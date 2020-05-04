@@ -1,9 +1,9 @@
 package config
 
 import (
-	"os"
-	"log"
 	"github.com/joho/godotenv"
+	"log"
+	"os"
 )
 
 type env struct {
@@ -12,9 +12,11 @@ type env struct {
 	DbUser string
 	DbPassword string
 	DbName string
+	ClientURL string
+	Port string
 }
 
-// Env is env procjet struct
+// Env is env project struct
 var Env env
 
 func init() {
@@ -29,6 +31,8 @@ func init() {
 		DbPort: os.Getenv("DB_PORT"),
 		DbUser: os.Getenv("DB_USER"),
 		DbPassword: os.Getenv("DB_PASSWORD"),
-		DbName: os.Getenv("DB_NAME"), 
+		DbName: os.Getenv("DB_NAME"),
+		ClientURL: os.Getenv("CLIENT_URL"),
+		Port: os.Getenv("PORT"),
 	}
 }
