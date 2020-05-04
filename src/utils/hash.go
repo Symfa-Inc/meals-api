@@ -8,7 +8,7 @@ import (
 // HashString func is used to create hash based on 
 // string and const default is 14
 func HashString(value string) (string) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(value), 14)
+	bytes, err := bcrypt.GenerateFromPassword([]byte(value), bcrypt.DefaultCost)
 
 	if err != nil {
 		panic(err)

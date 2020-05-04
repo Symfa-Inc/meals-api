@@ -1,17 +1,16 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-
-	"go_api/src/config"
+	_ "go_api/docs"
+	_ "go_api/src/config"
+	"go_api/src/mux"
 )
-
-func greet(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World! %s", config.Env.DbHost)
-}
-
+// @title AIS Catering
+// @version 1.0.0
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
-	http.HandleFunc("/", greet)
-	http.ListenAndServe(":8080", nil)
+	r := mux.SetupRouter()
+	r.Run()
 }
