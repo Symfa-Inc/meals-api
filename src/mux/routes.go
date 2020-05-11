@@ -1,12 +1,12 @@
 package mux
 
 import (
-	"go_api/src/mux/auth"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	"go_api/src/config"
+	"go_api/src/mux/auth"
 	"go_api/src/mux/middleware"
 	"net/http"
 )
@@ -34,6 +34,7 @@ func SetupRouter() *gin.Engine {
 
 	r.GET("/refresh_token", middleware.Passport().RefreshHandler)
 	r.POST("/login", middleware.Passport().LoginHandler)
+	r.GET("/logout", middleware.Passport().LogoutHandler)
 	authRequired := r.Group("/")
 	authRequired.Use(middleware.Passport().MiddlewareFunc())
 	{

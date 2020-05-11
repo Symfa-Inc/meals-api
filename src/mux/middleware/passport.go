@@ -2,40 +2,45 @@ package middleware
 
 import (
 	"errors"
-	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	users "go_api/src/models/user"
 	requestAuth "go_api/src/schemes/request/auth"
 	"go_api/src/utils"
+	"os"
 	"time"
 )
 
-const IdentityKey = "id"
+const IdentityKeyID = "id"
 
 type UserID struct {
 	ID string
 }
 
 //Middleware for user authentication
-func Passport() *jwt.GinJWTMiddleware {
-	authMiddleware, _ := jwt.New(&jwt.GinJWTMiddleware{
+func Passport() *GinJWTMiddleware {
+	authMiddleware, _ := New(&GinJWTMiddleware{
 		Realm:       "AIS Catering",
-		Key:         []byte("jwtsecret"),
-		Timeout:     time.Second * 30,
-		MaxRefresh:  time.Hour * 2,
-		IdentityKey: IdentityKey,
-		PayloadFunc: func(data interface{}) jwt.MapClaims {
+		Key:         []byte(os.Getenv("JWTSECRET")),
+		Timeout:     time.Hour,
+		MaxRefresh:  time.Hour * 4,
+		IdentityKey: IdentityKeyID,
+		SendCookie:       true,
+		CookieMaxAge: time.Hour * 24 * 365,
+		CookieHTTPOnly:   true,
+		CookieName:       "jwt",
+		TokenLookup:      "cookie:jwt",
+		PayloadFunc: func(data interface{}) MapClaims {
 			if v, ok := data.(*UserID); ok {
-				return jwt.MapClaims{
-					IdentityKey: v.ID,
+				return MapClaims{
+					IdentityKeyID: v.ID,
 				}
 			}
-			return jwt.MapClaims{}
+			return MapClaims{}
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
-			claims := jwt.ExtractClaims(c)
+			claims := ExtractClaims(c)
 			return &UserID{
-				ID: claims[IdentityKey].(string),
+				ID: claims[IdentityKeyID].(string),
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
