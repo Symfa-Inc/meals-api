@@ -16,6 +16,9 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: meals
+      JWTSECRET: jwtsecret
+      CLIENT_URL: http://localhost:3000
+      PORT: 8080
     command: bash -c "./wait-for-it.sh db:5432 -- go run db/migrate.go && go run main.go"
     volumes:
       - .:/go/src/go_api
