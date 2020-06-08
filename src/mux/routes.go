@@ -5,11 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
-	"go_api/src/config"
 	"go_api/src/mux/auth"
 	"go_api/src/mux/catering"
 	"go_api/src/mux/middleware"
 	"net/http"
+	"os"
 )
 
 // RedirectFunc wrapper for a Gin Redirect function
@@ -17,6 +17,7 @@ import (
 func RedirectFunc(route string) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		c.Redirect(http.StatusMovedPermanently, route)
+		c.Abort()
 	}
 }
 
@@ -25,13 +26,13 @@ func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
 	configCors := cors.DefaultConfig()
-	configCors.AllowOrigins = []string{config.Env.ClientURL}
+	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL")}
 	configCors.AllowCredentials = true;
 	r.Use(cors.New(configCors))
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
-	r.GET("/api-docs", RedirectFunc("http://localhost:"+config.Env.Port+"/api-docs/static/index.html"))
+	r.GET("/api-docs", RedirectFunc("/api-docs/static/index.html"))
 	r.GET("/api-docs/static/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.GET("/refresh-token", middleware.Passport().RefreshHandler)
