@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: meals
+    ports:
+      - "5432:5432"
+  app:
+    build: .
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: meals
+    command: bash -c "./wait-for-it.sh db:5432 -- go run db/migrate.go && go run main.go"
+    volumes:
+      - .:/go/src/go_api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    links:
+      - postgres

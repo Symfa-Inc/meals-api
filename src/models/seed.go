@@ -1,9 +1,7 @@
-package seeds
-
-import "go_api/src/models"
+package models
 
 // Seed model
 type Seed struct {
-	models.Base
+	Base
 	Name string `gorm:"type:varchar(30);unique;not null"`
 }
