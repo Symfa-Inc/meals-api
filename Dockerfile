@@ -1,8 +1,10 @@
-FROM golang:1.13
+FROM golang:1.14
 
-WORKDIR /go/src/app
+WORKDIR /go/src/go_api
 COPY . .
 
-RUN go get ./...
+RUN go get -u -v github.com/swaggo/swag/cmd/swag
+RUN swag init
+RUN go get -v
 
-CMD go run main.go
+CMD ["go_api"]

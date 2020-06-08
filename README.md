@@ -7,20 +7,22 @@ cp .env.example .env
 go get ./...
 ```
 ### Generate and update swagger docs
+Run this command to get swag-cli 
+go get -u github.com/swaggo/swag/cmd/swag
 ```
 swag init
+```
+### Dockerization
+```
+docker-compose up
 ```
 ### [How to describe swagger routes](https://github.com/swaggo/swag/blob/master/README.md)
 #### [Examples](https://github.com/swaggo/swag/blob/master/example/celler/controller/examples.go)
 ___
 ### How to 
-Run migrations
+Run migrations and seeds
 ```
 go run db/migrate.go
-```
-Run seeds
-```
-go run db/seeds.go
 ```
 ## Run project with live reload 
 ```

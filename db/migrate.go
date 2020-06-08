@@ -2,21 +2,36 @@ package main
 
 import (
 	"fmt"
+	"go_api/db/seeds/dev"
 	"go_api/src/config"
-	"go_api/src/models/seeds"
-	"go_api/src/models/user"
+	"go_api/src/models"
 	"go_api/src/types"
 )
 
 func main() {
 	fmt.Println("=== CREATING TYPES ===")
-
 	createTypes()
 	fmt.Println("=== TYPES ARE CREATED ===")
 
-	config.DB.DropTableIfExists(&users.User{}, &seeds.Seed{})
+	migrate()
+	fmt.Println("=== ADD MIGRATIONS ===")
+
+	dev.CreateAdmin()
+	dev.CreateUsers();
+	dev.CreateCaterings();
+}
+
+func migrate() {
+	config.DB.DropTableIfExists(
+		&models.Catering{},
+		&models.Seed{},
+		&models.User{},
+	)
+
 	config.DB.AutoMigrate(
-		&users.User{}, &seeds.Seed{},
+		&models.User{},
+		&models.Seed{},
+		&models.Catering{},
 	)
 }
 

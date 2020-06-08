@@ -2,10 +2,13 @@ package middleware
 
 import (
 	"errors"
+	"github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
-	users "go_api/src/models/user"
+	"go_api/src/models"
 	requestAuth "go_api/src/schemes/request/auth"
+	"go_api/src/schemes/response/auth"
 	"go_api/src/utils"
+	"net/http"
 	"os"
 	"time"
 )
@@ -17,28 +20,40 @@ type UserID struct {
 }
 
 //Middleware for user authentication
-func Passport() *GinJWTMiddleware {
-	authMiddleware, _ := New(&GinJWTMiddleware{
-		Realm:       "AIS Catering",
-		Key:         []byte(os.Getenv("JWTSECRET")),
-		Timeout:     time.Hour,
-		MaxRefresh:  time.Hour * 4,
-		IdentityKey: IdentityKeyID,
-		SendCookie:       true,
-		CookieMaxAge: time.Hour * 24 * 365,
-		CookieHTTPOnly:   true,
-		CookieName:       "jwt",
-		TokenLookup:      "cookie:jwt",
-		PayloadFunc: func(data interface{}) MapClaims {
+func Passport() *jwt.GinJWTMiddleware {
+	authMiddleware, _ := jwt.New(&jwt.GinJWTMiddleware{
+		Realm:          "AIS Catering",
+		Key:            []byte(os.Getenv("JWTSECRET")),
+		Timeout:        time.Hour * 4,
+		MaxRefresh:     time.Hour * 24,
+		IdentityKey:    IdentityKeyID,
+		SendCookie:     true,
+		CookieMaxAge:   time.Hour * 24,
+		CookieHTTPOnly: true,
+		CookieName:     "jwt",
+		TokenLookup:    "cookie:jwt",
+		LoginResponse: func(c *gin.Context, i int, s string, t time.Time) {
+			value, _ := Passport().ParseTokenString(s)
+			id := jwt.ExtractClaimsFromToken(value)["id"]
+			user, _ := models.GetUserByKey("id", id.(string))
+			c.JSON(http.StatusOK, auth.IsAuthenticated{
+				ID:        user.ID,
+				FirstName: user.FirstName,
+				LastName:  user.LastName,
+				Email:     user.Email,
+				Role:      user.Role,
+			})
+		},
+		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*UserID); ok {
-				return MapClaims{
+				return jwt.MapClaims{
 					IdentityKeyID: v.ID,
 				}
 			}
-			return MapClaims{}
+			return jwt.MapClaims{}
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
-			claims := ExtractClaims(c)
+			claims := jwt.ExtractClaims(c)
 			return &UserID{
 				ID: claims[IdentityKeyID].(string),
 			}
@@ -49,7 +64,7 @@ func Passport() *GinJWTMiddleware {
 				return "", errors.New("missing email or password")
 			}
 
-			user, err := users.GetUserByKey("email", body.Email)
+			user, err := models.GetUserByKey("email", body.Email)
 			if err == nil {
 				equal := utils.CheckPasswordHash(body.Password, user.Password)
 				if equal {
