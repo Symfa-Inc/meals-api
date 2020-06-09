@@ -3,8 +3,8 @@ package auth
 import (
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
-	"go_api/src/models"
-	"go_api/src/mux/middleware"
+	"go_api/src/delivery/middleware"
+	"go_api/src/repository/user"
 	"go_api/src/schemes/response/auth"
 	"net/http"
 )
@@ -21,12 +21,12 @@ import (
 func IsAuthenticated(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
 	id := claims[middleware.IdentityKeyID]
-	user, _ := models.GetUserByKey("id", id.(string))
+	result, _ := user.GetUserByKey("id", id.(string))
 	c.JSON(http.StatusOK, auth.IsAuthenticated{
-		ID:        user.ID,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Email:     user.Email,
-		Role:      user.Role,
+		ID:        result.ID,
+		FirstName: result.FirstName,
+		LastName:  result.LastName,
+		Email:     result.Email,
+		Role:      result.Role,
 	})
 }

@@ -2,7 +2,7 @@ package catering
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_api/src/models"
+	"go_api/src/repository/catering"
 	"go_api/src/types"
 	"net/http"
 )
@@ -24,7 +24,7 @@ func GetCatering(c *gin.Context) {
 		})
 		return
 	}
-	catering, err := models.GetCateringByKey("id", path.ID)
+	result, err := catering.GetCateringByKey("id", path.ID)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"code":  http.StatusBadRequest,
@@ -32,5 +32,5 @@ func GetCatering(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, catering)
+	c.JSON(http.StatusOK, result)
 }

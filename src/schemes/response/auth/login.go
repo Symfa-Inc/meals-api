@@ -13,11 +13,11 @@ type IsAuthenticated struct {
 	LastName  string         `json:"lastName,omitempty"`
 	Email     string         `json:"email,omitempty"`
 	Role      types.UserRole `json:"role,omitempty"`
-}//@name IsAuthenticatedResponse
+} //@name IsAuthenticatedResponse
 
 //Response model for /login response route
-type LoginResponse struct {
+type RefreshToken struct {
 	Code   int       `json:"code"`
 	Expire time.Time `json:"expire"`
 	Token  string    `json:"token"`
-}//@name LoginResponse
+} //@name ResfreshTokenResponse

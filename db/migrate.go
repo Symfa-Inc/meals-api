@@ -17,8 +17,8 @@ func main() {
 	fmt.Println("=== ADD MIGRATIONS ===")
 
 	dev.CreateAdmin()
-	dev.CreateUsers();
-	dev.CreateCaterings();
+	dev.CreateUsers()
+	dev.CreateCaterings()
 }
 
 func migrate() {

@@ -3,6 +3,7 @@ package catering
 import (
 	"github.com/gin-gonic/gin"
 	"go_api/src/models"
+	catering "go_api/src/repository/catering"
 	"net/http"
 )
 
@@ -12,21 +13,21 @@ import (
 // @Accept json
 // @Tags catering
 // @Param body body catering.AddCateringScheme false "Catering Name"
-// @Success 200 {object} response.ResponseID
+// @Success 201 {object} response.ResponseID
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings [post]
 func AddCatering(c *gin.Context) {
-	var catering models.Catering
-	if err := c.ShouldBindJSON(&catering); err != nil {
+	var cateringModel models.Catering
+	if err := c.ShouldBindJSON(&cateringModel); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":  http.StatusBadRequest,
 			"error": err.Error(),
 		})
 	}
-	catering, err := models.CreateCatering(catering)
+	result, err := catering.CreateCatering(cateringModel)
 	if err == nil {
 		c.JSON(http.StatusCreated, gin.H{
-			"id": catering.ID,
+			"id": result.ID,
 		})
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{

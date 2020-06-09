@@ -8,4 +8,4 @@ package auth
 // @Success 200 {object} models.User
 // @Failure 401 {object} types.Error "Error"
 // @Router /login [post]
-func login(){}
+func login() {}
