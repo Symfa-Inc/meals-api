@@ -13,7 +13,7 @@ type env struct {
 	DbName     string
 	ClientURL  string
 	Port       string
-	Host 	   string
+	Host       string
 }
 
 // Env is env project struct

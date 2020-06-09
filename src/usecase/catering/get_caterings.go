@@ -2,7 +2,7 @@ package catering
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_api/src/models"
+	"go_api/src/repository/catering"
 	"go_api/src/types"
 	"net/http"
 )
@@ -20,18 +20,18 @@ func GetCaterings(c *gin.Context) {
 	var query types.PaginationQuery
 	if err := c.ShouldBind(&query); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"code": http.StatusBadRequest,
+			"code":  http.StatusBadRequest,
 			"error": err.Error(),
 		})
 		return
 	}
-	cateringsList, err := models.GetCateringsDB(query)
+	result, err := catering.GetCateringsDB(query)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"code": http.StatusBadRequest,
+			"code":  http.StatusBadRequest,
 			"error": err.Error(),
 		})
 		return
 	}
-	c.JSON(http.StatusOK, cateringsList)
+	c.JSON(http.StatusOK, result)
 }

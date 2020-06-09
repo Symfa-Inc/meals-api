@@ -3,6 +3,7 @@ package catering
 import (
 	"github.com/gin-gonic/gin"
 	"go_api/src/models"
+	"go_api/src/repository/catering"
 	"go_api/src/types"
 	"net/http"
 )
@@ -19,8 +20,8 @@ import (
 // @Router /caterings/{id} [put]
 func UpdateCatering(c *gin.Context) {
 	var path types.PathId
-	var catering models.Catering
-	if err := c.ShouldBindJSON(&catering); err != nil {
+	var cateringModel models.Catering
+	if err := c.ShouldBindJSON(&cateringModel); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":  http.StatusBadRequest,
 			"error": err.Error(),
@@ -30,21 +31,21 @@ func UpdateCatering(c *gin.Context) {
 
 	if err := c.ShouldBindUri(&path); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"code": http.StatusBadRequest,
+			"code":  http.StatusBadRequest,
 			"error": err.Error(),
 		})
 		return
 	}
-	catering, err := models.UpdateCateringDB(path.ID, catering)
+	result, err := catering.UpdateCateringDB(path.ID, cateringModel)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"code": http.StatusBadRequest,
+			"code":  http.StatusBadRequest,
 			"error": err.Error(),
 		})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"id": path.ID,
-		"name": catering.Name,
+		"id":   path.ID,
+		"name": result.Name,
 	})
 }

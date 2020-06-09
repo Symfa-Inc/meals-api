@@ -1,13 +1,13 @@
-package mux
+package delivery
 
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
-	"go_api/src/mux/auth"
-	"go_api/src/mux/catering"
-	"go_api/src/mux/middleware"
+	"go_api/src/delivery/middleware"
+	"go_api/src/usecase/auth"
+	"go_api/src/usecase/catering"
 	"net/http"
 	"os"
 )
@@ -27,7 +27,7 @@ func SetupRouter() *gin.Engine {
 
 	configCors := cors.DefaultConfig()
 	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL")}
-	configCors.AllowCredentials = true;
+	configCors.AllowCredentials = true
 	r.Use(cors.New(configCors))
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())

@@ -2,7 +2,7 @@ package catering
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_api/src/models"
+	"go_api/src/repository/catering"
 	"go_api/src/types"
 	"net/http"
 )
@@ -24,7 +24,7 @@ func DeleteCatering(c *gin.Context) {
 		})
 		return
 	}
-	err:= models.DeleteCateringDB(path.ID)
+	err := catering.DeleteCateringDB(path.ID)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"code":  http.StatusBadRequest,

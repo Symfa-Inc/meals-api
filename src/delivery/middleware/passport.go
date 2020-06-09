@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
-	"go_api/src/models"
+	"go_api/src/repository/user"
 	requestAuth "go_api/src/schemes/request/auth"
 	"go_api/src/schemes/response/auth"
 	"go_api/src/utils"
@@ -35,13 +35,13 @@ func Passport() *jwt.GinJWTMiddleware {
 		LoginResponse: func(c *gin.Context, i int, s string, t time.Time) {
 			value, _ := Passport().ParseTokenString(s)
 			id := jwt.ExtractClaimsFromToken(value)["id"]
-			user, _ := models.GetUserByKey("id", id.(string))
+			result, _ := user.GetUserByKey("id", id.(string))
 			c.JSON(http.StatusOK, auth.IsAuthenticated{
-				ID:        user.ID,
-				FirstName: user.FirstName,
-				LastName:  user.LastName,
-				Email:     user.Email,
-				Role:      user.Role,
+				ID:        result.ID,
+				FirstName: result.FirstName,
+				LastName:  result.LastName,
+				Email:     result.Email,
+				Role:      result.Role,
 			})
 		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
@@ -64,12 +64,12 @@ func Passport() *jwt.GinJWTMiddleware {
 				return "", errors.New("missing email or password")
 			}
 
-			user, err := models.GetUserByKey("email", body.Email)
+			result, err := user.GetUserByKey("email", body.Email)
 			if err == nil {
-				equal := utils.CheckPasswordHash(body.Password, user.Password)
+				equal := utils.CheckPasswordHash(body.Password, result.Password)
 				if equal {
 					return &UserID{
-						ID: user.ID.String(),
+						ID: result.ID.String(),
 					}, nil
 				}
 			}
