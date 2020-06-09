@@ -13,7 +13,7 @@ type User struct {
 	Email     string         `gorm:"type:varchar(30);unique;not null" json:"email,omitempty"`
 	Password  string         `gorm:"type:varchar(100);not null" json:"password,omitempty"`
 	Role      types.UserRole `sql:"type:user_roles" json:"role,omitempty"`
-}
+}//@name UserResponse
 
 //GetUserByKey returns user
 func GetUserByKey(key, value string) (User, error) {
