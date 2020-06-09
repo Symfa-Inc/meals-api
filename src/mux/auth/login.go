@@ -5,7 +5,7 @@ package auth
 // @Accept json
 // @Tags auth
 // @Param body body auth.LoginUserRequest false "User Credentials"
-// @Success 200 {object} auth.LoginResponse
+// @Success 200 {object} models.User
 // @Failure 401 {object} types.Error "Error"
 // @Router /login [post]
 func login(){}

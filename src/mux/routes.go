@@ -32,7 +32,6 @@ func SetupRouter() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
-	r.GET("/api-docs", RedirectFunc("/api-docs/static/index.html"))
 	r.GET("/api-docs/static/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.GET("/refresh-token", middleware.Passport().RefreshHandler)

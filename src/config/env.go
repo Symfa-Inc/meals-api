@@ -13,6 +13,7 @@ type env struct {
 	DbName     string
 	ClientURL  string
 	Port       string
+	Host 	   string
 }
 
 // Env is env project struct
@@ -29,5 +30,6 @@ func init() {
 		DbName:     os.Getenv("DB_NAME"),
 		ClientURL:  os.Getenv("CLIENT_URL"),
 		Port:       os.Getenv("PORT"),
+		Host:       os.Getenv("HOST"),
 	}
 }
