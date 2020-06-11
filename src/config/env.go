@@ -20,7 +20,7 @@ type env struct {
 var Env env
 
 func init() {
-	_ = godotenv.Load(".env")
+	_ = godotenv.Load(os.ExpandEnv("$GOPATH/src/go_api/.env"))
 
 	Env = env{
 		DbHost:     os.Getenv("DB_HOST"),

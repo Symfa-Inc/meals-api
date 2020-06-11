@@ -13,7 +13,7 @@ import (
 // @Produce json
 // @Param limit query int false "used for pagination"
 // @Param page query int false "used for pagination"
-// @Success 200 {array} models.Catering "List of caterings"
+// @Success 200 {object} catering.GetCaterings "List of caterings"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings [get]
 func GetCaterings(c *gin.Context) {
@@ -33,5 +33,12 @@ func GetCaterings(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, result)
+	if query.Page == 0 {
+		query.Page = 1
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"items": result,
+		"size": len(result),
+		"page": query.Page,
+	})
 }

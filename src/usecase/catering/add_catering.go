@@ -13,7 +13,7 @@ import (
 // @Accept json
 // @Tags catering
 // @Param body body catering.AddCateringScheme false "Catering Name"
-// @Success 201 {object} response.ResponseID
+// @Success 201 {object} models.Catering
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings [post]
 func AddCatering(c *gin.Context) {
@@ -23,16 +23,20 @@ func AddCatering(c *gin.Context) {
 			"code":  http.StatusBadRequest,
 			"error": err.Error(),
 		})
+		return
 	}
 	result, err := catering.CreateCatering(cateringModel)
 	if err == nil {
 		c.JSON(http.StatusCreated, gin.H{
 			"id": result.ID,
+			"name": result.Name,
 		})
+		return
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":  http.StatusBadRequest,
 			"error": "catering with that name already exist",
 		})
+		return
 	}
 }

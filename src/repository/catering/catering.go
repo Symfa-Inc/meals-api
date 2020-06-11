@@ -1,6 +1,7 @@
 package catering
 
 import (
+	"github.com/jinzhu/gorm"
 	"go_api/src/config"
 	"go_api/src/models"
 	"go_api/src/types"
@@ -39,13 +40,13 @@ func GetCateringByKey(key, value string) (models.Catering, error) {
 
 // DeleteCateringDB soft delete of catering with passed id
 // returns error if exists
-func DeleteCateringDB(id string) error {
-	return config.DB.Where("id = ?", id).Delete(&models.Catering{}).Error
+func DeleteCateringDB(id string) *gorm.DB {
+	return config.DB.Where("id = ?", id).Delete(&models.Catering{})
 }
 
 // UpdateCateringDB updates catering with passed args
 // returns updated catering struct and error if exists
-func UpdateCateringDB(id string, catering models.Catering) (models.Catering, error) {
-	err := config.DB.Model(&catering).Where("id = ?", id).Update(&catering).Error
-	return catering, err
+func UpdateCateringDB(id string, catering models.Catering) *gorm.DB {
+	result := config.DB.Model(&catering).Where("id = ?", id).Update(&catering)
+	return result
 }
