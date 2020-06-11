@@ -14,6 +14,7 @@ import (
 // @Param id path string true "Catering ID"
 // @Success 200 {object} models.Catering "List of caterings"
 // @Failure 400 {object} types.Error "Error"
+// @Failure 404 {object} types.Error "Error"
 // @Router /caterings/{id} [get]
 func GetCatering(c *gin.Context) {
 	var path types.PathId
@@ -26,11 +27,19 @@ func GetCatering(c *gin.Context) {
 	}
 	result, err := catering.GetCateringByKey("id", path.ID)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"code":  http.StatusBadRequest,
-			"error": err.Error(),
-		})
-		return
+		if err.Error() == "record not found" {
+			c.JSON(http.StatusNotFound, gin.H{
+				"code":  http.StatusNotFound,
+				"error": err.Error(),
+			})
+			return
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"code":  http.StatusBadRequest,
+				"error": err.Error(),
+			})
+			return
+		}
 	}
 	c.JSON(http.StatusOK, result)
 }

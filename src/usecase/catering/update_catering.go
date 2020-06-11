@@ -36,16 +36,17 @@ func UpdateCatering(c *gin.Context) {
 		})
 		return
 	}
-	result, err := catering.UpdateCateringDB(path.ID, cateringModel)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":  http.StatusBadRequest,
-			"error": err.Error(),
+	result := catering.UpdateCateringDB(path.ID, cateringModel)
+	cateringName := result.Value.(*models.Catering).Name
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"code":  http.StatusNotFound,
+			"error": "catering not found",
 		})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"id":   path.ID,
-		"name": result.Name,
+		"name": cateringName,
 	})
 }

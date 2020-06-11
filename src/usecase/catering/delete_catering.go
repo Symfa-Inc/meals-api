@@ -24,11 +24,11 @@ func DeleteCatering(c *gin.Context) {
 		})
 		return
 	}
-	err := catering.DeleteCateringDB(path.ID)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"code":  http.StatusBadRequest,
-			"error": err.Error(),
+	result := catering.DeleteCateringDB(path.ID)
+	if result.RowsAffected == 0 {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+			"code":  http.StatusNotFound,
+			"error": "catering not found",
 		})
 		return
 	}
