@@ -3,19 +3,19 @@ package tests
 import (
 	"encoding/json"
 	"github.com/appleboy/gofight"
-	"go_api/src/schemes/response/catering"
 	"github.com/stretchr/testify/assert"
 	"go_api/src/delivery"
 	"go_api/src/delivery/middleware"
-	"go_api/src/models"
+	"go_api/src/repository/user"
+	"go_api/src/schemes/response/catering"
 	"net/http"
 	"testing"
 )
 
 func TestGetCaterings(t *testing.T) {
 	r := gofight.New()
-	user, _ := models.GetUserByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{user.ID.String()})
+	result, _ := user.GetUserByKey("email", "admin@meals.com")
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
 
 	// Trying to get list of caterings
 	r.GET("/caterings").

@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go_api/src/delivery"
 	"go_api/src/delivery/middleware"
-	"go_api/src/models"
+	"go_api/src/repository/user"
 	"net/http"
 	"testing"
 )
@@ -14,8 +14,8 @@ import (
 func TestAddCatering(t *testing.T) {
 	r := gofight.New()
 	cateringName := "newcatering"
-	user, _ := models.GetUserByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{user.ID.String()})
+	userResult, _ := user.GetUserByKey("email", "admin@meals.com")
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
 	// Create new catering
 	r.POST("/caterings").
