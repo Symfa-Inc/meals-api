@@ -7,19 +7,20 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go_api/src/delivery"
 	"go_api/src/delivery/middleware"
-	"go_api/src/models"
+	"go_api/src/repository/catering"
+	"go_api/src/repository/user"
 	"net/http"
 	"testing"
 )
 
 func TestGetCatering(t *testing.T) {
 	r := gofight.New()
-	user, _ := models.GetUserByKey("email", "admin@meals.com")
-	catering, _ := models.GetCateringByKey("name", "Navir")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{user.ID.String()})
+	userResult, _ := user.GetUserByKey("email", "admin@meals.com")
+	cateringResult, _ := catering.GetCateringByKey("name", "Navir")
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
 	// Trying to get catering by ID
-	r.GET("/caterings/"+catering.ID.String()).
+	r.GET("/caterings/"+cateringResult.ID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -31,7 +32,7 @@ func TestGetCatering(t *testing.T) {
 		})
 
 	// Deleting catering for next tests
-	r.DELETE("/caterings/"+catering.ID.String()).
+	r.DELETE("/caterings/"+cateringResult.ID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -48,7 +49,7 @@ func TestGetCatering(t *testing.T) {
 		})
 
 	// Trying to get catering which already been deleted
-	r.GET("/caterings/"+catering.ID.String()).
+	r.GET("/caterings/"+cateringResult.ID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"go_api/src/config"
 	"go_api/src/types"
 )
 
@@ -15,9 +14,3 @@ type User struct {
 	Role      types.UserRole `sql:"type:user_roles" json:"role,omitempty"`
 } //@name UsersResponse
 
-//GetUserByKey returns user
-func GetUserByKey(key, value string) (User, error) {
-	var user User
-	err := config.DB.Where(key+" = ?", value).First(&user).Error
-	return user, err
-}
