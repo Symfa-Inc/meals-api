@@ -8,6 +8,7 @@ import (
 	"go_api/src/delivery/middleware"
 	"go_api/src/usecase/auth"
 	"go_api/src/usecase/catering"
+	"go_api/src/usecase/meals"
 	"net/http"
 	"os"
 )
@@ -49,6 +50,10 @@ func SetupRouter() *gin.Engine {
 			cateringGroup.GET("/caterings/:id", catering.GetCatering)
 			cateringGroup.DELETE("/caterings/:id", catering.DeleteCatering)
 			cateringGroup.PUT("/caterings/:id", catering.UpdateCatering)
+		}
+		mealsGroup := authRequired.Group("/")
+		{
+			mealsGroup.POST("/meals", meals.AddMeals)
 		}
 	}
 	return r

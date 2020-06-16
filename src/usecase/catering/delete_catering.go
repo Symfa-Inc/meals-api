@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go_api/src/repository/catering"
 	"go_api/src/types"
+	"go_api/src/utils"
 	"net/http"
 )
 
@@ -17,20 +18,16 @@ import (
 // @Router /caterings/{id} [delete]
 func DeleteCatering(c *gin.Context) {
 	var path types.PathId
-	if err := c.ShouldBindUri(&path); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"code":  http.StatusBadRequest,
-			"error": err.Error(),
-		})
+	if err := utils.RequestBinderUri(&path, c); err != nil {
 		return
 	}
+
 	result := catering.DeleteCateringDB(path.ID)
+
 	if result.RowsAffected == 0 {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-			"code":  http.StatusNotFound,
-			"error": "catering not found",
-		})
+		utils.CreateError(http.StatusNotFound, "catering not found", c)
 		return
 	}
+
 	c.Status(http.StatusNoContent)
 }

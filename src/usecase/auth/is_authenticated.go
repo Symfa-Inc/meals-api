@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go_api/src/delivery/middleware"
 	"go_api/src/repository/user"
-	"go_api/src/schemes/response/auth"
 	"net/http"
 )
 
@@ -14,7 +13,7 @@ import (
 // @Produce json
 // @Accept json
 // @Tags auth
-// @Success 200 {object} auth.IsAuthenticated
+// @Success 200 {object} models.User
 // @Failure 401 {object} types.Error
 // @Security ApiKeyAuth
 // @Router /is-authenticated [get]
@@ -22,11 +21,5 @@ func IsAuthenticated(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
 	id := claims[middleware.IdentityKeyID]
 	result, _ := user.GetUserByKey("id", id.(string))
-	c.JSON(http.StatusOK, auth.IsAuthenticated{
-		ID:        result.ID,
-		FirstName: result.FirstName,
-		LastName:  result.LastName,
-		Email:     result.Email,
-		Role:      result.Role,
-	})
+	c.JSON(http.StatusOK, result)
 }

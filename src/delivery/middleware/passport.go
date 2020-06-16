@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go_api/src/repository/user"
 	requestAuth "go_api/src/schemes/request/auth"
-	"go_api/src/schemes/response/auth"
 	"go_api/src/utils"
 	"net/http"
 	"os"
@@ -36,13 +35,7 @@ func Passport() *jwt.GinJWTMiddleware {
 			value, _ := Passport().ParseTokenString(s)
 			id := jwt.ExtractClaimsFromToken(value)["id"]
 			result, _ := user.GetUserByKey("id", id.(string))
-			c.JSON(http.StatusOK, auth.IsAuthenticated{
-				ID:        result.ID,
-				FirstName: result.FirstName,
-				LastName:  result.LastName,
-				Email:     result.Email,
-				Role:      result.Role,
-			})
+			c.JSON(http.StatusOK, result)
 		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*UserID); ok {
