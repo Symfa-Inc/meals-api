@@ -56,7 +56,7 @@ func TestUpdateCatering(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 
-	// Trying to change name of catering with non-existing ID
+	// Trying to change name of catering with non-exist ID
 	fakeId, _ := uuid.NewV4()
 	r.PUT("/caterings/"+fakeId.String()).
 		SetCookie(gofight.H{

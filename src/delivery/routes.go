@@ -53,7 +53,9 @@ func SetupRouter() *gin.Engine {
 		}
 		mealsGroup := authRequired.Group("/")
 		{
-			mealsGroup.POST("/meals", meals.AddMeals)
+			mealsGroup.POST("/meals/:id", meals.AddMeals)
+			mealsGroup.GET("/meals/:id", meals.GetMeals)
+			mealsGroup.PUT("/meals/:id", meals.UpdateMeal)
 		}
 	}
 	return r

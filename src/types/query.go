@@ -6,6 +6,6 @@ type PaginationQuery struct {
 }
 
 type StartEndDateQuery struct {
-	StartDate string `form:"startDate"`
-	EndDate string `form:"endDate"`
+	StartDate string `form:"startDate" binding:"required"`
+	EndDate   string `form:"endDate" binding:"required"`
 }

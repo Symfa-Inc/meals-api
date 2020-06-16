@@ -1,7 +1,9 @@
 package meal
 
-import uuid "github.com/satori/go.uuid"
+import "time"
+
+type AddMealRequestList []AddMealRequest // @name AddMealListResponse
 
 type AddMealRequest struct {
-	ID uuid.UUID `json:"id" binding:"required"`
-}
+	Date time.Time `json:"date" binding:"required" example:"2020-06-20T00:00:00Z"`
+} // @name AddMealResponse

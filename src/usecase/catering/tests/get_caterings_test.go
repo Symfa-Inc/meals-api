@@ -19,7 +19,7 @@ func TestGetCaterings(t *testing.T) {
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
 
 	// Trying to get list of caterings
-	r.GET("/caterings").
+	r.GET("/caterings?limit=10").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -28,12 +28,12 @@ func TestGetCaterings(t *testing.T) {
 			var result catering.GetCaterings
 			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, http.StatusOK, r.Code)
-			assert.Equal(t, result.Size, len(result.Items))
+			assert.Equal(t, 10, len(result.Items))
 			assert.Equal(t, 1, result.Page)
 		})
 
 	// Testing pagination params
-	r.GET("/caterings?page=2&limit=25").
+	r.GET("/caterings?limit=15&page=2").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -42,7 +42,7 @@ func TestGetCaterings(t *testing.T) {
 			var result catering.GetCaterings
 			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, http.StatusOK, r.Code)
-			assert.Equal(t, result.Size, len(result.Items))
+			assert.Equal(t, 15, len(result.Items))
 			assert.Equal(t, 2, result.Page)
 		})
 }

@@ -19,6 +19,7 @@ import (
 // @Router /caterings/{id} [get]
 func GetCatering(c *gin.Context) {
 	var path types.PathId
+
 	if err := utils.RequestBinderUri(&path, c); err != nil {
 		return
 	}

@@ -16,18 +16,31 @@ func CreateCatering(catering models.Catering) (models.Catering, error) {
 
 // GetCateringsDB returns list of caterings with pagination args
 // and error if exists
-func GetCateringsDB(query types.PaginationQuery) ([]models.Catering, error) {
+func GetCateringsDB(query types.PaginationQuery) ([]models.Catering, int, error) {
 	var caterings []models.Catering
+	var total int
+
 	page := query.Page
 	limit := query.Limit
+
 	if page == 0 {
 		page = 1
 	}
+
 	if limit == 0 {
 		limit = 10
 	}
-	err := config.DB.Limit(limit).Offset((page - 1) * limit).Find(&caterings).Error
-	return caterings, err
+
+	config.DB.Debug().Find(&caterings).Count(&total)
+
+	err := config.DB.
+		Debug().
+		Limit(limit).
+		Offset((page - 1) * limit).
+		Find(&caterings).
+		Error
+
+	return caterings, total, err
 }
 
 // GetCateringByKey returns single catering item found by key
@@ -47,6 +60,5 @@ func DeleteCateringDB(id string) *gorm.DB {
 // UpdateCateringDB updates catering with passed args
 // returns updated catering struct and error if exists
 func UpdateCateringDB(id string, catering models.Catering) *gorm.DB {
-	result := config.DB.Model(&catering).Where("id = ?", id).Update(&catering)
-	return result
+	return config.DB.Model(&catering).Where("id = ?", id).Update(&catering)
 }
