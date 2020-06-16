@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"fmt"
 	"github.com/appleboy/gofight"
 	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
@@ -15,6 +14,7 @@ import (
 
 func TestGetCatering(t *testing.T) {
 	r := gofight.New()
+
 	userResult, _ := user.GetUserByKey("email", "admin@meals.com")
 	cateringResult, _ := catering.GetCateringByKey("name", "Navir")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
@@ -44,7 +44,6 @@ func TestGetCatering(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			fmt.Println(r.Code)
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 

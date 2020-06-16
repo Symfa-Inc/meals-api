@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go_api/src/repository/catering"
 	"go_api/src/types"
+	"go_api/src/utils"
 	"net/http"
 )
 
@@ -18,28 +19,21 @@ import (
 // @Router /caterings/{id} [get]
 func GetCatering(c *gin.Context) {
 	var path types.PathId
-	if err := c.ShouldBindUri(&path); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"code":  http.StatusBadRequest,
-			"error": err.Error(),
-		})
+	if err := utils.RequestBinderUri(&path, c); err != nil {
 		return
 	}
+
 	result, err := catering.GetCateringByKey("id", path.ID)
+
 	if err != nil {
 		if err.Error() == "record not found" {
-			c.JSON(http.StatusNotFound, gin.H{
-				"code":  http.StatusNotFound,
-				"error": err.Error(),
-			})
+			utils.CreateError(http.StatusNotFound, err.Error(), c)
 			return
 		} else {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"code":  http.StatusBadRequest,
-				"error": err.Error(),
-			})
+			utils.CreateError(http.StatusBadRequest, err.Error(), c)
 			return
 		}
 	}
+
 	c.JSON(http.StatusOK, result)
 }

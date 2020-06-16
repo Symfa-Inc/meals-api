@@ -16,13 +16,18 @@ func main() {
 	migrate()
 	fmt.Println("=== ADD MIGRATIONS ===")
 
+	addDbConstraints()
+	fmt.Println("=== ADD DB CONSTRAINTS ===")
+
 	dev.CreateAdmin()
 	dev.CreateUsers()
 	dev.CreateCaterings()
+	dev.CreateMeals()
 }
 
 func migrate() {
 	config.DB.DropTableIfExists(
+		&models.Meal{},
 		&models.Catering{},
 		&models.Seed{},
 		&models.User{},
@@ -32,7 +37,12 @@ func migrate() {
 		&models.User{},
 		&models.Seed{},
 		&models.Catering{},
+		&models.Meal{},
 	)
+}
+
+func addDbConstraints() {
+	config.DB.Model(&models.Meal{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
 }
 
 func createTypes() {

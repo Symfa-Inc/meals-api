@@ -6,4 +6,4 @@ type GetCaterings struct {
 	Items []models.Catering `json:"items"`
 	Page int `json:"page"`
 	Size int `json:"size"`
-}
+} //@name GetCateringsResponse

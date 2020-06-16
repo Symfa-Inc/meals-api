@@ -1,5 +1,5 @@
 package types
 
 type PathId struct {
-	ID string `uri:"id"`
+	ID string `uri:"id" json:"id"`
 }

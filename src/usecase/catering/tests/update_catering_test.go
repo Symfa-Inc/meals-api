@@ -1,9 +1,9 @@
 package tests
 
 import (
-	"fmt"
 	"github.com/appleboy/gofight"
 	"github.com/buger/jsonparser"
+	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"go_api/src/delivery"
 	"go_api/src/delivery/middleware"
@@ -15,6 +15,7 @@ import (
 
 func TestUpdateCatering(t *testing.T) {
 	r := gofight.New()
+
 	userResult, _ := user.GetUserByKey("email", "admin@meals.com")
 	result, _ := catering.GetCateringByKey("name", "Telpod")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
@@ -33,7 +34,18 @@ func TestUpdateCatering(t *testing.T) {
 		assert.Equal(t, "newcateringname", name)
 	})
 
-	// Trying to change a name of catering with wrong ID
+	// Trying to change name of the catering with name that already exist in DB
+	r.PUT("/caterings/"+result.ID.String()).
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		SetJSON(gofight.D{
+			"name": "Twiist",
+		}).Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+
+	// Trying to change a name of catering with non-valid ID
 	r.PUT("/caterings/qwerty").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -41,10 +53,18 @@ func TestUpdateCatering(t *testing.T) {
 		SetJSON(gofight.D{
 			"name": "newcateringname",
 		}).Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-		data := []byte(r.Body.String())
-		fmt.Println(r.Body)
-		errorValue, _ := jsonparser.GetString(data, "error")
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+
+	// Trying to change name of catering with non-existing ID
+	fakeId, _ := uuid.NewV4()
+	r.PUT("/caterings/"+fakeId.String()).
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		SetJSON(gofight.D{
+			"name": "newcateringname",
+		}).Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 		assert.Equal(t, http.StatusNotFound, r.Code)
-		assert.Equal(t, "catering not found", errorValue)
 	})
 }

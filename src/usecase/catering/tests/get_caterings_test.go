@@ -14,6 +14,7 @@ import (
 
 func TestGetCaterings(t *testing.T) {
 	r := gofight.New()
+
 	result, _ := user.GetUserByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
 

@@ -13,6 +13,7 @@ import (
 
 func TestAddCatering(t *testing.T) {
 	r := gofight.New()
+
 	cateringName := "newcatering"
 	userResult, _ := user.GetUserByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})

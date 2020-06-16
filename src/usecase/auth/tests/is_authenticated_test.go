@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"fmt"
 	"github.com/appleboy/gofight"
 	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
@@ -14,6 +13,7 @@ import (
 
 func TestIsAuthenticated(t *testing.T) {
 	r := gofight.New()
+
 	userResult, _ := user.GetUserByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
@@ -21,7 +21,6 @@ func TestIsAuthenticated(t *testing.T) {
 	r.GET("/is-authenticated").
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
-			fmt.Println(r.Body)
 			errorValue, _ := jsonparser.GetString(data, "message")
 			assert.Equal(t, http.StatusUnauthorized, r.Code)
 			assert.Equal(t, "cookie token is empty", errorValue)
