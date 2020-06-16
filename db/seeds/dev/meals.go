@@ -19,11 +19,13 @@ func CreateMeals() {
 		var wg sync.WaitGroup
 		wg.Add(7)
 
+		t := 24 * time.Hour
+
 		for i := 0; i < 7; i++ {
 			go func(i int) {
 				defer wg.Done()
 				meal := models.Meal{
-					Date:       time.Now().AddDate(0, 0, i),
+					Date:       time.Now().AddDate(0, 0, i).Truncate(t),
 					CateringID: cateringResult.ID,
 				}
 				config.DB.Create(&meal)

@@ -7,6 +7,6 @@ import (
 
 type Meal struct {
 	Base
-	Date time.Time `json:"date,omitempty"`
-	CateringID uuid.UUID `json:"cateringId,omitempty"`
-}// @name MealsResponse
+	Date       time.Time `json:"date,omitempty" binding:"required"`
+	CateringID uuid.UUID `json:"-"`
+} // @name MealsResponse

@@ -2,27 +2,31 @@ package meals
 
 import (
 	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
+	"go_api/src/models"
 	"go_api/src/repository/meal"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
+	"strconv"
+	"time"
 )
 
-// AddDays godoc
+// AddMeals godoc
 // @Summary Add days for catering
 // @Tags meals
 // @Produce json
-// @Param startDate query string true "example: 2006-01-02T00:00:00"
-// @Param endDate query string true "example: 2006-01-09T00:00:00"
-// @Param body body types.PathId false "Catering ID"
+// @Param id path string false "Catering ID"
+// @Param payload body meal.AddMealRequestList false "array of meals"
 // @Success 201 {array} models.Meal "array of meal readings"
 // @Failure 400 {object} types.Error "Error"
-// @Router /meals [post]
+// @Router /meals/{id} [post]
 func AddMeals(c *gin.Context) {
-	var query types.StartEndDateQuery
-	var body types.PathId
+	var path types.PathId
+	var body []models.Meal
+	var resultMealArray []*models.Meal
 
-	if err := utils.RequestBinderQuery(&query, c); err != nil {
+	if err := utils.RequestBinderUri(&path, c); err != nil {
 		return
 	}
 
@@ -30,12 +34,32 @@ func AddMeals(c *gin.Context) {
 		return
 	}
 
-	mealsArray, err := meal.CreateMealsDB(query, body.ID)
+	parsedId, _ := uuid.FromString(path.ID)
+	for i, _ := range body {
+		t := 24 * time.Hour
+		body[i].CateringID = parsedId
+		difference := body[i].Date.Sub(time.Now().Truncate(t)).Hours()
 
-	if err != nil {
-		utils.CreateError(http.StatusBadRequest, err.Error(), c)
-		return
+		if difference < 0 {
+			utils.CreateError(http.StatusBadRequest, "item "+strconv.Itoa(i+1)+" has wrong date (can't use previous dates)", c)
+			return
+		}
+
+		if err := meal.FindMealDB(body[i]); err != nil {
+			utils.CreateError(http.StatusBadRequest, "item "+strconv.Itoa(i+1)+" already exist", c)
+			return
+		}
 	}
 
-	c.JSON(http.StatusCreated, mealsArray)
+	for i := range body {
+		body[i].CateringID = parsedId
+		mealItem, err := meal.CreateMealDB(body[i])
+		if err != nil {
+			utils.CreateError(http.StatusBadRequest, err.Error(), c)
+			return
+		}
+		resultMealArray = append(resultMealArray, mealItem.Value.(*models.Meal))
+	}
+
+	c.JSON(http.StatusCreated, resultMealArray)
 }

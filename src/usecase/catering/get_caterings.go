@@ -3,6 +3,7 @@ package catering
 import (
 	"github.com/gin-gonic/gin"
 	"go_api/src/repository/catering"
+	response "go_api/src/schemes/response/catering"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
@@ -24,7 +25,7 @@ func GetCaterings(c *gin.Context) {
 		return
 	}
 
-	result, err := catering.GetCateringsDB(query)
+	result, total, err := catering.GetCateringsDB(query)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
@@ -35,9 +36,9 @@ func GetCaterings(c *gin.Context) {
 		query.Page = 1
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"items": result,
-		"size":  len(result),
-		"page":  query.Page,
+	c.JSON(http.StatusOK, response.GetCaterings{
+		Items: result,
+		Page:  query.Page,
+		Total: total,
 	})
 }

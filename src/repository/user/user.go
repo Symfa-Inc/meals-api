@@ -6,7 +6,7 @@ import (
 )
 
 // GetUserByKey returns user
-// and error if exists
+// and error if exist
 func GetUserByKey(key, value string) (models.User, error) {
 	var user models.User
 	err := config.DB.Where(key+" = ?", value).First(&user).Error
