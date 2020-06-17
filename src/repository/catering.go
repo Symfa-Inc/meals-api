@@ -31,10 +31,9 @@ func GetCateringsDB(query types.PaginationQuery) ([]models.Catering, int, error)
 		limit = 10
 	}
 
-	config.DB.Debug().Find(&caterings).Count(&total)
+	config.DB.Find(&caterings).Count(&total)
 
 	err := config.DB.
-		Debug().
 		Limit(limit).
 		Offset((page - 1) * limit).
 		Find(&caterings).

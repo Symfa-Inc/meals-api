@@ -11,7 +11,7 @@ import (
 
 // GetMeals godoc
 // @Summary get list of meals withing provided date range
-// @Tags meals
+// @Tags catering meals
 // @Produce json
 // @Param startDate query string false "example: 2006-01-02"
 // @Param endDate query string false "example: 2006-01-09"
@@ -19,7 +19,7 @@ import (
 // @Param id path string false "Catering ID"
 // @Success 200 {object} response.GetMealsModel "array of meal readings"
 // @Failure 400 {object} types.Error "Error"
-// @Router /meals/{id} [get]
+// @Router /catering/{id}/meals [get]
 func GetMeals(c *gin.Context) {
 	var limitQuery types.PaginationQuery
 	var dateQuery types.StartEndDateQuery

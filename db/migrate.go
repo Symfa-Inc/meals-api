@@ -23,10 +23,12 @@ func main() {
 	dev.CreateUsers()
 	dev.CreateCaterings()
 	dev.CreateMeals()
+	dev.CreateDishCategories()
 }
 
 func migrate() {
 	config.DB.DropTableIfExists(
+		&models.DishCategory{},
 		&models.Meal{},
 		&models.Catering{},
 		&models.Seed{},
@@ -38,11 +40,13 @@ func migrate() {
 		&models.Seed{},
 		&models.Catering{},
 		&models.Meal{},
+		&models.DishCategory{},
 	)
 }
 
 func addDbConstraints() {
 	config.DB.Model(&models.Meal{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&models.DishCategory{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
 }
 
 func createTypes() {

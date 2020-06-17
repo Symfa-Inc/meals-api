@@ -13,7 +13,6 @@ import (
 // Looks for meal in db, if it doesn't exist returns nil
 func FindMealDB(meal models.Meal) error {
 	result := config.DB.
-		Debug().
 		Where("catering_id = ? AND date = ?", meal.CateringID, meal.Date).
 		Find(&meal)
 	if result.RowsAffected != 0 {
@@ -72,7 +71,6 @@ func UpdateMealDB(id string, meal request.UpdateMealRequest) (*gorm.DB, error) {
 	}
 
 	result := config.DB.
-		Debug().
 		Where("catering_id = ? AND date = ?", meal.CateringID, meal.Date).
 		Find(&mealModel)
 
@@ -80,5 +78,5 @@ func UpdateMealDB(id string, meal request.UpdateMealRequest) (*gorm.DB, error) {
 		return nil, errors.New("this date already exist")
 	}
 
-	return config.DB.Debug().Model(&mealModel).Where("id = ?", id).Update(&meal), nil
+	return config.DB.Model(&mealModel).Where("id = ?", id).Update(&meal), nil
 }
