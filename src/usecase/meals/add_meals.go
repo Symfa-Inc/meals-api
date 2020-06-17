@@ -14,13 +14,13 @@ import (
 
 // AddMeals godoc
 // @Summary Add days for catering
-// @Tags meals
+// @Tags catering meals
 // @Produce json
 // @Param id path string false "Catering ID"
 // @Param payload body request.AddMealRequestList false "array of meals"
 // @Success 201 {array} models.Meal "array of meal readings"
 // @Failure 400 {object} types.Error "Error"
-// @Router /meals/{id} [post]
+// @Router /caterings/{id}/meals [post]
 func AddMeals(c *gin.Context) {
 	var path types.PathId
 	var body []models.Meal

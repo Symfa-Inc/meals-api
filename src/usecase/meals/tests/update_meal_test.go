@@ -36,7 +36,7 @@ func TestUpdateMeal(t *testing.T) {
 	jsonValidMealArray, _ := json.Marshal(validMealsArray)
 
 	// Creates new meals for catering
-	r.POST("/meals/"+cateringResult.ID.String()).
+	r.POST("/caterings/"+cateringResult.ID.String()+"/meals").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -50,7 +50,7 @@ func TestUpdateMeal(t *testing.T) {
 
 	// Trying to update meal with non existing date
 	// Should be success
-	r.PUT("/meals/"+resultFirst[0].ID.String()).
+	r.PUT("/caterings/"+resultFirst[0].ID.String()+"/meals").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -66,7 +66,7 @@ func TestUpdateMeal(t *testing.T) {
 
 	// Trying to update the same date with already existing date
 	// Should throw an error
-	r.PUT("/meals/"+resultFirst[0].ID.String()).
+	r.PUT("/caterings/"+resultFirst[0].ID.String()+"/meals").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -83,7 +83,7 @@ func TestUpdateMeal(t *testing.T) {
 
 	//Trying to create meal before today
 	//Should throw an error
-	r.PUT("/meals/"+resultFirst[0].ID.String()).
+	r.PUT("/caterings/"+resultFirst[0].ID.String()+"/meals").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).

@@ -14,12 +14,12 @@ import (
 // @Summary Returns updated meal
 // @Produce json
 // @Accept json
-// @Tags meals
+// @Tags catering meals
 // @Param id path string true "Meal ID"
 // @Param body body request.UpdateMealRequest false "Meal date"
 // @Success 200 {object} models.Meal "Meal"
 // @Failure 400 {object} types.Error "Error"
-// @Router /meals/{id} [put]
+// @Router /caterings/{id}/meals [put]
 func UpdateMeal(c *gin.Context) {
 	var path types.PathId
 	var body request.UpdateMealRequest

@@ -23,7 +23,7 @@ func TestGetMeals(t *testing.T) {
 
 	// Testing validation of params
 	// Should throw an error
-	r.GET("/meals/"+cateringResult.ID.String()+"?startDate=2010-01-01").
+	r.GET("/caterings/"+cateringResult.ID.String()+"/meals?startDate=2010-01-01").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -34,7 +34,7 @@ func TestGetMeals(t *testing.T) {
 	// Testing non-existing catering ID
 	// Should throw an error
 	fakeId, _ := uuid.NewV4()
-	r.GET("/meals/"+fakeId.String()+"?startDate=2010-01-01").
+	r.GET("/caterings/"+fakeId.String()+"/meals?startDate=2010-01-01").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -47,7 +47,7 @@ func TestGetMeals(t *testing.T) {
 
 	// Trying to get list of meals for catering
 	// Should be success
-	r.GET("/meals/"+cateringResult.ID.String()+"?startDate=2010-01-01&endDate=2021-01-01&limit=5").
+	r.GET("/caterings/"+cateringResult.ID.String()+"/meals?startDate=2010-01-01&endDate=2021-01-01&limit=5").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).

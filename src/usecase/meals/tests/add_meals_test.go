@@ -46,7 +46,7 @@ func TestAddMeals(t *testing.T) {
 
 	// Trying do add non-valid days
 	// Should throw an error
-	r.POST("/meals/"+cateringResult.ID.String()).
+	r.POST("/caterings/"+cateringResult.ID.String()+"/meals").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -61,7 +61,7 @@ func TestAddMeals(t *testing.T) {
 
 	// Trying to add valid meals
 	// Should be success
-	r.POST("/meals/"+cateringResult.ID.String()).
+	r.POST("/caterings/"+cateringResult.ID.String()+"/meals").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -74,7 +74,7 @@ func TestAddMeals(t *testing.T) {
 			assert.Equal(t, len(validMealsArray), len(result))
 		})
 
-	r.POST("/meals/"+cateringResult.ID.String()).
+	r.POST("/caterings/"+cateringResult.ID.String()+"/meals").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
