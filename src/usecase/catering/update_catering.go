@@ -3,7 +3,7 @@ package catering
 import (
 	"github.com/gin-gonic/gin"
 	"go_api/src/models"
-	"go_api/src/repository/catering"
+	"go_api/src/repository"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
@@ -15,7 +15,7 @@ import (
 // @Accept json
 // @Tags catering
 // @Param id path string true "Catering ID"
-// @Param body body catering.AddCateringRequest false "Catering Name"
+// @Param body body request.AddCateringRequest false "Catering Name"
 // @Success 200 {object} models.Catering "Catering"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id} [put]
@@ -31,7 +31,7 @@ func UpdateCatering(c *gin.Context) {
 		return
 	}
 
-	result := catering.UpdateCateringDB(path.ID, cateringModel)
+	result := repository.UpdateCateringDB(path.ID, cateringModel)
 
 	cateringName := result.Value.(*models.Catering).Name
 

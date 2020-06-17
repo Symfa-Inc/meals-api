@@ -4,7 +4,7 @@ package auth
 // @Produce json
 // @Accept json
 // @Tags auth
-// @Param body body auth.LoginUserRequest false "User Credentials"
+// @Param body body request.LoginUserRequest false "User Credentials"
 // @Success 200 {object} models.User
 // @Failure 401 {object} types.Error "Error"
 // @Router /login [post]

@@ -4,7 +4,7 @@ package auth
 // @Produce json
 // @Accept json
 // @Tags auth
-// @Success 200 {object} auth.RefreshToken
+// @Success 200 {object} response.RefreshToken
 // @Failure 401 {object} types.Error "Error"
 // @Router /refresh-token [get]
 func refreshToken() {}

@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go_api/src/delivery"
 	"go_api/src/delivery/middleware"
-	"go_api/src/repository/user"
-	"go_api/src/schemes/response/catering"
+	"go_api/src/repository"
+	"go_api/src/schemes/response"
 	"net/http"
 	"testing"
 )
@@ -15,7 +15,7 @@ import (
 func TestGetCaterings(t *testing.T) {
 	r := gofight.New()
 
-	result, _ := user.GetUserByKey("email", "admin@meals.com")
+	result, _ := repository.GetUserByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
 
 	// Trying to get list of caterings
@@ -25,7 +25,7 @@ func TestGetCaterings(t *testing.T) {
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
-			var result catering.GetCaterings
+			var result response.GetCaterings
 			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, http.StatusOK, r.Code)
 			assert.Equal(t, 10, len(result.Items))
@@ -39,7 +39,7 @@ func TestGetCaterings(t *testing.T) {
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
-			var result catering.GetCaterings
+			var result response.GetCaterings
 			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, http.StatusOK, r.Code)
 			assert.Equal(t, 15, len(result.Items))

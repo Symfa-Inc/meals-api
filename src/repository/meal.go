@@ -1,11 +1,11 @@
-package meal
+package repository
 
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
 	"go_api/src/config"
 	"go_api/src/models"
-	"go_api/src/schemes/request/meal"
+	"go_api/src/schemes/request"
 	"go_api/src/types"
 	"time"
 )
@@ -60,7 +60,7 @@ func GetMealsDB(limit int, dateQuery types.StartEndDateQuery, id string) ([]mode
 }
 
 // Returns updated meals if exists
-func UpdateMealDB(id string, meal meal.UpdateMealRequest) (*gorm.DB, error) {
+func UpdateMealDB(id string, meal request.UpdateMealRequest) (*gorm.DB, error) {
 	var mealModel models.Meal
 
 	t := 24 * time.Hour

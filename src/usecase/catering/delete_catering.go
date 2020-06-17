@@ -2,7 +2,7 @@ package catering
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_api/src/repository/catering"
+	"go_api/src/repository"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
@@ -22,7 +22,7 @@ func DeleteCatering(c *gin.Context) {
 		return
 	}
 
-	result := catering.DeleteCateringDB(path.ID)
+	result := repository.DeleteCateringDB(path.ID)
 
 	if result.RowsAffected == 0 {
 		utils.CreateError(http.StatusNotFound, "catering not found", c)

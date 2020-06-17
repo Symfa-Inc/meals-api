@@ -9,8 +9,7 @@ import (
 	"go_api/src/delivery"
 	"go_api/src/delivery/middleware"
 	"go_api/src/models"
-	"go_api/src/repository/catering"
-	"go_api/src/repository/user"
+	"go_api/src/repository"
 	"net/http"
 	"testing"
 	"time"
@@ -21,8 +20,8 @@ func TestUpdateMeal(t *testing.T) {
 
 	var resultFirst []models.Meal
 
-	userResult, _ := user.GetUserByKey("email", "admin@meals.com")
-	cateringResult, _ := catering.GetCateringByKey("name", "Qiao")
+	userResult, _ := repository.GetUserByKey("email", "admin@meals.com")
+	cateringResult, _ := repository.GetCateringByKey("name", "Qiao")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
 	trunc := 24 * time.Hour

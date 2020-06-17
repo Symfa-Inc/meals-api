@@ -1,4 +1,4 @@
-package auth
+package request
 
 // User model for /login request route
 type LoginUserRequest struct {

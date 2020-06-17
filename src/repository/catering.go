@@ -1,4 +1,4 @@
-package catering
+package repository
 
 import (
 	"github.com/jinzhu/gorm"

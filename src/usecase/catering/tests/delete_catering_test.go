@@ -6,8 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go_api/src/delivery"
 	"go_api/src/delivery/middleware"
-	"go_api/src/repository/catering"
-	"go_api/src/repository/user"
+	"go_api/src/repository"
 	"net/http"
 	"testing"
 )
@@ -15,8 +14,8 @@ import (
 func TestDeleteCatering(t *testing.T) {
 	r := gofight.New()
 
-	userResult, _ := user.GetUserByKey("email", "admin@meals.com")
-	cateringResult, _ := catering.GetCateringByKey("name", "Gink")
+	userResult, _ := repository.GetUserByKey("email", "admin@meals.com")
+	cateringResult, _ := repository.GetCateringByKey("name", "Gink")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
 	// Deleting catering

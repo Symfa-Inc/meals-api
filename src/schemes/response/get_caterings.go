@@ -1,4 +1,4 @@
-package catering
+package response
 
 import "go_api/src/models"
 

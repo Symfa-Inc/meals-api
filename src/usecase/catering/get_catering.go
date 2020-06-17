@@ -2,7 +2,7 @@ package catering
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_api/src/repository/catering"
+	"go_api/src/repository"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
@@ -24,7 +24,7 @@ func GetCatering(c *gin.Context) {
 		return
 	}
 
-	result, err := catering.GetCateringByKey("id", path.ID)
+	result, err := repository.GetCateringByKey("id", path.ID)
 
 	if err != nil {
 		if err.Error() == "record not found" {

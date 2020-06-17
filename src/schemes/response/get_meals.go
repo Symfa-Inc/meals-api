@@ -1,4 +1,4 @@
-package meal
+package response
 
 import "go_api/src/models"
 

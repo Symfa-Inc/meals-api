@@ -2,8 +2,8 @@ package catering
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_api/src/repository/catering"
-	response "go_api/src/schemes/response/catering"
+	"go_api/src/repository"
+	response2 "go_api/src/schemes/response"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
@@ -15,7 +15,7 @@ import (
 // @Produce json
 // @Param limit query int false "used for pagination"
 // @Param page query int false "used for pagination"
-// @Success 200 {object} catering.GetCaterings "List of caterings"
+// @Success 200 {object} response.GetCaterings "List of caterings"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings [get]
 func GetCaterings(c *gin.Context) {
@@ -25,7 +25,7 @@ func GetCaterings(c *gin.Context) {
 		return
 	}
 
-	result, total, err := catering.GetCateringsDB(query)
+	result, total, err := repository.GetCateringsDB(query)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
@@ -36,7 +36,7 @@ func GetCaterings(c *gin.Context) {
 		query.Page = 1
 	}
 
-	c.JSON(http.StatusOK, response.GetCaterings{
+	c.JSON(http.StatusOK, response2.GetCaterings{
 		Items: result,
 		Page:  query.Page,
 		Total: total,
