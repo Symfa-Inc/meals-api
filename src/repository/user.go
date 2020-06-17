@@ -1,4 +1,4 @@
-package user
+package repository
 
 import (
 	"go_api/src/config"

@@ -8,9 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go_api/src/delivery"
 	"go_api/src/delivery/middleware"
-	"go_api/src/repository/catering"
-	"go_api/src/repository/user"
-	"go_api/src/schemes/response/meal"
+	"go_api/src/repository"
+	"go_api/src/schemes/response"
 	"net/http"
 	"testing"
 )
@@ -18,8 +17,8 @@ import (
 func TestGetMeals(t *testing.T) {
 	r := gofight.New()
 
-	userResult, _ := user.GetUserByKey("email", "admin@meals.com")
-	cateringResult, _ := catering.GetCateringByKey("name", "Twiist")
+	userResult, _ := repository.GetUserByKey("email", "admin@meals.com")
+	cateringResult, _ := repository.GetCateringByKey("name", "Twiist")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
 	// Testing validation of params
@@ -54,7 +53,7 @@ func TestGetMeals(t *testing.T) {
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
-			var result meal.GetMealsModel
+			var result response.GetMealsModel
 			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, 5, len(result.Items))
 			assert.Equal(t, http.StatusOK, r.Code)

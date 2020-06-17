@@ -7,8 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go_api/src/delivery"
 	"go_api/src/delivery/middleware"
-	"go_api/src/repository/catering"
-	"go_api/src/repository/user"
+	"go_api/src/repository"
 	"net/http"
 	"testing"
 )
@@ -16,8 +15,8 @@ import (
 func TestUpdateCatering(t *testing.T) {
 	r := gofight.New()
 
-	userResult, _ := user.GetUserByKey("email", "admin@meals.com")
-	result, _ := catering.GetCateringByKey("name", "Telpod")
+	userResult, _ := repository.GetUserByKey("email", "admin@meals.com")
+	result, _ := repository.GetCateringByKey("name", "Telpod")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
 	// Trying to change name of the catering

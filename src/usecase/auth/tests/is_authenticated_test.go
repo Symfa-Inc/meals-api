@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go_api/src/delivery"
 	"go_api/src/delivery/middleware"
-	"go_api/src/repository/user"
+	"go_api/src/repository"
 	"net/http"
 	"testing"
 )
@@ -14,7 +14,7 @@ import (
 func TestIsAuthenticated(t *testing.T) {
 	r := gofight.New()
 
-	userResult, _ := user.GetUserByKey("email", "admin@meals.com")
+	userResult, _ := repository.GetUserByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
 	// Trying to login without jwt cookie

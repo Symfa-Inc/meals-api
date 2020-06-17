@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"go_api/src/config"
 	"go_api/src/models"
-	"go_api/src/repository/catering"
+	"go_api/src/repository"
 	"sync"
 	"time"
 )
 
 func CreateMeals() {
 	seedExist := config.DB.Where("name = ?", "init meals").First(&models.Seed{}).Error
-	cateringResult, _ := catering.GetCateringByKey("name", "Twiist")
+	cateringResult, _ := repository.GetCateringByKey("name", "Twiist")
 	if seedExist != nil {
 		seed := models.Seed{
 			Name: "init meals",

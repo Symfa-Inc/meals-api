@@ -3,8 +3,8 @@ package meals
 import (
 	"github.com/gin-gonic/gin"
 	"go_api/src/models"
-	"go_api/src/repository/meal"
-	meal2 "go_api/src/schemes/request/meal"
+	"go_api/src/repository"
+	"go_api/src/schemes/request"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
@@ -16,13 +16,13 @@ import (
 // @Accept json
 // @Tags meals
 // @Param id path string true "Meal ID"
-// @Param body body meal.UpdateMealRequest false "Meal date"
+// @Param body body request.UpdateMealRequest false "Meal date"
 // @Success 200 {object} models.Meal "Meal"
 // @Failure 400 {object} types.Error "Error"
 // @Router /meals/{id} [put]
 func UpdateMeal(c *gin.Context) {
 	var path types.PathId
-	var body meal2.UpdateMealRequest
+	var body request.UpdateMealRequest
 
 	if err := utils.RequestBinderUri(&path, c); err != nil {
 		return
@@ -32,7 +32,7 @@ func UpdateMeal(c *gin.Context) {
 		return
 	}
 
-	result, err := meal.UpdateMealDB(path.ID, body)
+	result, err := repository.UpdateMealDB(path.ID, body)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)

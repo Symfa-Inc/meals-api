@@ -4,7 +4,7 @@ import (
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	"go_api/src/delivery/middleware"
-	"go_api/src/repository/user"
+	"go_api/src/repository"
 	"net/http"
 )
 
@@ -20,6 +20,6 @@ import (
 func IsAuthenticated(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
 	id := claims[middleware.IdentityKeyID]
-	result, _ := user.GetUserByKey("id", id.(string))
+	result, _ := repository.GetUserByKey("id", id.(string))
 	c.JSON(http.StatusOK, result)
 }

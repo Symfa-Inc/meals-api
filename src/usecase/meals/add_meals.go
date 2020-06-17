@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 	"go_api/src/models"
-	"go_api/src/repository/meal"
+	"go_api/src/repository"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
@@ -17,7 +17,7 @@ import (
 // @Tags meals
 // @Produce json
 // @Param id path string false "Catering ID"
-// @Param payload body meal.AddMealRequestList false "array of meals"
+// @Param payload body request.AddMealRequestList false "array of meals"
 // @Success 201 {array} models.Meal "array of meal readings"
 // @Failure 400 {object} types.Error "Error"
 // @Router /meals/{id} [post]
@@ -45,7 +45,7 @@ func AddMeals(c *gin.Context) {
 			return
 		}
 
-		if err := meal.FindMealDB(body[i]); err != nil {
+		if err := repository.FindMealDB(body[i]); err != nil {
 			utils.CreateError(http.StatusBadRequest, "item "+strconv.Itoa(i+1)+" already exist", c)
 			return
 		}
@@ -53,7 +53,7 @@ func AddMeals(c *gin.Context) {
 
 	for i := range body {
 		body[i].CateringID = parsedId
-		mealItem, err := meal.CreateMealDB(body[i])
+		mealItem, err := repository.CreateMealDB(body[i])
 		if err != nil {
 			utils.CreateError(http.StatusBadRequest, err.Error(), c)
 			return

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
-	"go_api/src/repository/user"
-	requestAuth "go_api/src/schemes/request/auth"
+	"go_api/src/repository"
+	"go_api/src/schemes/request"
 	"go_api/src/utils"
 	"net/http"
 	"os"
@@ -34,7 +34,7 @@ func Passport() *jwt.GinJWTMiddleware {
 		LoginResponse: func(c *gin.Context, i int, s string, t time.Time) {
 			value, _ := Passport().ParseTokenString(s)
 			id := jwt.ExtractClaimsFromToken(value)["id"]
-			result, _ := user.GetUserByKey("id", id.(string))
+			result, _ := repository.GetUserByKey("id", id.(string))
 			c.JSON(http.StatusOK, result)
 		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
@@ -52,12 +52,12 @@ func Passport() *jwt.GinJWTMiddleware {
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
-			var body requestAuth.LoginUserRequest
+			var body request.LoginUserRequest
 			if err := c.ShouldBind(&body); err != nil {
 				return "", errors.New("missing email or password")
 			}
 
-			result, err := user.GetUserByKey("email", body.Email)
+			result, err := repository.GetUserByKey("email", body.Email)
 			if err == nil {
 				equal := utils.CheckPasswordHash(body.Password, result.Password)
 				if equal {
