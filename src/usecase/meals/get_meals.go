@@ -19,7 +19,7 @@ import (
 // @Param id path string false "Catering ID"
 // @Success 200 {object} response.GetMealsModel "array of meal readings"
 // @Failure 400 {object} types.Error "Error"
-// @Router /catering/{id}/meals [get]
+// @Router /caterings/{id}/meals [get]
 func GetMeals(c *gin.Context) {
 	var limitQuery types.PaginationQuery
 	var dateQuery types.StartEndDateQuery

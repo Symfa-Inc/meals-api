@@ -54,9 +54,12 @@ func SetupRouter() *gin.Engine {
 
 			cateringGroup.POST("/caterings/:id/meals", meals.AddMeals)
 			cateringGroup.GET("/caterings/:id/meals", meals.GetMeals)
-			cateringGroup.PUT("/caterings/:id/meals", meals.UpdateMeal)
+			cateringGroup.PUT("/caterings/:id/meals/:mealId", meals.UpdateMeal)
 
 			cateringGroup.POST("/caterings/:id/dish-category", dish_category.AddDishCategory)
+			cateringGroup.GET("/caterings/:id/dish-category", dish_category.GetDishCategories)
+			cateringGroup.DELETE("/caterings/:id/dish-category/:categoryId", dish_category.DeleteDishCategory)
+			cateringGroup.PUT("/caterings/:id/dish-category/:categoryId", dish_category.UpdateDishCategory)
 		}
 	}
 	return r

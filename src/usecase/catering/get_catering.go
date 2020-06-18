@@ -9,11 +9,11 @@ import (
 )
 
 // GetCatering godoc
-// @Summary Returns list of caterings
+// @Summary Returns info about catering
 // @Tags catering
 // @Produce json
 // @Param id path string true "Catering ID"
-// @Success 200 {object} models.Catering "List of caterings"
+// @Success 200 {object} models.Catering "catering model"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Error"
 // @Router /caterings/{id} [get]

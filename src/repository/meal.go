@@ -5,7 +5,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"go_api/src/config"
 	"go_api/src/models"
-	"go_api/src/schemes/request"
 	"go_api/src/types"
 	"time"
 )
@@ -59,7 +58,7 @@ func GetMealsDB(limit int, dateQuery types.StartEndDateQuery, id string) ([]mode
 }
 
 // Returns updated meals if exists
-func UpdateMealDB(id string, meal request.UpdateMealRequest) (*gorm.DB, error) {
+func UpdateMealDB(path types.PathMeal, meal models.Meal) (*gorm.DB, error) {
 	var mealModel models.Meal
 
 	t := 24 * time.Hour
@@ -71,12 +70,12 @@ func UpdateMealDB(id string, meal request.UpdateMealRequest) (*gorm.DB, error) {
 	}
 
 	result := config.DB.
-		Where("catering_id = ? AND date = ?", meal.CateringID, meal.Date).
+		Where("catering_id = ? AND date = ?", path.ID, meal.Date).
 		Find(&mealModel)
 
 	if result.RowsAffected != 0 {
 		return nil, errors.New("this date already exist")
 	}
 
-	return config.DB.Model(&mealModel).Where("id = ?", id).Update(&meal), nil
+	return config.DB.Model(&mealModel).Where("id = ?", path.MealID).Update(&meal), nil
 }

@@ -2,7 +2,6 @@ package tests
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/appleboy/gofight"
 	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
@@ -53,7 +52,6 @@ func TestAddMeals(t *testing.T) {
 		SetBody(string(jsonNonValidMealArray)).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
-			fmt.Println(string(jsonNonValidMealArray))
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "item 1 has wrong date (can't use previous dates)", errorValue)

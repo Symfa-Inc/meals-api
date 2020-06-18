@@ -2,7 +2,6 @@ package tests
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/appleboy/gofight"
 	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
@@ -23,6 +22,7 @@ func TestUpdateMeal(t *testing.T) {
 	userResult, _ := repository.GetUserByKey("email", "admin@meals.com")
 	cateringResult, _ := repository.GetCateringByKey("name", "Qiao")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	cateringId := cateringResult.ID.String()
 
 	trunc := 24 * time.Hour
 	var validMealsArray []models.Meal
@@ -36,7 +36,7 @@ func TestUpdateMeal(t *testing.T) {
 	jsonValidMealArray, _ := json.Marshal(validMealsArray)
 
 	// Creates new meals for catering
-	r.POST("/caterings/"+cateringResult.ID.String()+"/meals").
+	r.POST("/caterings/"+cateringId+"/meals").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -50,29 +50,25 @@ func TestUpdateMeal(t *testing.T) {
 
 	// Trying to update meal with non existing date
 	// Should be success
-	r.PUT("/caterings/"+resultFirst[0].ID.String()+"/meals").
+	r.PUT("/caterings/"+cateringId+"/meals/"+resultFirst[0].ID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"date":       time.Now().AddDate(0, 0, 10).Truncate(trunc).UTC(),
-			"cateringId": cateringResult.ID.String(),
+			"date": time.Now().AddDate(0, 0, 10).Truncate(trunc).UTC(),
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			fmt.Println("=============TEST=================")
-			fmt.Println(cateringResult.ID)
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
 	// Trying to update the same date with already existing date
 	// Should throw an error
-	r.PUT("/caterings/"+resultFirst[0].ID.String()+"/meals").
+	r.PUT("/caterings/"+cateringId+"/meals/"+resultFirst[0].ID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"date":       time.Now().AddDate(0, 0, 10).Truncate(trunc).UTC(),
-			"cateringId": cateringResult.ID.String(),
+			"date": time.Now().AddDate(0, 0, 10).Truncate(trunc).UTC(),
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
@@ -83,13 +79,12 @@ func TestUpdateMeal(t *testing.T) {
 
 	//Trying to create meal before today
 	//Should throw an error
-	r.PUT("/caterings/"+resultFirst[0].ID.String()+"/meals").
+	r.PUT("/caterings/"+cateringId+"/meals/"+resultFirst[0].ID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"date":       time.Now().AddDate(0, 0, -1).Truncate(trunc).UTC(),
-			"cateringId": cateringResult.ID,
+			"date": time.Now().AddDate(0, 0, -1).Truncate(trunc).UTC(),
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
