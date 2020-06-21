@@ -30,6 +30,10 @@ go run db/migrate.go
 go run db/migrate.go && go test ./... -count=1
 ```
 -count=1 clears cache of previous test results
+##### Run linter
+```
+go fmt ./...
+```
 ## Run project with live reload 
 ```
 go get -u github.com/cosmtrek/air

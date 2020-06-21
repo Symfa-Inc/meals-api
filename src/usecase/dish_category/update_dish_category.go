@@ -16,11 +16,11 @@ import (
 // @Tags catering dish-categories
 // @Param id path string true "Catering ID"
 // @Param categoryId path string true "Category ID"
-// @Param body body request.AddDishCategory false "new category name"
+// @Param body body request.UpdateDishCategory false "new category name"
 // @Success 200 {object} models.DishCategory "Dish Category"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
-// @Router /caterings/{id}/dish-category/{categoryId} [put]
+// @Router /caterings/{id}/dish-categories/{categoryId} [put]
 func UpdateDishCategory(c *gin.Context) {
 	var path types.PathDishCategory
 	var body models.DishCategory

@@ -13,7 +13,7 @@ import (
 // @Produce json
 // @Accept json
 // @Tags catering
-// @Param body body request.AddCateringRequest false "Catering Name"
+// @Param body body request.AddCatering false "Catering Name"
 // @Success 201 {object} models.Catering
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings [post]

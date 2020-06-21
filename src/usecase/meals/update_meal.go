@@ -16,7 +16,7 @@ import (
 // @Tags catering meals
 // @Param id path string true "Catering ID"
 // @Param mealId path string true "Meal ID"
-// @Param body body request.AddMealRequest false "Meal date"
+// @Param body body request.AddMeal false "Meal date"
 // @Success 200 {object} models.Meal "Meal"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/meals/{mealId} [put]
