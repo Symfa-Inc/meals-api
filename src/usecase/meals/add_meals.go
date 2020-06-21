@@ -17,7 +17,7 @@ import (
 // @Tags catering meals
 // @Produce json
 // @Param id path string false "Catering ID"
-// @Param payload body request.AddMealRequestList false "array of meals"
+// @Param payload body request.AddMealList false "array of meals"
 // @Success 201 {array} models.Meal "array of meal readings"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/meals [post]

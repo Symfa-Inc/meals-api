@@ -16,7 +16,7 @@ import (
 // @Success 200 {array} models.DishCategory "array of category readings"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Error"
-// @Router /caterings/{id}/dish-category [get]
+// @Router /caterings/{id}/dish-categories [get]
 func GetDishCategories(c *gin.Context) {
 	var path types.PathId
 

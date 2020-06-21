@@ -15,7 +15,7 @@ import (
 // @Accept json
 // @Tags catering
 // @Param id path string true "Catering ID"
-// @Param body body request.AddCateringRequest false "Catering Name"
+// @Param body body request.AddCatering false "Catering Name"
 // @Success 200 {object} models.Catering "Catering"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id} [put]

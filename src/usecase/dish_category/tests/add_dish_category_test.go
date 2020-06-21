@@ -20,7 +20,7 @@ func TestAddDishCategory(t *testing.T) {
 
 	// Trying to add category to non-existing ID
 	// Should throw error
-	r.POST("/caterings/qwerty/dish-category").
+	r.POST("/caterings/qwerty/dish-categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -33,7 +33,7 @@ func TestAddDishCategory(t *testing.T) {
 
 	// Trying to add category to existing ID
 	// Should be success
-	r.POST("/caterings/"+cateringResult.ID.String()+"/dish-category").
+	r.POST("/caterings/"+cateringResult.ID.String()+"/dish-categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -49,7 +49,7 @@ func TestAddDishCategory(t *testing.T) {
 
 	// Trying to add already existing category
 	// Should throw error
-	r.POST("/caterings/"+cateringResult.ID.String()+"/dish-category").
+	r.POST("/caterings/"+cateringResult.ID.String()+"/dish-categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).

@@ -16,7 +16,7 @@ import (
 // @Param categoryId path string true "Category ID"
 // @Success 204
 // @Failure 404 {object} types.Error "Error"
-// @Router /caterings/{id}/dish-category/{categoryId} [delete]
+// @Router /caterings/{id}/dish-categories/{categoryId} [delete]
 func DeleteDishCategory(c *gin.Context) {
 	var path types.PathDishCategory
 	if err := utils.RequestBinderUri(&path, c); err != nil {

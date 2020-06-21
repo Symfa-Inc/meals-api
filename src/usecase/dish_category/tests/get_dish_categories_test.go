@@ -23,7 +23,7 @@ func TestGetDishCategories(t *testing.T) {
 
 	// Trying to get categories from non-existing catering
 	// Should throw error
-	r.GET("/caterings/"+fakeId.String()+"/dish-category").
+	r.GET("/caterings/"+fakeId.String()+"/dish-categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -36,7 +36,7 @@ func TestGetDishCategories(t *testing.T) {
 
 	// Trying to get categories from existing catering
 	// Should be success
-	r.GET("/caterings/"+id+"/dish-category").
+	r.GET("/caterings/"+id+"/dish-categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).

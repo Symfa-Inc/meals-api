@@ -2,8 +2,8 @@ package request
 
 import "time"
 
-type AddMealRequestList []AddMealRequest // @name AddMealListResponse
+type AddMealList []AddMeal // @name AddMealListRequest
 
-type AddMealRequest struct {
+type AddMeal struct {
 	Date time.Time `json:"date" binding:"required" example:"2020-06-20T00:00:00Z"`
-} // @name AddMealResponse
+} // @name AddMealRequest

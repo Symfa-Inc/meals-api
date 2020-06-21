@@ -1,5 +1,5 @@
 package request
 
-type AddCateringRequest struct {
+type AddCatering struct {
 	Name string `json:"name,omitempty" example:"aisnovations" binding:"required"`
-} //@name AddCateringResponse
+} //@name AddCateringRequest

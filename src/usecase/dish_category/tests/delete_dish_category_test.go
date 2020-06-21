@@ -22,7 +22,7 @@ func TestDeleteDishCategory(t *testing.T) {
 
 	// Creates new dish category
 	// Should be success
-	r.POST("/caterings/"+cateringId+"/dish-category").
+	r.POST("/caterings/"+cateringId+"/dish-categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -37,7 +37,7 @@ func TestDeleteDishCategory(t *testing.T) {
 
 	// Trying to delete new category dish
 	// Should be success
-	r.DELETE("/caterings/"+cateringId+"/dish-category/"+id).
+	r.DELETE("/caterings/"+cateringId+"/dish-categories/"+id).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -47,7 +47,7 @@ func TestDeleteDishCategory(t *testing.T) {
 
 	// Trying to delete already deleted category
 	// Should throw error
-	r.DELETE("/caterings/"+cateringId+"/dish-category/"+id).
+	r.DELETE("/caterings/"+cateringId+"/dish-categories/"+id).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
