@@ -6,11 +6,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	"go_api/src/delivery/middleware"
-	"go_api/src/usecase/auth"
-	"go_api/src/usecase/catering"
-	"go_api/src/usecase/dish"
-	"go_api/src/usecase/dish_category"
-	"go_api/src/usecase/meals"
+	"go_api/src/usecase"
 	"net/http"
 	"os"
 )
@@ -27,6 +23,12 @@ func RedirectFunc(route string) func(c *gin.Context) {
 //SetupRouter setting up gin router and config
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
+
+	auth := usecase.NewAuth()
+	catering := usecase.NewCatering()
+	meal := usecase.NewMeal()
+	dishCategory := usecase.NewDishCategory()
+	dish := usecase.NewDish()
 
 	configCors := cors.DefaultConfig()
 	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL")}
@@ -47,24 +49,23 @@ func SetupRouter() *gin.Engine {
 
 		cateringGroup := authRequired.Group("/")
 		{
-			cateringGroup.POST("/caterings", catering.AddCatering)
-			cateringGroup.GET("/caterings", catering.GetCaterings)
-			cateringGroup.GET("/caterings/:id", catering.GetCatering)
-			cateringGroup.DELETE("/caterings/:id", catering.DeleteCatering)
-			cateringGroup.PUT("/caterings/:id", catering.UpdateCatering)
+			cateringGroup.POST("/caterings", catering.Add)
+			cateringGroup.GET("/caterings", catering.Get)
+			cateringGroup.DELETE("/caterings/:id", catering.Delete)
+			cateringGroup.PUT("/caterings/:id", catering.Update)
 
 			cateringRoutes := cateringGroup.Group("/caterings")
 			{
-				cateringRoutes.POST("/:id/meals", meals.AddMeals)
-				cateringRoutes.GET("/:id/meals", meals.GetMeals)
-				cateringRoutes.PUT("/:id/meals/:mealId", meals.UpdateMeal)
+				cateringRoutes.POST("/:id/meals", meal.Add)
+				cateringRoutes.GET("/:id/meals", meal.Get)
+				cateringRoutes.PUT("/:id/meals/:mealId", meal.Update)
 
-				cateringRoutes.POST("/:id/dish-categories", dish_category.AddDishCategory)
-				cateringRoutes.GET("/:id/dish-categories", dish_category.GetDishCategories)
-				cateringRoutes.DELETE("/:id/dish-categories/:categoryId", dish_category.DeleteDishCategory)
-				cateringRoutes.PUT("/:id/dish-categories/:categoryId", dish_category.UpdateDishCategory)
+				cateringRoutes.POST("/:id/dish-categories", dishCategory.Add)
+				cateringRoutes.GET("/:id/dish-categories", dishCategory.Get)
+				cateringRoutes.DELETE("/:id/dish-categories/:categoryId", dishCategory.Delete)
+				cateringRoutes.PUT("/:id/dish-categories/:categoryId", dishCategory.Update)
 
-				cateringRoutes.POST("/:id/dish", dish.AddDish)
+				cateringRoutes.POST("/:id/dish", dish.Add)
 			}
 		}
 	}

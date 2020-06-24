@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"go_api/db/seeds/dev"
 	"go_api/src/config"
-	"go_api/src/models"
+	"go_api/src/domain"
 	"go_api/src/types"
 )
 
@@ -29,35 +29,35 @@ func main() {
 
 func migrate() {
 	config.DB.DropTableIfExists(
-		&models.MealDish{},
-		&models.Dish{},
-		&models.DishCategory{},
-		&models.Meal{},
-		&models.Catering{},
-		&models.Seed{},
-		&models.User{},
+		&domain.MealDish{},
+		&domain.Dish{},
+		&domain.DishCategory{},
+		&domain.Meal{},
+		&domain.Catering{},
+		&domain.Seed{},
+		&domain.User{},
 	)
 
 	config.DB.AutoMigrate(
-		&models.User{},
-		&models.Seed{},
-		&models.Catering{},
-		&models.Meal{},
-		&models.DishCategory{},
-		&models.Dish{},
-		&models.MealDish{},
+		&domain.User{},
+		&domain.Seed{},
+		&domain.Catering{},
+		&domain.Meal{},
+		&domain.DishCategory{},
+		&domain.Dish{},
+		&domain.MealDish{},
 	)
 }
 
 func addDbConstraints() {
-	config.DB.Model(&models.Meal{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.Meal{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
 
-	config.DB.Model(&models.DishCategory{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.DishCategory{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
 
-	config.DB.Model(&models.Dish{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
-	config.DB.Model(&models.Dish{}).AddForeignKey("dish_category_id", "dish_categories(id)", "CASCADE", "CASCADE")
-	config.DB.Model(&models.MealDish{}).AddForeignKey("meal_id", "meals(id)", "CASCADE", "CASCADE")
-	config.DB.Model(&models.MealDish{}).AddForeignKey("dish_id", "dishes(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.Dish{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.Dish{}).AddForeignKey("dish_category_id", "dish_categories(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.MealDish{}).AddForeignKey("meal_id", "meals(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.MealDish{}).AddForeignKey("dish_id", "dishes(id)", "CASCADE", "CASCADE")
 }
 
 func createTypes() {
