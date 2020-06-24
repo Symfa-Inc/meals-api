@@ -2,13 +2,19 @@ package repository
 
 import (
 	"go_api/src/config"
-	"go_api/src/models"
+	"go_api/src/domain"
 )
 
-// GetUserByKey returns user
+type userRepo struct{}
+
+func NewUserRepo() *userRepo {
+	return &userRepo{}
+}
+
+// userRepo.GetByKey returns user
 // and error if exist
-func GetUserByKey(key, value string) (models.User, error) {
-	var user models.User
+func (ur userRepo) GetByKey(key, value string) (domain.User, error) {
+	var user domain.User
 	err := config.DB.Where(key+" = ?", value).First(&user).Error
 	return user, err
 }

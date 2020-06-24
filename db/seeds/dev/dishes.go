@@ -3,24 +3,26 @@ package dev
 import (
 	"fmt"
 	"go_api/src/config"
-	"go_api/src/models"
+	"go_api/src/domain"
 	"go_api/src/repository"
 	"go_api/src/utils"
 	"sync"
 )
 
 func CreateDishes() {
+	cateringRepo := repository.NewCateringRepo()
+	dishCategoryRepo := repository.NewDishCategoryRepo()
 	seedExists := config.DB.
 		Where("name = ?", "init dishes").
-		First(&models.Seed{}).Error
+		First(&domain.Seed{}).Error
 	if seedExists != nil {
-		seed := models.Seed{
+		seed := domain.Seed{
 			Name: "init dishes",
 		}
 
-		var dishesArray []models.Dish
-		cateringResult, _ := repository.GetCateringByKey("name", "Twiist")
-		dishCategoryResult, _ := repository.GetDishCategoryByKey("name", "супы", cateringResult.ID.String())
+		var dishesArray []domain.Dish
+		cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
+		dishCategoryResult, _ := dishCategoryRepo.GetByKey("name", "супы", cateringResult.ID.String())
 		utils.JsonParse("/db/seeds/data/dishes.json", &dishesArray)
 
 		var wg sync.WaitGroup

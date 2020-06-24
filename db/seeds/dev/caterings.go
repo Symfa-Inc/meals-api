@@ -3,20 +3,20 @@ package dev
 import (
 	"fmt"
 	"go_api/src/config"
-	"go_api/src/models"
+	"go_api/src/domain"
 	"go_api/src/utils"
 	"sync"
 )
 
 // CreateCaterings will populate table with random caterings
 func CreateCaterings() {
-	seedExists := config.DB.Where("name = ?", "init caterings").First(&models.Seed{}).Error
+	seedExists := config.DB.Where("name = ?", "init caterings").First(&domain.Seed{}).Error
 	if seedExists != nil {
-		seed := models.Seed{
+		seed := domain.Seed{
 			Name: "init caterings",
 		}
 
-		var cateringArray []models.Catering
+		var cateringArray []domain.Catering
 		utils.JsonParse("/db/seeds/data/caterings.json", &cateringArray)
 
 		var wg sync.WaitGroup

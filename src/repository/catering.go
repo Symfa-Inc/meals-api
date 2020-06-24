@@ -1,23 +1,29 @@
 package repository
 
 import (
-	"github.com/jinzhu/gorm"
+	"errors"
 	"go_api/src/config"
-	"go_api/src/models"
+	"go_api/src/domain"
 	"go_api/src/types"
 )
 
+type cateringRepo struct{}
+
+func NewCateringRepo() *cateringRepo {
+	return &cateringRepo{}
+}
+
 // CreateCatering creates catering in DB
 // and error if exists
-func CreateCatering(catering models.Catering) (models.Catering, error) {
+func (c cateringRepo) Add(catering domain.Catering) (domain.Catering, error) {
 	err := config.DB.Create(&catering).Error
 	return catering, err
 }
 
 // GetCateringsDB returns list of caterings with pagination args
 // and error if exists
-func GetCateringsDB(query types.PaginationQuery) ([]models.Catering, int, error) {
-	var caterings []models.Catering
+func (c cateringRepo) Get(query types.PaginationQuery) ([]domain.Catering, int, error) {
+	var caterings []domain.Catering
 	var total int
 
 	page := query.Page
@@ -44,20 +50,35 @@ func GetCateringsDB(query types.PaginationQuery) ([]models.Catering, int, error)
 
 // GetCateringByKey returns single catering item found by key
 // and error if exists
-func GetCateringByKey(key, value string) (models.Catering, error) {
-	var catering models.Catering
+func (c cateringRepo) GetByKey(key, value string) (domain.Catering, error) {
+	var catering domain.Catering
 	err := config.DB.Where(key+" = ?", value).First(&catering).Error
 	return catering, err
 }
 
 // DeleteCateringDB soft delete of catering with passed id
 // returns error if exists
-func DeleteCateringDB(id string) *gorm.DB {
-	return config.DB.Where("id = ?", id).Delete(&models.Catering{})
+func (c cateringRepo) Delete(id string) error {
+	result := config.DB.Where("id = ?", id).Delete(&domain.Catering{})
+
+	if result.RowsAffected == 0 {
+		return errors.New("catering not found")
+	}
+
+	return nil
 }
 
 // UpdateCateringDB updates catering with passed args
 // returns updated catering struct and error if exists
-func UpdateCateringDB(id string, catering models.Catering) *gorm.DB {
-	return config.DB.Model(&catering).Where("id = ?", id).Update(&catering)
+func (c cateringRepo) Update(id string, catering domain.Catering) error {
+	result := config.DB.Model(&catering).Where("id = ?", id).Update(&catering)
+
+	if result.RowsAffected == 0 {
+		if result.Error != nil {
+			return errors.New(result.Error.Error())
+		}
+		return errors.New("catering not found")
+	}
+
+	return nil
 }

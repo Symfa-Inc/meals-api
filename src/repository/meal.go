@@ -2,15 +2,20 @@ package repository
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
 	"go_api/src/config"
-	"go_api/src/models"
+	"go_api/src/domain"
 	"go_api/src/types"
 	"time"
 )
 
+type mealRepo struct{}
+
+func NewMealRepo() *mealRepo {
+	return &mealRepo{}
+}
+
 // Looks for meal in db, if it doesn't exist returns nil
-func FindMealDB(meal models.Meal) error {
+func (m mealRepo) Find(meal domain.Meal) error {
 	result := config.DB.
 		Where("catering_id = ? AND date = ?", meal.CateringID, meal.Date).
 		Find(&meal)
@@ -22,19 +27,19 @@ func FindMealDB(meal models.Meal) error {
 
 // Create meal entity
 // returns new meal item and error
-func CreateMealDB(meal models.Meal) (*gorm.DB, error) {
+func (m mealRepo) Add(meal domain.Meal) (interface{}, error) {
 	mealItem := config.DB.Create(&meal)
 	if mealItem.Error != nil {
 		return nil, mealItem.Error
 	}
 
-	return mealItem, nil
+	return mealItem.Value, nil
 }
 
 // Returns list of meals withing provided date range
 // Returns list of meals, total items if and error
-func GetMealsDB(limit int, dateQuery types.StartEndDateQuery, id string) ([]models.Meal, int, error) {
-	var meals []models.Meal
+func (m mealRepo) Get(limit int, dateQuery types.StartEndDateQuery, id string) ([]domain.Meal, int, error) {
+	var meals []domain.Meal
 	var total int
 
 	startDate := dateQuery.StartDate
@@ -58,15 +63,15 @@ func GetMealsDB(limit int, dateQuery types.StartEndDateQuery, id string) ([]mode
 }
 
 // Returns updated meals if exists
-func UpdateMealDB(path types.PathMeal, meal models.Meal) (*gorm.DB, error) {
-	var mealModel models.Meal
+func (m mealRepo) Update(path types.PathMeal, meal domain.Meal) error {
+	var mealModel domain.Meal
 
 	t := 24 * time.Hour
 
 	difference := meal.Date.Sub(time.Now().Truncate(t)).Hours()
 
 	if difference < 0 {
-		return nil, errors.New("can't add meals to previous dates")
+		return errors.New("can't add meals to previous dates")
 	}
 
 	result := config.DB.
@@ -74,8 +79,15 @@ func UpdateMealDB(path types.PathMeal, meal models.Meal) (*gorm.DB, error) {
 		Find(&mealModel)
 
 	if result.RowsAffected != 0 {
-		return nil, errors.New("this date already exist")
+		return errors.New("this date already exist")
 	}
 
-	return config.DB.Model(&mealModel).Where("id = ?", path.MealID).Update(&meal), nil
+	resultSecond := config.DB.Model(&mealModel).Where("id = ?", path.MealID).Update(&meal)
+	if resultSecond.RowsAffected == 0 {
+		if resultSecond.Error != nil {
+			return errors.New(resultSecond.Error.Error())
+		}
+		return errors.New("meal not found")
+	}
+	return nil
 }

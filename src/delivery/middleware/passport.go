@@ -18,6 +18,8 @@ type UserID struct {
 	ID string
 }
 
+var userRepo = repository.NewUserRepo()
+
 //Middleware for user authentication
 func Passport() *jwt.GinJWTMiddleware {
 	authMiddleware, _ := jwt.New(&jwt.GinJWTMiddleware{
@@ -34,7 +36,7 @@ func Passport() *jwt.GinJWTMiddleware {
 		LoginResponse: func(c *gin.Context, i int, s string, t time.Time) {
 			value, _ := Passport().ParseTokenString(s)
 			id := jwt.ExtractClaimsFromToken(value)["id"]
-			result, _ := repository.GetUserByKey("id", id.(string))
+			result, _ := userRepo.GetByKey("id", id.(string))
 			c.JSON(http.StatusOK, result)
 		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
@@ -57,7 +59,7 @@ func Passport() *jwt.GinJWTMiddleware {
 				return "", errors.New("missing email or password")
 			}
 
-			result, err := repository.GetUserByKey("email", body.Email)
+			result, err := userRepo.GetByKey("email", body.Email)
 			if err == nil {
 				equal := utils.CheckPasswordHash(body.Password, result.Password)
 				if equal {

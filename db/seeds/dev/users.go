@@ -3,22 +3,22 @@ package dev
 import (
 	"fmt"
 	"go_api/src/config"
-	"go_api/src/models"
+	"go_api/src/domain"
 	"go_api/src/utils"
 	"sync"
 )
 
 // CreateUsers will populate users table with random users
 func CreateUsers() {
-	seedExists := config.DB.Where("name = ?", "init users").First(&models.Seed{}).Error
+	seedExists := config.DB.Where("name = ?", "init users").First(&domain.Seed{}).Error
 	if seedExists != nil {
-		seed := models.Seed{
+		seed := domain.Seed{
 			Name: "init users",
 		}
 
 		hashedPassword := utils.HashString("Password12!")
 
-		var userArray []models.User
+		var userArray []domain.User
 		utils.JsonParse("/db/seeds/data/users.json", &userArray)
 
 		var wg sync.WaitGroup

@@ -3,17 +3,18 @@ package dev
 import (
 	"fmt"
 	"go_api/src/config"
-	"go_api/src/models"
+	"go_api/src/domain"
 	"go_api/src/repository"
 	"sync"
 	"time"
 )
 
 func CreateMeals() {
-	seedExist := config.DB.Where("name = ?", "init meals").First(&models.Seed{}).Error
-	cateringResult, _ := repository.GetCateringByKey("name", "Twiist")
+	cateringRepo := repository.NewCateringRepo()
+	seedExist := config.DB.Where("name = ?", "init meals").First(&domain.Seed{}).Error
+	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	if seedExist != nil {
-		seed := models.Seed{
+		seed := domain.Seed{
 			Name: "init meals",
 		}
 		var wg sync.WaitGroup
@@ -24,7 +25,7 @@ func CreateMeals() {
 		for i := 0; i < 7; i++ {
 			go func(i int) {
 				defer wg.Done()
-				meal := models.Meal{
+				meal := domain.Meal{
 					Date:       time.Now().AddDate(0, 0, i).Truncate(t),
 					CateringID: cateringResult.ID,
 				}

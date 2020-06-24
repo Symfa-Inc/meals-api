@@ -1,8 +1,10 @@
 package response
 
-import "go_api/src/models"
+import (
+	"go_api/src/domain"
+)
 
 type GetMealsModel struct {
-	Items []models.Meal `json:"items"`
+	Items []domain.Meal `json:"items"`
 	Total int           `json:"total"`
 } //@name GetMealsResponse

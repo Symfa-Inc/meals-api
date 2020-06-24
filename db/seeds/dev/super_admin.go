@@ -3,7 +3,7 @@ package dev
 import (
 	"fmt"
 	"go_api/src/config"
-	"go_api/src/models"
+	"go_api/src/domain"
 	"go_api/src/types"
 	"go_api/src/utils"
 )
@@ -12,13 +12,13 @@ const seedName string = "init admin"
 
 // CreateAdmin init admin user
 func CreateAdmin() {
-	seedExists := config.DB.Where("name = ?", seedName).First(&models.Seed{}).Error
+	seedExists := config.DB.Where("name = ?", seedName).First(&domain.Seed{}).Error
 	if seedExists != nil {
-		seed := models.Seed{
+		seed := domain.Seed{
 			Name: seedName,
 		}
 
-		superAdmin := models.User{
+		superAdmin := domain.User{
 			FirstName: "super",
 			LastName:  "admin",
 			Email:     "admin@meals.com",
