@@ -5,6 +5,7 @@ import (
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/types"
+	"net/http"
 	"time"
 )
 
@@ -17,13 +18,12 @@ func NewDishCategoryRepo() *dishCategoryRepo {
 // CreateDishCategory creates dish category
 // returns dish category and error
 func (dc dishCategoryRepo) Add(category domain.DishCategory) (domain.DishCategory, error) {
-	result := config.DB.
+	if exist := config.DB.
 		Unscoped().
 		Where("catering_id = ? AND name = ? AND deleted_at >  ?", category.CateringID, category.Name, time.Now()).
 		Or("catering_id = ? AND name = ? AND deleted_at IS NULL", category.CateringID, category.Name).
-		Find(&category)
+		Find(&category).RecordNotFound(); !exist {
 
-	if result.RowsAffected != 0 {
 		return domain.DishCategory{}, errors.New("this category already exist")
 	}
 
@@ -33,14 +33,13 @@ func (dc dishCategoryRepo) Add(category domain.DishCategory) (domain.DishCategor
 
 // GetDishCategoriesDB returns list of categories of passed catering ID
 // returns list of categories and error
-func (dc dishCategoryRepo) Get(id string) ([]domain.DishCategory, error) {
+func (dc dishCategoryRepo) Get(id string) ([]domain.DishCategory, error, int) {
 	var categories []domain.DishCategory
-	catering := config.DB.
+	if cateringRows := config.DB.
 		Where("id = ?", id).
-		Find(&domain.Catering{})
+		Find(&domain.Catering{}).RowsAffected; cateringRows == 0 {
 
-	if catering.RowsAffected == 0 {
-		return nil, errors.New("catering with that ID is not found")
+		return nil, errors.New("catering with that ID is not found"), http.StatusNotFound
 	}
 
 	err := config.DB.
@@ -49,7 +48,7 @@ func (dc dishCategoryRepo) Get(id string) ([]domain.DishCategory, error) {
 		Find(&categories).
 		Error
 
-	return categories, err
+	return categories, err, 0
 }
 
 // GetDishCategoryByKey returns single category item found by key
@@ -65,10 +64,9 @@ func (dc dishCategoryRepo) GetByKey(key, value, cateringId string) (domain.DishC
 // DeleteDishCategoryDB soft deletes reading from DB
 // returns gorm.DB struct with methods
 func (dc dishCategoryRepo) Delete(path types.PathDishCategory) error {
-	result := config.DB.
+	if dishCategoryRows := config.DB.
 		Where("catering_id = ? AND id = ?", path.ID, path.CategoryID).
-		Delete(&domain.DishCategory{})
-	if result.RowsAffected == 0 {
+		Delete(&domain.DishCategory{}).RowsAffected; dishCategoryRows == 0 {
 		return errors.New("category not found")
 	}
 	return nil
@@ -76,23 +74,20 @@ func (dc dishCategoryRepo) Delete(path types.PathDishCategory) error {
 
 // UpdateDishCategoryDB checks if that name already exists in provided catering
 // if its exists throws and error, if not updates the reading
-func (dc dishCategoryRepo) Update(path types.PathDishCategory, category domain.DishCategory) error {
+func (dc dishCategoryRepo) Update(path types.PathDishCategory, category domain.DishCategory) (error, int) {
 	var categoryModel domain.DishCategory
 
-	result := config.DB.
+	if categoryExist := config.DB.
 		Where("catering_id = ? AND name = ?", path.ID, category.Name).
-		Find(&categoryModel)
+		Find(&categoryModel).RecordNotFound(); !categoryExist {
 
-	if result.RowsAffected != 0 {
-		return errors.New("this category already exist")
+		return errors.New("this category already exist"), http.StatusBadRequest
 	}
 
-	resultSecond := config.DB.Model(&categoryModel).Where("id = ?", path.CategoryID).Update(&category)
-	if resultSecond.RowsAffected == 0 {
-		if resultSecond.Error != nil {
-			return errors.New(resultSecond.Error.Error())
-		}
-		return errors.New("category not found")
+	if resultSecond := config.DB.Model(&categoryModel).
+		Where("id = ?", path.CategoryID).
+		Update(&category); resultSecond.RowsAffected == 0 {
+		return errors.New("category not found"), http.StatusNotFound
 	}
-	return nil
+	return nil, 0
 }

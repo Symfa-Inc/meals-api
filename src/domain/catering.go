@@ -8,7 +8,7 @@ import (
 // Catering model
 type Catering struct {
 	Base
-	Name string `gorm:"type:varchar(30);unique;not null" json:"name,omitempty" binding:"required"`
+	Name string `gorm:"type:varchar(30);not null" json:"name,omitempty" binding:"required"`
 } //@name CateringsResponse
 
 type CateringUsecase interface {
@@ -20,8 +20,8 @@ type CateringUsecase interface {
 
 type CateringRepository interface {
 	Get(query types.PaginationQuery) ([]Catering, int, error)
-	Add(catering Catering) (Catering, error)
-	Update(id string, catering Catering) error
+	Add(catering Catering) error
+	Update(id string, catering Catering) (error, int)
 	Delete(id string) error
 	GetByKey(key, value string) (Catering, error)
 }

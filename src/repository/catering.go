@@ -5,6 +5,7 @@ import (
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/types"
+	"net/http"
 )
 
 type cateringRepo struct{}
@@ -15,9 +16,12 @@ func NewCateringRepo() *cateringRepo {
 
 // CreateCatering creates catering in DB
 // and error if exists
-func (c cateringRepo) Add(catering domain.Catering) (domain.Catering, error) {
-	err := config.DB.Create(&catering).Error
-	return catering, err
+func (c cateringRepo) Add(catering domain.Catering) error {
+	if exist := config.DB.Where("name = ?", catering.Name).
+		Find(&catering).RowsAffected; exist != 0 {
+		return errors.New("catering with that name already exist")
+	}
+	return config.DB.Create(&catering).Error
 }
 
 // GetCateringsDB returns list of caterings with pagination args
@@ -59,9 +63,8 @@ func (c cateringRepo) GetByKey(key, value string) (domain.Catering, error) {
 // DeleteCateringDB soft delete of catering with passed id
 // returns error if exists
 func (c cateringRepo) Delete(id string) error {
-	result := config.DB.Where("id = ?", id).Delete(&domain.Catering{})
-
-	if result.RowsAffected == 0 {
+	if result := config.DB.Where("id = ?", id).
+		Delete(&domain.Catering{}).RowsAffected; result == 0 {
 		return errors.New("catering not found")
 	}
 
@@ -70,15 +73,15 @@ func (c cateringRepo) Delete(id string) error {
 
 // UpdateCateringDB updates catering with passed args
 // returns updated catering struct and error if exists
-func (c cateringRepo) Update(id string, catering domain.Catering) error {
-	result := config.DB.Model(&catering).Where("id = ?", id).Update(&catering)
-
-	if result.RowsAffected == 0 {
-		if result.Error != nil {
-			return errors.New(result.Error.Error())
-		}
-		return errors.New("catering not found")
+func (c cateringRepo) Update(id string, catering domain.Catering) (error, int) {
+	if cateringExist := config.DB.Where("id = ?", id).
+		Find(&domain.Catering{}).RowsAffected; cateringExist == 0 {
+		return errors.New("catering not found"), http.StatusNotFound
 	}
 
-	return nil
+	if nameExist := config.DB.Where("name = ?", catering.Name).
+		Find(&catering).RowsAffected; nameExist != 0 {
+		return errors.New("catering with that name already exist"), http.StatusBadRequest
+	}
+	return config.DB.Model(&catering).Where("id = ?", id).Update(&catering).Error, 0
 }

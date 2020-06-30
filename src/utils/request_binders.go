@@ -20,7 +20,7 @@ func RequestBinderBody(model interface{}, c *gin.Context) error {
 // Validates request uri with passed model
 func RequestBinderUri(model interface{}, c *gin.Context) error {
 	if err := c.ShouldBindUri(model); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"code":  http.StatusBadRequest,
 			"error": err.Error(),
 		})

@@ -7,17 +7,16 @@ cp .env.example .env
 go get -v ./...
 ```
 ### Generate and update swagger docs
-Run this command to get swag-cli 
-go get -u github.com/swaggo/swag/cmd/swag
 ```
+go get -u github.com/swaggo/swag/cmd/swag
 swag init
 ```
+### [How to describe swagger routes](https://github.com/swaggo/swag/blob/master/README.md)
+#### [Examples](https://github.com/swaggo/swag/blob/master/example/celler/controller/examples.go)
 ### Dockerization
 ```
 docker-compose up -d
 ```
-### [How to describe swagger routes](https://github.com/swaggo/swag/blob/master/README.md)
-#### [Examples](https://github.com/swaggo/swag/blob/master/example/celler/controller/examples.go)
 ___
 ### How to 
 ##### Run migrations and seeds
@@ -29,11 +28,12 @@ go run db/migrate.go
 ```
 go run db/migrate.go && go test ./... -count=1
 ```
--count=1 clears cache of previous test results
+use flag -count=1 to clear cache
 ##### Run linter
 ```
 go fmt ./...
 ```
+___
 ## Run project with live reload 
 ```
 go get -u github.com/cosmtrek/air

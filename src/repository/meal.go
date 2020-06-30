@@ -5,6 +5,7 @@ import (
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/types"
+	"net/http"
 	"time"
 )
 
@@ -63,7 +64,7 @@ func (m mealRepo) Get(limit int, dateQuery types.StartEndDateQuery, id string) (
 }
 
 // Returns updated meals if exists
-func (m mealRepo) Update(path types.PathMeal, meal domain.Meal) error {
+func (m mealRepo) Update(path types.PathMeal, meal domain.Meal) (error, int) {
 	var mealModel domain.Meal
 
 	t := 24 * time.Hour
@@ -71,23 +72,22 @@ func (m mealRepo) Update(path types.PathMeal, meal domain.Meal) error {
 	difference := meal.Date.Sub(time.Now().Truncate(t)).Hours()
 
 	if difference < 0 {
-		return errors.New("can't add meals to previous dates")
+		return errors.New("can't add meals to previous dates"), http.StatusBadRequest
 	}
 
-	result := config.DB.
+	if mealExist := config.DB.
 		Where("catering_id = ? AND date = ?", path.ID, meal.Date).
-		Find(&mealModel)
-
-	if result.RowsAffected != 0 {
-		return errors.New("this date already exist")
+		Find(&mealModel).RecordNotFound(); !mealExist {
+		return errors.New("this date already exist"), http.StatusBadRequest
 	}
 
-	resultSecond := config.DB.Model(&mealModel).Where("id = ?", path.MealID).Update(&meal)
-	if resultSecond.RowsAffected == 0 {
+	if resultSecond := config.DB.Model(&mealModel).
+		Where("id = ?", path.MealID).
+		Update(&meal); resultSecond.RowsAffected == 0 {
 		if resultSecond.Error != nil {
-			return errors.New(resultSecond.Error.Error())
+			return errors.New(resultSecond.Error.Error()), http.StatusBadRequest
 		}
-		return errors.New("meal not found")
+		return errors.New("meal not found"), http.StatusNotFound
 	}
-	return nil
+	return nil, 0
 }

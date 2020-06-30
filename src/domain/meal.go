@@ -23,5 +23,5 @@ type MealRepository interface {
 	Find(meal Meal) error
 	Add(meal Meal) (interface{}, error)
 	Get(limit int, dateQuery types.StartEndDateQuery, id string) ([]Meal, int, error)
-	Update(path types.PathMeal, meal Meal) error
+	Update(path types.PathMeal, meal Meal) (error, int)
 }
