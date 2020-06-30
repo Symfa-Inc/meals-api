@@ -65,7 +65,10 @@ func SetupRouter() *gin.Engine {
 				cateringRoutes.DELETE("/:id/dish-categories/:categoryId", dishCategory.Delete)
 				cateringRoutes.PUT("/:id/dish-categories/:categoryId", dishCategory.Update)
 
-				cateringRoutes.POST("/:id/dish", dish.Add)
+				cateringRoutes.POST("/:id/dishes", dish.Add)
+				cateringRoutes.DELETE("/:id/dishes/:dishId", dish.Delete)
+				cateringRoutes.GET("/:id/dishes", dish.Get)
+				cateringRoutes.PUT("/:id/dishes/:dishId", dish.Update)
 			}
 		}
 	}

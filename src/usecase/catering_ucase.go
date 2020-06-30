@@ -33,9 +33,9 @@ func (ca catering) Add(c *gin.Context) {
 		return
 	}
 
-	_, err := cateringRepo.Add(cateringModel)
+	err := cateringRepo.Add(cateringModel)
 	if err != nil {
-		utils.CreateError(http.StatusBadRequest, "catering with that name already exist", c)
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}
 
@@ -47,8 +47,9 @@ func (ca catering) Add(c *gin.Context) {
 // @Tags catering
 // @Produce json
 // @Param id path string true "Catering ID"
-// @Success 204
+// @Success 204 "Successfully deleted"
 // @Failure 400 {object} types.Error "Error"
+// @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id} [delete]
 func (ca catering) Delete(c *gin.Context) {
 	var path types.PathId
@@ -71,7 +72,7 @@ func (ca catering) Delete(c *gin.Context) {
 // @Param id path string true "Catering ID"
 // @Success 200 {object} domain.Catering "catering model"
 // @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Error"
+// @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id} [get]
 func (ca catering) GetById(c *gin.Context) {
 	var path types.PathId
@@ -138,6 +139,7 @@ func (ca catering) Get(c *gin.Context) {
 // @Param body body request.AddCatering false "Catering Name"
 // @Success 204 "Successfully updated"
 // @Failure 400 {object} types.Error "Error"
+// @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id} [put]
 func (ca catering) Update(c *gin.Context) {
 	var path types.PathId
@@ -151,12 +153,8 @@ func (ca catering) Update(c *gin.Context) {
 		return
 	}
 
-	if err := cateringRepo.Update(path.ID, cateringModel); err != nil {
-		if err.Error() == "catering not found" {
-			utils.CreateError(http.StatusNotFound, err.Error(), c)
-			return
-		}
-		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+	if err, code := cateringRepo.Update(path.ID, cateringModel); err != nil {
+		utils.CreateError(code, err.Error(), c)
 		return
 	}
 

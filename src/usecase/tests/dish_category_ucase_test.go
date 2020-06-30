@@ -85,6 +85,7 @@ func TestDeleteDishCategory(t *testing.T) {
 
 	createdDishCategory, _ := dishCategoryRepo.GetByKey("name", "закуски", cateringId)
 	dishCategoryId := createdDishCategory.ID.String()
+
 	// Trying to delete new category dish
 	// Should be success
 	r.DELETE("/caterings/"+cateringId+"/dish-categories/"+dishCategoryId).
@@ -149,6 +150,7 @@ func TestUpdateDishCategory(t *testing.T) {
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 	cateringId := cateringResult.ID.String()
+
 	// Trying to update non-existing dish category
 	// Should throw an error
 	fakeId, _ := uuid.NewV4()

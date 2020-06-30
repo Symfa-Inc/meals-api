@@ -120,41 +120,34 @@ func TestUpdateCatering(t *testing.T) {
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
 	// Trying to change name of the catering
+	// Should be success
 	r.PUT("/caterings/"+result.ID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
 			"name": "newcateringname",
-		}).Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-		assert.Equal(t, http.StatusNoContent, r.Code)
-	})
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusNoContent, r.Code)
+		})
 
 	// Trying to change name of the catering with name that already exist in DB
+	// Should throw an error
 	r.PUT("/caterings/"+result.ID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
 			"name": "Twiist",
-		}).Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-		assert.Equal(t, http.StatusBadRequest, r.Code)
-	})
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusBadRequest, r.Code)
+		})
 
 	// Trying to change a name of catering with non-valid ID
+	// Should throw an error
 	r.PUT("/caterings/qwerty").
-		SetCookie(gofight.H{
-			"jwt": jwt,
-		}).
-		SetJSON(gofight.D{
-			"name": "newcateringname",
-		}).Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-		assert.Equal(t, http.StatusBadRequest, r.Code)
-	})
-
-	// Trying to change name of catering with non-exist ID
-	fakeId, _ := uuid.NewV4()
-	r.PUT("/caterings/"+fakeId.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -163,4 +156,18 @@ func TestUpdateCatering(t *testing.T) {
 		}).Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
+
+	// Trying to change name of catering with non-exist ID
+	// Should throw an error
+	fakeId, _ := uuid.NewV4()
+	r.PUT("/caterings/"+fakeId.String()).
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		SetJSON(gofight.D{
+			"name": "newcateringname",
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusNotFound, r.Code)
+		})
 }

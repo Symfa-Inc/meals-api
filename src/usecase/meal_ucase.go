@@ -136,6 +136,7 @@ func (m meal) Get(c *gin.Context) {
 // @Param body body request.AddMeal false "Meal date"
 // @Success 204 "Successfully updated"
 // @Failure 400 {object} types.Error "Error"
+// @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/meals/{mealId} [put]
 func (m meal) Update(c *gin.Context) {
 	var path types.PathMeal
@@ -149,14 +150,10 @@ func (m meal) Update(c *gin.Context) {
 		return
 	}
 
-	err := mealRepo.Update(path, body)
+	err, code := mealRepo.Update(path, body)
 
 	if err != nil {
-		if err.Error() == "meal not found" {
-			utils.CreateError(http.StatusNotFound, err.Error(), c)
-			return
-		}
-		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		utils.CreateError(code, err.Error(), c)
 		return
 	}
 
