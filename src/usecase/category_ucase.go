@@ -13,27 +13,27 @@ import (
 	"time"
 )
 
-type dishCategory struct{}
+type category struct{}
 
-func NewDishCategory() *dishCategory {
-	return &dishCategory{}
+func NewCategory() *category {
+	return &category{}
 }
 
-var dishCategoryRepo = repository.NewDishCategoryRepo()
+var categoryRepo = repository.NewCategoryRepo()
 
-// AddDishCategory add dish category in DB
+// AddCategory add dish category in DB
 // returns 204 if success and 4xx if request failed
 // @Summary Returns error if exists and 204 if success
 // @Produce json
 // @Accept json
 // @Tags catering dish-categories
 // @Param id path string true "Catering ID"
-// @Param body body request.AddDishCategory false "Category Name"
+// @Param body body request.AddCategory false "Category Name"
 // @Success 204 "Successfully created"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/dish-categories [post]
-func (dc dishCategory) Add(c *gin.Context) {
-	var body request.AddDishCategory
+func (dc category) Add(c *gin.Context) {
+	var body request.AddCategory
 	var path types.PathId
 
 	if err := utils.RequestBinderUri(&path, c); err != nil {
@@ -52,13 +52,13 @@ func (dc dishCategory) Add(c *gin.Context) {
 	}
 
 	cateringId, _ := uuid.FromString(path.ID)
-	categoryModel := domain.DishCategory{
+	categoryModel := domain.Category{
 		Base:       domain.Base{DeletedAt: body.DeletedAt},
 		Name:       strings.ToLower(body.Name),
 		CateringID: cateringId,
 	}
 
-	_, err := dishCategoryRepo.Add(categoryModel)
+	_, err := categoryRepo.Add(categoryModel)
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
@@ -67,7 +67,7 @@ func (dc dishCategory) Add(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// DeleteDishCategory soft delete of category reading
+// DeleteCategory soft delete of category reading
 // @Summary Soft delete
 // @Tags catering dish-categories
 // @Produce json
@@ -76,13 +76,13 @@ func (dc dishCategory) Add(c *gin.Context) {
 // @Success 204 "Successfully deleted"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/dish-categories/{categoryId} [delete]
-func (dc dishCategory) Delete(c *gin.Context) {
-	var path types.PathDishCategory
+func (dc category) Delete(c *gin.Context) {
+	var path types.PathCategory
 	if err := utils.RequestBinderUri(&path, c); err != nil {
 		return
 	}
 
-	if err := dishCategoryRepo.Delete(path); err != nil {
+	if err := categoryRepo.Delete(path); err != nil {
 		utils.CreateError(http.StatusNotFound, err.Error(), c)
 		return
 	}
@@ -90,23 +90,23 @@ func (dc dishCategory) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// GetDishCategories returns list of categories or error
+// GetCategories returns list of categories or error
 // @Summary Get list of categories
 // @Tags catering dish-categories
 // @Produce json
 // @Param id path string false "Catering ID"
-// @Success 200 {array} domain.DishCategory "array of category readings"
+// @Success 200 {array} domain.Category "array of category readings"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/dish-categories [get]
-func (dc dishCategory) Get(c *gin.Context) {
+func (dc category) Get(c *gin.Context) {
 	var path types.PathId
 
 	if err := utils.RequestBinderUri(&path, c); err != nil {
 		return
 	}
 
-	categoriesResult, err, code := dishCategoryRepo.Get(path.ID)
+	categoriesResult, err, code := categoryRepo.Get(path.ID)
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
@@ -115,21 +115,21 @@ func (dc dishCategory) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, categoriesResult)
 }
 
-// UpdateDishCategory updates dish category with new value provided in body
+// UpdateCategory updates dish category with new value provided in body
 // @Summary Returns 204 if success and 4xx error if failed
 // @Produce json
 // @Accept json
 // @Tags catering dish-categories
 // @Param id path string true "Catering ID"
 // @Param categoryId path string true "Category ID"
-// @Param body body request.UpdateDishCategory false "new category name"
+// @Param body body request.UpdateCategory false "new category name"
 // @Success 204 "Successfully updated"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/dish-categories/{categoryId} [put]
-func (dc dishCategory) Update(c *gin.Context) {
-	var path types.PathDishCategory
-	var body domain.DishCategory
+func (dc category) Update(c *gin.Context) {
+	var path types.PathCategory
+	var body domain.Category
 
 	if err := utils.RequestBinderUri(&path, c); err != nil {
 		return
@@ -139,7 +139,7 @@ func (dc dishCategory) Update(c *gin.Context) {
 		return
 	}
 
-	err, code := dishCategoryRepo.Update(path, body)
+	err, code := categoryRepo.Update(path, body)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)

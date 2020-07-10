@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"fmt"
 	"github.com/appleboy/gofight"
 	"github.com/buger/jsonparser"
 	uuid "github.com/satori/go.uuid"
@@ -12,7 +11,7 @@ import (
 	"testing"
 )
 
-func TestAddDishCategory(t *testing.T) {
+func TestAddCategory(t *testing.T) {
 	r := gofight.New()
 
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
@@ -62,7 +61,7 @@ func TestAddDishCategory(t *testing.T) {
 		})
 }
 
-func TestDeleteDishCategory(t *testing.T) {
+func TestDeleteCategory(t *testing.T) {
 	r := gofight.New()
 
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
@@ -83,12 +82,12 @@ func TestDeleteDishCategory(t *testing.T) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 
-	createdDishCategory, _ := dishCategoryRepo.GetByKey("name", "закуски", cateringId)
-	dishCategoryId := createdDishCategory.ID.String()
+	createdCategory, _ := categoryRepo.GetByKey("name", "закуски", cateringId)
+	categoryId := createdCategory.ID.String()
 
 	// Trying to delete new category dish
 	// Should be success
-	r.DELETE("/caterings/"+cateringId+"/dish-categories/"+dishCategoryId).
+	r.DELETE("/caterings/"+cateringId+"/dish-categories/"+categoryId).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -98,7 +97,7 @@ func TestDeleteDishCategory(t *testing.T) {
 
 	// Trying to delete already deleted category
 	// Should throw error
-	r.DELETE("/caterings/"+cateringId+"/dish-categories/"+dishCategoryId).
+	r.DELETE("/caterings/"+cateringId+"/dish-categories/"+categoryId).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -110,7 +109,7 @@ func TestDeleteDishCategory(t *testing.T) {
 		})
 }
 
-func TestGetDishCategories(t *testing.T) {
+func TestGetCategories(t *testing.T) {
 	r := gofight.New()
 
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
@@ -143,7 +142,7 @@ func TestGetDishCategories(t *testing.T) {
 		})
 }
 
-func TestUpdateDishCategory(t *testing.T) {
+func TestUpdateCategory(t *testing.T) {
 	r := gofight.New()
 
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
@@ -178,8 +177,8 @@ func TestUpdateDishCategory(t *testing.T) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 
-	createdDishCategory, _ := dishCategoryRepo.GetByKey("name", "qwerty", cateringId)
-	categoryId := createdDishCategory.ID.String()
+	createdCategory, _ := categoryRepo.GetByKey("name", "qwerty", cateringId)
+	categoryId := createdCategory.ID.String()
 
 	// Trying to update new dish category
 	// Should be success
@@ -191,7 +190,6 @@ func TestUpdateDishCategory(t *testing.T) {
 			"name": "zxcvb",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			fmt.Println(r.Body.String())
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 

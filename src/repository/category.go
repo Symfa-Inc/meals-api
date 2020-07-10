@@ -9,32 +9,32 @@ import (
 	"time"
 )
 
-type dishCategoryRepo struct{}
+type categoryRepo struct{}
 
-func NewDishCategoryRepo() *dishCategoryRepo {
-	return &dishCategoryRepo{}
+func NewCategoryRepo() *categoryRepo {
+	return &categoryRepo{}
 }
 
-// CreateDishCategory creates dish category
+// CreateCategory creates dish category
 // returns dish category and error
-func (dc dishCategoryRepo) Add(category domain.DishCategory) (domain.DishCategory, error) {
+func (dc categoryRepo) Add(category domain.Category) (domain.Category, error) {
 	if exist := config.DB.
 		Unscoped().
 		Where("catering_id = ? AND name = ? AND deleted_at >  ?", category.CateringID, category.Name, time.Now()).
 		Or("catering_id = ? AND name = ? AND deleted_at IS NULL", category.CateringID, category.Name).
 		Find(&category).RecordNotFound(); !exist {
 
-		return domain.DishCategory{}, errors.New("this category already exist")
+		return domain.Category{}, errors.New("this category already exist")
 	}
 
 	err := config.DB.Create(&category).Error
 	return category, err
 }
 
-// GetDishCategoriesDB returns list of categories of passed catering ID
+// GetCategoriesDB returns list of categories of passed catering ID
 // returns list of categories and error
-func (dc dishCategoryRepo) Get(id string) ([]domain.DishCategory, error, int) {
-	var categories []domain.DishCategory
+func (dc categoryRepo) Get(id string) ([]domain.Category, error, int) {
+	var categories []domain.Category
 	if cateringRows := config.DB.
 		Where("id = ?", id).
 		Find(&domain.Catering{}).RowsAffected; cateringRows == 0 {
@@ -51,31 +51,31 @@ func (dc dishCategoryRepo) Get(id string) ([]domain.DishCategory, error, int) {
 	return categories, err, 0
 }
 
-// GetDishCategoryByKey returns single category item found by key
+// GetCategoryByKey returns single category item found by key
 // and error if exists
-func (dc dishCategoryRepo) GetByKey(key, value, cateringId string) (domain.DishCategory, error) {
-	var dishCategory domain.DishCategory
+func (dc categoryRepo) GetByKey(key, value, cateringId string) (domain.Category, error) {
+	var category domain.Category
 	err := config.DB.
 		Where("catering_id = ? AND "+key+" = ?", cateringId, value).
-		First(&dishCategory).Error
-	return dishCategory, err
+		First(&category).Error
+	return category, err
 }
 
-// DeleteDishCategoryDB soft deletes reading from DB
+// DeleteCategoryDB soft deletes reading from DB
 // returns gorm.DB struct with methods
-func (dc dishCategoryRepo) Delete(path types.PathDishCategory) error {
-	if dishCategoryRows := config.DB.
+func (dc categoryRepo) Delete(path types.PathCategory) error {
+	if categoryRows := config.DB.
 		Where("catering_id = ? AND id = ?", path.ID, path.CategoryID).
-		Delete(&domain.DishCategory{}).RowsAffected; dishCategoryRows == 0 {
+		Delete(&domain.Category{}).RowsAffected; categoryRows == 0 {
 		return errors.New("category not found")
 	}
 	return nil
 }
 
-// UpdateDishCategoryDB checks if that name already exists in provided catering
+// UpdateCategoryDB checks if that name already exists in provided catering
 // if its exists throws and error, if not updates the reading
-func (dc dishCategoryRepo) Update(path types.PathDishCategory, category domain.DishCategory) (error, int) {
-	var categoryModel domain.DishCategory
+func (dc categoryRepo) Update(path types.PathCategory, category domain.Category) (error, int) {
+	var categoryModel domain.Category
 
 	if categoryExist := config.DB.
 		Where("catering_id = ? AND name = ?", path.ID, category.Name).

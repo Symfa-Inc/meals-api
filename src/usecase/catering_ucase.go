@@ -84,13 +84,8 @@ func (ca catering) GetById(c *gin.Context) {
 	result, err := cateringRepo.GetByKey("id", path.ID)
 
 	if err != nil {
-		if err.Error() == "record not found" {
-			utils.CreateError(http.StatusNotFound, err.Error(), c)
-			return
-		} else {
-			utils.CreateError(http.StatusBadRequest, err.Error(), c)
-			return
-		}
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
 	}
 
 	c.JSON(http.StatusOK, result)

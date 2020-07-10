@@ -23,15 +23,16 @@ func main() {
 	dev.CreateUsers()
 	dev.CreateCaterings()
 	dev.CreateMeals()
-	dev.CreateDishCategories()
+	dev.CreateCategories()
 	dev.CreateDishes()
+	dev.CreateMealDishes()
 }
 
 func migrate() {
 	config.DB.DropTableIfExists(
 		&domain.MealDish{},
 		&domain.Dish{},
-		&domain.DishCategory{},
+		&domain.Category{},
 		&domain.Meal{},
 		&domain.Catering{},
 		&domain.Seed{},
@@ -43,19 +44,20 @@ func migrate() {
 		&domain.Seed{},
 		&domain.Catering{},
 		&domain.Meal{},
-		&domain.DishCategory{},
+		&domain.Category{},
 		&domain.Dish{},
 		&domain.MealDish{},
 	)
+
 }
 
 func addDbConstraints() {
 	config.DB.Model(&domain.Meal{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
 
-	config.DB.Model(&domain.DishCategory{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.Category{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
 
-	config.DB.Model(&domain.Dish{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
-	config.DB.Model(&domain.Dish{}).AddForeignKey("dish_category_id", "dish_categories(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.Dish{}).AddForeignKey("category_id", "categories(id)", "CASCADE", "CASCADE")
+
 	config.DB.Model(&domain.MealDish{}).AddForeignKey("meal_id", "meals(id)", "CASCADE", "CASCADE")
 	config.DB.Model(&domain.MealDish{}).AddForeignKey("dish_id", "dishes(id)", "CASCADE", "CASCADE")
 }

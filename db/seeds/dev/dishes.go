@@ -6,12 +6,11 @@ import (
 	"go_api/src/domain"
 	"go_api/src/repository"
 	"go_api/src/utils"
-	"sync"
 )
 
 func CreateDishes() {
 	cateringRepo := repository.NewCateringRepo()
-	dishCategoryRepo := repository.NewDishCategoryRepo()
+	categoryRepo := repository.NewCategoryRepo()
 	seedExists := config.DB.
 		Where("name = ?", "init dishes").
 		First(&domain.Seed{}).Error
@@ -22,22 +21,22 @@ func CreateDishes() {
 
 		var dishesArray []domain.Dish
 		cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-		dishCategoryResult, _ := dishCategoryRepo.GetByKey("name", "супы", cateringResult.ID.String())
+		categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringResult.ID.String())
 		utils.JsonParse("/db/seeds/data/dishes.json", &dishesArray)
 
-		var wg sync.WaitGroup
-		wg.Add(len(dishesArray))
-
 		for i := range dishesArray {
-			go func(i int) {
-				defer wg.Done()
-				dishesArray[i].CateringID = cateringResult.ID
-				dishesArray[i].DishCategoryID = dishCategoryResult.ID
-				config.DB.Create(&dishesArray[i])
-			}(i)
+			dishesArray[i].CateringID = cateringResult.ID
+			dishesArray[i].CategoryID = categoryResult.ID
+			config.DB.Create(&dishesArray[i])
 		}
 
-		wg.Wait()
+		categoryResult2, _ := categoryRepo.GetByKey("name", "гарнир", cateringResult.ID.String())
+		for i := range dishesArray {
+			dishesArray[i].CateringID = cateringResult.ID
+			dishesArray[i].CategoryID = categoryResult2.ID
+			config.DB.Create(&dishesArray[i])
+		}
+
 		config.DB.Create(&seed)
 		fmt.Println("=== Dishes seeds created ===")
 	} else {
