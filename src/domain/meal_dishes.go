@@ -8,4 +8,8 @@ type MealDish struct {
 	Base
 	MealID uuid.UUID `json:"mealId"`
 	DishID uuid.UUID `json:"dishId"`
-} //@name MealDishResponse
+} //@name MealDishRequest
+
+type MealDishRepository interface {
+	Add(mealDish MealDish) error
+}

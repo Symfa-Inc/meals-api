@@ -8,13 +8,13 @@ import (
 
 type Dish struct {
 	Base
-	Name           string    `json:"name" gorm:"not null" binding:"required"`
-	Weight         int       `json:"weight" gorm:"not null"binding:"required"`
-	Price          int       `json:"price" gorm:"not null" binding:"required"`
-	Desc           string    `json:"desc"`
-	Images         string    `json:"images,omitempty"`
-	CateringID     uuid.UUID `json:"-"`
-	DishCategoryID uuid.UUID `json:"categoryId,omitempty"`
+	Name       string    `json:"name" gorm:"not null" binding:"required"`
+	Weight     int       `json:"weight" gorm:"not null"binding:"required"`
+	Price      int       `json:"price" gorm:"not null" binding:"required"`
+	Desc       string    `json:"desc"`
+	Images     string    `json:"images,omitempty"`
+	CateringID uuid.UUID `json:"-"`
+	CategoryID uuid.UUID `json:"categoryId,omitempty"`
 } //@name DishRequest
 
 type DishUsecase interface {

@@ -9,6 +9,7 @@ import (
 	"go_api/src/delivery/middleware"
 	"net/http"
 	"testing"
+	"time"
 )
 
 func TestAddDish(t *testing.T) {
@@ -20,8 +21,11 @@ func TestAddDish(t *testing.T) {
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringId := cateringResult.ID.String()
 
-	categoryResult, _ := dishCategoryRepo.GetByKey("name", "гарнир", cateringId)
+	categoryResult, _ := categoryRepo.GetByKey("name", "гарнир", cateringId)
 
+	trunc := time.Hour * 24
+	mealResult, _ := mealRepo.GetByKey("date", time.Now().AddDate(0, 0, 0).Truncate(trunc).Format(time.RFC3339))
+	mealId := mealResult.ID.String()
 	// Trying to add dish to non-existing catering
 	// Should throw an error
 	fakeId, _ := uuid.NewV4()
@@ -57,7 +61,7 @@ func TestAddDish(t *testing.T) {
 
 	// Trying to create new dish
 	// Should be success
-	r.POST("/caterings/"+cateringId+"/dishes").
+	r.POST("/caterings/"+cateringId+"/dishes?mealId="+mealId).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -74,7 +78,7 @@ func TestAddDish(t *testing.T) {
 
 	// Trying to create same dish in same category
 	// Should throw an error
-	r.POST("/caterings/"+cateringId+"/dishes").
+	r.POST("/caterings/"+cateringId+"/dishes?mealId="+mealId).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -102,10 +106,10 @@ func TestDeleteDish(t *testing.T) {
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringId := cateringResult.ID.String()
 
-	dishCategoryResult, _ := dishCategoryRepo.GetByKey("name", "супы", cateringId)
-	dishCategoryId := dishCategoryResult.ID.String()
+	categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringId)
+	categoryId := categoryResult.ID.String()
 
-	dishResult, _ := dishRepo.GetByKey("name", "доширак", cateringId, dishCategoryId)
+	dishResult, _ := dishRepo.GetByKey("name", "доширак", cateringId, categoryId)
 
 	fakeId, _ := uuid.NewV4()
 
@@ -155,14 +159,14 @@ func TestGetDishes(t *testing.T) {
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringId := cateringResult.ID.String()
 
-	dishCategoryResult, _ := dishCategoryRepo.GetByKey("name", "супы", cateringId)
-	dishCategoryId := dishCategoryResult.ID.String()
+	categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringId)
+	categoryId := categoryResult.ID.String()
 
 	fakeId, _ := uuid.NewV4()
 
 	// Trying to get dishes with non-existing catering ID
 	// Should throw an error
-	r.GET("/caterings/"+fakeId.String()+"/dishes?categoryId="+dishCategoryId).
+	r.GET("/caterings/"+fakeId.String()+"/dishes?categoryId="+categoryId).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -188,7 +192,7 @@ func TestGetDishes(t *testing.T) {
 
 	// Trying to get dishes with all valid values
 	// Should be success
-	r.GET("/caterings/"+cateringId+"/dishes?categoryId="+dishCategoryResult.ID.String()).
+	r.GET("/caterings/"+cateringId+"/dishes?categoryId="+categoryResult.ID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -206,10 +210,10 @@ func TestUpdateDish(t *testing.T) {
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringId := cateringResult.ID.String()
 
-	dishCategoryResult, _ := dishCategoryRepo.GetByKey("name", "супы", cateringId)
-	dishCategoryId := dishCategoryResult.ID.String()
+	categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringId)
+	categoryId := categoryResult.ID.String()
 
-	dishResult, _ := dishRepo.GetByKey("name", "борщ", cateringId, dishCategoryId)
+	dishResult, _ := dishRepo.GetByKey("name", "борщ", cateringId, categoryId)
 	dishId := dishResult.ID.String()
 
 	fakeId, _ := uuid.NewV4()
@@ -221,7 +225,7 @@ func TestUpdateDish(t *testing.T) {
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"categoryId": dishCategoryId,
+			"categoryId": categoryId,
 			"desc":       "Очень острый",
 			"name":       "супер доширак",
 			"price":      120,
@@ -261,7 +265,7 @@ func TestUpdateDish(t *testing.T) {
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"categoryId": dishCategoryId,
+			"categoryId": categoryId,
 			"desc":       "Очень острый",
 			"name":       "супер доширак",
 			"price":      120,
@@ -281,7 +285,7 @@ func TestUpdateDish(t *testing.T) {
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"categoryId": dishCategoryId,
+			"categoryId": categoryId,
 			"desc":       "Очень острый",
 			"name":       "супер доширак",
 			"price":      120,

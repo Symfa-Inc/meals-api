@@ -19,9 +19,15 @@ type MealUsecase interface {
 	Update(c *gin.Context)
 }
 
+type MealsResult struct {
+	Category
+	Dish
+}
+
 type MealRepository interface {
 	Find(meal Meal) error
 	Add(meal Meal) (interface{}, error)
-	Get(limit int, dateQuery types.StartEndDateQuery, id string) ([]Meal, int, error)
+	Get(mealId, id string) (map[string][]interface{}, error, int)
 	Update(path types.PathMeal, meal Meal) (error, int)
+	GetByKey(key, value string) (Meal, error)
 }

@@ -27,7 +27,7 @@ func SetupRouter() *gin.Engine {
 	auth := usecase.NewAuth()
 	catering := usecase.NewCatering()
 	meal := usecase.NewMeal()
-	dishCategory := usecase.NewDishCategory()
+	category := usecase.NewCategory()
 	dish := usecase.NewDish()
 
 	configCors := cors.DefaultConfig()
@@ -60,10 +60,10 @@ func SetupRouter() *gin.Engine {
 				cateringRoutes.GET("/:id/meals", meal.Get)
 				cateringRoutes.PUT("/:id/meals/:mealId", meal.Update)
 
-				cateringRoutes.POST("/:id/dish-categories", dishCategory.Add)
-				cateringRoutes.GET("/:id/dish-categories", dishCategory.Get)
-				cateringRoutes.DELETE("/:id/dish-categories/:categoryId", dishCategory.Delete)
-				cateringRoutes.PUT("/:id/dish-categories/:categoryId", dishCategory.Update)
+				cateringRoutes.POST("/:id/dish-categories", category.Add)
+				cateringRoutes.GET("/:id/dish-categories", category.Get)
+				cateringRoutes.DELETE("/:id/dish-categories/:categoryId", category.Delete)
+				cateringRoutes.PUT("/:id/dish-categories/:categoryId", category.Update)
 
 				cateringRoutes.POST("/:id/dishes", dish.Add)
 				cateringRoutes.DELETE("/:id/dishes/:dishId", dish.Delete)

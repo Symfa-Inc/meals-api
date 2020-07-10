@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	uuid "github.com/satori/go.uuid"
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/types"
@@ -16,28 +17,29 @@ func NewDishRepo() *dishRepo {
 
 // Creates new dish entity
 // returns error or nil
-func (d dishRepo) Add(cateringId string, dish domain.Dish) error {
+func (d dishRepo) Add(cateringId string, dish domain.Dish) (uuid.UUID, error) {
 	var total int
 	config.DB.
 		Model(&domain.Dish{}).
-		Where("catering_id = ? AND dish_category_id = ?", cateringId, dish.DishCategoryID).
+		Where("catering_id = ? AND category_id = ?", cateringId, dish.CategoryID).
 		Count(&total)
 
 	if total >= 10 {
-		return errors.New("can't add more than 10 dishes for a single category")
+		return uuid.Nil, errors.New("can't add more than 10 dishes for a single category")
 	}
 
 	if dishExist := config.DB.
-		Where("catering_id = ? AND dish_category_id = ? AND name = ?", cateringId, dish.DishCategoryID, dish.Name).
+		Where("catering_id = ? AND category_id = ? AND name = ?", cateringId, dish.CategoryID, dish.Name).
 		Find(&dish).
 		RecordNotFound(); !dishExist {
-		return errors.New("this dish already exist in that category")
+		return uuid.Nil, errors.New("this dish already exist in that category")
 	}
 
 	if err := config.DB.Create(&dish).Error; err != nil {
-		return err
+		return uuid.Nil, err
 	}
-	return nil
+
+	return dish.ID, nil
 }
 
 // Soft delete of entity
@@ -61,7 +63,7 @@ func (d dishRepo) Delete(path types.PathDish) error {
 func (d dishRepo) GetByKey(key, value, cateringId, categoryId string) (domain.Dish, error) {
 	var dish domain.Dish
 	err := config.DB.
-		Where("catering_id = ? and dish_category_id = ? AND "+key+" = ?", cateringId, categoryId, value).
+		Where("catering_id = ? AND category_id = ? AND "+key+" = ?", cateringId, categoryId, value).
 		First(&dish).Error
 	return dish, err
 }
@@ -80,13 +82,13 @@ func (d dishRepo) Get(cateringId, categoryId string) ([]domain.Dish, error, int)
 
 	if categoryNotExist := config.DB.
 		Where("id = ?", categoryId).
-		Find(&domain.DishCategory{}).
+		Find(&domain.Category{}).
 		RecordNotFound(); categoryNotExist {
 		return nil, errors.New("category with that ID doesn't exist"), http.StatusNotFound
 	}
 
 	err := config.DB.
-		Where("catering_id = ? AND dish_category_id = ?", cateringId, categoryId).
+		Where("catering_id = ? AND category_id = ?", cateringId, categoryId).
 		Find(&dishes).
 		Error
 	return dishes, err, 0
@@ -103,14 +105,14 @@ func (d dishRepo) Update(path types.PathDish, dish domain.Dish) (error, int) {
 	}
 
 	if categoryNotExist := config.DB.
-		Where("id = ?", dish.DishCategoryID).
-		Find(&domain.DishCategory{}).
+		Where("id = ?", dish.CategoryID).
+		Find(&domain.Category{}).
 		RecordNotFound(); categoryNotExist {
 		return errors.New("dish category not found"), http.StatusNotFound
 	}
 
 	if result := config.DB.Model(&dish).
-		Where("id = ? AND dish_category_id = ?", path.DishID, dish.DishCategoryID).
+		Where("id = ? AND category_id = ?", path.DishID, dish.CategoryID).
 		Update(&dish).RowsAffected; result == 0 {
 		return errors.New("dish not found"), http.StatusNotFound
 	}

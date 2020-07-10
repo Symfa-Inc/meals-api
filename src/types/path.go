@@ -9,7 +9,7 @@ type PathMeal struct {
 	MealID string `uri:"mealId" json:"mealId" binding:"required"`
 } //@name MealPathResponse
 
-type PathDishCategory struct {
+type PathCategory struct {
 	ID         string `uri:"id" json:"id" binding:"required"`
 	CategoryID string `uri:"categoryId" json:"categoryId" binding:"required"`
 }

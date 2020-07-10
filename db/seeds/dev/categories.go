@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-func CreateDishCategories() {
+func CreateCategories() {
 	cateringRepo := repository.NewCateringRepo()
 	seedExists := config.DB.
 		Where("name = ?", "init dish_categories").
@@ -20,8 +20,8 @@ func CreateDishCategories() {
 		}
 
 		cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-		var categoriesArray []domain.DishCategory
-		utils.JsonParse("/db/seeds/data/dish_categories.json", &categoriesArray)
+		var categoriesArray []domain.Category
+		utils.JsonParse("/db/seeds/data/categories.json", &categoriesArray)
 
 		var wg sync.WaitGroup
 		wg.Add(len(categoriesArray))
