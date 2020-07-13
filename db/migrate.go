@@ -53,6 +53,7 @@ func migrate() {
 
 func addDbConstraints() {
 	config.DB.Model(&domain.Meal{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.Meal{}).AddIndex("idx_meals_date", "date")
 
 	config.DB.Model(&domain.Category{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
 

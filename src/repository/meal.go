@@ -3,10 +3,9 @@ package repository
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	"go_api/src/config"
 	"go_api/src/domain"
-	"go_api/src/schemes/response"
-	"go_api/src/types"
 	"net/http"
 	"time"
 )
@@ -40,21 +39,18 @@ func (m mealRepo) Add(meal domain.Meal) (interface{}, error) {
 
 // Returns list of meals withing provided date range
 // Returns list of meals, total items if and error
-func (m mealRepo) Get(mealId, id string) (map[string][]interface{}, error, int) {
+func (m mealRepo) Get(mealDate time.Time, id string) ([]domain.GetMealDish, uuid.UUID, error, int) {
 	var meal domain.Meal
-	var result []response.GetMealsModel
-	var categoriesArray []response.GetMealsModel
+	var result []domain.GetMealDish
 
 	if err := config.DB.
-		Where("catering_id = ? AND id = ?", id, mealId).
+		Where("catering_id = ? AND date = ?", id, mealDate).
 		First(&meal).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return map[string][]interface{}{}, errors.New(err.Error()), http.StatusNotFound
+			return []domain.GetMealDish{}, uuid.Nil, errors.New(err.Error()), http.StatusNotFound
 		}
-		return map[string][]interface{}{}, errors.New(err.Error()), http.StatusBadRequest
+		return []domain.GetMealDish{}, uuid.Nil, errors.New(err.Error()), http.StatusBadRequest
 	}
-
-	mealsMap := make(map[string][]interface{})
 
 	err := config.DB.
 		Model(&domain.Category{}).
@@ -66,61 +62,18 @@ func (m mealRepo) Get(mealId, id string) (map[string][]interface{}, error, int) 
 		Scan(&result).
 		Error
 
-	config.DB.
-		Model(&domain.Category{}).
-		Select("categories.name as category_name, categories.id as category_id").
-		Where("categories.catering_id = ?", id).
-		Scan(&categoriesArray)
-
-	for i := range categoriesArray {
-		result = append(result, categoriesArray[i])
-	}
-
-	for _, dish := range result {
-		mealsMap[dish.CategoryName] = append(mealsMap[dish.CategoryName], dish.DishStruct)
-	}
-
-	for key, element := range mealsMap {
-		element = element[:len(element)-1]
-		mealsMap[key] = element
-	}
-
-	return mealsMap, err, http.StatusBadRequest
+	return result, meal.ID, err, http.StatusBadRequest
 }
 
-// Returns updated meals if exists
-func (m mealRepo) Update(path types.PathMeal, meal domain.Meal) (error, int) {
-	var mealModel domain.Meal
-
-	t := 24 * time.Hour
-
-	difference := meal.Date.Sub(time.Now().Truncate(t)).Hours()
-
-	if difference < 0 {
-		return errors.New("can't add meals to previous dates"), http.StatusBadRequest
-	}
-
-	if mealExist := config.DB.
-		Where("catering_id = ? AND date = ?", path.ID, meal.Date).
-		Find(&mealModel).RecordNotFound(); !mealExist {
-		return errors.New("this date already exist"), http.StatusBadRequest
-	}
-
-	if resultSecond := config.DB.Model(&mealModel).
-		Where("id = ?", path.MealID).
-		Update(&meal); resultSecond.RowsAffected == 0 {
-		if resultSecond.Error != nil {
-			return errors.New(resultSecond.Error.Error()), http.StatusBadRequest
-		}
-		return errors.New("meal not found"), http.StatusNotFound
-	}
-	return nil, 0
-}
-
-func (m mealRepo) GetByKey(key, value string) (domain.Meal, error) {
+func (m mealRepo) GetByKey(key, value string) (domain.Meal, error, int) {
 	var meal domain.Meal
-	err := config.DB.
-		Where(key+"= ?", value).
-		First(&meal).Error
-	return meal, err
+	if err := config.DB.
+		Where(key+" = ?", value).
+		First(&meal).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return domain.Meal{}, errors.New("meal with this date not found"), http.StatusNotFound
+		}
+		return domain.Meal{}, err, http.StatusBadRequest
+	}
+	return meal, nil, 0
 }

@@ -23,17 +23,13 @@ var dishRepo = repository.NewDishRepo()
 // @Tags catering dishes
 // @Produce json
 // @Param id path string true "Catering ID"
-// @Param mealId query string true "Meal ID"
 // @Param payload body request.AddDish false "dish object"
 // @Success 204 "Successfully created"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/dishes [post]
 func (d dish) Add(c *gin.Context) {
 	var path types.PathId
-	var query types.MealIdQuery
 	var body domain.Dish
-
-	mealDishRepo := repository.NewMealDishesRepo()
 
 	if err := utils.RequestBinderUri(&path, c); err != nil {
 		return
@@ -43,25 +39,9 @@ func (d dish) Add(c *gin.Context) {
 		return
 	}
 
-	if err := utils.RequestBinderQuery(&query, c); err != nil {
-		return
-	}
-
 	body.CateringID, _ = uuid.FromString(path.ID)
-	dishId, err := dishRepo.Add(path.ID, body)
+	err := dishRepo.Add(path.ID, body)
 	if err != nil {
-		utils.CreateError(http.StatusBadRequest, err.Error(), c)
-		return
-	}
-
-	parsedMealId, _ := uuid.FromString(query.MealId)
-
-	mealDish := domain.MealDish{
-		MealID: parsedMealId,
-		DishID: dishId,
-	}
-
-	if err := mealDishRepo.Add(mealDish); err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}

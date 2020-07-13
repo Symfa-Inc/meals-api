@@ -38,7 +38,7 @@ func CreateMealDishes() {
 		dishesArray, _, _ = dishRepo.Get(cateringId, categoryId)
 		dishesArray2, _, _ = dishRepo.Get(cateringId, categoryId2)
 
-		mealResult, _ := mealRepo.GetByKey("date", time.Now().AddDate(0, 0, 0).Truncate(t).Format(time.RFC3339))
+		mealResult, _, _ := mealRepo.GetByKey("date", time.Now().AddDate(0, 0, 0).Truncate(t).Format(time.RFC3339))
 		var mealDish domain.MealDish
 		for i := range dishesArray {
 			mealDish.DishID = dishesArray[i].ID

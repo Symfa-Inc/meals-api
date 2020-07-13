@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	uuid "github.com/satori/go.uuid"
+	"github.com/jinzhu/gorm"
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/types"
@@ -17,7 +17,7 @@ func NewDishRepo() *dishRepo {
 
 // Creates new dish entity
 // returns error or nil
-func (d dishRepo) Add(cateringId string, dish domain.Dish) (uuid.UUID, error) {
+func (d dishRepo) Add(cateringId string, dish domain.Dish) error {
 	var total int
 	config.DB.
 		Model(&domain.Dish{}).
@@ -25,21 +25,21 @@ func (d dishRepo) Add(cateringId string, dish domain.Dish) (uuid.UUID, error) {
 		Count(&total)
 
 	if total >= 10 {
-		return uuid.Nil, errors.New("can't add more than 10 dishes for a single category")
+		return errors.New("can't add more than 10 dishes for a single category")
 	}
 
 	if dishExist := config.DB.
 		Where("catering_id = ? AND category_id = ? AND name = ?", cateringId, dish.CategoryID, dish.Name).
 		Find(&dish).
 		RecordNotFound(); !dishExist {
-		return uuid.Nil, errors.New("this dish already exist in that category")
+		return errors.New("this dish already exist in that category")
 	}
 
 	if err := config.DB.Create(&dish).Error; err != nil {
-		return uuid.Nil, err
+		return err
 	}
 
-	return dish.ID, nil
+	return nil
 }
 
 // Soft delete of entity
@@ -60,12 +60,31 @@ func (d dishRepo) Delete(path types.PathDish) error {
 
 // Get entity filtered by key and value
 // returns entity and error or nil
-func (d dishRepo) GetByKey(key, value, cateringId, categoryId string) (domain.Dish, error) {
+func (d dishRepo) GetByKey(key, value, cateringId, categoryId string) (domain.Dish, error, int) {
 	var dish domain.Dish
-	err := config.DB.
+	if err := config.DB.
 		Where("catering_id = ? AND category_id = ? AND "+key+" = ?", cateringId, categoryId, value).
-		First(&dish).Error
-	return dish, err
+		First(&dish).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return domain.Dish{}, errors.New("dish with that id not found"), http.StatusNotFound
+		}
+		return domain.Dish{}, err, http.StatusBadRequest
+	}
+	return dish, nil, 0
+}
+
+func (d dishRepo) FindById(cateringId, id string) (domain.Dish, error, int) {
+	var dish domain.Dish
+	if err := config.DB.
+		Debug().
+		Where("catering_id = ? AND id = ?", cateringId, id).
+		First(&dish).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return domain.Dish{}, errors.New("dish with that id not found"), http.StatusNotFound
+		}
+		return domain.Dish{}, err, http.StatusBadRequest
+	}
+	return dish, nil, 0
 }
 
 // Get list of dishes

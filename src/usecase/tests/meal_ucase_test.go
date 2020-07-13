@@ -12,21 +12,34 @@ import (
 	"time"
 )
 
+var dishesIdArray []string
+
 func TestAddMeals(t *testing.T) {
 	r := gofight.New()
 
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
-	cateringResult, _ := cateringRepo.GetByKey("name", "Pyrami")
+	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
+	cateringId := cateringResult.ID.String()
+	categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringResult.ID.String())
+	dishesResult, _, _ := dishRepo.Get(cateringId, categoryResult.ID.String())
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
 	trunc := 24 * time.Hour
 
-	r.POST("/caterings/"+cateringResult.ID.String()+"/meals").
+	for _, dish := range dishesResult {
+		dishId := dish.ID.String()
+		dishesIdArray = append(dishesIdArray, dishId)
+	}
+
+	// Trying to add new meal with previous date
+	// Should throw an error
+	r.POST("/caterings/"+cateringId+"/meals").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"date": time.Now().AddDate(0, 0, -1).UTC().Truncate(trunc),
+			"date":   time.Now().AddDate(0, 0, -1).UTC().Truncate(trunc),
+			"dishes": dishesIdArray,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
@@ -35,18 +48,20 @@ func TestAddMeals(t *testing.T) {
 			assert.Equal(t, "item has wrong date (can't use previous dates)", errorValue)
 		})
 
-	// Trying to add valid meals
-	// Should be success
+	//Trying to add valid meals
+	//Should be success
 	r.POST("/caterings/"+cateringResult.ID.String()+"/meals").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"date": time.Now().AddDate(0, 0, 1).UTC().Truncate(trunc),
+			"date":   time.Now().AddDate(0, 0, 10).UTC().Truncate(trunc),
+			"dishes": dishesIdArray,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
+
 	// Trying to add meal with already existing date
 	// Should throw an errro
 	r.POST("/caterings/"+cateringResult.ID.String()+"/meals").
@@ -54,7 +69,8 @@ func TestAddMeals(t *testing.T) {
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"date": time.Now().AddDate(0, 0, 1).UTC().Truncate(trunc),
+			"date":   time.Now().AddDate(0, 0, 10).UTC().Truncate(trunc),
+			"dishes": dishesIdArray,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
@@ -69,12 +85,12 @@ func TestGetMeals(t *testing.T) {
 
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
+	cateringId := cateringResult.ID.String()
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
-	var mealId string
 
 	// Testing validation of params
 	// Should throw an error
-	r.GET("/caterings/"+cateringResult.ID.String()+"/meals?qwerty=qwerty").
+	r.GET("/caterings/"+cateringId+"/meals?qwerty=qwerty").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -96,26 +112,16 @@ func TestGetMeals(t *testing.T) {
 			assert.Equal(t, http.StatusNotFound, r.Code)
 		})
 
-	// Creating new meal to retrieve its ID
-	trunc := 24 * time.Hour
-	r.POST("/caterings/"+cateringResult.ID.String()+"/meals").
+	//Trying to get meal for catering
+	//Should be success
+	trunc := time.Hour * 24
+	date := time.Now().AddDate(0, 0, 10).Truncate(trunc).UTC().Format(time.RFC3339)
+	r.GET("/caterings/"+cateringResult.ID.String()+"/meals?date="+date).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
 			"date": time.Now().AddDate(0, 0, 10).UTC().Truncate(trunc),
-		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
-			mealId, _ = jsonparser.GetString(data, "id")
-			assert.Equal(t, http.StatusCreated, r.Code)
-		})
-
-	//Trying to get meal for catering
-	//Should be success
-	r.GET("/caterings/"+cateringResult.ID.String()+"/meals?mealId="+mealId).
-		SetCookie(gofight.H{
-			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
@@ -129,65 +135,34 @@ func TestUpdateMeal(t *testing.T) {
 	cateringResult, _ := cateringRepo.GetByKey("name", "Qiao")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 	cateringId := cateringResult.ID.String()
-	var mealId string
+	trunc := time.Hour * 24
+	date := time.Now().AddDate(0, 0, 10).Truncate(trunc).UTC().Format(time.RFC3339)
+	meal, _, _ := mealRepo.GetByKey("date", date)
+	mealId := meal.ID.String()
 
-	// Creating new meal to retrieve its ID
-	trunc := 24 * time.Hour
-	r.POST("/caterings/"+cateringResult.ID.String()+"/meals").
-		SetCookie(gofight.H{
-			"jwt": jwt,
-		}).
-		SetJSON(gofight.D{
-			"date": time.Now().AddDate(0, 0, 10).UTC().Truncate(trunc),
-		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
-			mealId, _ = jsonparser.GetString(data, "id")
-			assert.Equal(t, http.StatusCreated, r.Code)
-		})
-
-	// Trying to update meal with existing date
-	// Should be success
-	r.PUT("/caterings/"+cateringId+"/meals/"+mealId).
-		SetCookie(gofight.H{
-			"jwt": jwt,
-		}).
-		SetJSON(gofight.D{
-			"date": time.Now().AddDate(0, 0, 11).Truncate(trunc).UTC(),
-		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			assert.Equal(t, http.StatusNoContent, r.Code)
-		})
-
-	// Trying to update the same date with already existing date
+	// Trying to update meal with no dishes field
 	// Should throw an error
 	r.PUT("/caterings/"+cateringId+"/meals/"+mealId).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"date": time.Now().AddDate(0, 0, 11).Truncate(trunc).UTC(),
+			"test": "123",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
-			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
-			assert.Equal(t, "this date already exist", errorValue)
 		})
 
-	//Trying to create meal before today
-	//Should throw an error
+	// Trying to update meal with dishes array
+	// Should should be success
 	r.PUT("/caterings/"+cateringId+"/meals/"+mealId).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"date": time.Now().AddDate(0, 0, -1).Truncate(trunc).UTC(),
+			"dishes": dishesIdArray[:2],
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
-			errorValue, _ := jsonparser.GetString(data, "error")
-			assert.Equal(t, http.StatusBadRequest, r.Code)
-			assert.Equal(t, "can't add meals to previous dates", errorValue)
+			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 }

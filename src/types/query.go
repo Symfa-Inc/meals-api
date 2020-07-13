@@ -5,8 +5,8 @@ type PaginationQuery struct {
 	Page  int `form:"page"`
 }
 
-type MealIdQuery struct {
-	MealId string `form:"mealId" binding:"required"`
+type DateQuery struct {
+	Date string `form:"date" binding:"required"`
 }
 
 type CategoryIdQuery struct {

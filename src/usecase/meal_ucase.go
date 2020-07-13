@@ -5,6 +5,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"go_api/src/domain"
 	"go_api/src/repository"
+	"go_api/src/schemes/request"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
@@ -25,12 +26,13 @@ var mealRepo = repository.NewMealRepo()
 // @Produce json
 // @Param id path string false "Catering ID"
 // @Param payload body request.AddMeal false "meal reading"
-// @Success 201 {object} domain.Meal "meal reading"
+// @Success 201 {object} domain.Meal "created meal"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/meals [post]
 func (m meal) Add(c *gin.Context) {
 	var path types.PathId
-	var body domain.Meal
+	var body request.AddMeal
+	mealDishRepo := repository.NewMealDishesRepo()
 
 	if err := utils.RequestBinderUri(&path, c); err != nil {
 		return
@@ -41,8 +43,12 @@ func (m meal) Add(c *gin.Context) {
 	}
 
 	parsedId, _ := uuid.FromString(path.ID)
+	meal := domain.Meal{
+		Date:       body.Date,
+		CateringID: parsedId,
+	}
+
 	t := 24 * time.Hour
-	body.CateringID = parsedId
 	difference := body.Date.Sub(time.Now().Truncate(t)).Hours()
 
 	if difference < 0 {
@@ -50,16 +56,35 @@ func (m meal) Add(c *gin.Context) {
 		return
 	}
 
-	if err := mealRepo.Find(body); err != nil {
+	if err := mealRepo.Find(meal); err != nil {
 		utils.CreateError(http.StatusBadRequest, "item already exist", c)
 		return
 	}
 
-	body.CateringID = parsedId
-	mealItem, err := mealRepo.Add(body)
+	for _, dishId := range body.Dishes {
+		_, err, code := dishRepo.FindById(path.ID, dishId)
+		if err != nil {
+			utils.CreateError(code, err.Error(), c)
+			return
+		}
+	}
+
+	mealItem, err := mealRepo.Add(meal)
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
+	}
+
+	for _, dishId := range body.Dishes {
+		dishIdParsed, _ := uuid.FromString(dishId)
+		mealDish := domain.MealDish{
+			MealID: mealItem.(*domain.Meal).ID,
+			DishID: dishIdParsed,
+		}
+		if err := mealDishRepo.Add(mealDish); err != nil {
+			utils.CreateError(http.StatusBadRequest, err.Error(), c)
+			return
+		}
 	}
 
 	c.JSON(http.StatusCreated, mealItem)
@@ -69,14 +94,14 @@ func (m meal) Add(c *gin.Context) {
 // @Summary Get list of categories with dishes for passed meal ID
 // @Tags catering meals
 // @Produce json
-// @Param mealId query string false "Meal ID"
+// @Param date query string false "Meal Date in 2020-01-01T00:00:00Z format"
 // @Param id path string false "Catering ID"
-// @Success 200 {object} response.GetMealsResponse "categories with dishes for passed day"
+// @Success 200 {object} domain.GetMealDish "dishes for passed day"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/meals [get]
 func (m meal) Get(c *gin.Context) {
-	var mealQuery types.MealIdQuery
+	var query types.DateQuery
 	var pathUri types.PathId
 
 	if err := utils.RequestBinderUri(&pathUri, c); err != nil {
@@ -94,34 +119,43 @@ func (m meal) Get(c *gin.Context) {
 		return
 	}
 
-	if err := utils.RequestBinderQuery(&mealQuery, c); err != nil {
+	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return
 	}
 
-	result, err, code := mealRepo.Get(mealQuery.MealId, pathUri.ID)
+	date, err := time.Parse(time.RFC3339, query.Date)
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, "can't parse the date", c)
+	}
+
+	result, mealId, err, code := mealRepo.Get(date, pathUri.ID)
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}
 
-	c.JSON(http.StatusOK, result)
+	c.JSON(http.StatusOK, gin.H{
+		"mealId": mealId,
+		"dishes": result,
+	})
 }
 
-// UpdateMeal godoc
-// @Summary Returns updated meal
+// UpdateMeal updates the menu for provided day, takes an array of dish Ids
+// @Summary Returns 204 if success and 4xx if error
 // @Produce json
 // @Accept json
 // @Tags catering meals
 // @Param id path string true "Catering ID"
-// @Param mealId path string true "Meal ID"
-// @Param body body request.AddMeal false "Meal date"
+// @Param mealId path string false "Meal ID"
+// @Param body body request.UpdateMeal false "Meal date"
 // @Success 204 "Successfully updated"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/meals/{mealId} [put]
 func (m meal) Update(c *gin.Context) {
 	var path types.PathMeal
-	var body domain.Meal
+	var body request.UpdateMeal
+	mealDishRepo := repository.NewMealDishesRepo()
 
 	if err := utils.RequestBinderUri(&path, c); err != nil {
 		return
@@ -131,12 +165,28 @@ func (m meal) Update(c *gin.Context) {
 		return
 	}
 
-	err, code := mealRepo.Update(path, body)
+	mealItem, err, code := mealRepo.GetByKey("id", path.MealId)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}
 
+	if err := mealDishRepo.Delete(mealItem.ID.String()); err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	for _, dishId := range body.Dishes {
+		dishIdParsed, _ := uuid.FromString(dishId)
+		mealDish := domain.MealDish{
+			MealID: mealItem.ID,
+			DishID: dishIdParsed,
+		}
+		if err := mealDishRepo.Add(mealDish); err != nil {
+			utils.CreateError(http.StatusBadRequest, err.Error(), c)
+			return
+		}
+	}
 	c.Status(http.StatusNoContent)
 }
