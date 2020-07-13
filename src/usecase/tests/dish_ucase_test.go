@@ -24,7 +24,7 @@ func TestAddDish(t *testing.T) {
 	categoryResult, _ := categoryRepo.GetByKey("name", "гарнир", cateringId)
 
 	trunc := time.Hour * 24
-	mealResult, _ := mealRepo.GetByKey("date", time.Now().AddDate(0, 0, 0).Truncate(trunc).Format(time.RFC3339))
+	mealResult, _, _ := mealRepo.GetByKey("date", time.Now().AddDate(0, 0, 0).Truncate(trunc).Format(time.RFC3339))
 	mealId := mealResult.ID.String()
 	// Trying to add dish to non-existing catering
 	// Should throw an error
@@ -97,59 +97,6 @@ func TestAddDish(t *testing.T) {
 		})
 }
 
-func TestDeleteDish(t *testing.T) {
-	r := gofight.New()
-
-	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
-
-	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-	cateringId := cateringResult.ID.String()
-
-	categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringId)
-	categoryId := categoryResult.ID.String()
-
-	dishResult, _ := dishRepo.GetByKey("name", "доширак", cateringId, categoryId)
-
-	fakeId, _ := uuid.NewV4()
-
-	// Trying to delete non-existing dish
-	// Should throw an error
-	r.DELETE("/caterings/"+cateringId+"/dishes/"+fakeId.String()).
-		SetCookie(gofight.H{
-			"jwt": jwt,
-		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
-			errorValue, _ := jsonparser.GetString(data, "error")
-			assert.Equal(t, http.StatusNotFound, r.Code)
-			assert.Equal(t, "dish not found", errorValue)
-		})
-
-	// Trying to delete existing dish
-	// Should be success
-	r.DELETE("/caterings/"+cateringId+"/dishes/"+dishResult.ID.String()).
-		SetCookie(gofight.H{
-			"jwt": jwt,
-		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			assert.Equal(t, http.StatusNoContent, r.Code)
-		})
-
-	// Trying to delete soft deleted dish
-	// Should throw an error
-	r.DELETE("/caterings/"+cateringId+"/dishes/"+dishResult.ID.String()).
-		SetCookie(gofight.H{
-			"jwt": jwt,
-		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
-			errorValue, _ := jsonparser.GetString(data, "error")
-			assert.Equal(t, http.StatusNotFound, r.Code)
-			assert.Equal(t, "dish not found", errorValue)
-		})
-}
-
 func TestGetDishes(t *testing.T) {
 	r := gofight.New()
 
@@ -213,7 +160,7 @@ func TestUpdateDish(t *testing.T) {
 	categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringId)
 	categoryId := categoryResult.ID.String()
 
-	dishResult, _ := dishRepo.GetByKey("name", "борщ", cateringId, categoryId)
+	dishResult, _, _ := dishRepo.GetByKey("name", "борщ", cateringId, categoryId)
 	dishId := dishResult.ID.String()
 
 	fakeId, _ := uuid.NewV4()
@@ -293,5 +240,58 @@ func TestUpdateDish(t *testing.T) {
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
+		})
+}
+
+func TestDeleteDish(t *testing.T) {
+	r := gofight.New()
+
+	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+
+	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
+	cateringId := cateringResult.ID.String()
+
+	categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringId)
+	categoryId := categoryResult.ID.String()
+
+	dishResult, _, _ := dishRepo.GetByKey("name", "доширак", cateringId, categoryId)
+
+	fakeId, _ := uuid.NewV4()
+
+	// Trying to delete non-existing dish
+	// Should throw an error
+	r.DELETE("/caterings/"+cateringId+"/dishes/"+fakeId.String()).
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			data := []byte(r.Body.String())
+			errorValue, _ := jsonparser.GetString(data, "error")
+			assert.Equal(t, http.StatusNotFound, r.Code)
+			assert.Equal(t, "dish not found", errorValue)
+		})
+
+	// Trying to delete existing dish
+	// Should be success
+	r.DELETE("/caterings/"+cateringId+"/dishes/"+dishResult.ID.String()).
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusNoContent, r.Code)
+		})
+
+	// Trying to delete soft deleted dish
+	// Should throw an error
+	r.DELETE("/caterings/"+cateringId+"/dishes/"+dishResult.ID.String()).
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			data := []byte(r.Body.String())
+			errorValue, _ := jsonparser.GetString(data, "error")
+			assert.Equal(t, http.StatusNotFound, r.Code)
+			assert.Equal(t, "dish not found", errorValue)
 		})
 }

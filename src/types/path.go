@@ -6,7 +6,7 @@ type PathId struct {
 
 type PathMeal struct {
 	ID     string `uri:"id" json:"id" binding:"required"`
-	MealID string `uri:"mealId" json:"mealId" binding:"required"`
+	MealId string `uri:"mealId" json:"mealId" binding:"required"`
 } //@name MealPathResponse
 
 type PathCategory struct {

@@ -17,3 +17,14 @@ func (md mealDishesRepo) Add(mealDish domain.MealDish) error {
 		Error
 	return err
 }
+
+func (md mealDishesRepo) Delete(mealId string) error {
+	if err := config.DB.
+		Where("meal_id = ?", mealId).
+		Delete(&domain.MealDish{}).
+		Error; err != nil {
+		return err
+	}
+
+	return nil
+}
