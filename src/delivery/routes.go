@@ -31,7 +31,8 @@ func SetupRouter() *gin.Engine {
 	dish := usecase.NewDish()
 
 	configCors := cors.DefaultConfig()
-	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL")}
+	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL"), os.Getenv("CLIENT_MOBILE_URL")}
+
 	configCors.AllowCredentials = true
 	r.Use(cors.New(configCors))
 	r.Use(gin.Logger())
