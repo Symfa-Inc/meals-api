@@ -96,7 +96,7 @@ func (m meal) Add(c *gin.Context) {
 // @Produce json
 // @Param date query string false "Meal Date in 2020-01-01T00:00:00Z format"
 // @Param id path string false "Catering ID"
-// @Success 200 {array} domain.GetMealDish "dishes for passed day"
+// @Success 200 {array} domain.Dish "dishes for passed day"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/meals [get]

@@ -24,7 +24,7 @@ var dishRepo = repository.NewDishRepo()
 // @Produce json
 // @Param id path string true "Catering ID"
 // @Param payload body request.AddDish false "dish object"
-// @Success 200 {object} domain.GetMealDish false "dish object"
+// @Success 200 {object} domain.Dish false "dish object"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/dishes [post]
 func (d dish) Add(c *gin.Context) {
