@@ -38,3 +38,35 @@ func TestIsAuthenticated(t *testing.T) {
 		assert.Equal(t, "super", name)
 	})
 }
+
+func TestValidator(t *testing.T) {
+	r := gofight.New()
+
+	userResult, _ := userRepo.GetByKey("role", "Client administrator")
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
+	cateringId := cateringResult.ID.String()
+
+	// Trying to access catering route with wrong permissions
+	// Should throw an error
+	r.GET("/caterings/"+cateringId+"/categories").
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusForbidden, r.Code)
+		})
+
+	userResult2, _ := userRepo.GetByKey("role", "Catering administrator")
+	jwt2, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult2.ID.String()})
+
+	// Trying to access catering with right permissions
+	// Should be success
+	r.GET("/caterings/"+cateringId+"/categories").
+		SetCookie(gofight.H{
+			"jwt": jwt2,
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusOK, r.Code)
+		})
+}

@@ -19,9 +19,9 @@ func main() {
 	addDbConstraints()
 	fmt.Println("=== ADD DB CONSTRAINTS ===")
 
+	dev.CreateCaterings()
 	dev.CreateAdmin()
 	dev.CreateUsers()
-	dev.CreateCaterings()
 	dev.CreateMeals()
 	dev.CreateCategories()
 	dev.CreateDishes()
@@ -34,15 +34,15 @@ func migrate() {
 		&domain.Dish{},
 		&domain.Category{},
 		&domain.Meal{},
+		&domain.User{},
 		&domain.Catering{},
 		&domain.Seed{},
-		&domain.User{},
 	)
 
 	config.DB.AutoMigrate(
+		&domain.Catering{},
 		&domain.User{},
 		&domain.Seed{},
-		&domain.Catering{},
 		&domain.Meal{},
 		&domain.Category{},
 		&domain.Dish{},
@@ -52,6 +52,8 @@ func migrate() {
 }
 
 func addDbConstraints() {
+	config.DB.Model(&domain.User{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
+
 	config.DB.Model(&domain.Meal{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
 	config.DB.Model(&domain.Meal{}).AddIndex("idx_meals_date", "date")
 
@@ -66,7 +68,7 @@ func addDbConstraints() {
 func createTypes() {
 	userTypesQuery := fmt.Sprintf("CREATE TYPE user_roles AS ENUM ('%s', '%s', '%s', '%s')",
 		types.UserRoleEnum.SuperAdmin,
-		types.UserRoleEnum.CompanyAdmin,
+		types.UserRoleEnum.CateringAdmin,
 		types.UserRoleEnum.ClientAdmin,
 		types.UserRoleEnum.User,
 	)

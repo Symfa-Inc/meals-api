@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"go_api/src/config"
 	"go_api/src/domain"
+	"go_api/src/repository"
+	"go_api/src/types"
 	"go_api/src/utils"
 	"sync"
 )
@@ -17,6 +19,8 @@ func CreateUsers() {
 		}
 
 		hashedPassword := utils.HashString("Password12!")
+		cateringRepo := repository.NewCateringRepo()
+		catering, _ := cateringRepo.GetByKey("name", "Twiist")
 
 		var userArray []domain.User
 		utils.JsonParse("/db/seeds/data/users.json", &userArray)
@@ -25,11 +29,21 @@ func CreateUsers() {
 		wg.Add(len(userArray))
 
 		for i := range userArray {
-			go func(i int) {
-				defer wg.Done()
-				userArray[i].Password = hashedPassword
-				config.DB.Create(&userArray[i])
-			}(i)
+			if i < 3 {
+				go func(i int) {
+					defer wg.Done()
+					userArray[i].CompanyType = &types.CompanyTypesEnum.Catering
+					userArray[i].CateringId = &catering.ID
+					userArray[i].Password = hashedPassword
+					config.DB.Create(&userArray[i])
+				}(i)
+			} else {
+				go func(i int) {
+					defer wg.Done()
+					userArray[i].Password = hashedPassword
+					config.DB.Create(&userArray[i])
+				}(i)
+			}
 		}
 
 		wg.Wait()

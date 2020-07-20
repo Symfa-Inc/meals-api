@@ -36,7 +36,11 @@ func Passport() *jwt.GinJWTMiddleware {
 		LoginResponse: func(c *gin.Context, i int, s string, t time.Time) {
 			value, _ := Passport().ParseTokenString(s)
 			id := jwt.ExtractClaimsFromToken(value)["id"]
-			result, _ := userRepo.GetByKey("id", id.(string))
+			result, err := userRepo.GetByKey("id", id.(string))
+			if err != nil {
+				utils.CreateError(http.StatusUnauthorized, err.Error(), c)
+				return
+			}
 			c.JSON(http.StatusOK, result)
 		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims {

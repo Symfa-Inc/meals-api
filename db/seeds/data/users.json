@@ -1,302 +1,38 @@
 [
   {
-    "firstName": "Ginger ",
-    "lastName": "Love",
-    "email": "gingerlove@comcubine.com",
-    "role": "Company administrator"
-  },
-  {
-    "firstName": "Hayden ",
-    "lastName": "Daniel",
-    "email": "haydendaniel@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Melody ",
-    "lastName": "Bond",
-    "email": "melodybond@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Mariana ",
+    "firstName": "Mariana",
     "lastName": "Fox",
     "email": "marianafox@comcubine.com",
-    "role": "Delivery administrator"
+    "role": "Catering administrator"
   },
   {
-    "firstName": "Maggie ",
+    "firstName": "Maggie",
     "lastName": "Todd",
     "email": "maggietodd@comcubine.com",
-    "role": "Delivery administrator"
+    "role": "Catering administrator"
   },
   {
-    "firstName": "Aline ",
+    "firstName": "Aline",
     "lastName": "Glenn",
     "email": "alineglenn@comcubine.com",
-    "role": "Delivery administrator"
+    "role": "Catering administrator"
   },
   {
-    "firstName": "Luna ",
-    "lastName": "Hinton",
-    "email": "lunahinton@comcubine.com",
-    "role": "Delivery administrator"
+    "firstName": "Ginger",
+    "lastName": "Love",
+    "email": "gingerlove@comcubine.com",
+    "role": "Client administrator"
   },
   {
-    "firstName": "Gwendolyn ",
-    "lastName": "Sawyer",
-    "email": "gwendolynsawyer@comcubine.com",
-    "role": "Delivery administrator"
+    "firstName": "Hayden",
+    "lastName": "Daniel",
+    "email": "haydendaniel@comcubine.com",
+    "role": "Client administrator"
   },
   {
-    "firstName": "Jenna ",
-    "lastName": "Dodson",
-    "email": "jennadodson@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Sharron ",
-    "lastName": "Hull",
-    "email": "sharronhull@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Baker ",
-    "lastName": "Burnett",
-    "email": "bakerburnett@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Allison ",
-    "lastName": "Kaufman",
-    "email": "allisonkaufman@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Jennifer ",
-    "lastName": "Mercado",
-    "email": "jennifermercado@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Acevedo ",
-    "lastName": "Burns",
-    "email": "acevedoburns@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Baxter ",
-    "lastName": "William",
-    "email": "baxterwilliam@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Booker ",
-    "lastName": "Holcomb",
-    "email": "bookerholcomb@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Lynn ",
-    "lastName": "Carr",
-    "email": "lynncarr@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Marla ",
-    "lastName": "Bryan",
-    "email": "marlabryan@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Elisa ",
-    "lastName": "Lyons",
-    "email": "elisalyons@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Bowman ",
-    "lastName": "Dennis",
-    "email": "bowmandennis@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Bennett ",
-    "lastName": "Anthony",
-    "email": "bennettanthony@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Becker ",
-    "lastName": "Leblanc",
-    "email": "beckerleblanc@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Carey ",
-    "lastName": "Wong",
-    "email": "careywong@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Moore ",
-    "lastName": "Kirby",
-    "email": "moorekirby@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Alana ",
-    "lastName": "Fitzpatrick",
-    "email": "alanafitzpatrick@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Meadows ",
-    "lastName": "Juarez",
-    "email": "meadowsjuarez@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Goff ",
-    "lastName": "Rogers",
-    "email": "goffrogers@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Melissa ",
-    "lastName": "Raymond",
-    "email": "melissaraymond@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Dixon ",
-    "lastName": "Woodard",
-    "email": "dixonwoodard@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Spence ",
-    "lastName": "Nieves",
-    "email": "spencenieves@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Hope ",
-    "lastName": "Jacobson",
-    "email": "hopejacobson@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Hillary ",
-    "lastName": "Murphy",
-    "email": "hillarymurphy@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Teri ",
-    "lastName": "Mccall",
-    "email": "terimccall@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Trujillo ",
-    "lastName": "Figueroa",
-    "email": "trujillofigueroa@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Krystal ",
-    "lastName": "Burgess",
-    "email": "krystalburgess@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Mayo ",
-    "lastName": "Stevenson",
-    "email": "mayostevenson@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Moses ",
-    "lastName": "Kelley",
-    "email": "moseskelley@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Michele ",
-    "lastName": "Cline",
-    "email": "michelecline@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Carson ",
-    "lastName": "Simon",
-    "email": "carsonsimon@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Lara ",
-    "lastName": "Lane",
-    "email": "laralane@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Molly ",
-    "lastName": "Lowe",
-    "email": "mollylowe@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Caldwell ",
-    "lastName": "Quinn",
-    "email": "caldwellquinn@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Russo ",
-    "lastName": "Leon",
-    "email": "russoleon@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Wilcox ",
-    "lastName": "Patel",
-    "email": "wilcoxpatel@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "England ",
-    "lastName": "Irwin",
-    "email": "englandirwin@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Aguilar ",
-    "lastName": "Blevins",
-    "email": "aguilarblevins@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Stewart ",
-    "lastName": "Weber",
-    "email": "stewartweber@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Bates ",
-    "lastName": "Becker",
-    "email": "batesbecker@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Prince ",
-    "lastName": "Black",
-    "email": "princeblack@comcubine.com",
-    "role": "Delivery administrator"
-  },
-  {
-    "firstName": "Bowers ",
-    "lastName": "Glover",
-    "email": "bowersglover@comcubine.com",
-    "role": "Delivery administrator"
+    "firstName": "Melody",
+    "lastName": "Bond",
+    "email": "melodybond@comcubine.com",
+    "role": "Client administrator"
   }
 ]
