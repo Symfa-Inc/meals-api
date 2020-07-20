@@ -18,45 +18,50 @@ func CreateImages() {
 		dir, _ := os.Getwd()
 		salads, _ := ioutil.ReadDir(dir + "/src/static/images/salad")
 		for _, salad := range salads {
+			categoryName := "salad"
 			image := domain.Image{
 				Path:     "/salad/" + salad.Name(),
-				Category: "salad",
+				Category: &categoryName,
 			}
 			config.DB.Create(&image)
 		}
 
 		desserts, _ := ioutil.ReadDir(dir + "/src/static/images/dessert")
 		for _, dessert := range desserts {
+			categoryName := "dessert"
 			image := domain.Image{
 				Path:     "/dessert/" + dessert.Name(),
-				Category: "dessert",
+				Category: &categoryName,
 			}
 			config.DB.Create(&image)
 		}
 
 		garnishes, _ := ioutil.ReadDir(dir + "/src/static/images/garnish")
 		for _, garnish := range garnishes {
+			categoryName := "garnish"
 			image := domain.Image{
 				Path:     "/garnish/" + garnish.Name(),
-				Category: "garnish",
+				Category: &categoryName,
 			}
 			config.DB.Create(&image)
 		}
 
 		soups, _ := ioutil.ReadDir(dir + "/src/static/images/soup")
 		for _, soup := range soups {
+			categoryName := "soup"
 			image := domain.Image{
 				Path:     "/soup/" + soup.Name(),
-				Category: "soup",
+				Category: &categoryName,
 			}
 			config.DB.Create(&image)
 		}
 
 		firstCourses, _ := ioutil.ReadDir(dir + "/src/static/images/first_course")
 		for _, firstCourse := range firstCourses {
+			categoryName := "first_course"
 			image := domain.Image{
 				Path:     "/first_course/" + firstCourse.Name(),
-				Category: "first_course",
+				Category: &categoryName,
 			}
 			config.DB.Create(&image)
 		}

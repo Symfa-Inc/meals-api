@@ -12,7 +12,7 @@ type Dish struct {
 	Weight     int          `json:"weight" gorm:"not null"binding:"required"`
 	Price      int          `json:"price" gorm:"not null" binding:"required"`
 	Desc       string       `json:"desc"`
-	Images     []ImageArray `json:"images,omitempty"`
+	Images     []ImageArray `json:"images"`
 	CateringID uuid.UUID    `json:"-"`
 	CategoryID uuid.UUID    `json:"categoryId,omitempty"`
 } //@name DishRequest

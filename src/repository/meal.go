@@ -39,17 +39,17 @@ func (m mealRepo) Add(meal domain.Meal) (interface{}, error) {
 
 // Returns list of meals withing provided date range
 // Returns list of meals, total items if and error
-func (m mealRepo) Get(mealDate time.Time, id string) ([]domain.GetMealDish, uuid.UUID, error, int) {
+func (m mealRepo) Get(mealDate time.Time, id string) ([]domain.Dish, uuid.UUID, error, int) {
 	var meal domain.Meal
-	var result []domain.GetMealDish
+	var result []domain.Dish
 
 	if err := config.DB.
 		Where("catering_id = ? AND date = ?", id, mealDate).
 		First(&meal).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return []domain.GetMealDish{}, uuid.Nil, errors.New(err.Error()), http.StatusNotFound
+			return []domain.Dish{}, uuid.Nil, errors.New(err.Error()), http.StatusNotFound
 		}
-		return []domain.GetMealDish{}, uuid.Nil, errors.New(err.Error()), http.StatusBadRequest
+		return []domain.Dish{}, uuid.Nil, errors.New(err.Error()), http.StatusBadRequest
 	}
 
 	err := config.DB.
@@ -65,21 +65,14 @@ func (m mealRepo) Get(mealDate time.Time, id string) ([]domain.GetMealDish, uuid
 
 	for i := range result {
 		var imagesArray []domain.ImageArray
-		var stringsArray []string
 		config.DB.
 			Model(&domain.Image{}).
-			Select("images.path").
+			Select("images.path, images.id").
 			Joins("left join image_dishes id on id.image_id = images.id").
 			Joins("left join dishes d on id.dish_id = d.id").
 			Where("d.id = ?", result[i].ID).
 			Scan(&imagesArray)
-		if len(imagesArray) <= 0 {
-			stringsArray = make([]string, 0)
-		}
-		for _, imageString := range imagesArray {
-			stringsArray = append(stringsArray, imageString.Path)
-		}
-		result[i].ImagesArray = stringsArray
+		result[i].Images = imagesArray
 	}
 	return result, meal.ID, err, http.StatusBadRequest
 }

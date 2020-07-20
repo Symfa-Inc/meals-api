@@ -29,7 +29,7 @@ var imageRepo = repository.NewImageRepo()
 // @Param image formData file false  "Image File"
 // @Param id formData string false  "id of default image"
 // @Success 201 {object} domain.Image "Image model"
-// @Success 204 "Successfully added default image"
+// @Success 200 {object} domain.Image "default image"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/images [post]
@@ -52,12 +52,12 @@ func (i image) Add(c *gin.Context) {
 			utils.CreateError(http.StatusBadRequest, err.Error(), c)
 			return
 		}
-		err, code := imageRepo.AddDefault(path.ID, query.DishId, parsedID)
+		image, err, code := imageRepo.AddDefault(path.ID, query.DishId, parsedID)
 		if err != nil {
 			utils.CreateError(code, err.Error(), c)
 			return
 		}
-		c.Status(http.StatusNoContent)
+		c.JSON(http.StatusOK, image)
 		return
 	} else {
 		file, err := c.FormFile("image")
@@ -75,7 +75,7 @@ func (i image) Add(c *gin.Context) {
 		}
 
 		image := domain.Image{
-			Path: filename,
+			Path: "/" + filename,
 		}
 
 		result, err, code := imageRepo.Add(path.ID, query.DishId, image)
