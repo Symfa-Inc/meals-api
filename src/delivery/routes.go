@@ -6,6 +6,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	"go_api/src/delivery/middleware"
+	"go_api/src/types"
 	"go_api/src/usecase"
 	"net/http"
 	"os"
@@ -30,6 +31,8 @@ func SetupRouter() *gin.Engine {
 	category := usecase.NewCategory()
 	dish := usecase.NewDish()
 
+	validator := middleware.NewValidator()
+
 	configCors := cors.DefaultConfig()
 	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL"), os.Getenv("CLIENT_MOBILE_URL")}
 
@@ -49,6 +52,7 @@ func SetupRouter() *gin.Engine {
 		authRequired.GET("/is-authenticated", auth.IsAuthenticated)
 
 		cateringGroup := authRequired.Group("/")
+		cateringGroup.Use(validator.ValidateRoles(types.UserRoleEnum.CateringAdmin, types.UserRoleEnum.SuperAdmin))
 		{
 			cateringGroup.POST("/caterings", catering.Add)
 			cateringGroup.GET("/caterings", catering.Get)
@@ -61,10 +65,10 @@ func SetupRouter() *gin.Engine {
 				cateringRoutes.GET("/:id/meals", meal.Get)
 				cateringRoutes.PUT("/:id/meals/:mealId", meal.Update)
 
-				cateringRoutes.POST("/:id/dish-categories", category.Add)
-				cateringRoutes.GET("/:id/dish-categories", category.Get)
-				cateringRoutes.DELETE("/:id/dish-categories/:categoryId", category.Delete)
-				cateringRoutes.PUT("/:id/dish-categories/:categoryId", category.Update)
+				cateringRoutes.POST("/:id/categories", category.Add)
+				cateringRoutes.GET("/:id/categories", category.Get)
+				cateringRoutes.DELETE("/:id/categories/:categoryId", category.Delete)
+				cateringRoutes.PUT("/:id/categories/:categoryId", category.Update)
 
 				cateringRoutes.POST("/:id/dishes", dish.Add)
 				cateringRoutes.DELETE("/:id/dishes/:dishId", dish.Delete)

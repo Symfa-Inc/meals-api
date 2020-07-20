@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go_api/src/delivery/middleware"
 	"go_api/src/repository"
+	"go_api/src/utils"
 	"net/http"
 )
 
@@ -21,13 +22,17 @@ func NewAuth() *auth {
 // @Tags auth
 // @Success 200 {object} domain.User
 // @Failure 401 {object} types.Error
-// @Security ApiKeyAuth
+// @Failure 404 {object} types.Error
 // @Router /is-authenticated [get]
 func (a auth) IsAuthenticated(c *gin.Context) {
 	userRepo := repository.NewUserRepo()
 	claims := jwt.ExtractClaims(c)
 	id := claims[middleware.IdentityKeyID]
-	result, _ := userRepo.GetByKey("id", id.(string))
+	result, err := userRepo.GetByKey("id", id.(string))
+	if err != nil {
+		utils.CreateError(http.StatusNotFound, err.Error(), c)
+		return
+	}
 	c.JSON(http.StatusOK, result)
 }
 

@@ -26,12 +26,12 @@ var categoryRepo = repository.NewCategoryRepo()
 // @Summary Returns error if exists and 204 if success
 // @Produce json
 // @Accept json
-// @Tags catering dish-categories
+// @Tags catering categories
 // @Param id path string true "Catering ID"
 // @Param body body request.AddCategory false "Category Name"
 // @Success 204 "Successfully created"
 // @Failure 400 {object} types.Error "Error"
-// @Router /caterings/{id}/dish-categories [post]
+// @Router /caterings/{id}/categories [post]
 func (dc category) Add(c *gin.Context) {
 	var body request.AddCategory
 	var path types.PathId
@@ -69,13 +69,13 @@ func (dc category) Add(c *gin.Context) {
 
 // DeleteCategory soft delete of category reading
 // @Summary Soft delete
-// @Tags catering dish-categories
+// @Tags catering categories
 // @Produce json
 // @Param id path string true "Catering ID"
 // @Param categoryId path string true "Category ID"
 // @Success 204 "Successfully deleted"
 // @Failure 404 {object} types.Error "Not Found"
-// @Router /caterings/{id}/dish-categories/{categoryId} [delete]
+// @Router /caterings/{id}/categories/{categoryId} [delete]
 func (dc category) Delete(c *gin.Context) {
 	var path types.PathCategory
 	if err := utils.RequestBinderUri(&path, c); err != nil {
@@ -92,13 +92,13 @@ func (dc category) Delete(c *gin.Context) {
 
 // GetCategories returns list of categories or error
 // @Summary Get list of categories
-// @Tags catering dish-categories
+// @Tags catering categories
 // @Produce json
 // @Param id path string false "Catering ID"
 // @Success 200 {array} domain.Category "array of category readings"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
-// @Router /caterings/{id}/dish-categories [get]
+// @Router /caterings/{id}/categories [get]
 func (dc category) Get(c *gin.Context) {
 	var path types.PathId
 
@@ -119,14 +119,14 @@ func (dc category) Get(c *gin.Context) {
 // @Summary Returns 204 if success and 4xx error if failed
 // @Produce json
 // @Accept json
-// @Tags catering dish-categories
+// @Tags catering categories
 // @Param id path string true "Catering ID"
 // @Param categoryId path string true "Category ID"
 // @Param body body request.UpdateCategory false "new category name"
 // @Success 204 "Successfully updated"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
-// @Router /caterings/{id}/dish-categories/{categoryId} [put]
+// @Router /caterings/{id}/categories/{categoryId} [put]
 func (dc category) Update(c *gin.Context) {
 	var path types.PathCategory
 	var body domain.Category

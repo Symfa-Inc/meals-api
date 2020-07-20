@@ -20,7 +20,7 @@ func TestAddCategory(t *testing.T) {
 
 	// Trying to add category to non-existing ID
 	// Should throw error
-	r.POST("/caterings/qwerty/dish-categories").
+	r.POST("/caterings/qwerty/categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -33,7 +33,7 @@ func TestAddCategory(t *testing.T) {
 
 	// Trying to add category to existing ID
 	// Should be success
-	r.POST("/caterings/"+cateringResult.ID.String()+"/dish-categories").
+	r.POST("/caterings/"+cateringResult.ID.String()+"/categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -46,7 +46,7 @@ func TestAddCategory(t *testing.T) {
 
 	// Trying to add already existing category
 	// Should throw error
-	r.POST("/caterings/"+cateringResult.ID.String()+"/dish-categories").
+	r.POST("/caterings/"+cateringResult.ID.String()+"/categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -71,7 +71,7 @@ func TestDeleteCategory(t *testing.T) {
 
 	// Creates new dish category
 	// Should be success
-	r.POST("/caterings/"+cateringId+"/dish-categories").
+	r.POST("/caterings/"+cateringId+"/categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -87,7 +87,7 @@ func TestDeleteCategory(t *testing.T) {
 
 	// Trying to delete new category dish
 	// Should be success
-	r.DELETE("/caterings/"+cateringId+"/dish-categories/"+categoryId).
+	r.DELETE("/caterings/"+cateringId+"/categories/"+categoryId).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -97,7 +97,7 @@ func TestDeleteCategory(t *testing.T) {
 
 	// Trying to delete already deleted category
 	// Should throw error
-	r.DELETE("/caterings/"+cateringId+"/dish-categories/"+categoryId).
+	r.DELETE("/caterings/"+cateringId+"/categories/"+categoryId).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -120,7 +120,7 @@ func TestGetCategories(t *testing.T) {
 
 	// Trying to get categories from non-existing catering
 	// Should throw error
-	r.GET("/caterings/"+fakeId.String()+"/dish-categories").
+	r.GET("/caterings/"+fakeId.String()+"/categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -133,7 +133,7 @@ func TestGetCategories(t *testing.T) {
 
 	// Trying to get categories from existing catering
 	// Should be success
-	r.GET("/caterings/"+id+"/dish-categories").
+	r.GET("/caterings/"+id+"/categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -153,7 +153,7 @@ func TestUpdateCategory(t *testing.T) {
 	// Trying to update non-existing dish category
 	// Should throw an error
 	fakeId, _ := uuid.NewV4()
-	r.PUT("/caterings/"+cateringId+"/dish-categories/"+fakeId.String()).
+	r.PUT("/caterings/"+cateringId+"/categories/"+fakeId.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -166,7 +166,7 @@ func TestUpdateCategory(t *testing.T) {
 
 	// Posting new dish category to update it
 	// Should be success
-	r.POST("/caterings/"+cateringId+"/dish-categories").
+	r.POST("/caterings/"+cateringId+"/categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -182,7 +182,7 @@ func TestUpdateCategory(t *testing.T) {
 
 	// Trying to update new dish category
 	// Should be success
-	r.PUT("/caterings/"+cateringId+"/dish-categories/"+categoryId).
+	r.PUT("/caterings/"+cateringId+"/categories/"+categoryId).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -195,7 +195,7 @@ func TestUpdateCategory(t *testing.T) {
 
 	// Trying to update the same category with already existing category
 	// Should throw an error
-	r.PUT("/caterings/"+cateringId+"/dish-categories/"+categoryId).
+	r.PUT("/caterings/"+cateringId+"/categories/"+categoryId).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
