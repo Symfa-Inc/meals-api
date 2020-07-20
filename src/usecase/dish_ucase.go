@@ -24,7 +24,7 @@ var dishRepo = repository.NewDishRepo()
 // @Produce json
 // @Param id path string true "Catering ID"
 // @Param payload body request.AddDish false "dish object"
-// @Success 204 "Successfully created"
+// @Success 200 {object} domain.Dish false "dish object"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/dishes [post]
 func (d dish) Add(c *gin.Context) {
@@ -40,13 +40,13 @@ func (d dish) Add(c *gin.Context) {
 	}
 
 	body.CateringID, _ = uuid.FromString(path.ID)
-	err := dishRepo.Add(path.ID, body)
+	dish, err := dishRepo.Add(path.ID, body)
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	c.JSON(http.StatusOK, dish)
 }
 
 // DeleteDish soft delete of dish

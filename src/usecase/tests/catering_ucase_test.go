@@ -29,7 +29,7 @@ func TestAddCatering(t *testing.T) {
 			"name": cateringName,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			assert.Equal(t, http.StatusNoContent, r.Code)
+			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
 	// Trying to create new catering with same name

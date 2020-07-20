@@ -41,7 +41,7 @@ func TestAddCategory(t *testing.T) {
 			"name": "закуски",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			assert.Equal(t, http.StatusNoContent, r.Code)
+			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
 	// Trying to add already existing category
@@ -79,7 +79,7 @@ func TestDeleteCategory(t *testing.T) {
 			"name": "закуски",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			assert.Equal(t, http.StatusNoContent, r.Code)
+			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
 	createdCategory, _ := categoryRepo.GetByKey("name", "закуски", cateringId)
@@ -174,7 +174,7 @@ func TestUpdateCategory(t *testing.T) {
 			"name": "qwerty",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			assert.Equal(t, http.StatusNoContent, r.Code)
+			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
 	createdCategory, _ := categoryRepo.GetByKey("name", "qwerty", cateringId)

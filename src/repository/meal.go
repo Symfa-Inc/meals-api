@@ -53,15 +53,34 @@ func (m mealRepo) Get(mealDate time.Time, id string) ([]domain.GetMealDish, uuid
 	}
 
 	err := config.DB.
+		Debug().
 		Model(&domain.Category{}).
-		Select("categories.name as category_name, categories.id as category_id, d.*").
+		Select("categories.id as category_id, d.*").
 		Joins("left join dishes d on d.category_id = categories.id").
 		Joins("left join meal_dishes md on md.dish_id = d.id").
 		Joins("left join meals m on m.id = md.meal_id").
-		Where("m.id = ?", meal.ID).
+		Where("m.id = ? AND md.deleted_at IS NULL", meal.ID).
 		Scan(&result).
 		Error
 
+	for i := range result {
+		var imagesArray []domain.ImageArray
+		var stringsArray []string
+		config.DB.
+			Model(&domain.Image{}).
+			Select("images.path").
+			Joins("left join image_dishes id on id.image_id = images.id").
+			Joins("left join dishes d on id.dish_id = d.id").
+			Where("d.id = ?", result[i].ID).
+			Scan(&imagesArray)
+		if len(imagesArray) <= 0 {
+			stringsArray = make([]string, 0)
+		}
+		for _, imageString := range imagesArray {
+			stringsArray = append(stringsArray, imageString.Path)
+		}
+		result[i].ImagesArray = stringsArray
+	}
 	return result, meal.ID, err, http.StatusBadRequest
 }
 

@@ -61,7 +61,7 @@ func TestAddDish(t *testing.T) {
 
 	// Trying to create new dish
 	// Should be success
-	r.POST("/caterings/"+cateringId+"/dishes?mealId="+mealId).
+	r.POST("/caterings/"+cateringId+"/dishes").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -73,7 +73,7 @@ func TestAddDish(t *testing.T) {
 			"weight":     250,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			assert.Equal(t, http.StatusNoContent, r.Code)
+			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
 	// Trying to create same dish in same category

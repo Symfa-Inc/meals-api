@@ -22,14 +22,14 @@ func NewCategory() *category {
 var categoryRepo = repository.NewCategoryRepo()
 
 // AddCategory add dish category in DB
-// returns 204 if success and 4xx if request failed
-// @Summary Returns error if exists and 204 if success
+// returns 200 if success and 4xx if request failed
+// @Summary Returns error if exists and 200 if success
 // @Produce json
 // @Accept json
 // @Tags catering categories
 // @Param id path string true "Catering ID"
 // @Param body body request.AddCategory false "Category Name"
-// @Success 204 "Successfully created"
+// @Success 200 {object} domain.Category false "category object"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/categories [post]
 func (dc category) Add(c *gin.Context) {
@@ -53,18 +53,18 @@ func (dc category) Add(c *gin.Context) {
 
 	cateringId, _ := uuid.FromString(path.ID)
 	categoryModel := domain.Category{
-		Base:       domain.Base{DeletedAt: body.DeletedAt},
+		DeletedAt: body.DeletedAt,
 		Name:       strings.ToLower(body.Name),
 		CateringID: cateringId,
 	}
 
-	_, err := categoryRepo.Add(categoryModel)
+	category, err := categoryRepo.Add(categoryModel)
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	c.JSON(http.StatusOK, category)
 }
 
 // DeleteCategory soft delete of category reading

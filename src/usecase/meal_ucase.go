@@ -126,6 +126,7 @@ func (m meal) Get(c *gin.Context) {
 	date, err := time.Parse(time.RFC3339, query.Date)
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, "can't parse the date", c)
+		return
 	}
 
 	result, mealId, err, code := mealRepo.Get(date, pathUri.ID)
