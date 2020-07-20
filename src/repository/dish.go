@@ -7,6 +7,7 @@ import (
 	"go_api/src/domain"
 	"go_api/src/types"
 	"net/http"
+	"time"
 )
 
 type dishRepo struct{}
@@ -99,7 +100,8 @@ func (d dishRepo) Get(cateringId, categoryId string) ([]domain.Dish, error, int)
 	}
 
 	if categoryNotExist := config.DB.
-		Where("id = ?", categoryId).
+		Unscoped().
+		Where("id = ? AND (deleted_at > ? OR deleted_at IS NULL)", categoryId, time.Now()).
 		Find(&domain.Category{}).
 		RecordNotFound(); categoryNotExist {
 		return nil, errors.New("category with that ID doesn't exist"), http.StatusNotFound
@@ -109,6 +111,18 @@ func (d dishRepo) Get(cateringId, categoryId string) ([]domain.Dish, error, int)
 		Where("catering_id = ? AND category_id = ?", cateringId, categoryId).
 		Find(&dishes).
 		Error
+	for i := range dishes {
+		var imagesArray []domain.ImageArray
+		config.DB.
+			Model(&domain.Image{}).
+			Select("images.path").
+			Joins("left join image_dishes id on id.image_id = images.id").
+			Joins("left join dishes d on id.dish_id = d.id").
+			Where("d.id = ?", dishes[i].ID).
+			Scan(&imagesArray)
+		dishes[i].Images = imagesArray
+	}
+
 	return dishes, err, 0
 }
 
@@ -123,7 +137,7 @@ func (d dishRepo) Update(path types.PathDish, dish domain.Dish) (error, int) {
 	}
 
 	if categoryNotExist := config.DB.
-		Where("id = ?", dish.CategoryID).
+		Where("id = ? AND (deleted_at > ? OR deleted_at IS NULL)", dish.CategoryID, time.Now()).
 		Find(&domain.Category{}).
 		RecordNotFound(); categoryNotExist {
 		return errors.New("dish category not found"), http.StatusNotFound

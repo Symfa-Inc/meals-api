@@ -28,6 +28,7 @@ func SetupRouter() *gin.Engine {
 
 	auth := usecase.NewAuth()
 	catering := usecase.NewCatering()
+	client := usecase.NewClient()
 	meal := usecase.NewMeal()
 	category := usecase.NewCategory()
 	dish := usecase.NewDish()
@@ -50,14 +51,23 @@ func SetupRouter() *gin.Engine {
 	r.GET("/refresh-token", middleware.Passport().RefreshHandler)
 	r.POST("/login", middleware.Passport().LoginHandler)
 	r.GET("/logout", middleware.Passport().LogoutHandler)
+
 	authRequired := r.Group("/")
 	authRequired.Use(middleware.Passport().MiddlewareFunc())
 	{
 		authRequired.GET("/is-authenticated", auth.IsAuthenticated)
 
 		cateringGroup := authRequired.Group("/")
-		cateringGroup.Use(validator.ValidateRoles(types.UserRoleEnum.CateringAdmin, types.UserRoleEnum.SuperAdmin))
+		cateringGroup.Use(validator.ValidateRoles(
+			types.UserRoleEnum.CateringAdmin,
+			types.UserRoleEnum.SuperAdmin,
+		))
 		{
+			cateringGroup.POST("/clients", client.Add)
+			cateringGroup.GET("/clients", client.Get)
+			cateringGroup.DELETE("/clients/:id", client.Delete)
+			cateringGroup.PUT("/clients/:id", client.Update)
+
 			cateringGroup.POST("/caterings", catering.Add)
 			cateringGroup.GET("/caterings", catering.Get)
 			cateringGroup.DELETE("/caterings/:id", catering.Delete)
