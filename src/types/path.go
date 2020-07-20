@@ -23,3 +23,8 @@ type PathDishGet struct {
 	CateringID string `uri:"id" json:"id" binding:"required"`
 	CategoryID string `uri:"categoryId" json:"categoryId" binding:"required"`
 }
+
+type PathImage struct {
+	CateringID string `uri:"id" json:"id" binding:"required"`
+	ImageId    string `uri:"imageId" json:"imageId" binding:"required"`
+}

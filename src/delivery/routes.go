@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
@@ -30,6 +31,7 @@ func SetupRouter() *gin.Engine {
 	meal := usecase.NewMeal()
 	category := usecase.NewCategory()
 	dish := usecase.NewDish()
+	image := usecase.NewImage()
 
 	validator := middleware.NewValidator()
 
@@ -41,8 +43,10 @@ func SetupRouter() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
-	r.GET("/api-docs/static/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	dir, _ := os.Getwd()
+	r.Use(static.Serve("/static/", static.LocalFile(dir+"/src/static/images", true)))
 
+	r.GET("/api-docs/static/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/refresh-token", middleware.Passport().RefreshHandler)
 	r.POST("/login", middleware.Passport().LoginHandler)
 	r.GET("/logout", middleware.Passport().LogoutHandler)
@@ -59,6 +63,8 @@ func SetupRouter() *gin.Engine {
 			cateringGroup.DELETE("/caterings/:id", catering.Delete)
 			cateringGroup.PUT("/caterings/:id", catering.Update)
 
+			cateringGroup.GET("/images", image.Get)
+
 			cateringRoutes := cateringGroup.Group("/caterings")
 			{
 				cateringRoutes.POST("/:id/meals", meal.Add)
@@ -74,6 +80,9 @@ func SetupRouter() *gin.Engine {
 				cateringRoutes.DELETE("/:id/dishes/:dishId", dish.Delete)
 				cateringRoutes.GET("/:id/dishes", dish.Get)
 				cateringRoutes.PUT("/:id/dishes/:dishId", dish.Update)
+
+				cateringRoutes.POST("/:id/images", image.Add)
+				cateringRoutes.DELETE("/:id/images/:imageId", image.Delete)
 			}
 		}
 	}

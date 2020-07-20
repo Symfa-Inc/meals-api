@@ -19,12 +19,12 @@ func NewCatering() *catering {
 var cateringRepo = repository.NewCateringRepo()
 
 // AddCatering creates catering
-// @Summary Returns error or 204 status code if success
+// @Summary Returns error or 200 status code if success
 // @Produce json
 // @Accept json
 // @Tags catering
 // @Param body body request.AddCatering false "Catering Name"
-// @Success 204 "Successfully created"
+// @Success 200 {object} domain.Catering false "catering object"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings [post]
 func (ca catering) Add(c *gin.Context) {
@@ -33,13 +33,13 @@ func (ca catering) Add(c *gin.Context) {
 		return
 	}
 
-	err := cateringRepo.Add(cateringModel)
+	catering, err := cateringRepo.Add(cateringModel)
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	c.JSON(http.StatusOK, catering)
 }
 
 // DeleteCatering soft delete of catering

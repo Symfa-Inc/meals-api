@@ -20,7 +20,7 @@ type CateringUsecase interface {
 
 type CateringRepository interface {
 	Get(query types.PaginationQuery) ([]Catering, int, error)
-	Add(catering Catering) error
+	Add(catering Catering) (Catering, error)
 	Update(id string, catering Catering) (error, int)
 	Delete(id string) error
 	GetByKey(key, value string) (Catering, error)

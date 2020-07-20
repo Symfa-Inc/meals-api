@@ -25,9 +25,9 @@ type DishUsecase interface {
 }
 
 type DishRepository interface {
-	Add(cateringId string, dish Dish) error
+	Add(cateringId string, dish Dish) (Dish, error)
 	Delete(path types.PathDish) error
 	Get(cateringId, categoryId string) ([]Dish, error, int)
-	GetByKey(key, value, cateringId, categoryId string) (Dish, error)
+	GetByKey(key, value, cateringId, categoryId string) (Dish, error, int)
 	Update(path types.PathDish, dish Dish) (error, int)
 }

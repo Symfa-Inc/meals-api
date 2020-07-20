@@ -25,12 +25,16 @@ func main() {
 	dev.CreateMeals()
 	dev.CreateCategories()
 	dev.CreateDishes()
+	dev.CreateImages()
 	dev.CreateMealDishes()
+	dev.CreateImageDishes()
 }
 
 func migrate() {
 	config.DB.DropTableIfExists(
 		&domain.MealDish{},
+		&domain.ImageDish{},
+		&domain.Image{},
 		&domain.Dish{},
 		&domain.Category{},
 		&domain.Meal{},
@@ -46,6 +50,8 @@ func migrate() {
 		&domain.Meal{},
 		&domain.Category{},
 		&domain.Dish{},
+		&domain.ImageDish{},
+		&domain.Image{},
 		&domain.MealDish{},
 	)
 
@@ -63,6 +69,9 @@ func addDbConstraints() {
 
 	config.DB.Model(&domain.MealDish{}).AddForeignKey("meal_id", "meals(id)", "CASCADE", "CASCADE")
 	config.DB.Model(&domain.MealDish{}).AddForeignKey("dish_id", "dishes(id)", "CASCADE", "CASCADE")
+
+	config.DB.Model(&domain.ImageDish{}).AddForeignKey("dish_id", "dishes(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.ImageDish{}).AddForeignKey("image_id", "images(id)", "CASCADE", "CASCADE")
 }
 
 func createTypes() {

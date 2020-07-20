@@ -17,7 +17,7 @@ func NewDishRepo() *dishRepo {
 
 // Creates new dish entity
 // returns error or nil
-func (d dishRepo) Add(cateringId string, dish domain.Dish) error {
+func (d dishRepo) Add(cateringId string, dish domain.Dish) (domain.Dish, error) {
 	var total int
 	config.DB.
 		Model(&domain.Dish{}).
@@ -25,21 +25,21 @@ func (d dishRepo) Add(cateringId string, dish domain.Dish) error {
 		Count(&total)
 
 	if total >= 10 {
-		return errors.New("can't add more than 10 dishes for a single category")
+		return domain.Dish{}, errors.New("can't add more than 10 dishes for a single category")
 	}
 
 	if dishExist := config.DB.
 		Where("catering_id = ? AND category_id = ? AND name = ?", cateringId, dish.CategoryID, dish.Name).
 		Find(&dish).
 		RecordNotFound(); !dishExist {
-		return errors.New("this dish already exist in that category")
+		return domain.Dish{}, errors.New("this dish already exist in that category")
 	}
 
 	if err := config.DB.Create(&dish).Error; err != nil {
-		return err
+		return domain.Dish{}, err
 	}
 
-	return nil
+	return dish, nil
 }
 
 // Soft delete of entity
@@ -76,7 +76,6 @@ func (d dishRepo) GetByKey(key, value, cateringId, categoryId string) (domain.Di
 func (d dishRepo) FindById(cateringId, id string) (domain.Dish, error, int) {
 	var dish domain.Dish
 	if err := config.DB.
-		Debug().
 		Where("catering_id = ? AND id = ?", cateringId, id).
 		First(&dish).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
