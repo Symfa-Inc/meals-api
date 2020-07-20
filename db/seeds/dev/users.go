@@ -22,6 +22,9 @@ func CreateUsers() {
 		cateringRepo := repository.NewCateringRepo()
 		catering, _ := cateringRepo.GetByKey("name", "Twiist")
 
+		clientRepo := repository.NewClientRepo()
+		client, _ := clientRepo.GetByKey("name", "Dymi")
+
 		var userArray []domain.User
 		utils.JsonParse("/db/seeds/data/users.json", &userArray)
 
@@ -40,6 +43,8 @@ func CreateUsers() {
 			} else {
 				go func(i int) {
 					defer wg.Done()
+					userArray[i].CompanyType = &types.CompanyTypesEnum.Client
+					userArray[i].ClientId = &client.ID
 					userArray[i].Password = hashedPassword
 					config.DB.Create(&userArray[i])
 				}(i)

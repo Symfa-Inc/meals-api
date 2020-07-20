@@ -5,6 +5,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"go_api/src/domain"
 	"go_api/src/repository"
+	"go_api/src/schemes/response"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
@@ -78,13 +79,14 @@ func (d dish) Delete(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Catering ID"
 // @Param categoryId query string true "Category ID"
-// @Success 200 {array} domain.Dish "List of dishes"
+// @Success 200 {array} response.GetDish "List of dishes"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/dishes [get]
 func (d dish) Get(c *gin.Context) {
-	//var path types.PathDishGet
 	var path types.PathId
 	var query types.CategoryIdQuery
+	var dishesArray []response.GetDish
+
 	if err := utils.RequestBinderUri(&path, c); err != nil {
 		return
 	}
@@ -99,7 +101,30 @@ func (d dish) Get(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dishes)
+	if len(dishes) == 0 {
+		c.JSON(http.StatusOK, make([]string, 0))
+		return
+	}
+
+	for _, dishItem := range dishes {
+		var imagesArray []string
+		for _, image := range dishItem.Images {
+			imagesArray = append(imagesArray, image.Path)
+		}
+		dishResult := response.GetDish{
+			ID:         dishItem.ID,
+			Name:       dishItem.Name,
+			Weight:     dishItem.Weight,
+			Price:      dishItem.Price,
+			Desc:       dishItem.Desc,
+			Images:     imagesArray,
+			CateringID: dishItem.CateringID,
+			CategoryID: dishItem.CategoryID,
+		}
+		dishesArray = append(dishesArray, dishResult)
+	}
+
+	c.JSON(http.StatusOK, dishesArray)
 }
 
 // UpdateDish updates dish

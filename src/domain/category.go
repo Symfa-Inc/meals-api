@@ -8,11 +8,10 @@ import (
 	"time"
 )
 
-
 type CategoryBase struct {
-	ID        uuid.UUID  `gorm:"type:uuid;" json:"id"`
-	CreatedAt time.Time  `json:"-"`
-	UpdatedAt time.Time  `json:"-"`
+	ID        uuid.UUID `gorm:"type:uuid;" json:"id"`
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
 }
 
 func (base *CategoryBase) BeforeCreate(scope *gorm.Scope) error {
@@ -25,9 +24,9 @@ func (base *CategoryBase) BeforeCreate(scope *gorm.Scope) error {
 
 type Category struct {
 	CategoryBase
-	DeletedAt *time.Time `sql:"index" json:"deletedAt"`
-	Name       string    `gorm:"type:varchar(30);not null" json:"name" binding:"required"`
-	CateringID uuid.UUID `json:"-"`
+	DeletedAt  *time.Time `sql:"index" json:"deletedAt"`
+	Name       string     `gorm:"type:varchar(30);not null" json:"name" binding:"required"`
+	CateringID uuid.UUID  `json:"-"`
 } //@name CategoryResponse
 
 type CategoryUsecase interface {

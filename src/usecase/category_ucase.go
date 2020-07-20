@@ -53,7 +53,7 @@ func (dc category) Add(c *gin.Context) {
 
 	cateringId, _ := uuid.FromString(path.ID)
 	categoryModel := domain.Category{
-		DeletedAt: body.DeletedAt,
+		DeletedAt:  body.DeletedAt,
 		Name:       strings.ToLower(body.Name),
 		CateringID: cateringId,
 	}

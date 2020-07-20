@@ -53,13 +53,13 @@ func (m mealRepo) Get(mealDate time.Time, id string) ([]domain.GetMealDish, uuid
 	}
 
 	err := config.DB.
-		Debug().
+		Unscoped().
 		Model(&domain.Category{}).
-		Select("categories.id as category_id, d.*").
+		Select("categories.id as category_id, categories.deleted_at,d.*").
 		Joins("left join dishes d on d.category_id = categories.id").
 		Joins("left join meal_dishes md on md.dish_id = d.id").
 		Joins("left join meals m on m.id = md.meal_id").
-		Where("m.id = ? AND md.deleted_at IS NULL", meal.ID).
+		Where("m.id = ? AND md.deleted_at IS NULL AND (categories.deleted_at > ? OR categories.deleted_at IS NULL)", meal.ID, time.Now()).
 		Scan(&result).
 		Error
 
@@ -84,6 +84,8 @@ func (m mealRepo) Get(mealDate time.Time, id string) ([]domain.GetMealDish, uuid
 	return result, meal.ID, err, http.StatusBadRequest
 }
 
+// Get meal by provided key value arguments
+// Returns meal, error and status code
 func (m mealRepo) GetByKey(key, value string) (domain.Meal, error, int) {
 	var meal domain.Meal
 	if err := config.DB.

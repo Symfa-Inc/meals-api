@@ -65,8 +65,10 @@ func (dc categoryRepo) GetByKey(key, value, cateringId string) (domain.Category,
 // returns gorm.DB struct with methods
 func (dc categoryRepo) Delete(path types.PathCategory) error {
 	if categoryRows := config.DB.
-		Where("catering_id = ? AND id = ?", path.ID, path.CategoryID).
-		Delete(&domain.Category{}).RowsAffected; categoryRows == 0 {
+		Unscoped().
+		Model(&domain.Category{}).
+		Where("catering_id = ? AND id = ?  AND (deleted_at > ? OR deleted_at IS NULL)", path.ID, path.CategoryID, time.Now()).
+		Update("deleted_at", time.Now()).RowsAffected; categoryRows == 0 {
 		return errors.New("category not found")
 	}
 	return nil
@@ -78,14 +80,16 @@ func (dc categoryRepo) Update(path types.PathCategory, category domain.Category)
 	var categoryModel domain.Category
 
 	if categoryExist := config.DB.
-		Where("catering_id = ? AND name = ?", path.ID, category.Name).
+		Unscoped().
+		Where("catering_id = ? AND name = ? AND (deleted_at > ? OR deleted_at IS NULL)", path.ID, category.Name, time.Now()).
 		Find(&categoryModel).RecordNotFound(); !categoryExist {
-
 		return errors.New("this category already exist"), http.StatusBadRequest
 	}
 
-	if resultSecond := config.DB.Model(&categoryModel).
-		Where("id = ?", path.CategoryID).
+	if resultSecond := config.DB.
+		Unscoped().
+		Model(&categoryModel).
+		Where("id = ? AND (deleted_at > ? OR deleted_at IS NULL)", path.CategoryID, time.Now()).
 		Update(&category); resultSecond.RowsAffected == 0 {
 		return errors.New("category not found"), http.StatusNotFound
 	}

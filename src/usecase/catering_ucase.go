@@ -19,11 +19,11 @@ func NewCatering() *catering {
 var cateringRepo = repository.NewCateringRepo()
 
 // AddCatering creates catering
-// @Summary Returns error or 200 status code if success
+// @Summary Returns error or 201 status code if success
 // @Produce json
 // @Accept json
 // @Tags catering
-// @Param body body request.AddCatering false "Catering Name"
+// @Param body body request.AddName false "Catering Name"
 // @Success 200 {object} domain.Catering false "catering object"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings [post]
@@ -39,7 +39,7 @@ func (ca catering) Add(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, catering)
+	c.JSON(http.StatusCreated, catering)
 }
 
 // DeleteCatering soft delete of catering
@@ -131,7 +131,7 @@ func (ca catering) Get(c *gin.Context) {
 // @Accept json
 // @Tags catering
 // @Param id path string true "Catering ID"
-// @Param body body request.AddCatering false "Catering Name"
+// @Param body body request.AddName false "Catering Name"
 // @Success 204 "Successfully updated"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
