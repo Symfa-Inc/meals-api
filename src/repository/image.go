@@ -56,15 +56,25 @@ func (i imageRepo) Add(cateringId, dishId string, image domain.Image) (domain.Im
 
 // Adds default image for provided dish id and only creates imageDish column
 // Returns error and status code
-func (i imageRepo) AddDefault(cateringId, dishId string, imageId uuid.UUID) (error, int) {
+func (i imageRepo) AddDefault(cateringId, dishId string, imageId uuid.UUID) (domain.Image, error, int) {
+	var image domain.Image
 	if err := config.DB.
 		Where("id = ? AND catering_id = ?", dishId, cateringId).
 		Find(&domain.Dish{}).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return err, http.StatusNotFound
+			return domain.Image{}, err, http.StatusNotFound
 		}
-		return err, http.StatusBadRequest
+		return domain.Image{}, err, http.StatusBadRequest
+	}
+
+	if err := config.DB.
+		Where("id = ?", imageId).
+		Find(&image).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return domain.Image{}, err, http.StatusNotFound
+		}
+		return domain.Image{}, err, http.StatusBadRequest
 	}
 
 	parsedDishId, _ := uuid.FromString(dishId)
@@ -74,10 +84,10 @@ func (i imageRepo) AddDefault(cateringId, dishId string, imageId uuid.UUID) (err
 	}
 
 	if err := config.DB.Create(&imageDish).Error; err != nil {
-		return err, http.StatusBadRequest
+		return domain.Image{}, err, http.StatusBadRequest
 	}
 
-	return nil, 0
+	return image, nil, 0
 }
 
 // Soft delete of image

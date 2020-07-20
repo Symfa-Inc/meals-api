@@ -115,7 +115,7 @@ func (d dishRepo) Get(cateringId, categoryId string) ([]domain.Dish, error, int)
 		var imagesArray []domain.ImageArray
 		config.DB.
 			Model(&domain.Image{}).
-			Select("images.path").
+			Select("images.path, images.id").
 			Joins("left join image_dishes id on id.image_id = images.id").
 			Joins("left join dishes d on id.dish_id = d.id").
 			Where("d.id = ?", dishes[i].ID).
@@ -137,6 +137,7 @@ func (d dishRepo) Update(path types.PathDish, dish domain.Dish) (error, int) {
 	}
 
 	if categoryNotExist := config.DB.
+		Unscoped().
 		Where("id = ? AND (deleted_at > ? OR deleted_at IS NULL)", dish.CategoryID, time.Now()).
 		Find(&domain.Category{}).
 		RecordNotFound(); categoryNotExist {

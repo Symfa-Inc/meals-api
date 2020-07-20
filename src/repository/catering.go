@@ -22,6 +22,9 @@ func (c cateringRepo) Add(catering domain.Catering) (domain.Catering, error) {
 		return domain.Catering{}, errors.New("catering with that name already exist")
 	}
 	err := config.DB.Create(&catering).Error
+	if err != nil {
+		return domain.Catering{}, err
+	}
 	return catering, err
 }
 

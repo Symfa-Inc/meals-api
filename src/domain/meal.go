@@ -21,6 +21,6 @@ type MealUsecase interface {
 type MealRepository interface {
 	Find(meal Meal) error
 	Add(meal Meal) (interface{}, error)
-	Get(mealDate time.Time, id string) ([]GetMealDish, uuid.UUID, error, int)
+	Get(mealDate time.Time, id string) ([]Dish, uuid.UUID, error, int)
 	GetByKey(key, value string) (Meal, error, int)
 }

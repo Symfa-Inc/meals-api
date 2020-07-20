@@ -26,7 +26,7 @@ var mealRepo = repository.NewMealRepo()
 // @Produce json
 // @Param id path string false "Catering ID"
 // @Param payload body request.AddMeal false "meal reading"
-// @Success 201 {object} domain.Meal "created meal"
+// @Success 201 {object} request.AddMeal "created meal"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/meals [post]
 func (m meal) Add(c *gin.Context) {
@@ -96,7 +96,7 @@ func (m meal) Add(c *gin.Context) {
 // @Produce json
 // @Param date query string false "Meal Date in 2020-01-01T00:00:00Z format"
 // @Param id path string false "Catering ID"
-// @Success 200 {object} domain.GetMealDish "dishes for passed day"
+// @Success 200 {array} domain.GetMealDish "dishes for passed day"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/meals [get]
