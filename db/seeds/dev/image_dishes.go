@@ -5,6 +5,7 @@ import (
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/repository"
+	"strconv"
 )
 
 func CreateImageDishes() {
@@ -32,10 +33,10 @@ func CreateImageDishes() {
 
 		dishesArray, _, _ = dishRepo.Get(cateringId, categoryId)
 
-		imageResult, _ := imageRepo.GetByKey("path", "/salad/1.png")
 		var imageDish domain.ImageDish
 		for i := range dishesArray {
 			for j := 0; j < 3; j++ {
+				imageResult, _ := imageRepo.GetByKey("path", "/salad/"+strconv.Itoa(j+1)+".png")
 				imageDish.DishID = dishesArray[i].ID
 				imageDish.ImageID = imageResult.ID
 				config.DB.Create(&imageDish)
