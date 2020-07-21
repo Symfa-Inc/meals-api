@@ -118,7 +118,7 @@ func (d dishRepo) Get(cateringId, categoryId string) ([]domain.Dish, error, int)
 			Select("images.path, images.id").
 			Joins("left join image_dishes id on id.image_id = images.id").
 			Joins("left join dishes d on id.dish_id = d.id").
-			Where("d.id = ?", dishes[i].ID).
+			Where("d.id = ? AND id.deleted_at IS NULL", dishes[i].ID).
 			Scan(&imagesArray)
 		dishes[i].Images = imagesArray
 	}

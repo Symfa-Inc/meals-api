@@ -80,7 +80,7 @@ func (d dish) Delete(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Catering ID"
 // @Param categoryId query string true "Category ID"
-// @Success 200 {array} response.GetDish "List of dishes"
+// @Success 200 {array} domain.Dish "List of dishes"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/dishes [get]
 func (d dish) Get(c *gin.Context) {

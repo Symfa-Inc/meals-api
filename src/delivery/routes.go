@@ -92,7 +92,8 @@ func SetupRouter() *gin.Engine {
 				cateringRoutes.PUT("/:id/dishes/:dishId", dish.Update)
 
 				cateringRoutes.POST("/:id/images", image.Add)
-				cateringRoutes.DELETE("/:id/images/:imageId", image.Delete)
+				cateringRoutes.DELETE("/:id/images/:imageId/dish/:dishId", image.Delete)
+				cateringRoutes.PUT("/:id/images/:imageId/dish/:dishId", image.Update)
 			}
 		}
 	}
