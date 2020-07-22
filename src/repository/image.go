@@ -10,14 +10,17 @@ import (
 	"os"
 )
 
-type imageRepo struct{}
+// ImageRepo struct
+type ImageRepo struct{}
 
-func NewImageRepo() *imageRepo {
-	return &imageRepo{}
+// NewImageRepo returns pointer to image repository
+// with all methods
+func NewImageRepo() *ImageRepo {
+	return &ImageRepo{}
 }
 
-// Returns image struct and error by provided key and value
-func (i imageRepo) GetByKey(key, value string) (domain.Image, error) {
+// GetByKey returns image struct and error by provided key and value
+func (i ImageRepo) GetByKey(key, value string) (domain.Image, error) {
 	var image domain.Image
 	err := config.DB.
 		Where(key+"= ?", value).
@@ -25,169 +28,168 @@ func (i imageRepo) GetByKey(key, value string) (domain.Image, error) {
 	return image, err
 }
 
-// Adds image for provided dish id, and also adds it in imageDish table
+// Add image for provided dish id, and also adds it in imageDish table
 // Returns image struct, error and status code
-func (i imageRepo) Add(cateringId, dishId string, image domain.Image) (domain.Image, error, int) {
+func (i ImageRepo) Add(cateringID, dishID string, image domain.Image) (domain.Image, int, error) {
 	if err := config.DB.
-		Where("id = ? AND catering_id = ?", dishId, cateringId).
+		Where("id = ? AND catering_id = ?", dishID, cateringID).
 		Find(&domain.Dish{}).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return domain.Image{}, err, http.StatusNotFound
+			return domain.Image{}, http.StatusNotFound, err
 		}
-		return domain.Image{}, err, http.StatusBadRequest
+		return domain.Image{}, http.StatusBadRequest, err
 	}
 
 	if err := config.DB.Create(&image).Error; err != nil {
-		return domain.Image{}, err, http.StatusBadRequest
+		return domain.Image{}, http.StatusBadRequest, err
 	}
 
-	parsedDishId, _ := uuid.FromString(dishId)
+	parsedDishID, _ := uuid.FromString(dishID)
 	imageDish := domain.ImageDish{
 		ImageID: image.ID,
-		DishID:  parsedDishId,
+		DishID:  parsedDishID,
 	}
 
 	if err := config.DB.Create(&imageDish).Error; err != nil {
-		return domain.Image{}, err, http.StatusBadRequest
+		return domain.Image{}, http.StatusBadRequest, err
 	}
 
-	return image, nil, 0
+	return image, 0, nil
 }
 
-// Adds default image for provided dish id and only creates imageDish column
+// AddDefault adds default image for provided dish
+// id and only creates imageDish column
 // Returns error and status code
-func (i imageRepo) AddDefault(cateringId, dishId string, imageId uuid.UUID) (domain.Image, error, int) {
+func (i ImageRepo) AddDefault(cateringID, dishID string, imageID uuid.UUID) (domain.Image, int, error) {
 	var image domain.Image
+
 	if err := config.DB.
-		Where("id = ? AND catering_id = ?", dishId, cateringId).
+		Where("id = ? AND catering_id = ?", dishID, cateringID).
 		Find(&domain.Dish{}).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return domain.Image{}, err, http.StatusNotFound
+			return domain.Image{}, http.StatusNotFound, err
 		}
-		return domain.Image{}, err, http.StatusBadRequest
+		return domain.Image{}, http.StatusBadRequest, err
 	}
 
 	if err := config.DB.
-		Where("id = ?", imageId).
+		Where("id = ?", imageID).
 		Find(&image).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return domain.Image{}, err, http.StatusNotFound
+			return domain.Image{}, http.StatusNotFound, err
 		}
-		return domain.Image{}, err, http.StatusBadRequest
+		return domain.Image{}, http.StatusBadRequest, err
 	}
 
-	parsedDishId, _ := uuid.FromString(dishId)
+	parsedDishID, _ := uuid.FromString(dishID)
+
 	if rows := config.DB.
-		Where("image_id = ? AND dish_id = ?", imageId, dishId).
+		Where("image_id = ? AND dish_id = ?", imageID, dishID).
 		Find(&domain.ImageDish{}).
 		RowsAffected; rows != 0 {
-		return domain.Image{}, errors.New("can't add the same default image to the dish"), http.StatusBadRequest
+		return domain.Image{}, http.StatusBadRequest, errors.New("can't add the same default image to the dish")
 	}
 
 	imageDish := domain.ImageDish{
-		ImageID: imageId,
-		DishID:  parsedDishId,
+		ImageID: imageID,
+		DishID:  parsedDishID,
 	}
 
 	if err := config.DB.Create(&imageDish).Error; err != nil {
-		return domain.Image{}, err, http.StatusBadRequest
+		return domain.Image{}, http.StatusBadRequest, err
 	}
 
-	return image, nil, 0
+	return image, 0, nil
 }
 
-// Soft delete of image
-// Deletes image from imageDish table and also from images table
+// Delete deletes image from imageDish table
 // Returns error and status code
-func (i imageRepo) Delete(cateringId, imageId, dishId string) (error, int) {
+func (i ImageRepo) Delete(cateringID, imageID, dishID string) (int, error) {
 	var imageToDelete domain.Image
 	if err := config.DB.
-		Where("id = ?", cateringId).
+		Where("id = ?", cateringID).
 		Find(&domain.Catering{}).
 		Error; err != nil {
 
 		if gorm.IsRecordNotFoundError(err) {
-			return err, http.StatusNotFound
+			return http.StatusNotFound, err
 		}
 
-		return err, http.StatusBadRequest
+		return http.StatusBadRequest, err
 	}
 
 	if rows := config.DB.
-		Where("image_id = ? AND dish_id = ?", imageId, dishId).
+		Where("image_id = ? AND dish_id = ?", imageID, dishID).
 		Delete(&domain.ImageDish{}).RowsAffected; rows == 0 {
-		return errors.New("image or dish with that ID not found"), http.StatusNotFound
+		return http.StatusNotFound, errors.New("image or dish with that ID not found")
 	}
 
 	if imageExist := config.DB.
-		Where("id = ? AND category IS NULL", imageId).
+		Where("id = ? AND category IS NULL", imageID).
 		Find(&imageToDelete).
 		Delete(&domain.Image{}).RowsAffected; imageExist != 0 {
 		dir, _ := os.Getwd()
 		imagePath := dir + "/src/static/images/" + imageToDelete.Path
 
 		if err := os.Remove(imagePath); err != nil {
-			return err, http.StatusBadRequest
+			return http.StatusBadRequest, err
 		}
 
-		return nil, 0
+		return 0, nil
 	}
 
-	return nil, 0
+	return 0, nil
 }
 
-// Return list of default images and error
-func (i imageRepo) Get() ([]domain.Image, error) {
+// Get return list of default images and error
+func (i ImageRepo) Get() ([]domain.Image, error) {
 	var images []domain.Image
+
 	if err := config.DB.
 		Where("category IS NOT NULL").
 		Find(&images).Error; err != nil {
 		return nil, err
 	}
+
 	return images, nil
 }
 
-func (i imageRepo) UpdateDishImage(cateringId, imageId, dishId string, image domain.Image) (domain.Image, error, int) {
+// UpdateDishImage updates already existing image in ImageDish table
+// Doesn't delete or change previous image in image table
+func (i ImageRepo) UpdateDishImage(cateringID, imageID, dishID string, image domain.Image) (domain.Image, int, error) {
 	if err := config.DB.
-		Where("id = ?", cateringId).
+		Where("id = ?", cateringID).
 		Find(&domain.Catering{}).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return domain.Image{}, err, http.StatusNotFound
+			return domain.Image{}, http.StatusNotFound, err
 		}
-		return domain.Image{}, err, http.StatusBadRequest
+		return domain.Image{}, http.StatusBadRequest, err
 	}
 
 	if err := config.DB.
-		Where("image_id = ? AND dish_id = ?", imageId, dishId).
+		Where("image_id = ? AND dish_id = ?", imageID, dishID).
 		Find(&domain.ImageDish{}).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return domain.Image{}, err, http.StatusNotFound
+			return domain.Image{}, http.StatusNotFound, err
 		}
-		return domain.Image{}, err, http.StatusBadRequest
+		return domain.Image{}, http.StatusBadRequest, err
 	}
 
 	if err := config.DB.
 		Create(&image).
 		Error; err != nil {
-		return domain.Image{}, err, http.StatusNotFound
+		return domain.Image{}, http.StatusNotFound, err
 	}
 
 	if err := config.DB.
 		Model(&domain.ImageDish{}).
-		Where("image_id = ? AND dish_id = ?", imageId, dishId).
+		Where("image_id = ? AND dish_id = ?", imageID, dishID).
 		Update("image_id", image.ID).Error; err != nil {
-		return domain.Image{}, err, http.StatusBadRequest
+		return domain.Image{}, http.StatusBadRequest, err
 	}
 
-	//dir, _ := os.Getwd()
-	//imagePath := dir + "/src/static/images/" + prevImage.Path
-	//
-	//if err := os.Remove(imagePath); err != nil {
-	//	return domain.Image{}, err, http.StatusBadRequest
-	//}
-
-	return image, nil, 0
+	return image, 0, nil
 }

@@ -8,25 +8,29 @@ import (
 	"net/http"
 )
 
-type clientRepo struct{}
+// ClientRepo struct
+type ClientRepo struct{}
 
-func NewClientRepo() *clientRepo {
-	return &clientRepo{}
+// NewClientRepo returns pointer to client repository
+// with all methods
+func NewClientRepo() *ClientRepo {
+	return &ClientRepo{}
 }
 
 // Add adds client in DB
 // returns error if that client name already exists
-func (c clientRepo) Add(client domain.Client) (domain.Client, error) {
+func (c ClientRepo) Add(client domain.Client) (domain.Client, error) {
 	if exist := config.DB.Where("name = ?", client.Name).
 		Find(&client).RowsAffected; exist != 0 {
 		return domain.Client{}, errors.New("client with that name already exist")
 	}
 	err := config.DB.Create(&client).Error
+
 	return client, err
 }
 
-// Returns list of clients
-func (c clientRepo) Get(query types.PaginationQuery) ([]domain.Client, int, error) {
+// Get returns list of clients
+func (c ClientRepo) Get(query types.PaginationQuery) ([]domain.Client, int, error) {
 	var clients []domain.Client
 	var total int
 
@@ -52,8 +56,8 @@ func (c clientRepo) Get(query types.PaginationQuery) ([]domain.Client, int, erro
 	return clients, total, err
 }
 
-// Soft delete of client
-func (c clientRepo) Delete(id string) error {
+// Delete soft delete of client
+func (c ClientRepo) Delete(id string) error {
 	if result := config.DB.Where("id = ?", id).
 		Delete(&domain.Client{}).RowsAffected; result == 0 {
 		return errors.New("client not found")
@@ -64,22 +68,23 @@ func (c clientRepo) Delete(id string) error {
 
 // Update updates client with passed args
 // returns error and status code
-func (c clientRepo) Update(id string, client domain.Client) (error, int) {
-	if clientExist := config.DB.Where("id = ?", id).
-		Find(&domain.Client{}).RowsAffected; clientExist == 0 {
-		return errors.New("client not found"), http.StatusNotFound
-	}
-
+func (c ClientRepo) Update(id string, client domain.Client) (int, error) {
 	if nameExist := config.DB.Where("name = ?", client.Name).
 		Find(&client).RowsAffected; nameExist != 0 {
-		return errors.New("client with that name already exist"), http.StatusBadRequest
+		return http.StatusBadRequest, errors.New("client with that name already exist")
 	}
-	return config.DB.Model(&client).Where("id = ?", id).Update(&client).Error, 0
+
+	if clientExist := config.DB.Model(&client).Where("id = ?", id).
+		Update(&client).RowsAffected; clientExist == 0 {
+		return http.StatusNotFound, errors.New("client not found")
+	}
+
+	return 0, nil
 }
 
-// Get client by provided key value arguments
+// GetByKey client by provided key value arguments
 // Returns client, error
-func (c clientRepo) GetByKey(key, value string) (domain.Client, error) {
+func (c ClientRepo) GetByKey(key, value string) (domain.Client, error) {
 	var client domain.Client
 	err := config.DB.Where(key+" = ?", value).First(&client).Error
 	return client, err

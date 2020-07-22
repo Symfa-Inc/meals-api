@@ -8,6 +8,7 @@ import (
 	"os"
 )
 
+// CreateImages creates seeds for images table
 func CreateImages() {
 	seedExist := config.DB.Where("name = ?", "init images").First(&domain.Seed{}).Error
 	if seedExist != nil {

@@ -7,23 +7,31 @@ import (
 	"net/http"
 )
 
+// ValidatorMiddleware used to validate users
+// by their roles
 type ValidatorMiddleware interface {
 	ValidateRoles(roles ...string) gin.HandlerFunc
 }
 
-type validator struct{}
+// Validator struct
+type Validator struct{}
 
-func NewValidator() *validator {
-	return &validator{}
+// NewValidator returns pointer to validator struct
+// which includes all validate methods
+func NewValidator() *Validator {
+	return &Validator{}
 }
 
-func (v *validator) ValidateRoles(roles ...string) gin.HandlerFunc {
+// ValidateRoles takes roles enums and validates each role
+// for the upcoming request, aborts the request
+// if role wasn't found in validRoles array
+func (v *Validator) ValidateRoles(roles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var validRoles []string
 		claims, _ := Passport().GetClaimsFromJWT(c)
 
-		userId := claims["id"]
-		user, _ := userRepo.GetByKey("id", fmt.Sprintf("%v", userId))
+		userID := claims["id"]
+		user, _ := userRepo.GetByKey("id", fmt.Sprintf("%v", userID))
 
 		for _, role := range roles {
 			if user.Role == role {
@@ -31,12 +39,11 @@ func (v *validator) ValidateRoles(roles ...string) gin.HandlerFunc {
 			}
 		}
 
-		if len(validRoles) <= 0 {
+		if len(validRoles) == 0 {
 			utils.CreateError(http.StatusForbidden, "no permissions", c)
 			c.Abort()
 			return
-		} else {
-			c.Next()
 		}
+		c.Next()
 	}
 }

@@ -5,15 +5,18 @@ import (
 	"go_api/src/domain"
 )
 
-type userRepo struct{}
+// UserRepo struct
+type UserRepo struct{}
 
-func NewUserRepo() *userRepo {
-	return &userRepo{}
+// NewUserRepo returns pointer to user repository
+// with all methods
+func NewUserRepo() *UserRepo {
+	return &UserRepo{}
 }
 
-// userRepo.GetByKey returns user
+// GetByKey returns user by key
 // and error if exist
-func (ur userRepo) GetByKey(key, value string) (domain.User, error) {
+func (ur UserRepo) GetByKey(key, value string) (domain.User, error) {
 	var user domain.User
 	err := config.DB.Where(key+" = ?", value).First(&user).Error
 	return user, err

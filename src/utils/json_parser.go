@@ -7,7 +7,8 @@ import (
 	"os"
 )
 
-func JsonParse(path string, model interface{}) {
+// JSONParse parsing json from provided path
+func JSONParse(path string, model interface{}) {
 	pwd, _ := os.Getwd()
 	jsonFile, err := os.Open(pwd + path)
 

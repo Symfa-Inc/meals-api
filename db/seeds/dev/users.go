@@ -26,7 +26,7 @@ func CreateUsers() {
 		client, _ := clientRepo.GetByKey("name", "Dymi")
 
 		var userArray []domain.User
-		utils.JsonParse("/db/seeds/data/users.json", &userArray)
+		utils.JSONParse("/db/seeds/data/users.json", &userArray)
 
 		var wg sync.WaitGroup
 		wg.Add(len(userArray))
@@ -36,7 +36,7 @@ func CreateUsers() {
 				go func(i int) {
 					defer wg.Done()
 					userArray[i].CompanyType = &types.CompanyTypesEnum.Catering
-					userArray[i].CateringId = &catering.ID
+					userArray[i].CateringID = &catering.ID
 					userArray[i].Password = hashedPassword
 					config.DB.Create(&userArray[i])
 				}(i)
@@ -44,7 +44,7 @@ func CreateUsers() {
 				go func(i int) {
 					defer wg.Done()
 					userArray[i].CompanyType = &types.CompanyTypesEnum.Client
-					userArray[i].ClientId = &client.ID
+					userArray[i].ClientID = &client.ID
 					userArray[i].Password = hashedPassword
 					config.DB.Create(&userArray[i])
 				}(i)

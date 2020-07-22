@@ -13,15 +13,18 @@ import (
 	"time"
 )
 
-type category struct{}
+// Category sturct
+type Category struct{}
 
-func NewCategory() *category {
-	return &category{}
+// NewCategory returns pointer to Category struct
+// with all methods
+func NewCategory() *Category {
+	return &Category{}
 }
 
 var categoryRepo = repository.NewCategoryRepo()
 
-// AddCategory add dish category in DB
+// Add add dish category in DB
 // returns 200 if success and 4xx if request failed
 // @Summary Returns error if exists and 200 if success
 // @Produce json
@@ -32,11 +35,11 @@ var categoryRepo = repository.NewCategoryRepo()
 // @Success 200 {object} domain.Category false "category object"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/categories [post]
-func (dc category) Add(c *gin.Context) {
+func (dc Category) Add(c *gin.Context) {
 	var body request.AddCategory
-	var path types.PathId
+	var path types.PathID
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
@@ -51,11 +54,11 @@ func (dc category) Add(c *gin.Context) {
 		}
 	}
 
-	cateringId, _ := uuid.FromString(path.ID)
+	cateringID, _ := uuid.FromString(path.ID)
 	categoryModel := domain.Category{
 		DeletedAt:  body.DeletedAt,
 		Name:       strings.ToLower(body.Name),
-		CateringID: cateringId,
+		CateringID: cateringID,
 	}
 
 	category, err := categoryRepo.Add(categoryModel)
@@ -67,18 +70,18 @@ func (dc category) Add(c *gin.Context) {
 	c.JSON(http.StatusOK, category)
 }
 
-// DeleteCategory soft delete of category reading
+// Delete soft delete of category reading
 // @Summary Soft delete
 // @Tags catering categories
 // @Produce json
 // @Param id path string true "Catering ID"
-// @Param categoryId path string true "Category ID"
+// @Param categoryID path string true "Category ID"
 // @Success 204 "Successfully deleted"
 // @Failure 404 {object} types.Error "Not Found"
-// @Router /caterings/{id}/categories/{categoryId} [delete]
-func (dc category) Delete(c *gin.Context) {
+// @Router /caterings/{id}/categories/{categoryID} [delete]
+func (dc Category) Delete(c *gin.Context) {
 	var path types.PathCategory
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
@@ -90,7 +93,7 @@ func (dc category) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// GetCategories returns list of categories or error
+// Get returns list of categories or error
 // @Summary Get list of categories
 // @Tags catering categories
 // @Produce json
@@ -99,14 +102,14 @@ func (dc category) Delete(c *gin.Context) {
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/categories [get]
-func (dc category) Get(c *gin.Context) {
-	var path types.PathId
+func (dc Category) Get(c *gin.Context) {
+	var path types.PathID
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	categoriesResult, err, code := categoryRepo.Get(path.ID)
+	categoriesResult, code, err := categoryRepo.Get(path.ID)
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
@@ -115,23 +118,23 @@ func (dc category) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, categoriesResult)
 }
 
-// UpdateCategory updates dish category with new value provided in body
+// Update updates dish category with new value provided in body
 // @Summary Returns 204 if success and 4xx error if failed
 // @Produce json
 // @Accept json
 // @Tags catering categories
 // @Param id path string true "Catering ID"
-// @Param categoryId path string true "Category ID"
+// @Param categoryID path string true "Category ID"
 // @Param body body request.UpdateCategory false "new category name"
 // @Success 204 "Successfully updated"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/categories/{categoryId} [put]
-func (dc category) Update(c *gin.Context) {
+func (dc Category) Update(c *gin.Context) {
 	var path types.PathCategory
 	var body domain.Category
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
@@ -139,7 +142,7 @@ func (dc category) Update(c *gin.Context) {
 		return
 	}
 
-	err, code := categoryRepo.Update(path, body)
+	code, err := categoryRepo.Update(path, body)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)

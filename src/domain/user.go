@@ -13,11 +13,12 @@ type User struct {
 	Email       string              `gorm:"type:varchar(30);unique;not null" json:"email,omitempty"`
 	Password    string              `gorm:"type:varchar(100);not null" json:"-"`
 	CompanyType *types.CompanyTypes `gorm:"type:varchar(20);null" json:"companyType,omitempty"`
-	CateringId  *uuid.UUID          `json:"cateringId,omitempty"`
-	ClientId    *uuid.UUID          `json:"clientId,omitempty"`
+	CateringID  *uuid.UUID          `json:"cateringId,omitempty"`
+	ClientID    *uuid.UUID          `json:"clientId,omitempty"`
 	Role        string              `sql:"type:user_roles" json:"role,omitempty"`
 } //@name UsersResponse
 
+// UserRepository is user interface for repository
 type UserRepository interface {
 	GetByKey(key, value string) (User, error)
 }

@@ -10,15 +10,18 @@ import (
 	"net/http"
 )
 
-type dish struct{}
+// Dish struct
+type Dish struct{}
 
-func NewDish() *dish {
-	return &dish{}
+// NewDish returns pointer to dish struct
+// with all methods
+func NewDish() *Dish {
+	return &Dish{}
 }
 
 var dishRepo = repository.NewDishRepo()
 
-// AddDish adds dish for catering with provided ID
+// Add adds dish for catering with provided ID
 // @Summary Add dish for certain category
 // @Tags catering dishes
 // @Produce json
@@ -27,11 +30,11 @@ var dishRepo = repository.NewDishRepo()
 // @Success 200 {object} domain.Dish false "dish object"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/dishes [post]
-func (d dish) Add(c *gin.Context) {
-	var path types.PathId
+func (d Dish) Add(c *gin.Context) {
+	var path types.PathID
 	var body domain.Dish
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
@@ -51,7 +54,7 @@ func (d dish) Add(c *gin.Context) {
 	c.JSON(http.StatusOK, dish)
 }
 
-// DeleteDish soft delete of dish
+// Delete soft delete of dish
 // @Summary Soft delete
 // @Tags catering dishes
 // @Produce json
@@ -60,10 +63,10 @@ func (d dish) Add(c *gin.Context) {
 // @Success 204 "Successfully deleted"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/dishes/{dishId} [delete]
-func (d dish) Delete(c *gin.Context) {
+func (d Dish) Delete(c *gin.Context) {
 	var path types.PathDish
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
@@ -74,27 +77,27 @@ func (d dish) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// GetDishes return list of dishes
+// Get return list of dishes
 // @Summary Returns list of dishes
 // @Tags catering dishes
 // @Produce json
 // @Param id path string true "Catering ID"
-// @Param categoryId query string true "Category ID"
+// @Param categoryID query string true "Category ID"
 // @Success 200 {array} domain.Dish "List of dishes"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/dishes [get]
-func (d dish) Get(c *gin.Context) {
-	var path types.PathId
-	var query types.CategoryIdQuery
+func (d Dish) Get(c *gin.Context) {
+	var path types.PathID
+	var query types.CategoryIDQuery
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return
 	}
 
-	dishes, err, code := dishRepo.Get(path.ID, query.CategoryId)
+	dishes, code, err := dishRepo.Get(path.ID, query.CategoryID)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
@@ -109,7 +112,7 @@ func (d dish) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, dishes)
 }
 
-// UpdateDish updates dish
+// Update updates dish
 // @Summary Returns 204 if success and 4xx error if failed
 // @Produce json
 // @Accept json
@@ -121,11 +124,11 @@ func (d dish) Get(c *gin.Context) {
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/dishes/{dishId} [put]
-func (d dish) Update(c *gin.Context) {
+func (d Dish) Update(c *gin.Context) {
 	var path types.PathDish
 	var body domain.Dish
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
@@ -133,7 +136,7 @@ func (d dish) Update(c *gin.Context) {
 		return
 	}
 
-	if err, code := dishRepo.Update(path, body); err != nil {
+	if code, err := dishRepo.Update(path, body); err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}

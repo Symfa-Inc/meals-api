@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// CreateMeals creates seeds for meals table
 func CreateMeals() {
 	cateringRepo := repository.NewCateringRepo()
 	seedExist := config.DB.Where("name = ?", "init meals").First(&domain.Seed{}).Error

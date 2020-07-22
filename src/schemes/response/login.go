@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-//Response model for /refresh-token response route
+// RefreshToken response model for /refresh-token response route
 type RefreshToken struct {
 	Code   int       `json:"code"`
 	Expire time.Time `json:"expire"`

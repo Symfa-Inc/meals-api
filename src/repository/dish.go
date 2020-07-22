@@ -10,19 +10,22 @@ import (
 	"time"
 )
 
-type dishRepo struct{}
+// DishRepo struct
+type DishRepo struct{}
 
-func NewDishRepo() *dishRepo {
-	return &dishRepo{}
+// NewDishRepo returns pointer to dish repository
+// with all methods
+func NewDishRepo() *DishRepo {
+	return &DishRepo{}
 }
 
-// Creates new dish entity
+// Add creates new dish entity
 // returns error or nil
-func (d dishRepo) Add(cateringId string, dish domain.Dish) (domain.Dish, error) {
+func (d DishRepo) Add(cateringID string, dish domain.Dish) (domain.Dish, error) {
 	var total int
 	config.DB.
 		Model(&domain.Dish{}).
-		Where("catering_id = ? AND category_id = ?", cateringId, dish.CategoryID).
+		Where("catering_id = ? AND category_id = ?", cateringID, dish.CategoryID).
 		Count(&total)
 
 	if total >= 10 {
@@ -30,7 +33,7 @@ func (d dishRepo) Add(cateringId string, dish domain.Dish) (domain.Dish, error) 
 	}
 
 	if dishExist := config.DB.
-		Where("catering_id = ? AND category_id = ? AND name = ?", cateringId, dish.CategoryID, dish.Name).
+		Where("catering_id = ? AND category_id = ? AND name = ?", cateringID, dish.CategoryID, dish.Name).
 		Find(&dish).
 		RecordNotFound(); !dishExist {
 		return domain.Dish{}, errors.New("this dish already exist in that category")
@@ -43,9 +46,9 @@ func (d dishRepo) Add(cateringId string, dish domain.Dish) (domain.Dish, error) 
 	return dish, nil
 }
 
-// Soft delete of entity
+// Delete soft delete of entity
 // returns error or nil
-func (d dishRepo) Delete(path types.PathDish) error {
+func (d DishRepo) Delete(path types.PathDish) error {
 	if cateringNotExist := config.DB.Where("id = ?", path.CateringID).
 		Find(&domain.Catering{}).RecordNotFound(); cateringNotExist {
 		return errors.New("catering with that ID doesn't exist")
@@ -59,58 +62,65 @@ func (d dishRepo) Delete(path types.PathDish) error {
 	return nil
 }
 
-// Get entity filtered by key and value
+// GetByKey get entity filtered by key and value
 // returns entity and error or nil
-func (d dishRepo) GetByKey(key, value, cateringId, categoryId string) (domain.Dish, error, int) {
+func (d DishRepo) GetByKey(key, value, cateringID, categoryID string) (domain.Dish, int, error) {
 	var dish domain.Dish
+
 	if err := config.DB.
-		Where("catering_id = ? AND category_id = ? AND "+key+" = ?", cateringId, categoryId, value).
+		Where("catering_id = ? AND category_id = ? AND "+key+" = ?", cateringID, categoryID, value).
 		First(&dish).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return domain.Dish{}, errors.New("dish with that id not found"), http.StatusNotFound
+			return domain.Dish{}, http.StatusNotFound, errors.New("dish with that id not found")
 		}
-		return domain.Dish{}, err, http.StatusBadRequest
+		return domain.Dish{}, http.StatusBadRequest, err
 	}
-	return dish, nil, 0
+
+	return dish, 0, nil
 }
 
-func (d dishRepo) FindById(cateringId, id string) (domain.Dish, error, int) {
+// FindByID finds dish by ID
+// Returns Dish, err and status code
+func (d DishRepo) FindByID(cateringID, id string) (domain.Dish, int, error) {
 	var dish domain.Dish
+
 	if err := config.DB.
-		Where("catering_id = ? AND id = ?", cateringId, id).
+		Where("catering_id = ? AND id = ?", cateringID, id).
 		First(&dish).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return domain.Dish{}, errors.New("dish with that id not found"), http.StatusNotFound
+			return domain.Dish{}, http.StatusNotFound, errors.New("dish with that id not found")
 		}
-		return domain.Dish{}, err, http.StatusBadRequest
+		return domain.Dish{}, http.StatusBadRequest, err
 	}
-	return dish, nil, 0
+
+	return dish, 0, nil
 }
 
 // Get list of dishes
 // returns array of dishes and error or nil and status code
-func (d dishRepo) Get(cateringId, categoryId string) ([]domain.Dish, error, int) {
+func (d DishRepo) Get(cateringID, categoryID string) ([]domain.Dish, int, error) {
 	var dishes []domain.Dish
 
 	if cateringNotExist := config.DB.
-		Where("id = ?", cateringId).
+		Where("id = ?", cateringID).
 		Find(&domain.Catering{}).
 		RecordNotFound(); cateringNotExist {
-		return nil, errors.New("catering with that ID doesn't exist"), http.StatusNotFound
+		return nil, http.StatusNotFound, errors.New("catering with that ID doesn't exist")
 	}
 
 	if categoryNotExist := config.DB.
 		Unscoped().
-		Where("id = ? AND (deleted_at > ? OR deleted_at IS NULL)", categoryId, time.Now()).
+		Where("id = ? AND (deleted_at > ? OR deleted_at IS NULL)", categoryID, time.Now()).
 		Find(&domain.Category{}).
 		RecordNotFound(); categoryNotExist {
-		return nil, errors.New("category with that ID doesn't exist"), http.StatusNotFound
+		return nil, http.StatusNotFound, errors.New("category with that ID doesn't exist")
 	}
 
 	err := config.DB.
-		Where("catering_id = ? AND category_id = ?", cateringId, categoryId).
+		Where("catering_id = ? AND category_id = ?", cateringID, categoryID).
 		Find(&dishes).
 		Error
+
 	for i := range dishes {
 		var imagesArray []domain.ImageArray
 		config.DB.
@@ -123,17 +133,17 @@ func (d dishRepo) Get(cateringId, categoryId string) ([]domain.Dish, error, int)
 		dishes[i].Images = imagesArray
 	}
 
-	return dishes, err, 0
+	return dishes, 0, err
 }
 
-// Updates entity
+// Update updates entity
 // returns error or nil and status code
-func (d dishRepo) Update(path types.PathDish, dish domain.Dish) (error, int) {
+func (d DishRepo) Update(path types.PathDish, dish domain.Dish) (int, error) {
 	if cateringNotExist := config.DB.
 		Where("id = ?", path.CateringID).
 		Find(&domain.Catering{}).
 		RecordNotFound(); cateringNotExist {
-		return errors.New("catering not found"), http.StatusNotFound
+		return http.StatusNotFound, errors.New("catering not found")
 	}
 
 	if categoryNotExist := config.DB.
@@ -141,14 +151,14 @@ func (d dishRepo) Update(path types.PathDish, dish domain.Dish) (error, int) {
 		Where("id = ? AND (deleted_at > ? OR deleted_at IS NULL)", dish.CategoryID, time.Now()).
 		Find(&domain.Category{}).
 		RecordNotFound(); categoryNotExist {
-		return errors.New("dish category not found"), http.StatusNotFound
+		return http.StatusNotFound, errors.New("dish category not found")
 	}
 
 	if result := config.DB.Model(&dish).
 		Where("id = ? AND category_id = ?", path.DishID, dish.CategoryID).
 		Update(&dish).RowsAffected; result == 0 {
-		return errors.New("dish not found"), http.StatusNotFound
+		return http.StatusNotFound, errors.New("dish not found")
 	}
 
-	return nil, 0
+	return 0, nil
 }

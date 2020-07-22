@@ -12,15 +12,18 @@ import (
 	"time"
 )
 
-type meal struct{}
+// Meal struct
+type Meal struct{}
 
-func NewMeal() *meal {
-	return &meal{}
+// NewMeal returns pointer to meal struct
+// with all methods
+func NewMeal() *Meal {
+	return &Meal{}
 }
 
 var mealRepo = repository.NewMealRepo()
 
-// AddMeals add meals
+// Add adds meals
 // @Summary Add days for catering
 // @Tags catering meals
 // @Produce json
@@ -29,12 +32,12 @@ var mealRepo = repository.NewMealRepo()
 // @Success 201 {object} request.AddMeal "created meal"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/meals [post]
-func (m meal) Add(c *gin.Context) {
-	var path types.PathId
+func (m Meal) Add(c *gin.Context) {
+	var path types.PathID
 	var body request.AddMeal
 	mealDishRepo := repository.NewMealDishesRepo()
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
@@ -42,10 +45,10 @@ func (m meal) Add(c *gin.Context) {
 		return
 	}
 
-	parsedId, _ := uuid.FromString(path.ID)
+	parsedID, _ := uuid.FromString(path.ID)
 	meal := domain.Meal{
 		Date:       body.Date,
-		CateringID: parsedId,
+		CateringID: parsedID,
 	}
 
 	t := 24 * time.Hour
@@ -61,8 +64,8 @@ func (m meal) Add(c *gin.Context) {
 		return
 	}
 
-	for _, dishId := range body.Dishes {
-		_, err, code := dishRepo.FindById(path.ID, dishId)
+	for _, dishID := range body.Dishes {
+		_, code, err := dishRepo.FindByID(path.ID, dishID)
 		if err != nil {
 			utils.CreateError(code, err.Error(), c)
 			return
@@ -75,11 +78,11 @@ func (m meal) Add(c *gin.Context) {
 		return
 	}
 
-	for _, dishId := range body.Dishes {
-		dishIdParsed, _ := uuid.FromString(dishId)
+	for _, dishID := range body.Dishes {
+		dishIDParsed, _ := uuid.FromString(dishID)
 		mealDish := domain.MealDish{
 			MealID: mealItem.(*domain.Meal).ID,
-			DishID: dishIdParsed,
+			DishID: dishIDParsed,
 		}
 		if err := mealDishRepo.Add(mealDish); err != nil {
 			utils.CreateError(http.StatusBadRequest, err.Error(), c)
@@ -90,7 +93,7 @@ func (m meal) Add(c *gin.Context) {
 	c.JSON(http.StatusCreated, mealItem)
 }
 
-// GetMeals returns array of meals
+// Get returns array of meals
 // @Summary Get list of categories with dishes for passed meal ID
 // @Tags catering meals
 // @Produce json
@@ -100,15 +103,15 @@ func (m meal) Add(c *gin.Context) {
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/meals [get]
-func (m meal) Get(c *gin.Context) {
+func (m Meal) Get(c *gin.Context) {
 	var query types.DateQuery
-	var pathUri types.PathId
+	var path types.PathID
 
-	if err := utils.RequestBinderUri(&pathUri, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	_, err := cateringRepo.GetByKey("id", pathUri.ID)
+	_, err := cateringRepo.GetByKey("id", path.ID)
 
 	if err != nil {
 		if err.Error() == "record not found" {
@@ -129,19 +132,19 @@ func (m meal) Get(c *gin.Context) {
 		return
 	}
 
-	result, mealId, err, code := mealRepo.Get(date, pathUri.ID)
+	result, mealID, code, err := mealRepo.Get(date, path.ID)
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"mealId": mealId,
+		"mealId": mealID,
 		"dishes": result,
 	})
 }
 
-// UpdateMeal updates the menu for provided day, takes an array of dish Ids
+// Update updates the menu for provided day, takes an array of dish Ids
 // @Summary Returns 204 if success and 4xx if error
 // @Produce json
 // @Accept json
@@ -153,12 +156,12 @@ func (m meal) Get(c *gin.Context) {
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/meals/{mealId} [put]
-func (m meal) Update(c *gin.Context) {
+func (m Meal) Update(c *gin.Context) {
 	var path types.PathMeal
 	var body request.UpdateMeal
 	mealDishRepo := repository.NewMealDishesRepo()
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
@@ -166,7 +169,7 @@ func (m meal) Update(c *gin.Context) {
 		return
 	}
 
-	mealItem, err, code := mealRepo.GetByKey("id", path.MealId)
+	mealItem, code, err := mealRepo.GetByKey("id", path.MealID)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
@@ -178,11 +181,11 @@ func (m meal) Update(c *gin.Context) {
 		return
 	}
 
-	for _, dishId := range body.Dishes {
-		dishIdParsed, _ := uuid.FromString(dishId)
+	for _, dishID := range body.Dishes {
+		dishIDParsed, _ := uuid.FromString(dishID)
 		mealDish := domain.MealDish{
 			MealID: mealItem.ID,
-			DishID: dishIdParsed,
+			DishID: dishIDParsed,
 		}
 		if err := mealDishRepo.Add(mealDish); err != nil {
 			utils.CreateError(http.StatusBadRequest, err.Error(), c)

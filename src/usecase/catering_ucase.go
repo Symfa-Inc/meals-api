@@ -10,15 +10,18 @@ import (
 	"net/http"
 )
 
-type catering struct{}
+// Catering struct
+type Catering struct{}
 
-func NewCatering() *catering {
-	return &catering{}
+// NewCatering returns pointer to catering struct
+// with all methods
+func NewCatering() *Catering {
+	return &Catering{}
 }
 
 var cateringRepo = repository.NewCateringRepo()
 
-// AddCatering creates catering
+// Add creates catering
 // @Summary Returns error or 201 status code if success
 // @Produce json
 // @Accept json
@@ -27,7 +30,7 @@ var cateringRepo = repository.NewCateringRepo()
 // @Success 200 {object} domain.Catering false "catering object"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings [post]
-func (ca catering) Add(c *gin.Context) {
+func (ca Catering) Add(c *gin.Context) {
 	var cateringModel domain.Catering
 	if err := utils.RequestBinderBody(&cateringModel, c); err != nil {
 		return
@@ -42,7 +45,7 @@ func (ca catering) Add(c *gin.Context) {
 	c.JSON(http.StatusCreated, catering)
 }
 
-// DeleteCatering soft delete of catering
+// Delete soft delete of catering
 // @Summary Soft delete
 // @Tags catering
 // @Produce json
@@ -51,9 +54,9 @@ func (ca catering) Add(c *gin.Context) {
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id} [delete]
-func (ca catering) Delete(c *gin.Context) {
-	var path types.PathId
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+func (ca Catering) Delete(c *gin.Context) {
+	var path types.PathID
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
@@ -65,7 +68,7 @@ func (ca catering) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// GetCatering returns catering
+// GetByID returns catering
 // @Summary Returns info about catering
 // @Tags catering
 // @Produce json
@@ -74,10 +77,10 @@ func (ca catering) Delete(c *gin.Context) {
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id} [get]
-func (ca catering) GetById(c *gin.Context) {
-	var path types.PathId
+func (ca Catering) GetByID(c *gin.Context) {
+	var path types.PathID
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
@@ -91,7 +94,7 @@ func (ca catering) GetById(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-// GetCaterings return list of caterings
+// Get return list of caterings
 // @Summary Returns list of caterings
 // @Tags catering
 // @Produce json
@@ -100,7 +103,7 @@ func (ca catering) GetById(c *gin.Context) {
 // @Success 200 {object} response.GetCaterings "List of caterings"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings [get]
-func (ca catering) Get(c *gin.Context) {
+func (ca Catering) Get(c *gin.Context) {
 	var query types.PaginationQuery
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
@@ -125,7 +128,7 @@ func (ca catering) Get(c *gin.Context) {
 	})
 }
 
-// UpdateCatering updates catering
+// Update updates catering
 // @Summary Returns 204 if success and 4xx error if failed
 // @Produce json
 // @Accept json
@@ -136,19 +139,19 @@ func (ca catering) Get(c *gin.Context) {
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id} [put]
-func (ca catering) Update(c *gin.Context) {
-	var path types.PathId
+func (ca Catering) Update(c *gin.Context) {
+	var path types.PathID
 	var cateringModel domain.Catering
 
 	if err := utils.RequestBinderBody(&cateringModel, c); err != nil {
 		return
 	}
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	if err, code := cateringRepo.Update(path.ID, cateringModel); err != nil {
+	if code, err := cateringRepo.Update(path.ID, cateringModel); err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}
