@@ -83,6 +83,7 @@ func (d DishRepo) GetByKey(key, value, cateringID, categoryID string) (domain.Di
 // Returns Dish, err and status code
 func (d DishRepo) FindByID(cateringID, id string) (domain.Dish, int, error) {
 	var dish domain.Dish
+	var imagesArray []domain.ImageArray
 
 	if err := config.DB.
 		Where("catering_id = ? AND id = ?", cateringID, id).
@@ -91,6 +92,20 @@ func (d DishRepo) FindByID(cateringID, id string) (domain.Dish, int, error) {
 			return domain.Dish{}, http.StatusNotFound, errors.New("dish with that id not found")
 		}
 		return domain.Dish{}, http.StatusBadRequest, err
+	}
+
+	config.DB.
+		Model(&domain.Image{}).
+		Select("images.path, images.id").
+		Joins("left join image_dishes id on id.image_id = images.id").
+		Joins("left join dishes d on id.dish_id = d.id").
+		Where("d.id = ? AND id.deleted_at IS NULL", dish.ID).
+		Scan(&imagesArray)
+
+	dish.Images = imagesArray
+
+	if len(dish.Images) == 0 {
+		dish.Images = make([]domain.ImageArray, 0)
 	}
 
 	return dish, 0, nil

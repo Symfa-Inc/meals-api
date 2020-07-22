@@ -18,6 +18,8 @@ func CreateClients() {
 
 		var clientsArray []domain.Client
 		utils.JSONParse("/db/seeds/data/clients.json", &clientsArray)
+		var cateringsArray []domain.Catering
+		config.DB.Find(&cateringsArray).Limit(len(clientsArray))
 
 		var wg sync.WaitGroup
 		wg.Add(len(clientsArray))
@@ -25,6 +27,7 @@ func CreateClients() {
 		for i := range clientsArray {
 			go func(i int) {
 				defer wg.Done()
+				clientsArray[i].CateringID = cateringsArray[i].ID
 				config.DB.Create(&clientsArray[i])
 			}(i)
 		}

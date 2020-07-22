@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"github.com/jinzhu/gorm"
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/types"
@@ -19,18 +20,43 @@ func NewClientRepo() *ClientRepo {
 
 // Add adds client in DB
 // returns error if that client name already exists
-func (c ClientRepo) Add(client domain.Client) (domain.Client, error) {
+func (c ClientRepo) Add(cateringID string, client domain.Client) (domain.Client, error) {
+	if err := config.DB.
+		Where("id = ?", cateringID).
+		Find(&domain.Catering{}).
+		Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return domain.Client{}, err
+		}
+
+		return domain.Client{}, err
+	}
+
 	if exist := config.DB.Where("name = ?", client.Name).
 		Find(&client).RowsAffected; exist != 0 {
 		return domain.Client{}, errors.New("client with that name already exist")
 	}
+
 	err := config.DB.Create(&client).Error
+
+	var cateringSchedules []domain.CateringSchedule
+	config.DB.Where("catering_id = ?", client.CateringID).Find(&cateringSchedules)
+	for _, schedule := range cateringSchedules {
+		clientSchedule := domain.ClientSchedule{
+			Day:       schedule.Day,
+			Start:     schedule.Start,
+			End:       schedule.End,
+			IsWorking: schedule.IsWorking,
+			ClientID:  client.ID,
+		}
+		config.DB.Create(&clientSchedule)
+	}
 
 	return client, err
 }
 
 // Get returns list of clients
-func (c ClientRepo) Get(query types.PaginationQuery) ([]domain.Client, int, error) {
+func (c ClientRepo) Get(cateringID string, query types.PaginationQuery) ([]domain.Client, int, error) {
 	var clients []domain.Client
 	var total int
 
@@ -45,11 +71,15 @@ func (c ClientRepo) Get(query types.PaginationQuery) ([]domain.Client, int, erro
 		limit = 10
 	}
 
-	config.DB.Find(&clients).Count(&total)
+	config.DB.
+		Where("catering_id = ?", cateringID).
+		Find(&clients).
+		Count(&total)
 
 	err := config.DB.
 		Limit(limit).
-		Offset((page - 1) * limit).
+		Offset((page-1)*limit).
+		Where("catering_id = ?", cateringID).
 		Find(&clients).
 		Error
 
@@ -57,8 +87,8 @@ func (c ClientRepo) Get(query types.PaginationQuery) ([]domain.Client, int, erro
 }
 
 // Delete soft delete of client
-func (c ClientRepo) Delete(id string) error {
-	if result := config.DB.Where("id = ?", id).
+func (c ClientRepo) Delete(cateringID, id string) error {
+	if result := config.DB.Where("id = ? AND catering_id = ?", id, cateringID).
 		Delete(&domain.Client{}).RowsAffected; result == 0 {
 		return errors.New("client not found")
 	}
@@ -68,13 +98,13 @@ func (c ClientRepo) Delete(id string) error {
 
 // Update updates client with passed args
 // returns error and status code
-func (c ClientRepo) Update(id string, client domain.Client) (int, error) {
+func (c ClientRepo) Update(cateringID, id string, client domain.Client) (int, error) {
 	if nameExist := config.DB.Where("name = ?", client.Name).
 		Find(&client).RowsAffected; nameExist != 0 {
 		return http.StatusBadRequest, errors.New("client with that name already exist")
 	}
 
-	if clientExist := config.DB.Model(&client).Where("id = ?", id).
+	if clientExist := config.DB.Model(&client).Where("id = ? AND catering_id = ?", id, cateringID).
 		Update(&client).RowsAffected; clientExist == 0 {
 		return http.StatusNotFound, errors.New("client not found")
 	}

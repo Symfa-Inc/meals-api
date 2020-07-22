@@ -5,6 +5,7 @@ import (
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/types"
+	"go_api/src/utils"
 	"net/http"
 )
 
@@ -28,6 +29,8 @@ func (c CateringRepo) Add(catering domain.Catering) (domain.Catering, error) {
 	if err != nil {
 		return domain.Catering{}, err
 	}
+	utils.AddDefaultCateringSchedules(catering.ID)
+
 	return catering, err
 }
 

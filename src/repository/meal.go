@@ -73,7 +73,7 @@ func (m MealRepo) Get(mealDate time.Time, id string) ([]domain.Dish, uuid.UUID, 
 			Select("images.path, images.id").
 			Joins("left join image_dishes id on id.image_id = images.id").
 			Joins("left join dishes d on id.dish_id = d.id").
-			Where("d.id = ?", result[i].ID).
+			Where("d.id = ? AND id.deleted_at IS NULL", result[i].ID).
 			Scan(&imagesArray)
 		result[i].Images = imagesArray
 	}
