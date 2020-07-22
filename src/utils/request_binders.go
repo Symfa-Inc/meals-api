@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// Validates request body with passed model
+// RequestBinderBody validates request body with passed model
 func RequestBinderBody(model interface{}, c *gin.Context) error {
 	if err := c.ShouldBindJSON(model); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -17,8 +17,8 @@ func RequestBinderBody(model interface{}, c *gin.Context) error {
 	return nil
 }
 
-// Validates request uri with passed model
-func RequestBinderUri(model interface{}, c *gin.Context) error {
+// RequestBinderURI validates request uri with passed model
+func RequestBinderURI(model interface{}, c *gin.Context) error {
 	if err := c.ShouldBindUri(model); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":  http.StatusBadRequest,
@@ -29,7 +29,7 @@ func RequestBinderUri(model interface{}, c *gin.Context) error {
 	return nil
 }
 
-// Validates request query with passed model
+// RequestBinderQuery validates request query with passed model
 func RequestBinderQuery(model interface{}, c *gin.Context) error {
 	if err := c.ShouldBindQuery(model); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

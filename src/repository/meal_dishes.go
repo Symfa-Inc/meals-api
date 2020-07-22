@@ -5,22 +5,27 @@ import (
 	"go_api/src/domain"
 )
 
-type mealDishesRepo struct{}
+// MealDishesRepo struct
+type MealDishesRepo struct{}
 
-func NewMealDishesRepo() *mealDishesRepo {
-	return &mealDishesRepo{}
+// NewMealDishesRepo returns pointer to mealDish repository
+// with all methods
+func NewMealDishesRepo() *MealDishesRepo {
+	return &MealDishesRepo{}
 }
 
-func (md mealDishesRepo) Add(mealDish domain.MealDish) error {
+// Add mealDish, returns err or nil
+func (md MealDishesRepo) Add(mealDish domain.MealDish) error {
 	err := config.DB.
 		Create(&mealDish).
 		Error
 	return err
 }
 
-func (md mealDishesRepo) Delete(mealId string) error {
+// Delete soft deletes mealDish, returns err or nil
+func (md MealDishesRepo) Delete(mealID string) error {
 	if err := config.DB.
-		Where("meal_id = ?", mealId).
+		Where("meal_id = ?", mealID).
 		Delete(&domain.MealDish{}).
 		Error; err != nil {
 		return err

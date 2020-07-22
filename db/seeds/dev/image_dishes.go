@@ -8,6 +8,7 @@ import (
 	"strconv"
 )
 
+// CreateImageDishes creates seeds for image_dishes table
 func CreateImageDishes() {
 	cateringRepo := repository.NewCateringRepo()
 	categoryRepo := repository.NewCategoryRepo()
@@ -25,13 +26,13 @@ func CreateImageDishes() {
 		var dishesArray []domain.Dish
 
 		cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-		cateringId := cateringResult.ID.String()
+		cateringID := cateringResult.ID.String()
 
-		categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringId)
+		categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringID)
 
-		categoryId := categoryResult.ID.String()
+		categoryID := categoryResult.ID.String()
 
-		dishesArray, _, _ = dishRepo.Get(cateringId, categoryId)
+		dishesArray, _, _ = dishRepo.Get(cateringID, categoryID)
 
 		var imageDish domain.ImageDish
 		for i := range dishesArray {

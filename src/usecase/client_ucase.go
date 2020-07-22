@@ -10,10 +10,13 @@ import (
 	"net/http"
 )
 
-type client struct{}
+// Client struct
+type Client struct{}
 
-func NewClient() *client {
-	return &client{}
+// NewClient returns pointer to client struct
+// with all methods
+func NewClient() *Client {
+	return &Client{}
 }
 
 var clientRepo = repository.NewClientRepo()
@@ -27,7 +30,7 @@ var clientRepo = repository.NewClientRepo()
 // @Success 200 {object} domain.Client false "client object"
 // @Failure 400 {object} types.Error "Error"
 // @Router /clients [post]
-func (cl client) Add(c *gin.Context) {
+func (cl Client) Add(c *gin.Context) {
 	var body domain.Client
 	if err := utils.RequestBinderBody(&body, c); err != nil {
 		return
@@ -51,7 +54,7 @@ func (cl client) Add(c *gin.Context) {
 // @Success 200 {object} response.GetClients "List of clients"
 // @Failure 400 {object} types.Error "Error"
 // @Router /clients [get]
-func (cl client) Get(c *gin.Context) {
+func (cl Client) Get(c *gin.Context) {
 	var query types.PaginationQuery
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
@@ -85,9 +88,9 @@ func (cl client) Get(c *gin.Context) {
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /clients/{id} [delete]
-func (cl client) Delete(c *gin.Context) {
-	var path types.PathId
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+func (cl Client) Delete(c *gin.Context) {
+	var path types.PathID
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
@@ -110,19 +113,19 @@ func (cl client) Delete(c *gin.Context) {
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /clients/{id} [put]
-func (cl client) Update(c *gin.Context) {
-	var path types.PathId
+func (cl Client) Update(c *gin.Context) {
+	var path types.PathID
 	var clientModal domain.Client
 
 	if err := utils.RequestBinderBody(&clientModal, c); err != nil {
 		return
 	}
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	if err, code := clientRepo.Update(path.ID, clientModal); err != nil {
+	if code, err := clientRepo.Update(path.ID, clientModal); err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}

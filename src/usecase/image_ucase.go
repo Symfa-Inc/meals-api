@@ -12,15 +12,18 @@ import (
 	"path/filepath"
 )
 
-type image struct{}
+// Image struct
+type Image struct{}
 
-func NewImage() *image {
-	return &image{}
+// NewImage returns pointer to image struct
+// with all methods
+func NewImage() *Image {
+	return &Image{}
 }
 
 var imageRepo = repository.NewImageRepo()
 
-// AddImage adds image for dish with provided ID
+// Add adds image for dish with provided ID
 // @Summary Add image for certain dish
 // @Tags catering images
 // @Produce json
@@ -33,11 +36,11 @@ var imageRepo = repository.NewImageRepo()
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/images [post]
-func (i image) Add(c *gin.Context) {
-	var path types.PathId
-	var query types.DishIdQuery
+func (i Image) Add(c *gin.Context) {
+	var path types.PathID
+	var query types.DishIDQuery
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
@@ -46,52 +49,59 @@ func (i image) Add(c *gin.Context) {
 	}
 
 	id := c.PostForm("id")
+
 	if id != "" {
 		parsedID, err := uuid.FromString(id)
+
 		if err != nil {
 			utils.CreateError(http.StatusBadRequest, err.Error(), c)
 			return
 		}
-		image, err, code := imageRepo.AddDefault(path.ID, query.DishId, parsedID)
+
+		image, code, err := imageRepo.AddDefault(path.ID, query.DishID, parsedID)
+
 		if err != nil {
 			utils.CreateError(code, err.Error(), c)
 			return
 		}
+
 		c.JSON(http.StatusOK, image)
 		return
-	} else {
-		file, err := c.FormFile("image")
-		if err != nil {
-			utils.CreateError(http.StatusBadRequest, "form file error:"+err.Error(), c)
-			return
-		}
-
-		dir, _ := os.Getwd()
-		ext := filepath.Ext(file.Filename)
-		randomString := utils.GenerateString(10)
-
-		imagePath := dir + "/src/static/images/" + randomString + ext
-
-		if err := c.SaveUploadedFile(file, imagePath); err != nil {
-			utils.CreateError(http.StatusBadRequest, err.Error(), c)
-			return
-		}
-
-		image := domain.Image{
-			Path: "/" + randomString + ext,
-		}
-
-		result, err, code := imageRepo.Add(path.ID, query.DishId, image)
-		if err != nil {
-			utils.CreateError(code, err.Error(), c)
-			return
-		}
-
-		c.JSON(http.StatusCreated, result)
 	}
+
+	file, err := c.FormFile("image")
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	dir, _ := os.Getwd()
+	ext := filepath.Ext(file.Filename)
+	randomString := utils.GenerateString(10)
+
+	imagePath := dir + "/src/static/images/" + randomString + ext
+
+	if err := c.SaveUploadedFile(file, imagePath); err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	image := domain.Image{
+		Path: "/" + randomString + ext,
+	}
+
+	result, code, err := imageRepo.Add(path.ID, query.DishID, image)
+
+	if err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
+	}
+
+	c.JSON(http.StatusCreated, result)
 }
 
-// DeleteImage soft delete of image
+// Delete deletes image from dish
 // @Summary Soft delete
 // @Tags catering images
 // @Produce json
@@ -102,14 +112,14 @@ func (i image) Add(c *gin.Context) {
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/images/{imageId}/dish/{dishId} [delete]
-func (i image) Delete(c *gin.Context) {
+func (i Image) Delete(c *gin.Context) {
 	var path types.PathImageDish
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	if err, code := imageRepo.Delete(path.CateringID, path.ImageId, path.DishId); err != nil {
+	if code, err := imageRepo.Delete(path.CateringID, path.ImageID, path.DishID); err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}
@@ -117,14 +127,14 @@ func (i image) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// GetImages return list of default images
+// Get return list of default images
 // @Summary Returns list of images
 // @Tags catering images
 // @Produce json
 // @Success 200 {array} response.GetImages "List of images"
 // @Failure 400 {object} types.Error "Error"
 // @Router /images [get]
-func (i image) Get(c *gin.Context) {
+func (i Image) Get(c *gin.Context) {
 	images, err := imageRepo.Get()
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
@@ -133,7 +143,7 @@ func (i image) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, images)
 }
 
-// Update Updates image for dish with provided ID
+// Update updates image for dish with provided ID
 // @Summary Updates image for certain dish
 // @Tags catering images
 // @Produce json
@@ -146,10 +156,10 @@ func (i image) Get(c *gin.Context) {
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/images/{imageId}/dish/{dishId} [put]
-func (i image) Update(c *gin.Context) {
+func (i Image) Update(c *gin.Context) {
 	var path types.PathImageDish
 
-	if err := utils.RequestBinderUri(&path, c); err != nil {
+	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
@@ -174,7 +184,7 @@ func (i image) Update(c *gin.Context) {
 		Path: "/" + randomString + ext,
 	}
 
-	imageResult, err, code := imageRepo.UpdateDishImage(path.CateringID, path.ImageId, path.DishId, image)
+	imageResult, code, err := imageRepo.UpdateDishImage(path.CateringID, path.ImageID, path.DishID, image)
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return

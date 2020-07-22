@@ -9,6 +9,7 @@ import (
 	"sync"
 )
 
+// CreateCategories creates seeds for categories table
 func CreateCategories() {
 	cateringRepo := repository.NewCateringRepo()
 	seedExists := config.DB.
@@ -21,7 +22,7 @@ func CreateCategories() {
 
 		cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 		var categoriesArray []domain.Category
-		utils.JsonParse("/db/seeds/data/categories.json", &categoriesArray)
+		utils.JSONParse("/db/seeds/data/categories.json", &categoriesArray)
 
 		var wg sync.WaitGroup
 		wg.Add(len(categoriesArray))

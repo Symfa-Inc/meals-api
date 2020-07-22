@@ -12,15 +12,18 @@ import (
 	"time"
 )
 
+// IdentityKeyID is used to tell
+// by what field we will identify user
 const IdentityKeyID = "id"
 
+// UserID struct
 type UserID struct {
 	ID string
 }
 
 var userRepo = repository.NewUserRepo()
 
-//Middleware for user authentication
+// Passport is middleware for user authentication
 func Passport() *jwt.GinJWTMiddleware {
 	authMiddleware, _ := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:          "AIS Catering",

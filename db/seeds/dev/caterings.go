@@ -17,7 +17,7 @@ func CreateCaterings() {
 		}
 
 		var cateringArray []domain.Catering
-		utils.JsonParse("/db/seeds/data/caterings.json", &cateringArray)
+		utils.JSONParse("/db/seeds/data/caterings.json", &cateringArray)
 
 		var wg sync.WaitGroup
 		wg.Add(len(cateringArray))

@@ -6,10 +6,11 @@ import (
 	"go_api/src/types"
 )
 
+// Dish struct used in DB
 type Dish struct {
 	Base
 	Name       string       `json:"name" gorm:"not null" binding:"required"`
-	Weight     int          `json:"weight" gorm:"not null"binding:"required"`
+	Weight     int          `json:"weight" gorm:"not null" binding:"required"`
 	Price      int          `json:"price" gorm:"not null" binding:"required"`
 	Desc       string       `json:"desc"`
 	Images     []ImageArray `json:"images"`
@@ -17,6 +18,7 @@ type Dish struct {
 	CategoryID uuid.UUID    `json:"categoryId,omitempty"`
 } //@name DishRequest
 
+// DishUsecase is dish interface for usecase
 type DishUsecase interface {
 	Add(c *gin.Context)
 	Delete(c *gin.Context)
@@ -24,10 +26,11 @@ type DishUsecase interface {
 	Update(c *gin.Context)
 }
 
+// DishRepository is dish interface for repository
 type DishRepository interface {
-	Add(cateringId string, dish Dish) (Dish, error)
+	Add(cateringID string, dish Dish) (Dish, error)
 	Delete(path types.PathDish) error
-	Get(cateringId, categoryId string) ([]Dish, error, int)
-	GetByKey(key, value, cateringId, categoryId string) (Dish, error, int)
-	Update(path types.PathDish, dish Dish) (error, int)
+	Get(cateringID, categoryID string) ([]Dish, int, error)
+	GetByKey(key, value, cateringID, categoryID string) (Dish, int, error)
+	Update(path types.PathDish, dish Dish) (int, error)
 }

@@ -153,19 +153,20 @@ func TestUpdateCatering(t *testing.T) {
 		}).
 		SetJSON(gofight.D{
 			"name": "newcateringname",
-		}).Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-		assert.Equal(t, http.StatusNotFound, r.Code)
-	})
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusBadRequest, r.Code)
+		})
 
 	// Trying to change name of catering with non-exist ID
 	// Should throw an error
-	fakeId, _ := uuid.NewV4()
-	r.PUT("/caterings/"+fakeId.String()).
+	fakeID, _ := uuid.NewV4()
+	r.PUT("/caterings/"+fakeID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"name": "newcateringname",
+			"name": "testcatering",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNotFound, r.Code)

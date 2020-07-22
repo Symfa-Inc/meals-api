@@ -8,6 +8,7 @@ import (
 	"sync"
 )
 
+// CreateClients creates seeds for clients table
 func CreateClients() {
 	seedExists := config.DB.Where("name = ?", "init clients").First(&domain.Seed{}).Error
 	if seedExists != nil {
@@ -16,7 +17,7 @@ func CreateClients() {
 		}
 
 		var clientsArray []domain.Client
-		utils.JsonParse("/db/seeds/data/clients.json", &clientsArray)
+		utils.JSONParse("/db/seeds/data/clients.json", &clientsArray)
 
 		var wg sync.WaitGroup
 		wg.Add(len(clientsArray))

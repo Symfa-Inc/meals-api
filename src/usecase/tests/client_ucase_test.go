@@ -89,11 +89,11 @@ func TestDeleteClient(t *testing.T) {
 
 	result, _ := userRepo.GetByKey("email", "admin@meals.com")
 	clientResult, _ := clientRepo.GetByKey("name", "Kiosk")
-	clientId := clientResult.ID.String()
+	clientID := clientResult.ID.String()
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
 
 	// Deleting client
-	r.DELETE("/clients/"+clientId).
+	r.DELETE("/clients/"+clientID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -102,7 +102,7 @@ func TestDeleteClient(t *testing.T) {
 		})
 
 	// Trying to delete client which already deleted
-	r.DELETE("/clients/"+clientId).
+	r.DELETE("/clients/"+clientID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -119,7 +119,7 @@ func TestUpdateClient(t *testing.T) {
 
 	result, _ := userRepo.GetByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
-	var clientId string
+	var clientID string
 
 	// Create new client
 	r.POST("/clients").
@@ -131,13 +131,13 @@ func TestUpdateClient(t *testing.T) {
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
-			clientId, _ = jsonparser.GetString(data, "id")
+			clientID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
 
 	// Trying to change name of the client
 	// Should be success
-	r.PUT("/clients/"+clientId).
+	r.PUT("/clients/"+clientID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -150,7 +150,7 @@ func TestUpdateClient(t *testing.T) {
 
 	// Trying to change name of the client with name that already exist in DB
 	// Should throw an error
-	r.PUT("/clients/"+clientId).
+	r.PUT("/clients/"+clientID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -171,18 +171,18 @@ func TestUpdateClient(t *testing.T) {
 			"name": "newclientname",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			assert.Equal(t, http.StatusNotFound, r.Code)
+			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 
 	// Trying to change name of client with non-exist ID
 	// Should throw an error
-	fakeId, _ := uuid.NewV4()
-	r.PUT("/clients/"+fakeId.String()).
+	fakeID, _ := uuid.NewV4()
+	r.PUT("/clients/"+fakeID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"name": "newclientname",
+			"name": "testclient",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNotFound, r.Code)

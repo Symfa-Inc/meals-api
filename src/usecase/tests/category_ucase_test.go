@@ -67,11 +67,11 @@ func TestDeleteCategory(t *testing.T) {
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Pheast")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
-	cateringId := cateringResult.ID.String()
+	cateringID := cateringResult.ID.String()
 
 	// Creates new dish category
 	// Should be success
-	r.POST("/caterings/"+cateringId+"/categories").
+	r.POST("/caterings/"+cateringID+"/categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -82,12 +82,12 @@ func TestDeleteCategory(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
-	createdCategory, _ := categoryRepo.GetByKey("name", "закуски", cateringId)
-	categoryId := createdCategory.ID.String()
+	createdCategory, _ := categoryRepo.GetByKey("name", "закуски", cateringID)
+	categoryID := createdCategory.ID.String()
 
 	// Trying to delete new category dish
 	// Should be success
-	r.DELETE("/caterings/"+cateringId+"/categories/"+categoryId).
+	r.DELETE("/caterings/"+cateringID+"/categories/"+categoryID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -97,7 +97,7 @@ func TestDeleteCategory(t *testing.T) {
 
 	// Trying to delete already deleted category
 	// Should throw error
-	r.DELETE("/caterings/"+cateringId+"/categories/"+categoryId).
+	r.DELETE("/caterings/"+cateringID+"/categories/"+categoryID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -116,11 +116,11 @@ func TestGetCategories(t *testing.T) {
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 	id := cateringResult.ID.String()
-	fakeId, _ := uuid.NewV4()
+	fakeID, _ := uuid.NewV4()
 
 	// Trying to get categories from non-existing catering
 	// Should throw error
-	r.GET("/caterings/"+fakeId.String()+"/categories").
+	r.GET("/caterings/"+fakeID.String()+"/categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -148,12 +148,12 @@ func TestUpdateCategory(t *testing.T) {
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
-	cateringId := cateringResult.ID.String()
+	cateringID := cateringResult.ID.String()
 
 	// Trying to update non-existing dish category
 	// Should throw an error
-	fakeId, _ := uuid.NewV4()
-	r.PUT("/caterings/"+cateringId+"/categories/"+fakeId.String()).
+	fakeID, _ := uuid.NewV4()
+	r.PUT("/caterings/"+cateringID+"/categories/"+fakeID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -166,7 +166,7 @@ func TestUpdateCategory(t *testing.T) {
 
 	// Posting new dish category to update it
 	// Should be success
-	r.POST("/caterings/"+cateringId+"/categories").
+	r.POST("/caterings/"+cateringID+"/categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -177,12 +177,12 @@ func TestUpdateCategory(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
-	createdCategory, _ := categoryRepo.GetByKey("name", "qwerty", cateringId)
-	categoryId := createdCategory.ID.String()
+	createdCategory, _ := categoryRepo.GetByKey("name", "qwerty", cateringID)
+	categoryID := createdCategory.ID.String()
 
 	// Trying to update new dish category
 	// Should be success
-	r.PUT("/caterings/"+cateringId+"/categories/"+categoryId).
+	r.PUT("/caterings/"+cateringID+"/categories/"+categoryID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -195,7 +195,7 @@ func TestUpdateCategory(t *testing.T) {
 
 	// Trying to update the same category with already existing category
 	// Should throw an error
-	r.PUT("/caterings/"+cateringId+"/categories/"+categoryId).
+	r.PUT("/caterings/"+cateringID+"/categories/"+categoryID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).

@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// CreateMealDishes creates seeds for meal_dishes table
 func CreateMealDishes() {
 	cateringRepo := repository.NewCateringRepo()
 	categoryRepo := repository.NewCategoryRepo()
@@ -26,17 +27,17 @@ func CreateMealDishes() {
 		var dishesArray2 []domain.Dish
 
 		cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-		cateringId := cateringResult.ID.String()
+		cateringID := cateringResult.ID.String()
 
-		categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringId)
-		categoryResult2, _ := categoryRepo.GetByKey("name", "гарнир", cateringId)
+		categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringID)
+		categoryResult2, _ := categoryRepo.GetByKey("name", "гарнир", cateringID)
 
-		categoryId := categoryResult.ID.String()
-		categoryId2 := categoryResult2.ID.String()
+		categoryID := categoryResult.ID.String()
+		categoryID2 := categoryResult2.ID.String()
 
 		t := time.Hour * 24
-		dishesArray, _, _ = dishRepo.Get(cateringId, categoryId)
-		dishesArray2, _, _ = dishRepo.Get(cateringId, categoryId2)
+		dishesArray, _, _ = dishRepo.Get(cateringID, categoryID)
+		dishesArray2, _, _ = dishRepo.Get(cateringID, categoryID2)
 
 		mealResult, _, _ := mealRepo.GetByKey("date", time.Now().AddDate(0, 0, 0).Truncate(t).Format(time.RFC3339))
 		var mealDish domain.MealDish

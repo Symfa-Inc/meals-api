@@ -45,11 +45,11 @@ func TestValidator(t *testing.T) {
 	userResult, _ := userRepo.GetByKey("role", "Client administrator")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-	cateringId := cateringResult.ID.String()
+	cateringID := cateringResult.ID.String()
 
 	// Trying to access catering route with wrong permissions
 	// Should throw an error
-	r.GET("/caterings/"+cateringId+"/categories").
+	r.GET("/caterings/"+cateringID+"/categories").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -62,7 +62,7 @@ func TestValidator(t *testing.T) {
 
 	// Trying to access catering with right permissions
 	// Should be success
-	r.GET("/caterings/"+cateringId+"/categories").
+	r.GET("/caterings/"+cateringID+"/categories").
 		SetCookie(gofight.H{
 			"jwt": jwt2,
 		}).

@@ -10,14 +10,17 @@ import (
 	"time"
 )
 
-type mealRepo struct{}
+// MealRepo struct
+type MealRepo struct{}
 
-func NewMealRepo() *mealRepo {
-	return &mealRepo{}
+// NewMealRepo returns pointer to meal repository
+// with all methods
+func NewMealRepo() *MealRepo {
+	return &MealRepo{}
 }
 
-// Looks for meal in db, if it doesn't exist returns nil
-func (m mealRepo) Find(meal domain.Meal) error {
+// Find looks for meal in db, if it doesn't exist returns nil
+func (m MealRepo) Find(meal domain.Meal) error {
 	if exist := config.DB.
 		Where("catering_id = ? AND date = ?", meal.CateringID, meal.Date).
 		Find(&meal).RecordNotFound(); !exist {
@@ -26,10 +29,11 @@ func (m mealRepo) Find(meal domain.Meal) error {
 	return nil
 }
 
-// Create meal entity
+// Add create meal entity
 // returns new meal item and error
-func (m mealRepo) Add(meal domain.Meal) (interface{}, error) {
+func (m MealRepo) Add(meal domain.Meal) (interface{}, error) {
 	mealItem := config.DB.Create(&meal)
+
 	if mealItem.Error != nil {
 		return nil, mealItem.Error
 	}
@@ -37,9 +41,8 @@ func (m mealRepo) Add(meal domain.Meal) (interface{}, error) {
 	return mealItem.Value, nil
 }
 
-// Returns list of meals withing provided date range
-// Returns list of meals, total items if and error
-func (m mealRepo) Get(mealDate time.Time, id string) ([]domain.Dish, uuid.UUID, error, int) {
+// Get returns list of meals, total items if and error
+func (m MealRepo) Get(mealDate time.Time, id string) ([]domain.Dish, uuid.UUID, int, error) {
 	var meal domain.Meal
 	var result []domain.Dish
 
@@ -47,9 +50,9 @@ func (m mealRepo) Get(mealDate time.Time, id string) ([]domain.Dish, uuid.UUID, 
 		Where("catering_id = ? AND date = ?", id, mealDate).
 		First(&meal).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return []domain.Dish{}, uuid.Nil, errors.New(err.Error()), http.StatusNotFound
+			return []domain.Dish{}, uuid.Nil, http.StatusNotFound, err
 		}
-		return []domain.Dish{}, uuid.Nil, errors.New(err.Error()), http.StatusBadRequest
+		return []domain.Dish{}, uuid.Nil, http.StatusBadRequest, err
 	}
 
 	err := config.DB.
@@ -74,20 +77,23 @@ func (m mealRepo) Get(mealDate time.Time, id string) ([]domain.Dish, uuid.UUID, 
 			Scan(&imagesArray)
 		result[i].Images = imagesArray
 	}
-	return result, meal.ID, err, http.StatusBadRequest
+
+	return result, meal.ID, http.StatusBadRequest, err
 }
 
-// Get meal by provided key value arguments
+// GetByKey get meal by provided key value arguments
 // Returns meal, error and status code
-func (m mealRepo) GetByKey(key, value string) (domain.Meal, error, int) {
+func (m MealRepo) GetByKey(key, value string) (domain.Meal, int, error) {
 	var meal domain.Meal
+
 	if err := config.DB.
 		Where(key+" = ?", value).
 		First(&meal).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return domain.Meal{}, errors.New("meal with this date not found"), http.StatusNotFound
+			return domain.Meal{}, http.StatusNotFound, errors.New("meal with this date not found")
 		}
-		return domain.Meal{}, err, http.StatusBadRequest
+		return domain.Meal{}, http.StatusBadRequest, err
 	}
-	return meal, nil, 0
+
+	return meal, 0, nil
 }

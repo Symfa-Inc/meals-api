@@ -9,13 +9,17 @@ import (
 	"net/http"
 )
 
-type auth struct{}
+// Auth struct
+type Auth struct{}
 
-func NewAuth() *auth {
-	return &auth{}
+// NewAuth returns pointer to Auth strcut
+// with all methods
+func NewAuth() *Auth {
+	return &Auth{}
 }
 
-// IsAuthenticated
+// IsAuthenticated check if user is authorized and
+// if user exists
 // @Summary Returns user info if authorized
 // @Produce json
 // @Accept json
@@ -24,7 +28,7 @@ func NewAuth() *auth {
 // @Failure 401 {object} types.Error
 // @Failure 404 {object} types.Error
 // @Router /is-authenticated [get]
-func (a auth) IsAuthenticated(c *gin.Context) {
+func (a Auth) IsAuthenticated(c *gin.Context) {
 	userRepo := repository.NewUserRepo()
 	claims := jwt.ExtractClaims(c)
 	id := claims[middleware.IdentityKeyID]

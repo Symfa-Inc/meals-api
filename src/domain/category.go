@@ -8,12 +8,14 @@ import (
 	"time"
 )
 
+// CategoryBase struct without deletedAt
 type CategoryBase struct {
 	ID        uuid.UUID `gorm:"type:uuid;" json:"id"`
 	CreatedAt time.Time `json:"-"`
 	UpdatedAt time.Time `json:"-"`
 }
 
+// BeforeCreate func which generates uuid v4 for each inserted row
 func (base *CategoryBase) BeforeCreate(scope *gorm.Scope) error {
 	uuidv4, err := uuid.NewV4()
 	if err != nil {
@@ -22,6 +24,7 @@ func (base *CategoryBase) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("ID", uuidv4)
 }
 
+// Category struct
 type Category struct {
 	CategoryBase
 	DeletedAt  *time.Time `sql:"index" json:"deletedAt"`
@@ -29,6 +32,7 @@ type Category struct {
 	CateringID uuid.UUID  `json:"-"`
 } //@name CategoryResponse
 
+// CategoryUsecase is category interface for usecase
 type CategoryUsecase interface {
 	Get(c *gin.Context)
 	Add(c *gin.Context)
@@ -36,10 +40,11 @@ type CategoryUsecase interface {
 	Delete(c *gin.Context)
 }
 
+// CategoryRepository is category interface for repository
 type CategoryRepository interface {
 	Add(category Category) (Category, error)
-	Get(id string) ([]Category, error, int)
-	GetByKey(id, value, cateringId string) (Category, error)
+	Get(id string) ([]Category, int, error)
+	GetByKey(id, value, cateringID string) (Category, error)
 	Delete(path types.PathCategory) error
-	Update(path types.PathCategory, category Category) (error, int)
+	Update(path types.PathCategory, category Category) (int, error)
 }

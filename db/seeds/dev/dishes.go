@@ -8,6 +8,7 @@ import (
 	"go_api/src/utils"
 )
 
+// CreateDishes creates seeds for clients table
 func CreateDishes() {
 	cateringRepo := repository.NewCateringRepo()
 	categoryRepo := repository.NewCategoryRepo()
@@ -22,7 +23,7 @@ func CreateDishes() {
 		var dishesArray []domain.Dish
 		cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 		categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringResult.ID.String())
-		utils.JsonParse("/db/seeds/data/dishes.json", &dishesArray)
+		utils.JSONParse("/db/seeds/data/dishes.json", &dishesArray)
 
 		for i := range dishesArray {
 			dishesArray[i].CateringID = cateringResult.ID

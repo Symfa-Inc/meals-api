@@ -1,5 +1,6 @@
 package types
 
+// CompanyTypes type
 type CompanyTypes string
 
 type companyEnum struct {
