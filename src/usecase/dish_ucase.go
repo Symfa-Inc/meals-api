@@ -112,6 +112,32 @@ func (d Dish) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, dishes)
 }
 
+// GetByID return dishes
+// @Summary Returns dishes
+// @Tags catering dishes
+// @Produce json
+// @Param id path string true "Catering ID"
+// @Param dishId path string true "Dish ID"
+// @Success 200 {array} domain.Dish "List of dishes"
+// @Failure 400 {object} types.Error "Error"
+// @Router /caterings/{id}/dishes/{dishId} [get]
+func (d Dish) GetByID(c *gin.Context) {
+	var path types.PathDishID
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	dish, code, err := dishRepo.FindByID(path.ID, path.DishID)
+
+	if err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
+	}
+
+	c.JSON(http.StatusOK, dish)
+}
+
 // Update updates dish
 // @Summary Returns 204 if success and 4xx error if failed
 // @Produce json

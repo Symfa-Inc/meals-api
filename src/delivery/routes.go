@@ -28,6 +28,8 @@ func SetupRouter() *gin.Engine {
 
 	auth := usecase.NewAuth()
 	catering := usecase.NewCatering()
+	cateringSchedule := usecase.NewCateringSchedule()
+	clientSchedule := usecase.NewClientSchedule()
 	client := usecase.NewClient()
 	meal := usecase.NewMeal()
 	category := usecase.NewCategory()
@@ -57,16 +59,22 @@ func SetupRouter() *gin.Engine {
 	{
 		authRequired.GET("/is-authenticated", auth.IsAuthenticated)
 
+		clientGroup := authRequired.Group("/")
+		clientGroup.Use(validator.ValidateRoles(
+			types.UserRoleEnum.ClientAdmin,
+			types.UserRoleEnum.SuperAdmin,
+		))
+		{
+			clientGroup.GET("/clients/:id/schedules", clientSchedule.Get)
+			clientGroup.PUT("/clients/:id/schedules/:scheduleId", clientSchedule.Update)
+		}
+
 		cateringGroup := authRequired.Group("/")
 		cateringGroup.Use(validator.ValidateRoles(
 			types.UserRoleEnum.CateringAdmin,
 			types.UserRoleEnum.SuperAdmin,
 		))
 		{
-			cateringGroup.POST("/clients", client.Add)
-			cateringGroup.GET("/clients", client.Get)
-			cateringGroup.DELETE("/clients/:id", client.Delete)
-			cateringGroup.PUT("/clients/:id", client.Update)
 
 			cateringGroup.POST("/caterings", catering.Add)
 			cateringGroup.GET("/caterings", catering.Get)
@@ -81,6 +89,14 @@ func SetupRouter() *gin.Engine {
 				cateringRoutes.GET("/:id/meals", meal.Get)
 				cateringRoutes.PUT("/:id/meals/:mealId", meal.Update)
 
+				cateringRoutes.POST("/:id/clients", client.Add)
+				cateringRoutes.GET("/:id/clients", client.Get)
+				cateringRoutes.DELETE("/:id/clients/:clientId", client.Delete)
+				cateringRoutes.PUT("/:id/clients/:clientId", client.Update)
+
+				cateringRoutes.GET("/:id/schedules", cateringSchedule.Get)
+				cateringRoutes.PUT("/:id/schedules/:scheduleId", cateringSchedule.Update)
+
 				cateringRoutes.POST("/:id/categories", category.Add)
 				cateringRoutes.GET("/:id/categories", category.Get)
 				cateringRoutes.DELETE("/:id/categories/:categoryID", category.Delete)
@@ -89,6 +105,7 @@ func SetupRouter() *gin.Engine {
 				cateringRoutes.POST("/:id/dishes", dish.Add)
 				cateringRoutes.DELETE("/:id/dishes/:dishId", dish.Delete)
 				cateringRoutes.GET("/:id/dishes", dish.Get)
+				cateringRoutes.GET("/:id/dishes/:dishId", dish.GetByID)
 				cateringRoutes.PUT("/:id/dishes/:dishId", dish.Update)
 
 				cateringRoutes.POST("/:id/images", image.Add)

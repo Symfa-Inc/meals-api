@@ -27,7 +27,7 @@ var cateringRepo = repository.NewCateringRepo()
 // @Accept json
 // @Tags catering
 // @Param body body request.AddName false "Catering Name"
-// @Success 200 {object} domain.Catering false "catering object"
+// @Success 201 {object} domain.Catering false "catering object"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings [post]
 func (ca Catering) Add(c *gin.Context) {

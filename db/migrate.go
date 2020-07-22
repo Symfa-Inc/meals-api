@@ -20,7 +20,9 @@ func main() {
 	fmt.Println("=== ADD DB CONSTRAINTS ===")
 
 	dev.CreateCaterings()
+	dev.CreateCateringSchedules()
 	dev.CreateClients()
+	dev.CreateClientSchedules()
 	dev.CreateAdmin()
 	dev.CreateUsers()
 	dev.CreateMeals()
@@ -40,14 +42,18 @@ func migrate() {
 		&domain.Category{},
 		&domain.Meal{},
 		&domain.User{},
+		&domain.ClientSchedule{},
 		&domain.Client{},
+		&domain.CateringSchedule{},
 		&domain.Catering{},
 		&domain.Seed{},
 	)
 
 	config.DB.AutoMigrate(
 		&domain.Catering{},
+		&domain.CateringSchedule{},
 		&domain.Client{},
+		&domain.ClientSchedule{},
 		&domain.User{},
 		&domain.Seed{},
 		&domain.Meal{},
@@ -63,6 +69,11 @@ func migrate() {
 func addDbConstraints() {
 	config.DB.Model(&domain.User{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
 	config.DB.Model(&domain.User{}).AddForeignKey("client_id", "clients(id)", "CASCADE", "CASCADE")
+
+	config.DB.Model(&domain.Client{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
+
+	config.DB.Model(&domain.CateringSchedule{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.ClientSchedule{}).AddForeignKey("client_id", "clients(id)", "CASCADE", "CASCADE")
 
 	config.DB.Model(&domain.Meal{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
 	config.DB.Model(&domain.Meal{}).AddIndex("idx_meals_date", "date")
