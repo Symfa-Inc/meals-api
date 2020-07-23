@@ -3,6 +3,7 @@ package middleware
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
 )
@@ -32,6 +33,12 @@ func (v *Validator) ValidateRoles(roles ...string) gin.HandlerFunc {
 
 		userID := claims["id"]
 		user, _ := userRepo.GetByKey("id", fmt.Sprintf("%v", userID))
+		status := utils.DerefString(user.Status)
+
+		if status == types.StatusTypesEnum.Deleted {
+			utils.CreateError(http.StatusForbidden, "user was deleted", c)
+			return
+		}
 
 		for _, role := range roles {
 			if user.Role == role {

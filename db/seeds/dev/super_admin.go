@@ -23,6 +23,7 @@ func CreateAdmin() {
 			LastName:  "admin",
 			Email:     "admin@meals.com",
 			Password:  utils.HashString("Password12!"),
+			Status:    &types.StatusTypesEnum.Active,
 			Role:      types.UserRoleEnum.SuperAdmin,
 		}
 

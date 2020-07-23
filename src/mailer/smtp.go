@@ -2,7 +2,7 @@ package mailer
 
 import (
 	"bytes"
-	"go_api/src/repository"
+	"go_api/src/domain"
 	"html/template"
 	"net/smtp"
 	"os"
@@ -20,12 +20,7 @@ type templateData struct {
 
 // SendEmail sends registration email on provided email
 // returns error
-func SendEmail(email, password string) error {
-	userRepo := repository.NewUserRepo()
-	user, err := userRepo.GetByKey("email", email)
-	if err != nil {
-		return err
-	}
+func SendEmail(user domain.User, password string) error {
 
 	auth = smtp.PlainAuth("", os.Getenv("SMTP_EMAIL"), os.Getenv("SMTP_PASSWORD"), "smtp.gmail.com")
 	templateData := templateData{
@@ -35,7 +30,7 @@ func SendEmail(email, password string) error {
 		Password: password,
 	}
 
-	r := NewRequest([]string{email}, "Invitation to AIS Meals", "")
+	r := NewRequest([]string{user.Email}, "Invitation to AIS Meals", "")
 	dir, _ := os.Getwd()
 
 	if err := r.ParseTemplate(dir+"/src/mailer/email_template.html", templateData); err != nil {
@@ -45,6 +40,7 @@ func SendEmail(email, password string) error {
 	if err := r.SendEmail(); err != nil {
 		return err
 	}
+
 	return nil
 }
 

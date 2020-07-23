@@ -11,6 +11,12 @@ type PathMeal struct {
 	MealID string `uri:"mealId" json:"mealId" binding:"required"`
 } //@name MealPathResponse
 
+// PathUser struct for path binding
+type PathUser struct {
+	ID     string `uri:"id" json:"id" binding:"required"`
+	UserID string `uri:"userId" json:"userId" binding:"required"`
+}
+
 // PathCategory struct for path binding
 type PathCategory struct {
 	ID         string `uri:"id" json:"id" binding:"required"`

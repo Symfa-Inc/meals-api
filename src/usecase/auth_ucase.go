@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go_api/src/delivery/middleware"
 	"go_api/src/repository"
+	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
 )
@@ -33,10 +34,17 @@ func (a Auth) IsAuthenticated(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
 	id := claims[middleware.IdentityKeyID]
 	result, err := userRepo.GetByKey("id", id.(string))
+
 	if err != nil {
 		utils.CreateError(http.StatusNotFound, err.Error(), c)
 		return
 	}
+
+	if result.Status == &types.StatusTypesEnum.Deleted {
+		utils.CreateError(http.StatusForbidden, "user was deleted", c)
+		return
+	}
+
 	c.JSON(http.StatusOK, result)
 }
 
