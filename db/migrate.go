@@ -97,5 +97,18 @@ func createTypes() {
 		types.UserRoleEnum.User,
 	)
 
+	companyTypesQuery := fmt.Sprintf("CREATE TYPE company_types AS ENUM ('%s', '%s')",
+		types.CompanyTypesEnum.Catering,
+		types.CompanyTypesEnum.Client,
+	)
+
+	statusTypesQuery := fmt.Sprintf("CREATE TYPE status_types AS ENUM ('%s', '%s', '%s')",
+		types.StatusTypesEnum.Deleted,
+		types.StatusTypesEnum.Invited,
+		types.StatusTypesEnum.Active,
+	)
+
 	config.DB.Exec(userTypesQuery)
+	config.DB.Exec(companyTypesQuery)
+	config.DB.Exec(statusTypesQuery)
 }

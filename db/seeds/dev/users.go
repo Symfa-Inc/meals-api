@@ -38,6 +38,7 @@ func CreateUsers() {
 					userArray[i].CompanyType = &types.CompanyTypesEnum.Catering
 					userArray[i].CateringID = &catering.ID
 					userArray[i].Password = hashedPassword
+					userArray[i].Status = &types.StatusTypesEnum.Active
 					config.DB.Create(&userArray[i])
 				}(i)
 			} else {
@@ -46,6 +47,7 @@ func CreateUsers() {
 					userArray[i].CompanyType = &types.CompanyTypesEnum.Client
 					userArray[i].ClientID = &client.ID
 					userArray[i].Password = hashedPassword
+					userArray[i].Status = &types.StatusTypesEnum.Active
 					config.DB.Create(&userArray[i])
 				}(i)
 			}

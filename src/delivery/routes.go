@@ -27,6 +27,7 @@ func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
 	auth := usecase.NewAuth()
+	user := usecase.NewUser()
 	catering := usecase.NewCatering()
 	cateringSchedule := usecase.NewCateringSchedule()
 	clientSchedule := usecase.NewClientSchedule()
@@ -59,14 +60,31 @@ func SetupRouter() *gin.Engine {
 	{
 		authRequired.GET("/is-authenticated", auth.IsAuthenticated)
 
-		clientGroup := authRequired.Group("/")
-		clientGroup.Use(validator.ValidateRoles(
-			types.UserRoleEnum.ClientAdmin,
+		cateringUsersGroup := authRequired.Group("/")
+		cateringUsersGroup.Use(validator.ValidateRoles(
 			types.UserRoleEnum.SuperAdmin,
 		))
 		{
-			clientGroup.GET("/clients/:id/schedules", clientSchedule.Get)
-			clientGroup.PUT("/clients/:id/schedules/:scheduleId", clientSchedule.Update)
+			cateringUsersGroup.POST("/caterings/:id/users", user.AddCateringUser)
+			cateringUsersGroup.DELETE("/caterings/:id/users/:userId", user.DeleteCateringUser)
+			cateringUsersGroup.PUT("/caterings/:id/users/:userId", user.UpdateCateringUser)
+		}
+
+		clientGroup := authRequired.Group("/")
+		clientGroup.Use(validator.ValidateRoles(
+			types.UserRoleEnum.SuperAdmin,
+		))
+		{
+			clientGroup.GET(
+				"/clients/:id/schedules",
+				validator.ValidateRoles(types.UserRoleEnum.ClientAdmin),
+				clientSchedule.Get,
+			)
+			clientGroup.PUT(
+				"/clients/:id/schedules/:scheduleId",
+				validator.ValidateRoles(types.UserRoleEnum.ClientAdmin),
+				clientSchedule.Update,
+			)
 		}
 
 		cateringGroup := authRequired.Group("/")

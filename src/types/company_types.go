@@ -1,11 +1,8 @@
 package types
 
-// CompanyTypes type
-type CompanyTypes string
-
 type companyEnum struct {
-	Client   CompanyTypes
-	Catering CompanyTypes
+	Client   string
+	Catering string
 }
 
 // CompanyTypesEnum enum

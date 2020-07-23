@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go_api/src/repository"
 	"go_api/src/schemes/request"
+	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
 	"os"
@@ -40,10 +41,19 @@ func Passport() *jwt.GinJWTMiddleware {
 			value, _ := Passport().ParseTokenString(s)
 			id := jwt.ExtractClaimsFromToken(value)["id"]
 			result, err := userRepo.GetByKey("id", id.(string))
+
 			if err != nil {
 				utils.CreateError(http.StatusUnauthorized, err.Error(), c)
 				return
 			}
+
+			status := utils.DerefString(result.Status)
+
+			if status == types.StatusTypesEnum.Deleted {
+				utils.CreateError(http.StatusForbidden, "user was deleted", c)
+				return
+			}
+
 			c.JSON(http.StatusOK, result)
 		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims {

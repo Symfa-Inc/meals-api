@@ -36,9 +36,24 @@
     "role": "Client administrator"
   },
   {
-    "firstName": "Dmitry",
-    "lastName": "Novikov",
-    "email": "d.novikov@wellyes.ru",
-    "role": "Client administrator"
+    "firstName": "user1",
+    "lastName": "lastname",
+    "email": "user1@meals.com",
+    "role": "User",
+    "floor": 1
+  },
+  {
+    "firstName": "user2",
+    "lastName": "lastname",
+    "email": "user2@meals.com",
+    "role": "User",
+    "floor": 2
+  },
+  {
+    "firstName": "user3",
+    "lastName": "lastname",
+    "email": "user3@meals.com",
+    "role": "User",
+    "floor": 3
   }
 ]
