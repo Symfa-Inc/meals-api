@@ -34,5 +34,11 @@
     "lastName": "Bond",
     "email": "melodybond@comcubine.com",
     "role": "Client administrator"
+  },
+  {
+    "firstName": "Dmitry",
+    "lastName": "Novikov",
+    "email": "d.novikov@wellyes.ru",
+    "role": "Client administrator"
   }
 ]
