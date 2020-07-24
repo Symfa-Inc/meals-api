@@ -39,21 +39,18 @@
     "firstName": "user1",
     "lastName": "lastname",
     "email": "user1@meals.com",
-    "role": "User",
-    "floor": 1
+    "role": "User"
   },
   {
     "firstName": "user2",
     "lastName": "lastname",
     "email": "user2@meals.com",
-    "role": "User",
-    "floor": 2
+    "role": "User"
   },
   {
     "firstName": "user3",
     "lastName": "lastname",
     "email": "user3@meals.com",
-    "role": "User",
-    "floor": 3
+    "role": "User"
   }
 ]

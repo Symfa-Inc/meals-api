@@ -31,10 +31,10 @@ var userRepo = repository.NewUserRepo()
 // @Tags caterings users
 // @Param id path string false "Catering ID"
 // @Param body body request.CateringUser false "Catering user"
-// @Success 201 {object} domain.User false "Catering user"
+// @Success 201 {object} response.UserResponse false "Catering user"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/users [post]
-func (u User) AddCateringUser(c *gin.Context) {
+func (u User) AddCateringUser(c *gin.Context) { //nolint:dupl
 	var path types.PathID
 	var user domain.User
 
@@ -60,7 +60,7 @@ func (u User) AddCateringUser(c *gin.Context) {
 	password := utils.GenerateString(10)
 	user.Password = utils.HashString(password)
 
-	_, err := userRepo.GetByKey("email", user.Email)
+	existingUser, err := userRepo.GetByKey("email", user.Email)
 
 	if gorm.IsRecordNotFoundError(err) {
 		if err := mailer.SendEmail(user, password); err != nil {
@@ -77,6 +77,61 @@ func (u User) AddCateringUser(c *gin.Context) {
 
 		c.JSON(http.StatusCreated, user)
 	}
+
+	if existingUser.ID != uuid.Nil {
+		utils.CreateError(http.StatusBadRequest, "user with that email already exist", c)
+		return
+	}
+}
+
+// GetCateringUsers return list of catering users
+// @Summary Returns list of catering users
+// @Tags caterings users
+// @Produce json
+// @Param id path string false "Catering ID"
+// @Param limit query int false "used for pagination"
+// @Param page query int false "used for pagination"
+// @Param q query string false "used query search"
+// @Param role query string false "used for role sort"
+// @Param client query string false "used for client sort"
+// @Success 200 {array} response.UserResponse false "Catering user"
+// @Failure 400 {object} types.Error "Error"
+// @Failure 404 {object} types.Error "Error"
+// @Router /caterings/{id}/users [get]
+func (u User) GetCateringUsers(c *gin.Context) { //nolint:dupl
+	var path types.PathID
+	var paginationQuery types.PaginationQuery
+	var filterQuery types.UserFilterQuery
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderQuery(&paginationQuery, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderQuery(&filterQuery, c); err != nil {
+		return
+	}
+
+	catering := types.CompanyTypesEnum.Catering
+	users, total, code, err := userRepo.Get(path.ID, catering, paginationQuery, filterQuery)
+
+	if err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
+	}
+
+	if paginationQuery.Page == 0 {
+		paginationQuery.Page = 1
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"users": users,
+		"total": total,
+		"page":  paginationQuery.Page,
+	})
 }
 
 // DeleteCateringUser deletes user of catering
@@ -123,7 +178,7 @@ func (u User) DeleteCateringUser(c *gin.Context) {
 // @Param id path string false "Catering ID"
 // @Param userId path string false "User ID"
 // @Param body body request.CateringUser false "Catering user"
-// @Success 201 {object} domain.User false "Catering user"
+// @Success 200 {object} response.UserResponse false "Catering user"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Error"
 // @Router /caterings/{id}/users/{userId} [put]
@@ -139,21 +194,215 @@ func (u User) UpdateCateringUser(c *gin.Context) {
 		return
 	}
 
-	if ok := utils.IsEmailValid(user.Email); !ok {
-		utils.CreateError(http.StatusBadRequest, "email is not valid", c)
-		return
+	if user.Email != "" {
+		if ok := utils.IsEmailValid(user.Email); !ok {
+			utils.CreateError(http.StatusBadRequest, "email is not valid", c)
+			return
+		}
 	}
 
 	parsedUserID, _ := uuid.FromString(path.UserID)
 	user.CompanyType = &types.CompanyTypesEnum.Catering
 	user.ID = parsedUserID
 
-	user, code, err := userRepo.Update(path.ID, user)
+	updatedUser, code, err := userRepo.Update(path.ID, user)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, updatedUser)
+}
+
+// GetClientUsers return list of client users
+// @Summary Returns list of client users
+// @Tags clients users
+// @Produce json
+// @Param id path string false "Client ID"
+// @Param limit query int false "used for pagination"
+// @Param page query int false "used for pagination"
+// @Param q query string false "used query search"
+// @Param role query string false "used for role sort"
+// @Param status query string false "used for status sort"
+// @Success 200 {array} response.UserResponse "List of client users"
+// @Failure 400 {object} types.Error "Error"
+// @Failure 404 {object} types.Error "Error"
+// @Router /clients/{id}/users [get]
+func (u User) GetClientUsers(c *gin.Context) { //nolint:dupl
+	var path types.PathID
+	var paginationQuery types.PaginationQuery
+	var filterQuery types.UserFilterQuery
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderQuery(&paginationQuery, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderQuery(&filterQuery, c); err != nil {
+		return
+	}
+
+	client := types.CompanyTypesEnum.Client
+	users, total, code, err := userRepo.Get(path.ID, client, paginationQuery, filterQuery)
+
+	if err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
+	}
+
+	if paginationQuery.Page == 0 {
+		paginationQuery.Page = 1
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"users": users,
+		"total": total,
+		"page":  paginationQuery.Page,
+	})
+}
+
+// AddClientUser creates user for client
+// @Summary Returns error or 201 status code if success
+// @Produce json
+// @Accept json
+// @Tags clients users
+// @Param id path string false "Client ID"
+// @Param body body request.ClientUser false "Client user"
+// @Success 201 {object} response.UserResponse false "Client user"
+// @Failure 400 {object} types.Error "Error"
+// @Router /clients/{id}/users [post]
+func (u User) AddClientUser(c *gin.Context) { //nolint:dupl
+	var path types.PathID
+	var user domain.User
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderBody(&user, c); err != nil {
+		return
+	}
+
+	if ok := utils.IsEmailValid(user.Email); !ok {
+		utils.CreateError(http.StatusBadRequest, "email is not valid", c)
+		return
+	}
+
+	parsedID, _ := uuid.FromString(path.ID)
+	user.ClientID = &parsedID
+	user.CompanyType = &types.CompanyTypesEnum.Client
+	user.Status = &types.StatusTypesEnum.Invited
+
+	password := utils.GenerateString(10)
+	user.Password = utils.HashString(password)
+
+	existingUser, err := userRepo.GetByKey("email", user.Email)
+
+	if gorm.IsRecordNotFoundError(err) {
+		if err := mailer.SendEmail(user, password); err != nil {
+			utils.CreateError(http.StatusBadRequest, err.Error(), c)
+			return
+		}
+
+		client, _ := clientRepo.GetByKey("id", path.ID)
+		user.CateringID = &client.CateringID
+		user, userErr := userRepo.Add(user)
+
+		if userErr != nil {
+			utils.CreateError(http.StatusBadRequest, userErr.Error(), c)
+			return
+		}
+
+		c.JSON(http.StatusCreated, user)
+	}
+
+	if existingUser.ID != uuid.Nil {
+		utils.CreateError(http.StatusBadRequest, "user with that email already exist", c)
+		return
+	}
+}
+
+// DeleteClientUser deletes user of client
+// @Summary Returns error or 204 status code if success
+// @Produce json
+// @Accept json
+// @Tags clients users
+// @Param id path string false "Client ID"
+// @Param userId path string false "User ID"
+// @Success 204 "Successfully deleted"
+// @Failure 400 {object} types.Error "Error"
+// @Failure 404 {object} types.Error "Error"
+// @Router /clients/{id}/users/{userId} [delete]
+func (u User) DeleteClientUser(c *gin.Context) {
+	var path types.PathUser
+	var user domain.User
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	parsedUserID, _ := uuid.FromString(path.UserID)
+	user.ID = parsedUserID
+	user.CompanyType = &types.CompanyTypesEnum.Client
+	user.Status = &types.StatusTypesEnum.Deleted
+	deletedAt := time.Now().AddDate(0, 0, 21).Truncate(time.Hour * 24)
+	user.DeletedAt = &deletedAt
+
+	code, err := userRepo.Delete(path.ID, user)
+
+	if err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+// UpdateClientUser updates user of client
+// @Summary Returns error or 200 status code if success
+// @Produce json
+// @Accept json
+// @Tags clients users
+// @Param id path string false "Client ID"
+// @Param userId path string false "User ID"
+// @Param body body request.ClientUser false "Client user"
+// @Success 200 {object} response.UserResponse false "Client user"
+// @Failure 400 {object} types.Error "Error"
+// @Failure 404 {object} types.Error "Error"
+// @Router /clients/{id}/users/{userId} [put]
+func (u User) UpdateClientUser(c *gin.Context) {
+	var path types.PathUser
+	var user domain.User
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderBody(&user, c); err != nil {
+		return
+	}
+
+	if user.Email != "" {
+		if ok := utils.IsEmailValid(user.Email); !ok {
+			utils.CreateError(http.StatusBadRequest, "email is not valid", c)
+			return
+		}
+	}
+
+	parsedUserID, _ := uuid.FromString(path.UserID)
+	user.CompanyType = &types.CompanyTypesEnum.Client
+	user.ID = parsedUserID
+
+	updatedUser, code, err := userRepo.Update(path.ID, user)
+
+	if err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
+	}
+
+	c.JSON(http.StatusOK, updatedUser)
 }

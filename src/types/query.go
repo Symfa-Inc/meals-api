@@ -20,3 +20,11 @@ type DishIDQuery struct {
 type CategoryIDQuery struct {
 	CategoryID string `form:"categoryID" binding:"required"`
 }
+
+// UserFilterQuery used to filter and sort users in DB
+type UserFilterQuery struct {
+	Query      string `form:"q"`
+	Role       string `form:"role"`
+	ClientName string `form:"client"`
+	Status     string `form:"status"`
+}
