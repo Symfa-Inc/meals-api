@@ -25,7 +25,7 @@ func NewAuth() *Auth {
 // @Produce json
 // @Accept json
 // @Tags auth
-// @Success 200 {object} domain.User
+// @Success 200 {object} response.UserResponse
 // @Failure 401 {object} types.Error
 // @Failure 404 {object} types.Error
 // @Router /is-authenticated [get]
@@ -53,7 +53,7 @@ func (a Auth) IsAuthenticated(c *gin.Context) {
 // @Accept json
 // @Tags auth
 // @Param body body request.LoginUserRequest false "User Credentials"
-// @Success 200 {object} domain.User
+// @Success 200 {object} response.UserResponse
 // @Failure 401 {object} types.Error "Error"
 // @Router /login [post]
 func login() {}

@@ -65,9 +65,23 @@ func SetupRouter() *gin.Engine {
 			types.UserRoleEnum.SuperAdmin,
 		))
 		{
+			cateringUsersGroup.GET("/caterings/:id/users", user.GetCateringUsers)
 			cateringUsersGroup.POST("/caterings/:id/users", user.AddCateringUser)
 			cateringUsersGroup.DELETE("/caterings/:id/users/:userId", user.DeleteCateringUser)
 			cateringUsersGroup.PUT("/caterings/:id/users/:userId", user.UpdateCateringUser)
+		}
+
+		clientUsersGroup := authRequired.Group("/")
+		clientUsersGroup.Use(validator.ValidateRoles(
+			types.UserRoleEnum.SuperAdmin,
+			types.UserRoleEnum.ClientAdmin,
+			types.UserRoleEnum.CateringAdmin,
+		))
+		{
+			clientUsersGroup.GET("/clients/:id/users", user.GetClientUsers)
+			clientUsersGroup.POST("/clients/:id/users", user.AddClientUser)
+			clientUsersGroup.DELETE("/clients/:id/users/:userId", user.DeleteClientUser)
+			clientUsersGroup.PUT("/clients/:id/users/:userId", user.UpdateClientUser)
 		}
 
 		clientGroup := authRequired.Group("/")
