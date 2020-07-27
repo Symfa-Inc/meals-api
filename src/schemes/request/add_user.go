@@ -8,6 +8,7 @@ type CateringUser struct {
 	ClientID  string `json:"clientID"`
 }
 
+// ClientUser scheme
 type ClientUser struct {
 	FirstName string `json:"firstName,omitempty" example:"Dmitry"`
 	LastName  string `json:"lastName,omitempty" example:"Novikov"`

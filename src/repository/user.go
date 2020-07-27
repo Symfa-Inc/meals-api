@@ -5,7 +5,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"go_api/src/config"
 	"go_api/src/domain"
-	"go_api/src/schemes/response"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
@@ -23,8 +22,8 @@ func NewUserRepo() *UserRepo {
 
 // GetByKey returns user by key
 // and error if exist
-func (ur UserRepo) GetByKey(key, value string) (response.User, error) {
-	var user response.User
+func (ur UserRepo) GetByKey(key, value string) (domain.UserClientCatering, error) {
+	var user domain.UserClientCatering
 	err := config.DB.
 		Model(&domain.User{}).
 		Select("users.*, c.id as catering_id, c.name as catering_name, ci.id as client_id, ci.name as client_name").
@@ -37,8 +36,8 @@ func (ur UserRepo) GetByKey(key, value string) (response.User, error) {
 }
 
 // Get returns list of users for provided company
-func (ur UserRepo) Get(companyID, companyType string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]response.User, int, int, error) {
-	var users []response.User
+func (ur UserRepo) Get(companyID, companyType string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]domain.UserClientCatering, int, int, error) {
+	var users []domain.UserClientCatering
 	var total int
 	page := pagination.Page
 	limit := pagination.Limit
@@ -125,8 +124,8 @@ func (ur UserRepo) Get(companyID, companyType string, pagination types.Paginatio
 		Joins("left join caterings c on c.id = users.catering_id").
 		Joins("left join clients ci on ci.id = users.client_id").
 		Where("users.client_id = ? AND (first_name || last_name) ILIKE ?"+
-			"AND status ILIKE ? AND CAST(users.role AS text) ILIKE ?" +
-		" AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, "%"+querySearch+"%", "%"+status+"%", "%"+role+"%", time.Now()).
+			"AND status ILIKE ? AND CAST(users.role AS text) ILIKE ?"+
+			" AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, "%"+querySearch+"%", "%"+status+"%", "%"+role+"%", time.Now()).
 		Order("created_at DESC").
 		Scan(&users).
 		Error; err != nil {
@@ -140,8 +139,8 @@ func (ur UserRepo) Get(companyID, companyType string, pagination types.Paginatio
 
 // Add adds new user for certain company passed in user struct
 // returns user and error
-func (ur UserRepo) Add(user domain.User) (response.User, error) {
-	var createdUser response.User
+func (ur UserRepo) Add(user domain.User) (domain.UserClientCatering, error) {
+	var createdUser domain.UserClientCatering
 	if err := config.DB.
 		Model(&domain.User{}).
 		Create(&user).
@@ -151,7 +150,7 @@ func (ur UserRepo) Add(user domain.User) (response.User, error) {
 		Where("users.id = ?", user.ID).
 		Scan(&createdUser).
 		Error; err != nil {
-		return response.User{}, err
+		return domain.UserClientCatering{}, err
 	}
 	return createdUser, nil
 }
@@ -183,9 +182,9 @@ func (ur UserRepo) Delete(companyID string, user domain.User) (int, error) {
 
 // Update updates user for passed company ID
 // checks if user belongs to client or catering
-func (ur UserRepo) Update(companyID string, user domain.User) (response.User, int, error) {
+func (ur UserRepo) Update(companyID string, user domain.User) (domain.UserClientCatering, int, error) {
 	companyType := utils.DerefString(user.CompanyType)
-	var updatedUser response.User
+	var updatedUser domain.UserClientCatering
 
 	if companyType == types.CompanyTypesEnum.Catering {
 		if err := config.DB.
@@ -199,9 +198,9 @@ func (ur UserRepo) Update(companyID string, user domain.User) (response.User, in
 			Error; err != nil {
 
 			if gorm.IsRecordNotFoundError(err) {
-				return response.User{}, http.StatusNotFound, errors.New("user not found")
+				return domain.UserClientCatering{}, http.StatusNotFound, errors.New("user not found")
 			}
-			return response.User{}, http.StatusBadRequest, err
+			return domain.UserClientCatering{}, http.StatusBadRequest, err
 		}
 		return updatedUser, 0, nil
 	}
@@ -217,9 +216,9 @@ func (ur UserRepo) Update(companyID string, user domain.User) (response.User, in
 		Error; err != nil {
 
 		if gorm.IsRecordNotFoundError(err) {
-			return response.User{}, http.StatusNotFound, errors.New("user not found")
+			return domain.UserClientCatering{}, http.StatusNotFound, errors.New("user not found")
 		}
-		return response.User{}, http.StatusBadRequest, err
+		return domain.UserClientCatering{}, http.StatusBadRequest, err
 	}
 	return updatedUser, 0, nil
 }

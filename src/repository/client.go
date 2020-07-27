@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"go_api/src/config"
 	"go_api/src/domain"
+	"go_api/src/schemes/response"
 	"go_api/src/types"
 	"net/http"
 )
@@ -61,8 +62,8 @@ func (c ClientRepo) Add(cateringID string, client *domain.Client) error {
 }
 
 // Get returns list of clients
-func (c ClientRepo) Get(cateringID string, query types.PaginationQuery) ([]domain.Client, int, error) {
-	var clients []domain.Client
+func (c ClientRepo) Get(cateringID string, query types.PaginationQuery) ([]response.Client, int, error) {
+	var clients []response.Client
 	var total int
 
 	page := query.Page
@@ -76,16 +77,35 @@ func (c ClientRepo) Get(cateringID string, query types.PaginationQuery) ([]domai
 		limit = 10
 	}
 
+	if cateringID == "" {
+		config.DB.
+			Model(&domain.Client{}).
+			Count(&total)
+
+		err := config.DB.
+			Limit(limit).
+			Offset((page - 1) * limit).
+			Model(&domain.Client{}).
+			Select("clients.*, c.name as catering_name, c.id as catering_id").
+			Joins("left join caterings c on c.id = clients.catering_id").
+			Scan(&clients).
+			Error
+
+		return clients, total, err
+	}
 	config.DB.
 		Where("catering_id = ?", cateringID).
-		Find(&clients).
+		Find(&domain.Client{}).
 		Count(&total)
 
 	err := config.DB.
 		Limit(limit).
 		Offset((page-1)*limit).
+		Model(&domain.Client{}).
+		Select("clients.*, c.name as catering_name, c.id as catering_id").
+		Joins("left join caterings c on c.id = clients.catering_id").
 		Where("catering_id = ?", cateringID).
-		Find(&clients).
+		Scan(&clients).
 		Error
 
 	return clients, total, err

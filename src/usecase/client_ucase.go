@@ -5,7 +5,6 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"go_api/src/domain"
 	"go_api/src/repository"
-	"go_api/src/schemes/response"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
@@ -56,7 +55,7 @@ func (cl Client) Add(c *gin.Context) {
 	c.JSON(http.StatusCreated, client)
 }
 
-// Get return list of clients
+// GetCateringClients return list of clients
 // @Summary Returns list of clients
 // @Tags caterings clients
 // @Produce json
@@ -66,7 +65,7 @@ func (cl Client) Add(c *gin.Context) {
 // @Success 200 {object} response.GetClients "List of clients"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/clients [get]
-func (cl Client) Get(c *gin.Context) {
+func (cl Client) GetCateringClients(c *gin.Context) {
 	var query types.PaginationQuery
 	var path types.PathID
 
@@ -89,10 +88,44 @@ func (cl Client) Get(c *gin.Context) {
 		query.Page = 1
 	}
 
-	c.JSON(http.StatusOK, response.GetClients{
-		Items: result,
-		Page:  query.Page,
-		Total: total,
+	c.JSON(http.StatusOK, gin.H{
+		"items": result,
+		"page":  query.Page,
+		"total": total,
+	})
+}
+
+// Get return list of clients
+// @Summary Returns list of clients
+// @Tags clients
+// @Produce json
+// @Param limit query int false "used for pagination"
+// @Param page query int false "used for pagination"
+// @Success 200 {object} response.GetClients "List of clients"
+// @Failure 400 {object} types.Error "Error"
+// @Router /clients [get]
+func (cl Client) Get(c *gin.Context) {
+	var query types.PaginationQuery
+
+	if err := utils.RequestBinderQuery(&query, c); err != nil {
+		return
+	}
+
+	result, total, err := clientRepo.Get("", query)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	if query.Page == 0 {
+		query.Page = 1
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"items": result,
+		"page":  query.Page,
+		"total": total,
 	})
 }
 
