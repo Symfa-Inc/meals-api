@@ -45,7 +45,7 @@ func (cs CateringScheduleRepo) Get(cateringID string) ([]domain.CateringSchedule
 }
 
 // Update updates schedule and returns new updated schedule
-func (cs CateringScheduleRepo) Update(cateringID, scheduleID string, isWorking *bool, newSchedule domain.CateringSchedule) (domain.CateringSchedule, int, error) {
+func (cs CateringScheduleRepo) Update(cateringID, scheduleID string, isWorking *bool, newSchedule *domain.CateringSchedule) (int, error) {
 	var schedule domain.CateringSchedule
 
 	if err := config.DB.
@@ -53,10 +53,10 @@ func (cs CateringScheduleRepo) Update(cateringID, scheduleID string, isWorking *
 		Find(&domain.Catering{}).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return domain.CateringSchedule{}, http.StatusNotFound, errors.New("catering with that id not found")
+			return http.StatusNotFound, errors.New("catering with that id not found")
 		}
 
-		return domain.CateringSchedule{}, http.StatusBadRequest, err
+		return http.StatusBadRequest, err
 	}
 
 	if err := config.DB.
@@ -64,29 +64,29 @@ func (cs CateringScheduleRepo) Update(cateringID, scheduleID string, isWorking *
 		Find(&schedule).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return domain.CateringSchedule{}, http.StatusNotFound, errors.New("schedule with that id not found")
+			return http.StatusNotFound, errors.New("schedule with that id not found")
 		}
 
-		return domain.CateringSchedule{}, http.StatusBadRequest, err
+		return http.StatusBadRequest, err
 	}
 
 	if newSchedule.Start != "" && newSchedule.End != "" {
 		startTime, err := now.Parse(newSchedule.Start)
 
 		if err != nil {
-			return domain.CateringSchedule{}, http.StatusBadRequest, err
+			return http.StatusBadRequest, err
 		}
 
 		endTime, err := now.Parse(newSchedule.End)
 
 		if err != nil {
-			return domain.CateringSchedule{}, http.StatusBadRequest, err
+			return http.StatusBadRequest, err
 		}
 
 		difference := endTime.Sub(startTime).Seconds()
 
 		if difference < 0 {
-			return domain.CateringSchedule{}, http.StatusBadRequest, errors.New("end date can't be earlier than start date")
+			return http.StatusBadRequest, errors.New("end date can't be earlier than start date")
 		}
 	}
 
@@ -94,19 +94,19 @@ func (cs CateringScheduleRepo) Update(cateringID, scheduleID string, isWorking *
 		startTime, err := now.Parse(newSchedule.Start)
 
 		if err != nil {
-			return domain.CateringSchedule{}, http.StatusBadRequest, err
+			return http.StatusBadRequest, err
 		}
 
 		endTime, err := now.Parse(schedule.End)
 
 		if err != nil {
-			return domain.CateringSchedule{}, http.StatusBadRequest, err
+			return http.StatusBadRequest, err
 		}
 
 		difference := endTime.Sub(startTime).Seconds()
 
 		if difference < 0 {
-			return domain.CateringSchedule{}, http.StatusBadRequest, errors.New("end date can't be earlier than start date")
+			return http.StatusBadRequest, errors.New("end date can't be earlier than start date")
 		}
 	}
 
@@ -114,19 +114,19 @@ func (cs CateringScheduleRepo) Update(cateringID, scheduleID string, isWorking *
 		endTime, err := now.Parse(newSchedule.End)
 
 		if err != nil {
-			return domain.CateringSchedule{}, http.StatusBadRequest, err
+			return http.StatusBadRequest, err
 		}
 
 		startTime, err := now.Parse(schedule.Start)
 
 		if err != nil {
-			return domain.CateringSchedule{}, http.StatusBadRequest, err
+			return http.StatusBadRequest, err
 		}
 
 		difference := endTime.Sub(startTime).Seconds()
 
 		if difference < 0 {
-			return domain.CateringSchedule{}, http.StatusBadRequest, errors.New("end date can't be earlier than start date")
+			return http.StatusBadRequest, errors.New("end date can't be earlier than start date")
 		}
 	}
 
@@ -156,7 +156,7 @@ func (cs CateringScheduleRepo) Update(cateringID, scheduleID string, isWorking *
 			"End":       newSchedule.End,
 			"IsWorking": newSchedule.IsWorking,
 		}).
-		Scan(&newSchedule)
+		Scan(newSchedule)
 
-	return newSchedule, 0, nil
+	return 0, nil
 }

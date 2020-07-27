@@ -70,15 +70,17 @@ func (s CateringSchedule) Update(c *gin.Context) {
 		return
 	}
 
-	schedule := domain.CateringSchedule{
+	schedule := &domain.CateringSchedule{
 		Start: body.Start,
 		End:   body.End,
 	}
 
-	schedule, code, err := cateringScheduleRepo.Update(path.ID, path.ScheduleID, body.IsWorking, schedule)
+	code, err := cateringScheduleRepo.Update(path.ID, path.ScheduleID, body.IsWorking, schedule)
+
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}
+
 	c.JSON(http.StatusOK, schedule)
 }

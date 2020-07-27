@@ -87,18 +87,18 @@ func (i Image) Add(c *gin.Context) {
 		return
 	}
 
-	image := domain.Image{
+	image := &domain.Image{
 		Path: "/" + randomString + ext,
 	}
 
-	result, code, err := imageRepo.Add(path.ID, query.DishID, image)
+	code, err := imageRepo.Add(path.ID, query.DishID, image)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}
 
-	c.JSON(http.StatusCreated, result)
+	c.JSON(http.StatusCreated, image)
 }
 
 // Delete deletes image from dish
@@ -180,15 +180,15 @@ func (i Image) Update(c *gin.Context) {
 		return
 	}
 
-	image := domain.Image{
+	image := &domain.Image{
 		Path: "/" + randomString + ext,
 	}
 
-	imageResult, code, err := imageRepo.UpdateDishImage(path.CateringID, path.ImageID, path.DishID, image)
+	code, err := imageRepo.UpdateDishImage(path.CateringID, path.ImageID, path.DishID, image)
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}
 
-	c.JSON(http.StatusOK, imageResult)
+	c.JSON(http.StatusOK, image)
 }

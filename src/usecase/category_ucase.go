@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-// Category sturct
+// Category struct
 type Category struct{}
 
 // NewCategory returns pointer to Category struct
@@ -55,13 +55,14 @@ func (dc Category) Add(c *gin.Context) {
 	}
 
 	cateringID, _ := uuid.FromString(path.ID)
-	categoryModel := domain.Category{
+	category := domain.Category{
 		DeletedAt:  body.DeletedAt,
 		Name:       strings.ToLower(body.Name),
 		CateringID: cateringID,
 	}
 
-	category, err := categoryRepo.Add(categoryModel)
+	err := categoryRepo.Add(&category)
+
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
@@ -129,20 +130,20 @@ func (dc Category) Get(c *gin.Context) {
 // @Success 204 "Successfully updated"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
-// @Router /caterings/{id}/categories/{categoryId} [put]
+// @Router /caterings/{id}/categories/{categoryID} [put]
 func (dc Category) Update(c *gin.Context) {
 	var path types.PathCategory
-	var body domain.Category
+	var category domain.Category
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	if err := utils.RequestBinderBody(&body, c); err != nil {
+	if err := utils.RequestBinderBody(&category, c); err != nil {
 		return
 	}
 
-	code, err := categoryRepo.Update(path, body)
+	code, err := categoryRepo.Update(path, &category)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)

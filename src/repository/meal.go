@@ -20,10 +20,10 @@ func NewMealRepo() *MealRepo {
 }
 
 // Find looks for meal in db, if it doesn't exist returns nil
-func (m MealRepo) Find(meal domain.Meal) error {
+func (m MealRepo) Find(meal *domain.Meal) error {
 	if exist := config.DB.
 		Where("catering_id = ? AND date = ?", meal.CateringID, meal.Date).
-		Find(&meal).RecordNotFound(); !exist {
+		Find(meal).RecordNotFound(); !exist {
 		return errors.New("this meal already exist")
 	}
 	return nil
@@ -31,14 +31,12 @@ func (m MealRepo) Find(meal domain.Meal) error {
 
 // Add create meal entity
 // returns new meal item and error
-func (m MealRepo) Add(meal domain.Meal) (interface{}, error) {
-	mealItem := config.DB.Create(&meal)
-
-	if mealItem.Error != nil {
-		return nil, mealItem.Error
+func (m MealRepo) Add(meal *domain.Meal) error {
+	if err := config.DB.Create(meal).Error; err != nil {
+		return err
 	}
 
-	return mealItem.Value, nil
+	return nil
 }
 
 // Get returns list of meals, total items if and error

@@ -20,18 +20,22 @@ func NewCateringRepo() *CateringRepo {
 
 // Add creates catering in DB
 // and error if exists
-func (c CateringRepo) Add(catering domain.Catering) (domain.Catering, error) {
+func (c CateringRepo) Add(catering *domain.Catering) error {
+
 	if exist := config.DB.Where("name = ?", catering.Name).
-		Find(&catering).RowsAffected; exist != 0 {
-		return domain.Catering{}, errors.New("catering with that name already exist")
+		Find(catering).RowsAffected; exist != 0 {
+		return errors.New("catering with that name already exist")
 	}
-	err := config.DB.Create(&catering).Error
+
+	err := config.DB.Create(catering).Error
+
 	if err != nil {
-		return domain.Catering{}, err
+		return err
 	}
+
 	utils.AddDefaultCateringSchedules(catering.ID)
 
-	return catering, err
+	return err
 }
 
 // Get returns list of caterings with pagination args
