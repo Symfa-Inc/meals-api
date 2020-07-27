@@ -32,18 +32,20 @@ var dishRepo = repository.NewDishRepo()
 // @Router /caterings/{id}/dishes [post]
 func (d Dish) Add(c *gin.Context) {
 	var path types.PathID
-	var body domain.Dish
+	var dish domain.Dish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	if err := utils.RequestBinderBody(&body, c); err != nil {
+	if err := utils.RequestBinderBody(&dish, c); err != nil {
 		return
 	}
 
-	body.CateringID, _ = uuid.FromString(path.ID)
-	dish, err := dishRepo.Add(path.ID, body)
+	dish.CateringID, _ = uuid.FromString(path.ID)
+
+	err := dishRepo.Add(path.ID, &dish)
+
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
@@ -152,17 +154,17 @@ func (d Dish) GetByID(c *gin.Context) {
 // @Router /caterings/{id}/dishes/{dishId} [put]
 func (d Dish) Update(c *gin.Context) {
 	var path types.PathDish
-	var body domain.Dish
+	var dish domain.Dish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	if err := utils.RequestBinderBody(&body, c); err != nil {
+	if err := utils.RequestBinderBody(&dish, c); err != nil {
 		return
 	}
 
-	if code, err := dishRepo.Update(path, body); err != nil {
+	if code, err := dishRepo.Update(path, dish); err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}

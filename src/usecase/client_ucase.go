@@ -33,9 +33,9 @@ var clientRepo = repository.NewClientRepo()
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/clients [post]
 func (cl Client) Add(c *gin.Context) {
-	var body domain.Client
+	var client domain.Client
 	var path types.PathID
-	if err := utils.RequestBinderBody(&body, c); err != nil {
+	if err := utils.RequestBinderBody(&client, c); err != nil {
 		return
 	}
 
@@ -44,8 +44,9 @@ func (cl Client) Add(c *gin.Context) {
 	}
 
 	parsedCateringID, _ := uuid.FromString(path.ID)
-	body.CateringID = parsedCateringID
-	client, err := clientRepo.Add(path.ID, body)
+	client.CateringID = parsedCateringID
+
+	err := clientRepo.Add(path.ID, &client)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)

@@ -20,18 +20,18 @@ func NewCategoryRepo() *CategoryRepo {
 
 // Add creates dish category
 // returns dish category and error
-func (dc CategoryRepo) Add(category domain.Category) (domain.Category, error) {
+func (dc CategoryRepo) Add(category *domain.Category) error {
 	if exist := config.DB.
 		Unscoped().
 		Where("catering_id = ? AND name = ? AND deleted_at >  ?", category.CateringID, category.Name, time.Now()).
 		Or("catering_id = ? AND name = ? AND deleted_at IS NULL", category.CateringID, category.Name).
-		Find(&category).RecordNotFound(); !exist {
+		Find(category).RecordNotFound(); !exist {
 
-		return domain.Category{}, errors.New("this category already exist")
+		return errors.New("this category already exist")
 	}
 
-	err := config.DB.Create(&category).Error
-	return category, err
+	err := config.DB.Create(category).Error
+	return err
 }
 
 // Get returns list of categories of passed catering ID
@@ -81,21 +81,19 @@ func (dc CategoryRepo) Delete(path types.PathCategory) error {
 
 // Update checks if that name already exists in provided catering
 // if its exists throws and error, if not updates the reading
-func (dc CategoryRepo) Update(path types.PathCategory, category domain.Category) (int, error) {
-	var categoryModel domain.Category
-
+func (dc CategoryRepo) Update(path types.PathCategory, category *domain.Category) (int, error) {
 	if categoryExist := config.DB.
 		Unscoped().
 		Where("catering_id = ? AND name = ? AND (deleted_at > ? OR deleted_at IS NULL)", path.ID, category.Name, time.Now()).
-		Find(&categoryModel).RecordNotFound(); !categoryExist {
+		Find(&domain.Category{}).RecordNotFound(); !categoryExist {
 		return http.StatusBadRequest, errors.New("this category already exist")
 	}
 
 	if categoryNotExist := config.DB.
 		Unscoped().
-		Model(&categoryModel).
+		Model(&domain.Category{}).
 		Where("id = ? AND (deleted_at > ? OR deleted_at IS NULL)", path.CategoryID, time.Now()).
-		Update(&category); categoryNotExist.RowsAffected == 0 {
+		Update(category); categoryNotExist.RowsAffected == 0 {
 		return http.StatusNotFound, errors.New("category not found")
 	}
 

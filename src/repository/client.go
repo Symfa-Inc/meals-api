@@ -20,27 +20,32 @@ func NewClientRepo() *ClientRepo {
 
 // Add adds client in DB
 // returns error if that client name already exists
-func (c ClientRepo) Add(cateringID string, client domain.Client) (domain.Client, error) {
+func (c ClientRepo) Add(cateringID string, client *domain.Client) error {
 	if err := config.DB.
 		Where("id = ?", cateringID).
 		Find(&domain.Catering{}).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return domain.Client{}, err
+			return err
 		}
 
-		return domain.Client{}, err
+		return err
 	}
 
-	if exist := config.DB.Where("name = ?", client.Name).
-		Find(&client).RowsAffected; exist != 0 {
-		return domain.Client{}, errors.New("client with that name already exist")
+	if exist := config.DB.
+		Where("name = ?", client.Name).
+		Find(client).RowsAffected; exist != 0 {
+		return errors.New("client with that name already exist")
 	}
 
-	err := config.DB.Create(&client).Error
+	err := config.DB.Create(client).Error
 
 	var cateringSchedules []domain.CateringSchedule
-	config.DB.Where("catering_id = ?", client.CateringID).Find(&cateringSchedules)
+
+	config.DB.
+		Where("catering_id = ?", client.CateringID).
+		Find(&cateringSchedules)
+
 	for _, schedule := range cateringSchedules {
 		clientSchedule := domain.ClientSchedule{
 			Day:       schedule.Day,
@@ -52,7 +57,7 @@ func (c ClientRepo) Add(cateringID string, client domain.Client) (domain.Client,
 		config.DB.Create(&clientSchedule)
 	}
 
-	return client, err
+	return err
 }
 
 // Get returns list of clients

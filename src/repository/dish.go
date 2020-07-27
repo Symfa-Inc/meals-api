@@ -21,29 +21,19 @@ func NewDishRepo() *DishRepo {
 
 // Add creates new dish entity
 // returns error or nil
-func (d DishRepo) Add(cateringID string, dish domain.Dish) (domain.Dish, error) {
-	var total int
-	config.DB.
-		Model(&domain.Dish{}).
-		Where("catering_id = ? AND category_id = ?", cateringID, dish.CategoryID).
-		Count(&total)
-
-	if total >= 10 {
-		return domain.Dish{}, errors.New("can't add more than 10 dishes for a single category")
-	}
-
+func (d DishRepo) Add(cateringID string, dish *domain.Dish) error {
 	if dishExist := config.DB.
 		Where("catering_id = ? AND category_id = ? AND name = ?", cateringID, dish.CategoryID, dish.Name).
-		Find(&dish).
+		Find(dish).
 		RecordNotFound(); !dishExist {
-		return domain.Dish{}, errors.New("this dish already exist in that category")
+		return errors.New("this dish already exist in that category")
 	}
 
-	if err := config.DB.Create(&dish).Error; err != nil {
-		return domain.Dish{}, err
+	if err := config.DB.Create(dish).Error; err != nil {
+		return err
 	}
 
-	return dish, nil
+	return nil
 }
 
 // Delete soft delete of entity

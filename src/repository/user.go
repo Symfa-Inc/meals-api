@@ -125,7 +125,8 @@ func (ur UserRepo) Get(companyID, companyType string, pagination types.Paginatio
 		Joins("left join caterings c on c.id = users.catering_id").
 		Joins("left join clients ci on ci.id = users.client_id").
 		Where("users.client_id = ? AND (first_name || last_name) ILIKE ?"+
-			"AND status ILIKE ? AND CAST(users.role AS text) ILIKE ?", companyID, "%"+querySearch+"%", "%"+status+"%", "%"+role+"%").
+			"AND status ILIKE ? AND CAST(users.role AS text) ILIKE ?" +
+		" AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, "%"+querySearch+"%", "%"+status+"%", "%"+role+"%", time.Now()).
 		Order("created_at DESC").
 		Scan(&users).
 		Error; err != nil {

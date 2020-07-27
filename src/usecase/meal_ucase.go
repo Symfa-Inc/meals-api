@@ -22,6 +22,7 @@ func NewMeal() *Meal {
 }
 
 var mealRepo = repository.NewMealRepo()
+var mealDishRepo = repository.NewMealDishesRepo()
 
 // Add adds meals
 // @Summary Add days for catering
@@ -35,7 +36,6 @@ var mealRepo = repository.NewMealRepo()
 func (m Meal) Add(c *gin.Context) {
 	var path types.PathID
 	var body request.AddMeal
-	mealDishRepo := repository.NewMealDishesRepo()
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -46,7 +46,7 @@ func (m Meal) Add(c *gin.Context) {
 	}
 
 	parsedID, _ := uuid.FromString(path.ID)
-	meal := domain.Meal{
+	meal := &domain.Meal{
 		Date:       body.Date,
 		CateringID: parsedID,
 	}
@@ -72,7 +72,7 @@ func (m Meal) Add(c *gin.Context) {
 		}
 	}
 
-	mealItem, err := mealRepo.Add(meal)
+	err := mealRepo.Add(meal)
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
@@ -81,7 +81,7 @@ func (m Meal) Add(c *gin.Context) {
 	for _, dishID := range body.Dishes {
 		dishIDParsed, _ := uuid.FromString(dishID)
 		mealDish := domain.MealDish{
-			MealID: mealItem.(*domain.Meal).ID,
+			MealID: meal.ID,
 			DishID: dishIDParsed,
 		}
 		if err := mealDishRepo.Add(mealDish); err != nil {
@@ -90,7 +90,7 @@ func (m Meal) Add(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusCreated, mealItem)
+	c.JSON(http.StatusCreated, meal)
 }
 
 // Get returns array of meals
@@ -159,7 +159,6 @@ func (m Meal) Get(c *gin.Context) {
 func (m Meal) Update(c *gin.Context) {
 	var path types.PathMeal
 	var body request.UpdateMeal
-	mealDishRepo := repository.NewMealDishesRepo()
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

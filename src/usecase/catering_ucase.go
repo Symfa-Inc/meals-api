@@ -31,12 +31,14 @@ var cateringRepo = repository.NewCateringRepo()
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings [post]
 func (ca Catering) Add(c *gin.Context) {
-	var cateringModel domain.Catering
-	if err := utils.RequestBinderBody(&cateringModel, c); err != nil {
+	var catering domain.Catering
+
+	if err := utils.RequestBinderBody(&catering, c); err != nil {
 		return
 	}
 
-	catering, err := cateringRepo.Add(cateringModel)
+	err := cateringRepo.Add(&catering)
+
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
