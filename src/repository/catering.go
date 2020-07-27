@@ -58,10 +58,11 @@ func (c CateringRepo) Get(query types.PaginationQuery) ([]domain.Catering, int, 
 	config.DB.Find(&caterings).Count(&total)
 
 	err := config.DB.
+		Debug().
 		Limit(limit).
 		Offset((page - 1) * limit).
-		Find(&caterings).
 		Order("created_at DESC").
+		Find(&caterings).
 		Error
 
 	return caterings, total, err

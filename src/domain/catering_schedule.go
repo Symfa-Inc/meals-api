@@ -19,7 +19,7 @@ type CateringSchedule struct {
 // for catering schedule
 type CateringScheduleRepository interface {
 	Get(cateringID string) ([]CateringSchedule, int, error)
-	Update(cateringID, scheduleID string, newSchedule CateringSchedule) (CateringSchedule, int, error)
+	Update(cateringID, scheduleID string, isWorking *bool, newSchedule *CateringSchedule) (int, error)
 }
 
 // CateringScheduleUsecase is usecase interface

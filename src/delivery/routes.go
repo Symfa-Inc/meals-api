@@ -99,10 +99,13 @@ func SetupRouter() *gin.Engine {
 				validator.ValidateRoles(types.UserRoleEnum.ClientAdmin),
 				clientSchedule.Update,
 			)
+
+			clientGroup.GET("/clients", client.Get)
 		}
 
 		cateringGroup := authRequired.Group("/")
 		cateringGroup.Use(validator.ValidateRoles(
+			types.UserRoleEnum.ClientAdmin,
 			types.UserRoleEnum.CateringAdmin,
 			types.UserRoleEnum.SuperAdmin,
 		))
@@ -122,7 +125,7 @@ func SetupRouter() *gin.Engine {
 				cateringRoutes.PUT("/:id/meals/:mealId", meal.Update)
 
 				cateringRoutes.POST("/:id/clients", client.Add)
-				cateringRoutes.GET("/:id/clients", client.Get)
+				cateringRoutes.GET("/:id/clients", client.GetCateringClients)
 				cateringRoutes.DELETE("/:id/clients/:clientId", client.Delete)
 				cateringRoutes.PUT("/:id/clients/:clientId", client.Update)
 

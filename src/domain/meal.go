@@ -22,8 +22,8 @@ type MealUsecase interface {
 
 // MealRepository is meal interface for repository
 type MealRepository interface {
-	Find(meal Meal) error
-	Add(meal Meal) (interface{}, error)
+	Find(meal *Meal) error
+	Add(meal *Meal) error
 	Get(mealDate time.Time, id string) ([]Dish, uuid.UUID, int, error)
 	GetByKey(key, value string) (Meal, int, error)
 }

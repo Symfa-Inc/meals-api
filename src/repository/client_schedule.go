@@ -6,7 +6,6 @@ import (
 	"github.com/jinzhu/now"
 	"go_api/src/config"
 	"go_api/src/domain"
-	"go_api/src/schemes/response"
 	"net/http"
 	"sort"
 )
@@ -22,10 +21,10 @@ func NewClientScheduleRepo() *ClientScheduleRepo {
 
 // Get returns array of schedules
 // for provided client id
-func (cs ClientScheduleRepo) Get(clientID string) ([]response.GetClientSchedules, int, error) {
+func (cs ClientScheduleRepo) Get(clientID string) ([]domain.ClientSchedulesCatering, int, error) {
 	var client domain.Client
 	var cateringSchedules []domain.CateringSchedule
-	var updatedSchedules []response.GetClientSchedules
+	var updatedSchedules []domain.ClientSchedulesCatering
 	if err := config.DB.
 		Where("id = ?", clientID).
 		Find(&client).
@@ -62,7 +61,7 @@ func (cs ClientScheduleRepo) Get(clientID string) ([]response.GetClientSchedules
 
 	for _, cateringSchedule := range cateringSchedules {
 		var oldClientSchedule domain.ClientSchedule
-		var updatedSchedule response.GetClientSchedules
+		var updatedSchedule domain.ClientSchedulesCatering
 		config.DB.
 			Where("client_id = ? AND day = ?", clientID, cateringSchedule.Day).
 			Find(&oldClientSchedule)
@@ -115,21 +114,21 @@ func (cs ClientScheduleRepo) Get(clientID string) ([]response.GetClientSchedules
 }
 
 // Update updates client's schedule with new values
-func (cs ClientScheduleRepo) Update(clientID, scheduleID string, isWorking *bool, newSchedule domain.ClientSchedule) (response.GetClientSchedules, int, error) {
+func (cs ClientScheduleRepo) Update(clientID, scheduleID string, isWorking *bool, newSchedule domain.ClientSchedule) (domain.ClientSchedulesCatering, int, error) {
 	var client domain.Client
 	var clientsOldSchedule domain.ClientSchedule
 	var cateringSchedule domain.CateringSchedule
-	var updatedSchedule response.GetClientSchedules
+	var updatedSchedule domain.ClientSchedulesCatering
 
 	if err := config.DB.
 		Where("id = ?", clientID).
 		First(&client).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return response.GetClientSchedules{}, http.StatusNotFound, errors.New("client with that id not found")
+			return domain.ClientSchedulesCatering{}, http.StatusNotFound, errors.New("client with that id not found")
 		}
 
-		return response.GetClientSchedules{}, http.StatusBadRequest, err
+		return domain.ClientSchedulesCatering{}, http.StatusBadRequest, err
 	}
 
 	config.DB.Find(&clientsOldSchedule).Where("id", scheduleID)
@@ -143,9 +142,9 @@ func (cs ClientScheduleRepo) Update(clientID, scheduleID string, isWorking *bool
 		Scan(&cateringSchedule).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return response.GetClientSchedules{}, http.StatusNotFound, errors.New("client schedule with that id not found")
+			return domain.ClientSchedulesCatering{}, http.StatusNotFound, errors.New("client schedule with that id not found")
 		}
-		return response.GetClientSchedules{}, http.StatusBadRequest, err
+		return domain.ClientSchedulesCatering{}, http.StatusBadRequest, err
 	}
 
 	if newSchedule.Start != "" && newSchedule.End != "" {
@@ -153,32 +152,32 @@ func (cs ClientScheduleRepo) Update(clientID, scheduleID string, isWorking *bool
 		oldStartTime, _ := now.Parse(cateringSchedule.Start)
 
 		if err != nil {
-			return response.GetClientSchedules{}, http.StatusBadRequest, err
+			return domain.ClientSchedulesCatering{}, http.StatusBadRequest, err
 		}
 
 		startDifference := startTime.Sub(oldStartTime).Seconds()
 
 		if startDifference < 0 {
-			return response.GetClientSchedules{}, http.StatusBadRequest, errors.New("new start time can't be earlier than catering's start time")
+			return domain.ClientSchedulesCatering{}, http.StatusBadRequest, errors.New("new start time can't be earlier than catering's start time")
 		}
 
 		endTime, err := now.Parse(newSchedule.End)
 		oldEndTime, _ := now.Parse(cateringSchedule.End)
 
 		if err != nil {
-			return response.GetClientSchedules{}, http.StatusBadRequest, err
+			return domain.ClientSchedulesCatering{}, http.StatusBadRequest, err
 		}
 
 		endDifference := oldEndTime.Sub(endTime).Seconds()
 
 		if endDifference < 0 {
-			return response.GetClientSchedules{}, http.StatusBadRequest, errors.New("new end time can't be later than catering's end time")
+			return domain.ClientSchedulesCatering{}, http.StatusBadRequest, errors.New("new end time can't be later than catering's end time")
 		}
 
 		difference := endTime.Sub(startTime).Seconds()
 
 		if difference < 0 {
-			return response.GetClientSchedules{}, http.StatusBadRequest, errors.New("end date can't be earlier than start date")
+			return domain.ClientSchedulesCatering{}, http.StatusBadRequest, errors.New("end date can't be earlier than start date")
 		}
 	}
 
@@ -187,25 +186,25 @@ func (cs ClientScheduleRepo) Update(clientID, scheduleID string, isWorking *bool
 		oldStartTime, _ := now.Parse(cateringSchedule.Start)
 
 		if err != nil {
-			return response.GetClientSchedules{}, http.StatusBadRequest, err
+			return domain.ClientSchedulesCatering{}, http.StatusBadRequest, err
 		}
 
 		startDifference := startTime.Sub(oldStartTime).Seconds()
 
 		if startDifference < 0 {
-			return response.GetClientSchedules{}, http.StatusBadRequest, errors.New("new start time can't be earlier than catering's start time")
+			return domain.ClientSchedulesCatering{}, http.StatusBadRequest, errors.New("new start time can't be earlier than catering's start time")
 		}
 
 		endTime, err := now.Parse(cateringSchedule.End)
 
 		if err != nil {
-			return response.GetClientSchedules{}, http.StatusBadRequest, err
+			return domain.ClientSchedulesCatering{}, http.StatusBadRequest, err
 		}
 
 		difference := endTime.Sub(startTime).Seconds()
 
 		if difference < 0 {
-			return response.GetClientSchedules{}, http.StatusBadRequest, errors.New("end date can't be earlier than start date")
+			return domain.ClientSchedulesCatering{}, http.StatusBadRequest, errors.New("end date can't be earlier than start date")
 		}
 	}
 
@@ -214,25 +213,25 @@ func (cs ClientScheduleRepo) Update(clientID, scheduleID string, isWorking *bool
 		oldEndTime, _ := now.Parse(cateringSchedule.End)
 
 		if err != nil {
-			return response.GetClientSchedules{}, http.StatusBadRequest, err
+			return domain.ClientSchedulesCatering{}, http.StatusBadRequest, err
 		}
 
 		endDifference := oldEndTime.Sub(endTime).Seconds()
 
 		if endDifference < 0 {
-			return response.GetClientSchedules{}, http.StatusBadRequest, errors.New("new end time can't be later than catering's end time")
+			return domain.ClientSchedulesCatering{}, http.StatusBadRequest, errors.New("new end time can't be later than catering's end time")
 		}
 
 		startTime, err := now.Parse(cateringSchedule.Start)
 
 		if err != nil {
-			return response.GetClientSchedules{}, http.StatusBadRequest, err
+			return domain.ClientSchedulesCatering{}, http.StatusBadRequest, err
 		}
 
 		difference := endTime.Sub(startTime).Seconds()
 
 		if difference < 0 {
-			return response.GetClientSchedules{}, http.StatusBadRequest, errors.New("end date can't be earlier than start date")
+			return domain.ClientSchedulesCatering{}, http.StatusBadRequest, errors.New("end date can't be earlier than start date")
 		}
 	}
 

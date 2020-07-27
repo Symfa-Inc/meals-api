@@ -128,7 +128,7 @@ func (u User) GetCateringUsers(c *gin.Context) { //nolint:dupl
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"users": users,
+		"items": users,
 		"total": total,
 		"page":  paginationQuery.Page,
 	})
@@ -259,7 +259,7 @@ func (u User) GetClientUsers(c *gin.Context) { //nolint:dupl
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"users": users,
+		"items": users,
 		"total": total,
 		"page":  paginationQuery.Page,
 	})

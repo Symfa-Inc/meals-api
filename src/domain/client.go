@@ -22,7 +22,7 @@ type ClientUsecase interface {
 
 // ClientRepository is client interface for repository
 type ClientRepository interface {
-	Add(cateringID string, client Client) (Client, error)
+	Add(cateringID string, client *Client) error
 	Update(cateringID, id string, client Client) (int, error)
 	Delete(cateringID, id string) error
 	GetByKey(key, value string) (Client, error)
