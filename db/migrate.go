@@ -31,6 +31,7 @@ func main() {
 	dev.CreateImages()
 	dev.CreateMealDishes()
 	dev.CreateImageDishes()
+	dev.CreateAddresses()
 }
 
 func migrate() {
@@ -45,6 +46,7 @@ func migrate() {
 		&domain.Category{},
 		&domain.Meal{},
 		&domain.User{},
+		&domain.Address{},
 		&domain.ClientSchedule{},
 		&domain.Client{},
 		&domain.CateringSchedule{},
@@ -56,6 +58,7 @@ func migrate() {
 		&domain.Catering{},
 		&domain.CateringSchedule{},
 		&domain.Client{},
+		&domain.Address{},
 		&domain.ClientSchedule{},
 		&domain.User{},
 		&domain.Seed{},
@@ -75,6 +78,8 @@ func migrate() {
 func addDbConstraints() {
 	config.DB.Model(&domain.User{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
 	config.DB.Model(&domain.User{}).AddForeignKey("client_id", "clients(id)", "CASCADE", "CASCADE")
+
+	config.DB.Model(&domain.Address{}).AddForeignKey("client_id", "clients(id)", "CASCADE", "CASCADE")
 
 	config.DB.Model(&domain.Client{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
 

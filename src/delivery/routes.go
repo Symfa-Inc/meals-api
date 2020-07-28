@@ -1,16 +1,17 @@
 package delivery
 
 import (
-	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/static"
-	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	"github.com/swaggo/gin-swagger"
 	"go_api/src/delivery/middleware"
 	"go_api/src/types"
 	"go_api/src/usecase"
 	"net/http"
 	"os"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/static"
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // RedirectFunc wrapper for a Gin Redirect function
@@ -37,6 +38,7 @@ func SetupRouter() *gin.Engine {
 	dish := usecase.NewDish()
 	image := usecase.NewImage()
 	order := usecase.NewOrder()
+	address := usecase.NewAddress()
 
 	validator := middleware.NewValidator()
 
@@ -133,6 +135,11 @@ func SetupRouter() *gin.Engine {
 			// client schedules
 			clAdminSuAdmin.PUT("/clients/:id/schedules/:scheduleId", clientSchedule.Update)
 
+			// client addresses
+			clAdminSuAdmin.POST("/clients/:id/addresses", address.Add)
+			clAdminSuAdmin.DELETE("/clients/:id/addresses/:addressId", address.Delete)
+			clAdminSuAdmin.PUT("/clients/:id/addresses/:addressId", address.Update)
+
 			// client orders
 			clAdminSuAdmin.GET("/clients/:id/orders", order.GetClientOrders)
 			clAdminSuAdmin.PUT("/clients/:id/orders", order.ApproveOrders)
@@ -185,6 +192,9 @@ func SetupRouter() *gin.Engine {
 		{
 			// clients
 			allAdmins.GET("/clients", client.Get)
+
+			// client addresses
+			allAdmins.GET("/clients/:id/addresses", address.Get)
 		}
 	}
 	return r

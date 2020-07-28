@@ -60,6 +60,12 @@ type PathSchedule struct {
 	ScheduleID string `uri:"scheduleId" json:"scheduleId" binding:"required"`
 }
 
+// PathAddress struct for path binding
+type PathAddress struct {
+	ID        string `uri:"id" json:"id" binding:"required"`
+	AddressID string `uri:"addressId" json:"addressId" binding:"required"`
+}
+
 // PathOrder struct for path binding
 type PathOrder struct {
 	ID      string `uri:"id" json:"id" binding:"required"`
