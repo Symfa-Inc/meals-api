@@ -36,9 +36,9 @@ type CateringClient struct {
 
 // ClientResponse struct
 type ClientResponse struct {
-	ID       string              `json:"id"`
-	Name     string              `json:"name"`
-	Catering domain.UserCatering `json:"catering"`
+	ID           string              `json:"id"`
+	Name         string              `json:"name"`
+	Catering     domain.UserCatering `json:"catering"`
 }
 
 type GetCateringClientsSwagger struct {

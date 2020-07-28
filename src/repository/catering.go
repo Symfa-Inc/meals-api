@@ -60,7 +60,7 @@ func (c CateringRepo) Get(query types.PaginationQuery) ([]domain.Catering, int, 
 	err := config.DB.
 		Limit(limit).
 		Offset((page - 1) * limit).
-		Order("created_at DESC, name ASC").
+		//Order("created_at DESC, name ASC").
 		Find(&caterings).
 		Error
 
