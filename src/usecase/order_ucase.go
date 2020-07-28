@@ -62,7 +62,20 @@ func (o Order) Add(c *gin.Context) {
 		}
 	}
 
-	date, _ := time.Parse(time.RFC3339, query.Date)
+	date, err := time.Parse(time.RFC3339, query.Date)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	difference := date.Sub(time.Now().Truncate(time.Hour * 24)).Hours()
+
+	if difference < 0 {
+		utils.CreateError(http.StatusBadRequest, "can't add order to previous date", c)
+		return
+	}
+
 	userOrder, err := orderRepo.Add(path.ID, date, order)
 
 	if err != nil {
@@ -123,6 +136,13 @@ func (o Order) GetUserOrder(c *gin.Context) {
 		return
 	}
 
+	_, err := time.Parse(time.RFC3339, query.Date)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
 	userOrders, code, err := orderRepo.GetUserOrder(path.ID, query.Date)
 
 	if err != nil {
@@ -155,19 +175,22 @@ func (o Order) GetClientOrders(c *gin.Context) {
 		return
 	}
 
-	client := types.CompanyTypesEnum.Client
-	summaryOrders, userOrders, summaryTotal, err := orderRepo.GetOrders("", path.ID, query.Date, client)
+	_, err := time.Parse(time.RFC3339, query.Date)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"summary":      summaryOrders,
-		"userOrders":   userOrders,
-		"summaryTotal": summaryTotal,
-	})
+	client := types.CompanyTypesEnum.Client
+	result, code, err := orderRepo.GetOrders("", path.ID, query.Date, client)
+
+	if err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
 // GetCateringClientOrders returns orders of provided client
@@ -193,19 +216,22 @@ func (o Order) GetCateringClientOrders(c *gin.Context) {
 		return
 	}
 
-	client := types.CompanyTypesEnum.Catering
-	summaryOrders, userOrders, summaryTotal, err := orderRepo.GetOrders(path.ID, path.ClientID, query.Date, client)
+	_, err := time.Parse(time.RFC3339, query.Date)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"summary":      summaryOrders,
-		"userOrders":   userOrders,
-		"summaryTotal": summaryTotal,
-	})
+	client := types.CompanyTypesEnum.Catering
+	result, code, err := orderRepo.GetOrders(path.ID, path.ClientID, query.Date, client)
+
+	if err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
 // ApproveOrders changes status of orders for provided day

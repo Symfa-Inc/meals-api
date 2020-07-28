@@ -30,9 +30,18 @@ type ItemsSummaryOrder struct {
 	Amount int    `json:"amount"`
 }
 
+// SummaryOrderResult struct
+type SummaryOrderResult struct {
+	SummaryOrders []SummaryOrder     `json:"summary"`
+	UserOrders    []SummaryUserOrder `json:"userOrders"`
+	Total         int                `json:"summaryTotal"`
+	Status        *string            `json:"status"`
+}
+
 // SummaryOrdersResponse struct
 type SummaryOrdersResponse struct {
 	Summary      SummaryOrder     `json:"summary"`
 	SummaryTotal int              `json:"summaryTotal"`
 	UserOrders   SummaryUserOrder `json:"userOrders"`
+	Status       *string          `json:"status"`
 }

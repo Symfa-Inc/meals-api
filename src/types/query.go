@@ -6,6 +6,13 @@ type PaginationQuery struct {
 	Page  int `form:"page"`
 }
 
+// PaginationWithDateQuery struct used for pagination binding
+type PaginationWithDateQuery struct {
+	Limit int    `form:"limit"`
+	Page  int    `form:"page"`
+	Date  string `form:"date" binding:"required"`
+}
+
 // DateQuery struct used for binding date
 type DateQuery struct {
 	Date string `form:"date" binding:"required"`

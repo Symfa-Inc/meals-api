@@ -61,8 +61,8 @@ func (c ClientRepo) Add(cateringID string, client *domain.Client) error {
 	return err
 }
 
-// Get returns list of catering Clients
-func (c ClientRepo) GetCateringClients(cateringID string, query types.PaginationQuery) ([]response.CateringClient, int, error) {
+// GetCateringClients returns list of catering Clients
+func (c ClientRepo) GetCateringClients(cateringID string, query types.PaginationWithDateQuery) ([]response.CateringClient, int, error) {
 	var cateringClients []response.CateringClient
 	var total int
 
@@ -86,7 +86,7 @@ func (c ClientRepo) GetCateringClients(cateringID string, query types.Pagination
 		Joins("left join user_orders uo on u.id = uo.user_id").
 		Joins("left join orders o on uo.order_id = o.id").
 		Joins("left join order_dishes od on od.order_id = o.id").
-		Where("clients.catering_id = ? AND o.status = ?", cateringID, types.OrderStatusTypesEnum.Approved).
+		Where("clients.catering_id = ? AND o.status = ? AND o.date = ?", cateringID, types.OrderStatusTypesEnum.Approved, query.Date).
 		Group("clients.name, clients.id").
 		Scan(&cateringClients).
 		Count(&total).
@@ -102,7 +102,7 @@ func (c ClientRepo) GetCateringClients(cateringID string, query types.Pagination
 			Joins("left join users u on u.client_id = clients.id").
 			Joins("left join user_orders uo on u.id = uo.user_id").
 			Joins("left join orders o on uo.order_id = o.id").
-			Where("clients.catering_id = ? AND o.status = ?", cateringID, types.OrderStatusTypesEnum.Approved).
+			Where("clients.catering_id = ? AND o.status = ? AND o.date = ?", cateringID, types.OrderStatusTypesEnum.Approved, query.Date).
 			Group("clients.name, clients.id").
 			Pluck("sum(o.total)", &total)
 
