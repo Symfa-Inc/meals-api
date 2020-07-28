@@ -265,3 +265,32 @@ func (o Order) ApproveOrders(c *gin.Context) {
 
 	c.Status(http.StatusOK)
 }
+
+// GetOrderStatus returns status of order
+// @Summary returns status of order
+// @Tags clients orders
+// @Produce json
+// @Param id path string true "Client ID"
+// @Param date query string true "Date query in YYYY-MM-DDT00:00:00Z format"
+// @Success 200 {object} response.OrderStatus "order status"
+// @Failure 400 {object} types.Error "Error"
+// @Failure 404 {object} types.Error "Not Found"
+// @Router /clients/{id}/order-status [get]
+func (o Order) GetOrderStatus(c *gin.Context) {
+	var path types.PathID
+	var query types.DateQuery
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderQuery(&query, c); err != nil {
+		return
+	}
+
+	status := orderRepo.GetOrdersStatus(path.ID, query.Date)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": status,
+	})
+}

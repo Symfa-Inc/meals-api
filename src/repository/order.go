@@ -153,26 +153,10 @@ func (o OrderRepo) GetUserOrder(userID, date string) (response.UserOrder, int, e
 // GetOrders return list of orders for catering or client
 func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (response.SummaryOrderResult, int, error) {
 	var result response.SummaryOrderResult
-	var ordersStatus []string
+	//var ordersStatus []string
 
 	if companyType == types.CompanyTypesEnum.Client {
-		if err := config.DB.
-			Model(&domain.User{}).
-			Select("o.status").
-			Joins("left join user_orders uo on uo.user_id = users.id").
-			Joins("left join orders o on uo.order_id = o.id").
-			Where("users.client_id = ? AND users.company_type = ? AND o.date = ?"+
-				" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
-			Pluck("o.status", &ordersStatus).
-			Error; err != nil {
-			return response.SummaryOrderResult{}, http.StatusBadRequest, err
-		}
-
-		if ordersStatus[0] == types.OrderStatusTypesEnum.Approved {
-			result.Status = &types.OrderStatusTypesEnum.Approved
-		} else {
-			result.Status = &types.OrderStatusTypesEnum.Pending
-		}
+		result.Status = o.GetOrdersStatus(clientID, date)
 
 		if err := config.DB.
 			Model(&domain.User{}).
@@ -249,7 +233,6 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 	}
 
 	if err := config.DB.
-		Debug().
 		Model(&domain.User{}).
 		Select("distinct on (c.id) c.name as category_name, c.id as category_id").
 		Joins("left join user_orders uo on uo.user_id = users.id").
@@ -313,6 +296,10 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 		result.Total += result.UserOrders[i].Total
 	}
 
+	if len(result.SummaryOrders) != 0 {
+		result.Status = &types.OrderStatusTypesEnum.Approved
+	}
+
 	return result, 0, nil
 }
 
@@ -357,4 +344,24 @@ func (o OrderRepo) getDishesForOrder(orderID uuid.UUID, dishes *[]response.Order
 		return err
 	}
 	return nil
+}
+
+func (o OrderRepo) GetOrdersStatus(clientID, date string) *string {
+	var ordersStatus []string
+
+	config.DB.
+		Debug().
+		Model(&domain.User{}).
+		Select("o.status").
+		Joins("left join user_orders uo on uo.user_id = users.id").
+		Joins("left join orders o on uo.order_id = o.id").
+		Where("users.client_id = ? AND users.company_type = ? AND o.date = ?"+
+			" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
+		Pluck("o.status", &ordersStatus)
+
+	if len(ordersStatus) ==  0 {
+		return nil
+	}
+
+	return &ordersStatus[0]
 }

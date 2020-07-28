@@ -162,6 +162,8 @@ func SetupRouter() *gin.Engine {
 			clAdminUser.POST("/users/:id/orders", order.Add)
 			clAdminUser.DELETE("/users/:id/orders/:orderId", order.CancelOrder)
 			clAdminUser.GET("/users/:id/orders", order.GetUserOrder)
+
+			clAdminUser.GET("/clients/:id/order-status", order.GetOrderStatus)
 		}
 
 		allUsers := authRequired.Group("/")
@@ -178,7 +180,7 @@ func SetupRouter() *gin.Engine {
 			// catering meals
 			allUsers.GET("/caterings/:id/meals", meal.Get)
 
-			// catering schedules
+			// schedules
 			allUsers.GET("/caterings/:id/schedules", cateringSchedule.Get)
 			allUsers.GET("/clients/:id/schedules", clientSchedule.Get)
 		}

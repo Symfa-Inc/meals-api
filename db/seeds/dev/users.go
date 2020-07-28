@@ -37,7 +37,7 @@ func CreateUsers() {
 			if i < 3 {
 				go func(i int) {
 					defer wg.Done()
-					cateringClient, _ := clientRepo.GetByKey("name", clientArray[i].Name)
+					cateringClient, _ := clientRepo.GetByKey("name", clientArray[i + 1].Name)
 					userArray[i].CompanyType = &types.CompanyTypesEnum.Catering
 					userArray[i].CateringID = &cateringClient.CateringID
 					userArray[i].ClientID = &cateringClient.ID

@@ -43,5 +43,5 @@ type SummaryOrdersResponse struct {
 	Summary      SummaryOrder     `json:"summary"`
 	SummaryTotal int              `json:"summaryTotal"`
 	UserOrders   SummaryUserOrder `json:"userOrders"`
-	Status       *string          `json:"status"`
+	Status       string          `json:"status"`
 }
