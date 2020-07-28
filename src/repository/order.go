@@ -2,8 +2,6 @@ package repository
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
-	uuid "github.com/satori/go.uuid"
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/schemes/request"
@@ -11,6 +9,9 @@ import (
 	"go_api/src/types"
 	"net/http"
 	"time"
+
+	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 )
 
 // OrderRepo struct
