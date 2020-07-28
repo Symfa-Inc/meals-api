@@ -346,6 +346,7 @@ func (o OrderRepo) getDishesForOrder(orderID uuid.UUID, dishes *[]response.Order
 	return nil
 }
 
+// GetOrderStatus returns order status for provided client
 func (o OrderRepo) GetOrdersStatus(clientID, date string) *string {
 	var ordersStatus []string
 
@@ -359,7 +360,7 @@ func (o OrderRepo) GetOrdersStatus(clientID, date string) *string {
 			" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
 		Pluck("o.status", &ordersStatus)
 
-	if len(ordersStatus) ==  0 {
+	if len(ordersStatus) == 0 {
 		return nil
 	}
 

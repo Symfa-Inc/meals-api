@@ -107,8 +107,6 @@ func SetupRouter() *gin.Engine {
 			// catering dishes
 			caAdminSuAdmin.POST("/caterings/:id/dishes", dish.Add)
 			caAdminSuAdmin.DELETE("/caterings/:id/dishes/:dishId", dish.Delete)
-			caAdminSuAdmin.GET("/caterings/:id/dishes", dish.Get)
-			caAdminSuAdmin.GET("/caterings/:id/dishes/:dishId", dish.GetByID)
 			caAdminSuAdmin.PUT("/caterings/:id/dishes/:dishId", dish.Update)
 
 			// catering images
@@ -183,6 +181,10 @@ func SetupRouter() *gin.Engine {
 			// schedules
 			allUsers.GET("/caterings/:id/schedules", cateringSchedule.Get)
 			allUsers.GET("/clients/:id/schedules", clientSchedule.Get)
+
+			// dishes
+			allUsers.GET("/caterings/:id/dishes", dish.Get)
+			allUsers.GET("/caterings/:id/dishes/:dishId", dish.GetByID)
 		}
 
 		allAdmins := authRequired.Group("/")
