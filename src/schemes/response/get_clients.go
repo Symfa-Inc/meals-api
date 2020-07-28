@@ -9,19 +9,21 @@ type GetClients struct {
 	Total int      `json:"total"`
 } //@name GetClients
 
+// GetCateringClients struct
 type GetCateringClients struct {
 	Items []CateringClient `json:"items"`
 	Page  int              `json:"page"`
 	Total int              `json:"total"`
 } //@name GetClients
 
-// CateringClient response struct
+// Client response struct
 type Client struct {
 	ID                  string `json:"id"`
 	Name                string `json:"name"`
 	domain.UserCatering `json:"catering"`
 }
 
+// ClientInfo response struct
 type ClientInfo struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
@@ -36,18 +38,19 @@ type CateringClient struct {
 
 // ClientResponse struct
 type ClientResponse struct {
-	ID           string              `json:"id"`
-	Name         string              `json:"name"`
-	Catering     domain.UserCatering `json:"catering"`
+	ID       string              `json:"id"`
+	Name     string              `json:"name"`
+	Catering domain.UserCatering `json:"catering"`
 }
 
+// GetCateringClientsSwagger struct
 type GetCateringClientsSwagger struct {
 	Items []CateringClientSwagger `json:"items"`
 	Page  int                     `json:"page"`
 	Total int                     `json:"total"`
 }
 
-// CateringClient response struct
+// CateringClientSwagger response struct
 type CateringClientSwagger struct {
 	ClientInfo   ClientInfo `json:"client"`
 	OrdersDishes string     `json:"ordersDishes" gorm:"column:orders_dishes"`

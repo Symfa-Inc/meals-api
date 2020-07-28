@@ -30,8 +30,8 @@ func CreateClients() {
 			} else {
 				if cateringsArray[i].Name != "Twiist" {
 					clientsArray[i].CateringID = cateringsArray[i].ID
+					config.DB.Create(&clientsArray[i])
 				}
-				config.DB.Create(&clientsArray[i])
 			}
 		}
 

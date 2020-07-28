@@ -8,6 +8,7 @@ import (
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
+	"time"
 )
 
 // Client struct
@@ -60,13 +61,14 @@ func (cl Client) Add(c *gin.Context) {
 // @Tags caterings clients
 // @Produce json
 // @Param id path string true "Catering ID"
+// @Param date query string true "Date query in YYYY-MM-DDT00:00:00Z format"
 // @Param limit query int false "used for pagination"
 // @Param page query int false "used for pagination"
 // @Success 200 {object} response.GetCateringClientsSwagger "List of clients"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/clients [get]
 func (cl Client) GetCateringClients(c *gin.Context) {
-	var query types.PaginationQuery
+	var query types.PaginationWithDateQuery
 	var path types.PathID
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
@@ -74,6 +76,13 @@ func (cl Client) GetCateringClients(c *gin.Context) {
 	}
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	_, err := time.Parse(time.RFC3339, query.Date)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}
 
