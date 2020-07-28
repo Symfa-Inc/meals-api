@@ -62,7 +62,7 @@ func (cl Client) Add(c *gin.Context) {
 // @Param id path string true "Catering ID"
 // @Param limit query int false "used for pagination"
 // @Param page query int false "used for pagination"
-// @Success 200 {object} response.GetClients "List of clients"
+// @Success 200 {object} response.GetCateringClientsSwagger "List of clients"
 // @Failure 400 {object} types.Error "Error"
 // @Router /caterings/{id}/clients [get]
 func (cl Client) GetCateringClients(c *gin.Context) {
@@ -77,7 +77,7 @@ func (cl Client) GetCateringClients(c *gin.Context) {
 		return
 	}
 
-	result, total, err := clientRepo.Get(path.ID, query)
+	result, total, err := clientRepo.GetCateringClients(path.ID, query)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
@@ -111,7 +111,7 @@ func (cl Client) Get(c *gin.Context) {
 		return
 	}
 
-	result, total, err := clientRepo.Get("", query)
+	result, total, err := clientRepo.Get(query)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)

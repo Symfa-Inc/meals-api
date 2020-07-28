@@ -35,6 +35,9 @@ func main() {
 
 func migrate() {
 	config.DB.DropTableIfExists(
+		&domain.UserOrders{},
+		&domain.OrderDishes{},
+		&domain.Order{},
 		&domain.MealDish{},
 		&domain.ImageDish{},
 		&domain.Image{},
@@ -62,6 +65,9 @@ func migrate() {
 		&domain.ImageDish{},
 		&domain.Image{},
 		&domain.MealDish{},
+		&domain.Order{},
+		&domain.OrderDishes{},
+		&domain.UserOrders{},
 	)
 
 }
@@ -87,6 +93,12 @@ func addDbConstraints() {
 
 	config.DB.Model(&domain.ImageDish{}).AddForeignKey("dish_id", "dishes(id)", "CASCADE", "CASCADE")
 	config.DB.Model(&domain.ImageDish{}).AddForeignKey("image_id", "images(id)", "CASCADE", "CASCADE")
+
+	config.DB.Model(&domain.OrderDishes{}).AddForeignKey("order_id", "orders(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.OrderDishes{}).AddForeignKey("dish_id", "dishes(id)", "CASCADE", "CASCADE")
+
+	config.DB.Model(&domain.UserOrders{}).AddForeignKey("order_id", "orders(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.UserOrders{}).AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
 }
 
 func createTypes() {
@@ -108,7 +120,14 @@ func createTypes() {
 		types.StatusTypesEnum.Active,
 	)
 
+	orderStatusTypesQuery := fmt.Sprintf("CREATE TYPE order_status_types AS ENUM ('%s', '%s', '%s')",
+		types.OrderStatusTypesEnum.Approved,
+		types.OrderStatusTypesEnum.Canceled,
+		types.OrderStatusTypesEnum.Pending,
+	)
+
 	config.DB.Exec(userTypesQuery)
 	config.DB.Exec(companyTypesQuery)
 	config.DB.Exec(statusTypesQuery)
+	config.DB.Exec(orderStatusTypesQuery)
 }

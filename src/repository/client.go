@@ -61,9 +61,9 @@ func (c ClientRepo) Add(cateringID string, client *domain.Client) error {
 	return err
 }
 
-// Get returns list of clients
-func (c ClientRepo) Get(cateringID string, query types.PaginationQuery) ([]response.Client, int, error) {
-	var clients []response.Client
+// Get returns list of catering Clients
+func (c ClientRepo) GetCateringClients(cateringID string, query types.PaginationQuery) ([]response.CateringClient, int, error) {
+	var cateringClients []response.CateringClient
 	var total int
 
 	page := query.Page
@@ -77,34 +77,66 @@ func (c ClientRepo) Get(cateringID string, query types.PaginationQuery) ([]respo
 		limit = 10
 	}
 
-	if cateringID == "" {
-		config.DB.
-			Model(&domain.Client{}).
-			Count(&total)
-
-		err := config.DB.
-			Limit(limit).
-			Offset((page - 1) * limit).
-			Model(&domain.Client{}).
-			Select("clients.*, c.name as catering_name, c.id as catering_id").
-			Joins("left join caterings c on c.id = clients.catering_id").
-			Scan(&clients).
-			Error
-
-		return clients, total, err
-	}
-	config.DB.
-		Where("catering_id = ?", cateringID).
-		Find(&domain.Client{}).
-		Count(&total)
-
 	err := config.DB.
 		Limit(limit).
 		Offset((page-1)*limit).
 		Model(&domain.Client{}).
+		Select("clients.name, clients.id, concat_ws('/', count(distinct od.order_id), sum(od.amount)) as orders_dishes").
+		Joins("left join users u on u.client_id = clients.id").
+		Joins("left join user_orders uo on u.id = uo.user_id").
+		Joins("left join orders o on uo.order_id = o.id").
+		Joins("left join order_dishes od on od.order_id = o.id").
+		Where("clients.catering_id = ? AND o.status = ?", cateringID, types.OrderStatusTypesEnum.Approved).
+		Group("clients.name, clients.id").
+		Scan(&cateringClients).
+		Count(&total).
+		Error
+
+	for i := range cateringClients {
+		var total []int
+		config.DB.
+			Limit(limit).
+			Offset((page-1)*limit).
+			Model(&domain.Client{}).
+			Select("o.total as total").
+			Joins("left join users u on u.client_id = clients.id").
+			Joins("left join user_orders uo on u.id = uo.user_id").
+			Joins("left join orders o on uo.order_id = o.id").
+			Where("clients.catering_id = ? AND o.status = ?", cateringID, types.OrderStatusTypesEnum.Approved).
+			Group("clients.name, clients.id").
+			Pluck("sum(o.total)", &total)
+
+		cateringClients[i].Total = total[0]
+	}
+
+	return cateringClients, total, err
+}
+
+// Get returns list of clients
+func (c ClientRepo) Get(query types.PaginationQuery) ([]response.Client, int, error) {
+	var clients []response.Client
+	var total int
+
+	page := query.Page
+	limit := query.Limit
+
+	if page == 0 {
+		page = 1
+	}
+
+	if limit == 0 {
+		limit = 10
+	}
+	config.DB.
+		Model(&domain.Client{}).
+		Count(&total)
+
+	err := config.DB.
+		Limit(limit).
+		Offset((page - 1) * limit).
+		Model(&domain.Client{}).
 		Select("clients.*, c.name as catering_name, c.id as catering_id").
 		Joins("left join caterings c on c.id = clients.catering_id").
-		Where("catering_id = ?", cateringID).
 		Scan(&clients).
 		Error
 
