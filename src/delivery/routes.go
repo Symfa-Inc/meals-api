@@ -69,25 +69,27 @@ func SetupRouter() *gin.Engine {
 			// caterings
 			suAdmin.POST("/caterings", catering.Add)
 			suAdmin.GET("/caterings", catering.Get)
-			suAdmin.GET("/caterings/:id", catering.GetByID)
 			suAdmin.DELETE("/caterings/:id", catering.Delete)
-			suAdmin.PUT("/caterings/:id", catering.Update)
-
-			// catering users
-			suAdmin.POST("/caterings/:id/users", user.AddCateringUser)
-			suAdmin.DELETE("/caterings/:id/users/:userId", user.DeleteCateringUser)
 		}
 
 		caAdminSuAdmin := authRequired.Group("/")
 		caAdminSuAdmin.Use(validator.ValidateRoles(
 			types.UserRoleEnum.SuperAdmin,
 			types.UserRoleEnum.CateringAdmin,
-			types.UserRoleEnum.ClientAdmin,
 		))
 		{
+			// catering info
+			caAdminSuAdmin.PUT("/caterings/:id", catering.Update)
+			caAdminSuAdmin.GET("/caterings/:id", catering.GetByID)
+
+			// catering users
+			caAdminSuAdmin.PUT("/caterings/:id/users/:userId", user.UpdateCateringUser)
+			caAdminSuAdmin.GET("/caterings/:id/users", user.GetCateringUsers)
+			caAdminSuAdmin.POST("/caterings/:id/users", user.AddCateringUser)
+			caAdminSuAdmin.DELETE("/caterings/:id/users/:userId", user.DeleteCateringUser)
+
 			// catering categories
 			caAdminSuAdmin.POST("/caterings/:id/categories", category.Add)
-			caAdminSuAdmin.GET("/caterings/:id/categories", category.Get)
 			caAdminSuAdmin.DELETE("/caterings/:id/categories/:categoryID", category.Delete)
 			caAdminSuAdmin.PUT("/caterings/:id/categories/:categoryID", category.Update)
 
@@ -96,6 +98,8 @@ func SetupRouter() *gin.Engine {
 			caAdminSuAdmin.GET("/caterings/:id/clients", client.GetCateringClients)
 			caAdminSuAdmin.DELETE("/caterings/:id/clients/:clientId", client.Delete)
 			caAdminSuAdmin.PUT("/caterings/:id/clients/:clientId", client.Update)
+
+			// catering client orders
 			caAdminSuAdmin.GET("/caterings/:id/clients/:clientId/orders", order.GetCateringClientOrders)
 
 			// catering dishes
@@ -118,9 +122,6 @@ func SetupRouter() *gin.Engine {
 			// catering schedules
 			caAdminSuAdmin.PUT("/caterings/:id/schedules/:scheduleId", cateringSchedule.Update)
 
-			// catering users
-			caAdminSuAdmin.PUT("/caterings/:id/users/:userId", user.UpdateCateringUser)
-			caAdminSuAdmin.GET("/caterings/:id/users", user.GetCateringUsers)
 		}
 
 		clAdminSuAdmin := authRequired.Group("/")
@@ -135,6 +136,12 @@ func SetupRouter() *gin.Engine {
 			// client orders
 			clAdminSuAdmin.GET("/clients/:id/orders", order.GetClientOrders)
 			clAdminSuAdmin.PUT("/clients/:id/orders", order.ApproveOrders)
+
+			// client users
+			clAdminSuAdmin.GET("/clients/:id/users", user.GetClientUsers)
+			clAdminSuAdmin.POST("/clients/:id/users", user.AddClientUser)
+			clAdminSuAdmin.DELETE("/clients/:id/users/:userId", user.DeleteClientUser)
+			clAdminSuAdmin.PUT("/clients/:id/users/:userId", user.UpdateClientUser)
 		}
 
 		clAdminUser := authRequired.Group("/")
@@ -150,6 +157,25 @@ func SetupRouter() *gin.Engine {
 			clAdminUser.GET("/users/:id/orders", order.GetUserOrder)
 		}
 
+		allUsers := authRequired.Group("/")
+		allUsers.Use(validator.ValidateRoles(
+			types.UserRoleEnum.SuperAdmin,
+			types.UserRoleEnum.CateringAdmin,
+			types.UserRoleEnum.ClientAdmin,
+			types.UserRoleEnum.User,
+		))
+		{
+			// categories
+			allUsers.GET("/caterings/:id/categories", category.Get)
+
+			// catering meals
+			allUsers.GET("/caterings/:id/meals", meal.Get)
+
+			// catering schedules
+			allUsers.GET("/caterings/:id/schedules", cateringSchedule.Get)
+			allUsers.GET("/clients/:id/schedules", clientSchedule.Get)
+		}
+
 		allAdmins := authRequired.Group("/")
 		allAdmins.Use(validator.ValidateRoles(
 			types.UserRoleEnum.SuperAdmin,
@@ -157,19 +183,7 @@ func SetupRouter() *gin.Engine {
 			types.UserRoleEnum.ClientAdmin,
 		))
 		{
-			// catering meals
-			allAdmins.GET("/caterings/:id/meals", meal.Get)
-
-			// catering schedules
-			allAdmins.GET("/caterings/:id/schedules", cateringSchedule.Get)
-			allAdmins.GET("/clients/:id/schedules", clientSchedule.Get)
-
-			// client users
-			allAdmins.GET("/clients/:id/users", user.GetClientUsers)
-			allAdmins.POST("/clients/:id/users", user.AddClientUser)
-			allAdmins.DELETE("/clients/:id/users/:userId", user.DeleteClientUser)
-			allAdmins.PUT("/clients/:id/users/:userId", user.UpdateClientUser)
-
+			// clients
 			allAdmins.GET("/clients", client.Get)
 		}
 	}
