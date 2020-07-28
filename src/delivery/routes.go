@@ -36,6 +36,7 @@ func SetupRouter() *gin.Engine {
 	category := usecase.NewCategory()
 	dish := usecase.NewDish()
 	image := usecase.NewImage()
+	order := usecase.NewOrder()
 
 	validator := middleware.NewValidator()
 
@@ -60,93 +61,116 @@ func SetupRouter() *gin.Engine {
 	{
 		authRequired.GET("/is-authenticated", auth.IsAuthenticated)
 
-		cateringUsersGroup := authRequired.Group("/")
-		cateringUsersGroup.Use(validator.ValidateRoles(
+		suAdmin := authRequired.Group("/")
+		suAdmin.Use(validator.ValidateRoles(
 			types.UserRoleEnum.SuperAdmin,
 		))
 		{
-			cateringUsersGroup.GET("/caterings/:id/users", user.GetCateringUsers)
-			cateringUsersGroup.POST("/caterings/:id/users", user.AddCateringUser)
-			cateringUsersGroup.DELETE("/caterings/:id/users/:userId", user.DeleteCateringUser)
-			cateringUsersGroup.PUT("/caterings/:id/users/:userId", user.UpdateCateringUser)
+			// caterings
+			suAdmin.POST("/caterings", catering.Add)
+			suAdmin.GET("/caterings", catering.Get)
+			suAdmin.GET("/caterings/:id", catering.GetByID)
+			suAdmin.DELETE("/caterings/:id", catering.Delete)
+			suAdmin.PUT("/caterings/:id", catering.Update)
+
+			// catering users
+			suAdmin.POST("/caterings/:id/users", user.AddCateringUser)
+			suAdmin.DELETE("/caterings/:id/users/:userId", user.DeleteCateringUser)
 		}
 
-		clientUsersGroup := authRequired.Group("/")
-		clientUsersGroup.Use(validator.ValidateRoles(
+		caAdminSuAdmin := authRequired.Group("/")
+		caAdminSuAdmin.Use(validator.ValidateRoles(
+			types.UserRoleEnum.SuperAdmin,
+			types.UserRoleEnum.CateringAdmin,
+			types.UserRoleEnum.ClientAdmin,
+		))
+		{
+			// catering categories
+			caAdminSuAdmin.POST("/caterings/:id/categories", category.Add)
+			caAdminSuAdmin.GET("/caterings/:id/categories", category.Get)
+			caAdminSuAdmin.DELETE("/caterings/:id/categories/:categoryID", category.Delete)
+			caAdminSuAdmin.PUT("/caterings/:id/categories/:categoryID", category.Update)
+
+			// catering clients
+			caAdminSuAdmin.POST("/caterings/:id/clients", client.Add)
+			caAdminSuAdmin.GET("/caterings/:id/clients", client.GetCateringClients)
+			caAdminSuAdmin.DELETE("/caterings/:id/clients/:clientId", client.Delete)
+			caAdminSuAdmin.PUT("/caterings/:id/clients/:clientId", client.Update)
+			caAdminSuAdmin.GET("/caterings/:id/clients/:clientId/orders", order.GetCateringClientOrders)
+
+			// catering dishes
+			caAdminSuAdmin.POST("/caterings/:id/dishes", dish.Add)
+			caAdminSuAdmin.DELETE("/caterings/:id/dishes/:dishId", dish.Delete)
+			caAdminSuAdmin.GET("/caterings/:id/dishes", dish.Get)
+			caAdminSuAdmin.GET("/caterings/:id/dishes/:dishId", dish.GetByID)
+			caAdminSuAdmin.PUT("/caterings/:id/dishes/:dishId", dish.Update)
+
+			// catering images
+			caAdminSuAdmin.GET("/images", image.Get)
+			caAdminSuAdmin.POST("/caterings/:id/images", image.Add)
+			caAdminSuAdmin.DELETE("/caterings/:id/images/:imageId/dish/:dishId", image.Delete)
+			caAdminSuAdmin.PUT("/caterings/:id/images/:imageId/dish/:dishId", image.Update)
+
+			// catering meals
+			caAdminSuAdmin.POST("/caterings/:id/meals", meal.Add)
+			caAdminSuAdmin.PUT("/caterings/:id/meals/:mealId", meal.Update)
+
+			// catering schedules
+			caAdminSuAdmin.PUT("/caterings/:id/schedules/:scheduleId", cateringSchedule.Update)
+
+			// catering users
+			caAdminSuAdmin.PUT("/caterings/:id/users/:userId", user.UpdateCateringUser)
+			caAdminSuAdmin.GET("/caterings/:id/users", user.GetCateringUsers)
+		}
+
+		clAdminSuAdmin := authRequired.Group("/")
+		clAdminSuAdmin.Use(validator.ValidateRoles(
+			types.UserRoleEnum.ClientAdmin,
+			types.UserRoleEnum.SuperAdmin,
+		))
+		{
+			// client schedules
+			clAdminSuAdmin.PUT("/clients/:id/schedules/:scheduleId", clientSchedule.Update)
+
+			// client orders
+			clAdminSuAdmin.GET("/clients/:id/orders", order.GetClientOrders)
+			clAdminSuAdmin.PUT("/clients/:id/orders", order.ApproveOrders)
+		}
+
+		clAdminUser := authRequired.Group("/")
+		clAdminUser.Use(validator.ValidateRoles(
 			types.UserRoleEnum.SuperAdmin,
 			types.UserRoleEnum.ClientAdmin,
-			types.UserRoleEnum.CateringAdmin,
+			types.UserRoleEnum.User,
 		))
 		{
-			clientUsersGroup.GET("/clients/:id/users", user.GetClientUsers)
-			clientUsersGroup.POST("/clients/:id/users", user.AddClientUser)
-			clientUsersGroup.DELETE("/clients/:id/users/:userId", user.DeleteClientUser)
-			clientUsersGroup.PUT("/clients/:id/users/:userId", user.UpdateClientUser)
+			// client orders
+			clAdminUser.POST("/users/:id/orders", order.Add)
+			clAdminUser.DELETE("/users/:id/orders/:orderId", order.CancelOrder)
+			clAdminUser.GET("/users/:id/orders", order.GetUserOrder)
 		}
 
-		clientGroup := authRequired.Group("/")
-		clientGroup.Use(validator.ValidateRoles(
+		allAdmins := authRequired.Group("/")
+		allAdmins.Use(validator.ValidateRoles(
 			types.UserRoleEnum.SuperAdmin,
-		))
-		{
-			clientGroup.GET(
-				"/clients/:id/schedules",
-				validator.ValidateRoles(types.UserRoleEnum.ClientAdmin),
-				clientSchedule.Get,
-			)
-			clientGroup.PUT(
-				"/clients/:id/schedules/:scheduleId",
-				validator.ValidateRoles(types.UserRoleEnum.ClientAdmin),
-				clientSchedule.Update,
-			)
-
-			clientGroup.GET("/clients", client.Get)
-		}
-
-		cateringGroup := authRequired.Group("/")
-		cateringGroup.Use(validator.ValidateRoles(
+			types.UserRoleEnum.CateringAdmin,
 			types.UserRoleEnum.ClientAdmin,
-			types.UserRoleEnum.CateringAdmin,
-			types.UserRoleEnum.SuperAdmin,
 		))
 		{
+			// catering meals
+			allAdmins.GET("/caterings/:id/meals", meal.Get)
 
-			cateringGroup.POST("/caterings", catering.Add)
-			cateringGroup.GET("/caterings", catering.Get)
-			cateringGroup.DELETE("/caterings/:id", catering.Delete)
-			cateringGroup.PUT("/caterings/:id", catering.Update)
+			// catering schedules
+			allAdmins.GET("/caterings/:id/schedules", cateringSchedule.Get)
+			allAdmins.GET("/clients/:id/schedules", clientSchedule.Get)
 
-			cateringGroup.GET("/images", image.Get)
+			// client users
+			allAdmins.GET("/clients/:id/users", user.GetClientUsers)
+			allAdmins.POST("/clients/:id/users", user.AddClientUser)
+			allAdmins.DELETE("/clients/:id/users/:userId", user.DeleteClientUser)
+			allAdmins.PUT("/clients/:id/users/:userId", user.UpdateClientUser)
 
-			cateringRoutes := cateringGroup.Group("/caterings")
-			{
-				cateringRoutes.POST("/:id/meals", meal.Add)
-				cateringRoutes.GET("/:id/meals", meal.Get)
-				cateringRoutes.PUT("/:id/meals/:mealId", meal.Update)
-
-				cateringRoutes.POST("/:id/clients", client.Add)
-				cateringRoutes.GET("/:id/clients", client.GetCateringClients)
-				cateringRoutes.DELETE("/:id/clients/:clientId", client.Delete)
-				cateringRoutes.PUT("/:id/clients/:clientId", client.Update)
-
-				cateringRoutes.GET("/:id/schedules", cateringSchedule.Get)
-				cateringRoutes.PUT("/:id/schedules/:scheduleId", cateringSchedule.Update)
-
-				cateringRoutes.POST("/:id/categories", category.Add)
-				cateringRoutes.GET("/:id/categories", category.Get)
-				cateringRoutes.DELETE("/:id/categories/:categoryID", category.Delete)
-				cateringRoutes.PUT("/:id/categories/:categoryID", category.Update)
-
-				cateringRoutes.POST("/:id/dishes", dish.Add)
-				cateringRoutes.DELETE("/:id/dishes/:dishId", dish.Delete)
-				cateringRoutes.GET("/:id/dishes", dish.Get)
-				cateringRoutes.GET("/:id/dishes/:dishId", dish.GetByID)
-				cateringRoutes.PUT("/:id/dishes/:dishId", dish.Update)
-
-				cateringRoutes.POST("/:id/images", image.Add)
-				cateringRoutes.DELETE("/:id/images/:imageId/dish/:dishId", image.Delete)
-				cateringRoutes.PUT("/:id/images/:imageId/dish/:dishId", image.Update)
-			}
+			allAdmins.GET("/clients", client.Get)
 		}
 	}
 	return r

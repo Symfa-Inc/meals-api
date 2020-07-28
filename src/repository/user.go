@@ -87,7 +87,7 @@ func (ur UserRepo) Get(companyID, companyType string, pagination types.Paginatio
 			Where("users.catering_id = ? AND (first_name || last_name) ILIKE ?"+
 				" AND ci.name ILIKE ? AND CAST(users.role AS text) ILIKE ?"+
 				" AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, "%"+querySearch+"%", "%"+clientName+"%", "%"+role+"%", time.Now()).
-			Order("created_at DESC").
+			Order("created_at DESC, name ASC").
 			Scan(&users).
 			Error; err != nil {
 			if gorm.IsRecordNotFoundError(err) {
@@ -126,7 +126,7 @@ func (ur UserRepo) Get(companyID, companyType string, pagination types.Paginatio
 		Where("users.client_id = ? AND (first_name || last_name) ILIKE ?"+
 			"AND status ILIKE ? AND CAST(users.role AS text) ILIKE ?"+
 			" AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, "%"+querySearch+"%", "%"+status+"%", "%"+role+"%", time.Now()).
-		Order("created_at DESC").
+		Order("created_at DESC, name ASC").
 		Scan(&users).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {

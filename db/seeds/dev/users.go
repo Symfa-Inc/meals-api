@@ -39,7 +39,7 @@ func CreateUsers() {
 					defer wg.Done()
 					cateringClient, _ := clientRepo.GetByKey("name", clientArray[i].Name)
 					userArray[i].CompanyType = &types.CompanyTypesEnum.Catering
-					userArray[i].CateringID = &catering.ID
+					userArray[i].CateringID = &cateringClient.CateringID
 					userArray[i].ClientID = &cateringClient.ID
 					userArray[i].Password = hashedPassword
 					userArray[i].Status = &types.StatusTypesEnum.Active
