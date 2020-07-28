@@ -7,7 +7,6 @@ import (
 	"go_api/src/repository"
 	"go_api/src/types"
 	"go_api/src/utils"
-	"sync"
 )
 
 // CreateUsers will populate users table with random users
@@ -30,36 +29,25 @@ func CreateUsers() {
 		utils.JSONParse("/db/seeds/data/users.json", &userArray)
 		utils.JSONParse("/db/seeds/data/clients.json", &clientArray)
 
-		var wg sync.WaitGroup
-		wg.Add(len(userArray))
-
 		for i := range userArray {
 			if i < 3 {
-				go func(i int) {
-					defer wg.Done()
-					cateringClient, _ := clientRepo.GetByKey("name", clientArray[i + 1].Name)
-					userArray[i].CompanyType = &types.CompanyTypesEnum.Catering
-					userArray[i].CateringID = &cateringClient.CateringID
-					userArray[i].ClientID = &cateringClient.ID
-					userArray[i].Password = hashedPassword
-					userArray[i].Status = &types.StatusTypesEnum.Active
-					config.DB.Create(&userArray[i])
-				}(i)
+				cateringClient, _ := clientRepo.GetByKey("name", clientArray[i].Name)
+				userArray[i].CompanyType = &types.CompanyTypesEnum.Catering
+				userArray[i].CateringID = &cateringClient.CateringID
+				userArray[i].ClientID = &cateringClient.ID
+				userArray[i].Password = hashedPassword
+				userArray[i].Status = &types.StatusTypesEnum.Active
+				config.DB.Create(&userArray[i])
 			} else {
-				go func(i int) {
-					defer wg.Done()
-					userArray[i].CompanyType = &types.CompanyTypesEnum.Client
-					userArray[i].Floor = &i
-					userArray[i].CateringID = &catering.ID
-					userArray[i].ClientID = &client.ID
-					userArray[i].Password = hashedPassword
-					userArray[i].Status = &types.StatusTypesEnum.Active
-					config.DB.Create(&userArray[i])
-				}(i)
+				userArray[i].CompanyType = &types.CompanyTypesEnum.Client
+				userArray[i].Floor = &i
+				userArray[i].CateringID = &catering.ID
+				userArray[i].ClientID = &client.ID
+				userArray[i].Password = hashedPassword
+				userArray[i].Status = &types.StatusTypesEnum.Active
+				config.DB.Create(&userArray[i])
 			}
 		}
-
-		wg.Wait()
 		config.DB.Create(&seed)
 
 		fmt.Println("=== User seeds created ===")

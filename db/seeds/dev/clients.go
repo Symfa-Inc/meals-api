@@ -20,18 +20,16 @@ func CreateClients() {
 		var clientsArray []domain.Client
 		utils.JSONParse("/db/seeds/data/clients.json", &clientsArray)
 		var cateringsArray []domain.Catering
-		twiistCatering, _ := cateringRepo.GetByKey("name", "Twiist")
 		config.DB.Find(&cateringsArray).Limit(len(clientsArray))
+		twiistCatering, _ := cateringRepo.GetByKey("name", "Twiist")
 
 		for i := range clientsArray {
 			if i == 0 {
 				clientsArray[i].CateringID = twiistCatering.ID
 				config.DB.Create(&clientsArray[i])
-			} else {
-				if cateringsArray[i].Name != "Twiist" {
-					clientsArray[i].CateringID = cateringsArray[i].ID
-					config.DB.Create(&clientsArray[i])
-				}
+			} else if cateringsArray[i].Name != "Twiist" {
+				clientsArray[i].CateringID = cateringsArray[i].ID
+				config.DB.Create(&clientsArray[i])
 			}
 		}
 
