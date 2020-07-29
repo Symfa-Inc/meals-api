@@ -54,14 +54,13 @@ func SetupRouter() *gin.Engine {
 	r.Use(static.Serve("/static/", static.LocalFile(dir+"/src/static/images", true)))
 
 	r.GET("/api-docs/static/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.GET("/refresh-token", middleware.Passport().RefreshHandler)
+	r.GET("/is-authenticated", auth.IsAuthenticated)
 	r.POST("/login", middleware.Passport().LoginHandler)
 	r.GET("/logout", middleware.Passport().LogoutHandler)
 
 	authRequired := r.Group("/")
 	authRequired.Use(middleware.Passport().MiddlewareFunc())
 	{
-		authRequired.GET("/is-authenticated", auth.IsAuthenticated)
 
 		suAdmin := authRequired.Group("/")
 		suAdmin.Use(validator.ValidateRoles(

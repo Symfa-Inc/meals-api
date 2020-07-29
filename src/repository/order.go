@@ -346,7 +346,7 @@ func (o OrderRepo) getDishesForOrder(orderID uuid.UUID, dishes *[]response.Order
 	return nil
 }
 
-// GetOrderStatus returns order status for provided client
+// GetOrdersStatus return order status for provided client
 func (o OrderRepo) GetOrdersStatus(clientID, date string) *string {
 	var ordersStatus []string
 
