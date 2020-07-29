@@ -36,7 +36,7 @@ func (ur UserRepo) GetByKey(key, value string) (domain.UserClientCatering, error
 }
 
 // Get returns list of users for provided company
-func (ur UserRepo) Get(companyID, companyType string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]domain.UserClientCatering, int, int, error) {
+func (ur UserRepo) Get(companyID, companyType, userRole string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]domain.UserClientCatering, int, int, error) {
 	var users []domain.UserClientCatering
 	var total int
 	page := pagination.Page
@@ -52,6 +52,10 @@ func (ur UserRepo) Get(companyID, companyType string, pagination types.Paginatio
 
 	if limit == 0 {
 		limit = 10
+	}
+
+	if userRole == types.UserRoleEnum.CateringAdmin {
+		role = types.UserRoleEnum.ClientAdmin
 	}
 
 	if companyType == types.CompanyTypesEnum.Catering {
@@ -104,9 +108,10 @@ func (ur UserRepo) Get(companyID, companyType string, pagination types.Paginatio
 		Select("users.*, c.id as catering_id, c.name as catering_name, ci.id as client_id, ci.name as client_name").
 		Joins("left join caterings c on c.id = users.catering_id").
 		Joins("left join clients ci on ci.id = users.client_id").
-		Where("users.client_id = ? AND (first_name || last_name) ILIKE ?"+
+		Where("users.client_id = ? AND users.company_type = ? AND (first_name || last_name) ILIKE ?"+
 			"AND status ILIKE ? AND CAST(users.role AS text) ILIKE ?"+
-			" AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, "%"+querySearch+"%", "%"+status+"%", "%"+role+"%", time.Now()).
+			" AND (users.deleted_at > ? OR users.deleted_at IS NULL)",
+			companyID, types.CompanyTypesEnum.Client, "%"+querySearch+"%", "%"+status+"%", "%"+role+"%", time.Now()).
 		Count(&total).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
@@ -123,9 +128,10 @@ func (ur UserRepo) Get(companyID, companyType string, pagination types.Paginatio
 		Select("users.*, c.id as catering_id, c.name as catering_name, ci.id as client_id, ci.name as client_name").
 		Joins("left join caterings c on c.id = users.catering_id").
 		Joins("left join clients ci on ci.id = users.client_id").
-		Where("users.client_id = ? AND (first_name || last_name) ILIKE ?"+
+		Where("users.client_id = ? AND users.company_type = ? AND (first_name || last_name) ILIKE ?"+
 			"AND status ILIKE ? AND CAST(users.role AS text) ILIKE ?"+
-			" AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, "%"+querySearch+"%", "%"+status+"%", "%"+role+"%", time.Now()).
+			" AND (users.deleted_at > ? OR users.deleted_at IS NULL)",
+			companyID, types.CompanyTypesEnum.Client, "%"+querySearch+"%", "%"+status+"%", "%"+role+"%", time.Now()).
 		Order("created_at DESC, first_name ASC").
 		Scan(&users).
 		Error; err != nil {

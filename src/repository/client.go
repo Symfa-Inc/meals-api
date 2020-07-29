@@ -113,9 +113,10 @@ func (c ClientRepo) GetCateringClients(cateringID string, query types.Pagination
 }
 
 // Get returns list of clients
-func (c ClientRepo) Get(query types.PaginationQuery) ([]response.Client, int, error) {
+func (c ClientRepo) Get(query types.PaginationQuery, cateringID, role string) ([]response.Client, int, error) {
 	var clients []response.Client
 	var total int
+	var err error
 
 	page := query.Page
 	limit := query.Limit
@@ -127,16 +128,36 @@ func (c ClientRepo) Get(query types.PaginationQuery) ([]response.Client, int, er
 	if limit == 0 {
 		limit = 10
 	}
+
+	if role == types.UserRoleEnum.SuperAdmin {
+		config.DB.
+			Model(&domain.Client{}).
+			Count(&total)
+
+		err = config.DB.
+			Limit(limit).
+			Offset((page - 1) * limit).
+			Model(&domain.Client{}).
+			Select("clients.*, c.name as catering_name, c.id as catering_id").
+			Joins("left join caterings c on c.id = clients.catering_id").
+			Scan(&clients).
+			Error
+
+		return clients, total, err
+	}
+
 	config.DB.
 		Model(&domain.Client{}).
+		Where("catering_id = ?", cateringID).
 		Count(&total)
 
-	err := config.DB.
+	err = config.DB.
 		Limit(limit).
-		Offset((page - 1) * limit).
+		Offset((page-1)*limit).
 		Model(&domain.Client{}).
 		Select("clients.*, c.name as catering_name, c.id as catering_id").
 		Joins("left join caterings c on c.id = clients.catering_id").
+		Where("catering_id = ?", cateringID).
 		Scan(&clients).
 		Error
 

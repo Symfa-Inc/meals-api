@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"github.com/jinzhu/gorm"
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/types"
@@ -67,26 +68,32 @@ func (dc CategoryRepo) GetByKey(key, value, cateringID string) (domain.Category,
 
 // Delete soft deletes reading from DB
 // returns gorm.DB struct with methods
-func (dc CategoryRepo) Delete(path types.PathCategory) error {
-	if categoryRows := config.DB.
+func (dc CategoryRepo) Delete(path types.PathCategory) (int, error) {
+	if err := config.DB.
 		Unscoped().
 		Model(&domain.Category{}).
 		Where("catering_id = ? AND id = ?  AND (deleted_at > ? OR deleted_at IS NULL)", path.ID, path.CategoryID, time.Now()).
-		Update("deleted_at", time.Now()).RowsAffected; categoryRows == 0 {
-		return errors.New("category not found")
+		Update("deleted_at", time.Now()).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return http.StatusNotFound, errors.New("category not found")
+		}
+		return http.StatusBadRequest, err
 	}
 
-	return nil
+	return 0, nil
 }
 
 // Update checks if that name already exists in provided catering
 // if its exists throws and error, if not updates the reading
 func (dc CategoryRepo) Update(path types.PathCategory, category *domain.Category) (int, error) {
-	if categoryExist := config.DB.
+	if err := config.DB.
 		Unscoped().
 		Where("catering_id = ? AND name = ? AND (deleted_at > ? OR deleted_at IS NULL)", path.ID, category.Name, time.Now()).
-		Find(&domain.Category{}).RecordNotFound(); !categoryExist {
-		return http.StatusBadRequest, errors.New("this category already exist")
+		Find(&domain.Category{}).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return http.StatusNotFound, errors.New("category not found")
+		}
+		return http.StatusBadRequest, err
 	}
 
 	if categoryNotExist := config.DB.
