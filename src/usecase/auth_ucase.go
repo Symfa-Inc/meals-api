@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	"go_api/src/delivery/middleware"
 	"go_api/src/repository"
@@ -31,7 +30,17 @@ func NewAuth() *Auth {
 // @Router /is-authenticated [get]
 func (a Auth) IsAuthenticated(c *gin.Context) {
 	userRepo := repository.NewUserRepo()
-	claims := jwt.ExtractClaims(c)
+	claims, err := middleware.Passport().CheckIfTokenExpire(c)
+
+	if err != nil {
+		utils.CreateError(http.StatusUnauthorized, err.Error(), c)
+		return
+	}
+
+	if int64(claims["exp"].(float64)) < middleware.Passport().TimeFunc().Unix() {
+		_, _, _ = middleware.Passport().RefreshToken(c)
+	}
+
 	id := claims[middleware.IdentityKeyID]
 	result, err := userRepo.GetByKey("id", id.(string))
 
@@ -66,12 +75,3 @@ func login() {}
 // @Failure 401 {object} types.Error "Error"
 // @Router /logout [get]
 func logout() {}
-
-// @Summary Return JSON with code, expire date and new JWT
-// @Produce json
-// @Accept json
-// @Tags auth
-// @Success 200 {object} response.RefreshToken
-// @Failure 401 {object} types.Error "Error"
-// @Router /refresh-token [get]
-func refreshToken() {}
