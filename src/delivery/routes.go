@@ -69,7 +69,6 @@ func SetupRouter() *gin.Engine {
 		{
 			// caterings
 			suAdmin.POST("/caterings", catering.Add)
-			suAdmin.GET("/caterings", catering.Get)
 			suAdmin.DELETE("/caterings/:id", catering.Delete)
 		}
 
@@ -193,6 +192,7 @@ func SetupRouter() *gin.Engine {
 		{
 			// clients
 			allAdmins.GET("/clients", client.Get)
+			allAdmins.GET("/caterings", catering.Get)
 
 			// clients users
 			allAdmins.GET("/clients/:id/users", user.GetClientUsers)
