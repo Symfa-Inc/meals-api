@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
+	"go_api/src/delivery/middleware"
 	"go_api/src/domain"
 	"go_api/src/mailer"
 	"go_api/src/repository"
@@ -116,7 +117,7 @@ func (u User) GetCateringUsers(c *gin.Context) { //nolint:dupl
 	}
 
 	catering := types.CompanyTypesEnum.Catering
-	users, total, code, err := userRepo.Get(path.ID, catering, paginationQuery, filterQuery)
+	users, total, code, err := userRepo.Get(path.ID, catering, "", paginationQuery, filterQuery)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
@@ -182,7 +183,7 @@ func (u User) DeleteCateringUser(c *gin.Context) {
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Error"
 // @Router /caterings/{id}/users/{userId} [put]
-func (u User) UpdateCateringUser(c *gin.Context) {
+func (u User) UpdateCateringUser(c *gin.Context) { //nolint:dupl
 	var path types.PathUser
 	var user domain.User
 
@@ -246,8 +247,24 @@ func (u User) GetClientUsers(c *gin.Context) { //nolint:dupl
 		return
 	}
 
+	claims, err := middleware.Passport().GetClaimsFromJWT(c)
+
+	if err != nil {
+		utils.CreateError(http.StatusUnauthorized, err.Error(), c)
+		return
+	}
+
+	id := claims["id"].(string)
+
+	user, err := userRepo.GetByKey("id", id)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
 	client := types.CompanyTypesEnum.Client
-	users, total, code, err := userRepo.Get(path.ID, client, paginationQuery, filterQuery)
+	users, total, code, err := userRepo.Get(path.ID, client, user.Role, paginationQuery, filterQuery)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)

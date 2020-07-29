@@ -86,8 +86,8 @@ func (dc Category) Delete(c *gin.Context) {
 		return
 	}
 
-	if err := categoryRepo.Delete(path); err != nil {
-		utils.CreateError(http.StatusNotFound, err.Error(), c)
+	if code, err := categoryRepo.Delete(path); err != nil {
+		utils.CreateError(code, err.Error(), c)
 		return
 	}
 

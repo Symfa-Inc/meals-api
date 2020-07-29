@@ -142,8 +142,6 @@ func SetupRouter() *gin.Engine {
 			clAdminSuAdmin.PUT("/clients/:id/orders", order.ApproveOrders)
 
 			// client users
-			clAdminSuAdmin.GET("/clients/:id/users", user.GetClientUsers)
-			clAdminSuAdmin.POST("/clients/:id/users", user.AddClientUser)
 			clAdminSuAdmin.DELETE("/clients/:id/users/:userId", user.DeleteClientUser)
 			clAdminSuAdmin.PUT("/clients/:id/users/:userId", user.UpdateClientUser)
 		}
@@ -195,6 +193,10 @@ func SetupRouter() *gin.Engine {
 		{
 			// clients
 			allAdmins.GET("/clients", client.Get)
+
+			// clients users
+			allAdmins.GET("/clients/:id/users", user.GetClientUsers)
+			allAdmins.POST("/clients/:id/users", user.AddClientUser)
 
 			// client addresses
 			allAdmins.GET("/clients/:id/addresses", address.Get)
