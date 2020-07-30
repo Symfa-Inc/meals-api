@@ -89,9 +89,16 @@ func (c CateringRepo) Delete(id string) error {
 // Update updates catering with passed args
 // returns updated catering struct and error if exists
 func (c CateringRepo) Update(id string, catering domain.Catering) (int, error) {
-	if nameExist := config.DB.Where("name = ?", catering.Name).
-		Find(&catering).RowsAffected; nameExist != 0 {
-		return http.StatusBadRequest, errors.New("catering with that name already exist")
+	if cateringExist := config.DB.
+		Where("name = ? AND id = ?", catering.Name, id).
+		Find(&catering).
+		RowsAffected; cateringExist == 0 {
+		if nameExist := config.DB.
+			Where("name = ?", catering.Name).
+			Find(&catering).
+			RowsAffected; nameExist != 0 {
+			return http.StatusBadRequest, errors.New("catering with that name already exist")
+		}
 	}
 
 	if cateringExist := config.DB.Model(&catering).Where("id = ?", id).
