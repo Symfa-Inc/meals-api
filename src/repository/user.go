@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/types"
@@ -227,4 +228,19 @@ func (ur UserRepo) Update(companyID string, user domain.User) (domain.UserClient
 		return domain.UserClientCatering{}, http.StatusBadRequest, err
 	}
 	return updatedUser, 0, nil
+}
+
+func (ur UserRepo) UpdateStatus(userID uuid.UUID, status string) (int, error) {
+	if err := config.DB.
+		Model(&domain.User{}).
+		Where("id = ?", userID).
+		Update("status", status).
+		Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return http.StatusNotFound, err
+		}
+		return http.StatusBadRequest, err
+	}
+
+	return 0, nil
 }

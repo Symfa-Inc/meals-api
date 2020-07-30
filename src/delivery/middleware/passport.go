@@ -54,6 +54,14 @@ func Passport() *jwt.GinJWTMiddleware {
 				return
 			}
 
+			if status == types.StatusTypesEnum.Invited {
+				code, err := userRepo.UpdateStatus(result.ID, types.StatusTypesEnum.Active)
+				if err != nil {
+					utils.CreateError(code, err.Error(), c)
+					return
+				}
+			}
+
 			c.JSON(http.StatusOK, result)
 		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims {

@@ -86,14 +86,11 @@ func (dc CategoryRepo) Delete(path types.PathCategory) (int, error) {
 // Update checks if that name already exists in provided catering
 // if its exists throws and error, if not updates the reading
 func (dc CategoryRepo) Update(path types.PathCategory, category *domain.Category) (int, error) {
-	if err := config.DB.
+	if categoryRows := config.DB.
 		Unscoped().
 		Where("catering_id = ? AND name = ? AND (deleted_at > ? OR deleted_at IS NULL)", path.ID, category.Name, time.Now()).
-		Find(&domain.Category{}).Error; err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			return http.StatusNotFound, errors.New("category not found")
-		}
-		return http.StatusBadRequest, err
+		Find(&domain.Category{}).RowsAffected; categoryRows != 0 {
+		return http.StatusBadRequest, errors.New("category with that name already exist")
 	}
 
 	if categoryNotExist := config.DB.

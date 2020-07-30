@@ -105,6 +105,32 @@ func (cl Client) GetCateringClients(c *gin.Context) {
 	})
 }
 
+// GetByID returns client
+// @Summary Returns info about client
+// @Tags clients
+// @Produce json
+// @Param id path string true "Client ID"
+// @Success 200 {object} domain.Client "client model"
+// @Failure 400 {object} types.Error "Error"
+// @Failure 404 {object} types.Error "Not Found"
+// @Router /clients/{id} [get]
+func (cl Client) GetByID(c *gin.Context) {
+	var path types.PathID
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	result, err := clientRepo.GetByKey("id", path.ID)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
 // Get return list of clients
 // @Summary Returns list of clients
 // @Tags clients
@@ -190,16 +216,15 @@ func (cl Client) Delete(c *gin.Context) {
 // @Summary Returns 204 if success and 4xx error if failed
 // @Produce json
 // @Accept json
-// @Tags caterings clients
-// @Param id path string true "Catering ID"
-// @Param clientId path string true "Client ID"
-// @Param body body request.AddName false "Client Name"
+// @Tags clients
+// @Param id path string true "Client ID"
+// @Param body body request.UpdateClient false "update client model"
 // @Success 204 "Successfully updated"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
-// @Router /caterings/{id}/clients/{clientId} [put]
+// @Router /clients/{id} [put]
 func (cl Client) Update(c *gin.Context) {
-	var path types.PathClient
+	var path types.PathID
 	var clientModal domain.Client
 
 	if err := utils.RequestBinderBody(&clientModal, c); err != nil {
@@ -210,7 +235,7 @@ func (cl Client) Update(c *gin.Context) {
 		return
 	}
 
-	if code, err := clientRepo.Update(path.ID, path.ClientID, clientModal); err != nil {
+	if code, err := clientRepo.Update(path.ID, clientModal); err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}

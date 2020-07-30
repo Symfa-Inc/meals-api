@@ -45,7 +45,7 @@ func (a Auth) IsAuthenticated(c *gin.Context) {
 	result, err := userRepo.GetByKey("id", id.(string))
 
 	if err != nil {
-		utils.CreateError(http.StatusNotFound, err.Error(), c)
+		utils.CreateError(http.StatusUnauthorized, "token is expired", c)
 		return
 	}
 
