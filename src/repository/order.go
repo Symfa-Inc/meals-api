@@ -351,7 +351,6 @@ func (o OrderRepo) GetOrdersStatus(clientID, date string) *string {
 	var ordersStatus []string
 
 	config.DB.
-		Debug().
 		Model(&domain.User{}).
 		Select("o.status").
 		Joins("left join user_orders uo on uo.user_id = users.id").

@@ -176,14 +176,19 @@ func (c ClientRepo) Delete(cateringID, id string) error {
 
 // Update updates client with passed args
 // returns error and status code
-func (c ClientRepo) Update(cateringID, id string, client domain.Client) (int, error) {
-	if nameExist := config.DB.Where("name = ?", client.Name).
-		Find(&client).RowsAffected; nameExist != 0 {
+func (c ClientRepo) Update(id string, client domain.Client) (int, error) {
+	if nameExist := config.DB.
+		Where("name = ?", client.Name).
+		Find(&client).
+		RowsAffected; nameExist != 0 {
 		return http.StatusBadRequest, errors.New("client with that name already exist")
 	}
 
-	if clientExist := config.DB.Model(&client).Where("id = ? AND catering_id = ?", id, cateringID).
-		Update(&client).RowsAffected; clientExist == 0 {
+	if clientExist := config.DB.
+		Model(&client).
+		Where("id = ?", id).
+		Update(&client).
+		RowsAffected; clientExist == 0 {
 		return http.StatusNotFound, errors.New("client not found")
 	}
 

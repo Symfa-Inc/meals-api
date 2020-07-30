@@ -9,7 +9,7 @@ import (
 type Client struct {
 	Base
 	Name       string    `gorm:"type:varchar(30);not null" json:"name,omitempty" binding:"required"`
-	CateringID uuid.UUID `json:"-" swaggerignore:"true"`
+	CateringID uuid.UUID `json:"cateringId" swaggerignore:"true"`
 } //@name ClientsResponse
 
 // ClientUsecase is client interface for usecase
