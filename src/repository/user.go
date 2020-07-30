@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 	"go_api/src/config"
@@ -58,21 +59,57 @@ func (ur UserRepo) Get(companyID, companyType, userRole string, pagination types
 	if userRole == types.UserRoleEnum.CateringAdmin {
 		role = types.UserRoleEnum.ClientAdmin
 	}
-
 	if companyType == types.CompanyTypesEnum.Catering {
 		if role == "" {
 			role = types.UserRoleEnum.CateringAdmin
+		}
+		if clientName != "" {
+			if err := config.DB.
+				Unscoped().
+				Model(&domain.User{}).
+				Joins("left join caterings c on c.id = users.catering_id").
+				Joins("left join clients ci on ci.id = users.client_id").
+				Where("users.catering_id = ? AND (first_name || last_name) ILIKE ?"+
+					" AND ci.name ILIKE ? AND CAST(users.role AS text) ILIKE ?"+
+					" AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, "%"+querySearch+"%", "%"+clientName+"%", "%"+role+"%", time.Now()).
+				Count(&total).
+				Error; err != nil {
+				if gorm.IsRecordNotFoundError(err) {
+					return nil, 0, http.StatusNotFound, errors.New("user not found")
+				}
+				return nil, 0, http.StatusBadRequest, err
+			}
+
+			if err := config.DB.
+				Unscoped().
+				Limit(limit).
+				Offset((page-1)*limit).
+				Model(&domain.User{}).
+				Select("users.*, c.id as catering_id, c.name as catering_name, ci.id as client_id, ci.name as client_name").
+				Joins("left join caterings c on c.id = users.catering_id").
+				Joins("left join clients ci on ci.id = users.client_id").
+				Where("users.catering_id = ? AND (first_name || last_name) ILIKE ?"+
+					" AND ci.name ILIKE ? AND CAST(users.role AS text) ILIKE ?"+
+					" AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, "%"+querySearch+"%", "%"+clientName+"%", "%"+role+"%", time.Now()).
+				Order("created_at DESC, first_name ASC").
+				Scan(&users).
+				Error; err != nil {
+				if gorm.IsRecordNotFoundError(err) {
+					return nil, 0, http.StatusNotFound, errors.New("user not found")
+				}
+				return nil, 0, http.StatusBadRequest, err
+			}
+			return users, total, 0, nil
 		}
 
 		if err := config.DB.
 			Unscoped().
 			Model(&domain.User{}).
-			Select("users.*, c.id as catering_id, c.name as catering_name, ci.id as client_id, ci.name as client_name").
 			Joins("left join caterings c on c.id = users.catering_id").
-			Joins("left join clients ci on ci.id = users.client_id").
+			Joins("full outer join clients ci on ci.id = users.client_id").
 			Where("users.catering_id = ? AND (first_name || last_name) ILIKE ?"+
-				" AND ci.name ILIKE ? AND CAST(users.role AS text) ILIKE ?"+
-				" AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, "%"+querySearch+"%", "%"+clientName+"%", "%"+role+"%", time.Now()).
+				" AND CAST(users.role AS text) ILIKE ?"+
+				" AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, "%"+querySearch+"%", "%"+role+"%", time.Now()).
 			Count(&total).
 			Error; err != nil {
 			if gorm.IsRecordNotFoundError(err) {
@@ -88,10 +125,10 @@ func (ur UserRepo) Get(companyID, companyType, userRole string, pagination types
 			Model(&domain.User{}).
 			Select("users.*, c.id as catering_id, c.name as catering_name, ci.id as client_id, ci.name as client_name").
 			Joins("left join caterings c on c.id = users.catering_id").
-			Joins("left join clients ci on ci.id = users.client_id").
+			Joins("full outer join clients ci on ci.id = users.client_id").
 			Where("users.catering_id = ? AND (first_name || last_name) ILIKE ?"+
-				" AND ci.name ILIKE ? AND CAST(users.role AS text) ILIKE ?"+
-				" AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, "%"+querySearch+"%", "%"+clientName+"%", "%"+role+"%", time.Now()).
+				" AND CAST(users.role AS text) ILIKE ?"+
+				" AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, "%"+querySearch+"%", "%"+role+"%", time.Now()).
 			Order("created_at DESC, first_name ASC").
 			Scan(&users).
 			Error; err != nil {
@@ -191,16 +228,27 @@ func (ur UserRepo) Delete(companyID string, user domain.User) (int, error) {
 // checks if user belongs to client or catering
 func (ur UserRepo) Update(companyID string, user domain.User) (domain.UserClientCatering, int, error) {
 	companyType := utils.DerefString(user.CompanyType)
+	var prevUser domain.User
+	userStatus := utils.DerefString(user.Status)
 	var updatedUser domain.UserClientCatering
 
 	if companyType == types.CompanyTypesEnum.Catering {
+		fmt.Println("CATERING")
+		config.DB.
+			Unscoped().
+			Model(&domain.User{}).
+			Find(&prevUser).
+			Where("users.catering_id = ? AND users.id = ? AND (users.deleted_at > ? OR users.deleted_at IS NULL)",
+				companyID, user.ID, time.Now())
+
 		if err := config.DB.
+			Unscoped().
 			Model(&domain.User{}).
 			Update(&user).
 			Select("users.*, c.id as catering_id, c.name as catering_name, ci.id as client_id, ci.name as client_name").
 			Joins("left join caterings c on c.id = users.catering_id").
 			Joins("left join clients ci on ci.id = users.client_id").
-			Where("users.catering_id = ?", companyID).
+			Where("users.catering_id = ? AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, time.Now()).
 			Scan(&updatedUser).
 			Error; err != nil {
 
@@ -209,16 +257,36 @@ func (ur UserRepo) Update(companyID string, user domain.User) (domain.UserClient
 			}
 			return domain.UserClientCatering{}, http.StatusBadRequest, err
 		}
+
+		prevUserStatus := utils.DerefString(prevUser.Status)
+		if userStatus == types.StatusTypesEnum.Active && prevUserStatus == types.StatusTypesEnum.Deleted {
+			config.DB.
+				Unscoped().
+				Model(&domain.User{}).
+				Update(&user).
+				Update(map[string]interface{}{
+					"DeletedAt": user.DeletedAt,
+				}).
+				Where("users.catering_id = ? AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, time.Now())
+		}
 		return updatedUser, 0, nil
 	}
 
+	config.DB.
+		Unscoped().
+		Model(&domain.User{}).
+		Where("users.client_id = ? AND users.id = ? AND (users.deleted_at > ? OR users.deleted_at IS NULL)",
+			companyID, user.ID, time.Now()).
+		Find(&prevUser)
+
 	if err := config.DB.
+		Unscoped().
 		Model(&domain.User{}).
 		Update(&user).
 		Select("users.*, c.id as catering_id, c.name as catering_name, ci.id as client_id, ci.name as client_name").
 		Joins("left join caterings c on c.id = users.catering_id").
 		Joins("left join clients ci on ci.id = users.client_id").
-		Where("users.client_id = ?", companyID).
+		Where("users.client_id = ? AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, time.Now()).
 		Scan(&updatedUser).
 		Error; err != nil {
 
@@ -227,6 +295,19 @@ func (ur UserRepo) Update(companyID string, user domain.User) (domain.UserClient
 		}
 		return domain.UserClientCatering{}, http.StatusBadRequest, err
 	}
+
+	prevUserStatus := utils.DerefString(prevUser.Status)
+	if userStatus == types.StatusTypesEnum.Active && prevUserStatus == types.StatusTypesEnum.Deleted {
+		config.DB.
+			Unscoped().
+			Model(&domain.User{}).
+			Update(&user).
+			Update(map[string]interface{}{
+				"DeletedAt": user.DeletedAt,
+			}).
+			Where("users.client_id = ? AND (users.deleted_at > ? OR users.deleted_at IS NULL)", companyID, time.Now())
+	}
+
 	return updatedUser, 0, nil
 }
 

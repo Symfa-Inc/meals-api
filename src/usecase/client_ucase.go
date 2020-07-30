@@ -190,21 +190,20 @@ func (cl Client) Get(c *gin.Context) {
 
 // Delete soft delete of client
 // @Summary Soft delete
-// @Tags caterings clients
+// @Tags clients
 // @Produce json
-// @Param id path string true "Catering ID"
-// @Param clientId path string true "Client ID"
+// @Param id path string true "Client ID"
 // @Success 204 "Successfully deleted"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
-// @Router /caterings/{id}/clients/{clientId} [delete]
+// @Router /clients/{id} [delete]
 func (cl Client) Delete(c *gin.Context) {
-	var path types.PathClient
+	var path types.PathID
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	if err := clientRepo.Delete(path.ID, path.ClientID); err != nil {
+	if err := clientRepo.Delete(path.ID); err != nil {
 		utils.CreateError(http.StatusNotFound, err.Error(), c)
 		return
 	}

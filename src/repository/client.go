@@ -140,6 +140,7 @@ func (c ClientRepo) Get(query types.PaginationQuery, cateringID, role string) ([
 			Model(&domain.Client{}).
 			Select("clients.*, c.name as catering_name, c.id as catering_id").
 			Joins("left join caterings c on c.id = clients.catering_id").
+			Order("clients.created_at DESC, clients.name ASC").
 			Scan(&clients).
 			Error
 
@@ -165,8 +166,8 @@ func (c ClientRepo) Get(query types.PaginationQuery, cateringID, role string) ([
 }
 
 // Delete soft delete of client
-func (c ClientRepo) Delete(cateringID, id string) error {
-	if result := config.DB.Where("id = ? AND catering_id = ?", id, cateringID).
+func (c ClientRepo) Delete(id string) error {
+	if result := config.DB.Where("id = ?", id).
 		Delete(&domain.Client{}).RowsAffected; result == 0 {
 		return errors.New("client not found")
 	}
@@ -177,11 +178,16 @@ func (c ClientRepo) Delete(cateringID, id string) error {
 // Update updates client with passed args
 // returns error and status code
 func (c ClientRepo) Update(id string, client domain.Client) (int, error) {
-	if nameExist := config.DB.
-		Where("name = ?", client.Name).
+	if clientExist := config.DB.
+		Where("name = ? AND id = ?", client.Name, id).
 		Find(&client).
-		RowsAffected; nameExist != 0 {
-		return http.StatusBadRequest, errors.New("client with that name already exist")
+		RowsAffected; clientExist == 0 {
+		if nameExist := config.DB.
+			Where("name = ?", client.Name).
+			Find(&client).
+			RowsAffected; nameExist != 0 {
+			return http.StatusBadRequest, errors.New("client with that name already exist")
+		}
 	}
 
 	if clientExist := config.DB.

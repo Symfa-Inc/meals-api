@@ -178,7 +178,7 @@ func (u User) DeleteCateringUser(c *gin.Context) {
 // @Tags caterings users
 // @Param id path string false "Catering ID"
 // @Param userId path string false "User ID"
-// @Param body body request.CateringUser false "Catering user"
+// @Param body body request.CateringUserUpdate false "Catering user"
 // @Success 200 {object} response.UserResponse false "Catering user"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Error"
@@ -386,12 +386,12 @@ func (u User) DeleteClientUser(c *gin.Context) {
 // @Tags clients users
 // @Param id path string false "Client ID"
 // @Param userId path string false "User ID"
-// @Param body body request.ClientUser false "Client user"
+// @Param body body request.ClientUserUpdate false "Client user"
 // @Success 200 {object} response.UserResponse false "Client user"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Error"
 // @Router /clients/{id}/users/{userId} [put]
-func (u User) UpdateClientUser(c *gin.Context) {
+func (u User) UpdateClientUser(c *gin.Context) { //nolint:dupl
 	var path types.PathUser
 	var user domain.User
 
