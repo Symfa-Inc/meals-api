@@ -28,7 +28,7 @@ func main() {
 	//dev.CreateMeals()
 	//dev.CreateCategories()
 	//dev.CreateDishes()
-	//dev.CreateImages()
+	dev.CreateImages()
 	//dev.CreateMealDishes()
 	//dev.CreateImageDishes()
 	//dev.CreateAddresses()

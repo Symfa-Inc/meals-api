@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 	"go_api/src/config"
@@ -185,6 +184,12 @@ func (ur UserRepo) Get(companyID, companyType, userRole string, pagination types
 // returns user and error
 func (ur UserRepo) Add(user domain.User) (domain.UserClientCatering, error) {
 	var createdUser domain.UserClientCatering
+	if emailExist := config.DB.
+		Where("email = ?", user.Email).
+		Find(&domain.User{}).
+		RowsAffected; emailExist != 0 {
+		return domain.UserClientCatering{}, errors.New("user with that email already exist")
+	}
 	if err := config.DB.
 		Model(&domain.User{}).
 		Create(&user).
@@ -233,7 +238,6 @@ func (ur UserRepo) Update(companyID string, user domain.User) (domain.UserClient
 	var updatedUser domain.UserClientCatering
 
 	if companyType == types.CompanyTypesEnum.Catering {
-		fmt.Println("CATERING")
 		config.DB.
 			Unscoped().
 			Model(&domain.User{}).

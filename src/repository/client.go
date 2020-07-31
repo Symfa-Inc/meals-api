@@ -8,6 +8,7 @@ import (
 	"go_api/src/schemes/response"
 	"go_api/src/types"
 	"net/http"
+	"time"
 )
 
 // ClientRepo struct
@@ -167,9 +168,22 @@ func (c ClientRepo) Get(query types.PaginationQuery, cateringID, role string) ([
 
 // Delete soft delete of client
 func (c ClientRepo) Delete(id string) error {
-	if result := config.DB.Where("id = ?", id).
-		Delete(&domain.Client{}).RowsAffected; result == 0 {
+	if clientExist := config.DB.
+		Where("id = ?", id).
+		Delete(&domain.Client{}).
+		RowsAffected; clientExist == 0 {
 		return errors.New("client not found")
+	}
+
+	if userExist := config.DB.
+		Model(&domain.User{}).
+		Where("client_id = ? AND company_type = ?", id, types.CompanyTypesEnum.Client).
+		Update(map[string]interface{}{
+			"status":     types.StatusTypesEnum.Deleted,
+			"deleted_at": time.Now(),
+		}).
+		RowsAffected; userExist == 0 {
+		return errors.New("user not found")
 	}
 
 	return nil

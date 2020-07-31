@@ -24,7 +24,7 @@ func NewCategoryRepo() *CategoryRepo {
 func (dc CategoryRepo) Add(category *domain.Category) error {
 	if exist := config.DB.
 		Unscoped().
-		Where("catering_id = ? AND name = ? AND deleted_at >  ?", category.CateringID, category.Name, time.Now()).
+		Where("catering_id = ? AND name = ? AND deleted_at >  ?", category.CateringID, category.Name, category.DeletedAt).
 		Or("catering_id = ? AND name = ? AND deleted_at IS NULL", category.CateringID, category.Name).
 		Find(category).RecordNotFound(); !exist {
 

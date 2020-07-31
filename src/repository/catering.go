@@ -2,11 +2,13 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
+	"time"
 )
 
 // CateringRepo struct
@@ -40,7 +42,7 @@ func (c CateringRepo) Add(catering *domain.Catering) error {
 
 // Get returns list of caterings with pagination args
 // and error if exists
-func (c CateringRepo) Get(query types.PaginationQuery) ([]domain.Catering, int, error) {
+func (c CateringRepo) Get(cateringID string, query types.PaginationQuery) ([]domain.Catering, int, error) {
 	var caterings []domain.Catering
 	var total int
 
@@ -55,16 +57,34 @@ func (c CateringRepo) Get(query types.PaginationQuery) ([]domain.Catering, int, 
 		limit = 10
 	}
 
-	config.DB.Find(&caterings).Count(&total)
+	if cateringID != "" {
+		config.DB.
+			Find(&caterings).
+			Where("id = ?", cateringID).
+			Count(&total)
 
-	err := config.DB.
-		Limit(limit).
-		Offset((page - 1) * limit).
-		Order("created_at DESC").
-		Find(&caterings).
-		Error
+		err := config.DB.
+			Limit(limit).
+			Offset((page-1)*limit).
+			Where("id = ?", cateringID).
+			Order("created_at DESC").
+			Find(&caterings).
+			Error
+		return caterings, total, err
+	} else {
+		config.DB.
+			Find(&caterings).
+			Count(&total)
 
-	return caterings, total, err
+		err := config.DB.
+			Limit(limit).
+			Offset((page - 1) * limit).
+			Order("created_at DESC").
+			Find(&caterings).
+			Error
+		return caterings, total, err
+	}
+
 }
 
 // GetByKey returns single catering item found by key
@@ -78,9 +98,22 @@ func (c CateringRepo) GetByKey(key, value string) (domain.Catering, error) {
 // Delete soft delete of catering with passed id
 // returns error if exists
 func (c CateringRepo) Delete(id string) error {
-	if result := config.DB.Where("id = ?", id).
-		Delete(&domain.Catering{}).RowsAffected; result == 0 {
+	if cateringExist := config.DB.
+		Where("id = ?", id).
+		Delete(&domain.Catering{}).
+		RowsAffected; cateringExist == 0 {
 		return errors.New("catering not found")
+	}
+
+	if userExist := config.DB.
+		Model(&domain.User{}).
+		Where("catering_id = ? AND company_type = ?", id, types.CompanyTypesEnum.Catering).
+		Update(map[string]interface{}{
+			"status":     types.StatusTypesEnum.Deleted,
+			"deleted_at": time.Now(),
+		}).
+		RowsAffected; userExist == 0 {
+		return errors.New("user not found")
 	}
 
 	return nil
