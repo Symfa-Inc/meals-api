@@ -184,12 +184,6 @@ func (ur UserRepo) Get(companyID, companyType, userRole string, pagination types
 // returns user and error
 func (ur UserRepo) Add(user domain.User) (domain.UserClientCatering, error) {
 	var createdUser domain.UserClientCatering
-	if emailExist := config.DB.
-		Where("email = ?", user.Email).
-		Find(&domain.User{}).
-		RowsAffected; emailExist != 0 {
-		return domain.UserClientCatering{}, errors.New("user with that email already exist")
-	}
 	if err := config.DB.
 		Model(&domain.User{}).
 		Create(&user).
@@ -236,6 +230,20 @@ func (ur UserRepo) Update(companyID string, user domain.User) (domain.UserClient
 	var prevUser domain.User
 	userStatus := utils.DerefString(user.Status)
 	var updatedUser domain.UserClientCatering
+
+	if userExist := config.DB.
+		Debug().
+		Where("id = ? AND email = ?", user.ID, user.Email).
+		Find(&domain.User{}).
+		RowsAffected; userExist == 0 {
+		if emailExist := config.DB.
+			Debug().
+			Where("email = ?", user.Email).
+			Find(&domain.User{}).
+			RowsAffected; emailExist != 0 {
+			return domain.UserClientCatering{}, http.StatusBadRequest, errors.New("user with this email already exists")
+		}
+	}
 
 	if companyType == types.CompanyTypesEnum.Catering {
 		config.DB.

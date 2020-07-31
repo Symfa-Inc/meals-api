@@ -80,7 +80,7 @@ func (u User) AddCateringUser(c *gin.Context) { //nolint:dupl
 	}
 
 	if existingUser.ID != uuid.Nil {
-		utils.CreateError(http.StatusBadRequest, "user with that email already exist", c)
+		utils.CreateError(http.StatusBadRequest, "user with this email already exists", c)
 		return
 	}
 }
