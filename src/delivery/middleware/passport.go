@@ -86,6 +86,11 @@ func Passport() *jwt.GinJWTMiddleware {
 
 			result, err := userRepo.GetByKey("email", body.Email)
 			if err == nil {
+				status := utils.DerefString(result.Status)
+				if status == types.StatusTypesEnum.Deleted {
+					return nil, errors.New("user was deleted")
+				}
+
 				equal := utils.CheckPasswordHash(body.Password, result.Password)
 				if equal {
 					return &UserID{

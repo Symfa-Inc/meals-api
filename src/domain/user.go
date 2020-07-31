@@ -10,7 +10,7 @@ type User struct {
 	Base
 	FirstName   string     `gorm:"type:varchar(20)" json:"firstName"`
 	LastName    string     `gorm:"type:varchar(20)" json:"lastName"`
-	Email       string     `gorm:"type:varchar(30);unique;not null" json:"email"`
+	Email       string     `gorm:"type:varchar(30);not null" json:"email"`
 	Password    string     `gorm:"type:varchar(100);not null" json:"-"`
 	CompanyType *string    `sql:"type:company_types" gorm:"type:varchar(20);null" json:"companyType"`
 	CateringID  *uuid.UUID `json:"cateringId"`

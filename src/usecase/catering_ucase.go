@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"github.com/gin-gonic/gin"
+	"go_api/src/delivery/middleware"
 	"go_api/src/domain"
 	"go_api/src/repository"
 	"go_api/src/schemes/response"
@@ -107,12 +108,35 @@ func (ca Catering) GetByID(c *gin.Context) {
 // @Router /caterings [get]
 func (ca Catering) Get(c *gin.Context) {
 	var query types.PaginationQuery
+	var cateringID string
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return
 	}
 
-	result, total, err := cateringRepo.Get(query)
+	claims, err := middleware.Passport().GetClaimsFromJWT(c)
+
+	if err != nil {
+		utils.CreateError(http.StatusUnauthorized, err.Error(), c)
+		return
+	}
+
+	id := claims["id"].(string)
+
+	user, err := userRepo.GetByKey("id", id)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	if user.CateringID == nil {
+		cateringID = ""
+	} else {
+		cateringID = user.CateringID.String()
+	}
+
+	result, total, err := cateringRepo.Get(cateringID, query)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
