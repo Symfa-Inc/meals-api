@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/types"
