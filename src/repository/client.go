@@ -175,16 +175,13 @@ func (c ClientRepo) Delete(id string) error {
 		return errors.New("client not found")
 	}
 
-	if userExist := config.DB.
+	config.DB.
 		Model(&domain.User{}).
 		Where("client_id = ? AND company_type = ?", id, types.CompanyTypesEnum.Client).
 		Update(map[string]interface{}{
 			"status":     types.StatusTypesEnum.Deleted,
 			"deleted_at": time.Now(),
-		}).
-		RowsAffected; userExist == 0 {
-		return errors.New("user not found")
-	}
+		})
 
 	return nil
 }
