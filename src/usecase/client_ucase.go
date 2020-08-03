@@ -44,12 +44,26 @@ func (cl Client) Add(c *gin.Context) {
 		return
 	}
 
+	claims, err := middleware.Passport().GetClaimsFromJWT(c)
+
+	if err != nil {
+		utils.CreateError(http.StatusUnauthorized, err.Error(), c)
+		return
+	}
+
+	id := claims["id"].(string)
+
+	user, err := userRepo.GetByKey("id", id)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
 	parsedCateringID, _ := uuid.FromString(path.ID)
 	client.CateringID = parsedCateringID
 
-	err := clientRepo.Add(path.ID, &client)
-
-	if err != nil {
+	if err := clientRepo.Add(path.ID, &client, user); err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}

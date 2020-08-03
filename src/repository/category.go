@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/types"
@@ -70,15 +69,18 @@ func (dc CategoryRepo) GetByKey(key, value, cateringID string) (domain.Category,
 // Delete soft deletes reading from DB
 // returns gorm.DB struct with methods
 func (dc CategoryRepo) Delete(path types.PathCategory) (int, error) {
-	if err := config.DB.
+	result := config.DB.
 		Unscoped().
 		Model(&domain.Category{}).
 		Where("catering_id = ? AND id = ?  AND (deleted_at > ? OR deleted_at IS NULL)", path.ID, path.CategoryID, time.Now()).
-		Update("deleted_at", time.Now()).Error; err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			return http.StatusNotFound, errors.New("category not found")
-		}
-		return http.StatusBadRequest, err
+		Update("deleted_at", time.Now())
+
+	if result.Error != nil {
+		return http.StatusBadRequest, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return http.StatusNotFound, errors.New("category not found")
 	}
 
 	return 0, nil
