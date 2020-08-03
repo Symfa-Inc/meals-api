@@ -26,6 +26,7 @@ func NewUserRepo() *UserRepo {
 func (ur UserRepo) GetByKey(key, value string) (domain.UserClientCatering, error) {
 	var user domain.UserClientCatering
 	err := config.DB.
+		Unscoped().
 		Model(&domain.User{}).
 		Select("users.*, c.id as catering_id, c.name as catering_name, ci.id as client_id, ci.name as client_name").
 		Joins("left join caterings c on c.id = users.catering_id").
@@ -202,20 +203,16 @@ func (ur UserRepo) Add(user domain.User) (domain.UserClientCatering, error) {
 // and sets deleted_at field to 21 days from now
 func (ur UserRepo) Delete(companyID string, user domain.User) (int, error) {
 	var totalUsers int
-	var users []domain.User
 	companyType := utils.DerefString(user.CompanyType)
 	if companyType == types.CompanyTypesEnum.Catering {
 		config.DB.
 			Model(&domain.User{}).
 			Where("catering_id = ? AND company_type = ? AND status != ?",
 				companyID, types.CompanyTypesEnum.Catering, types.StatusTypesEnum.Deleted).
-			Count(&totalUsers).
-			Find(&users)
+			Count(&totalUsers)
 
 		if totalUsers == 1 {
-			if users[0].Role == types.UserRoleEnum.CateringAdmin {
-				return http.StatusBadRequest, errors.New("can't delete last admin")
-			}
+			return http.StatusNotFound, errors.New("can't delete last user")
 		}
 
 		if userExist := config.DB.
@@ -223,21 +220,19 @@ func (ur UserRepo) Delete(companyID string, user domain.User) (int, error) {
 			Where("catering_id = ?", companyID).
 			Update(&user).
 			RowsAffected; userExist == 0 {
-			return http.StatusNotFound, errors.New("user not found")
+			return http.StatusBadRequest, errors.New("user not found")
 		}
 		return 0, nil
 	}
 
 	config.DB.
 		Model(&domain.User{}).
-		Where("client_id = ? AND company_type = ? AND status != ? AND role = ?",
-			companyID, types.CompanyTypesEnum.Client, types.StatusTypesEnum.Deleted, types.UserRoleEnum.ClientAdmin).
-		Count(&totalUsers).
-		Find(&users)
+		Where("client_id = ? AND company_type = ? AND status != ?",
+			companyID, types.CompanyTypesEnum.Client, types.StatusTypesEnum.Deleted).
+		Count(&totalUsers)
+
 	if totalUsers == 1 {
-		if users[0].Role == types.UserRoleEnum.ClientAdmin {
-			return http.StatusBadRequest, errors.New("can't delete last admin")
-		}
+		return http.StatusBadRequest, errors.New("can't delete last user")
 	}
 
 	if userExist := config.DB.
@@ -348,7 +343,7 @@ func (ur UserRepo) Update(companyID string, user domain.User) (domain.UserClient
 	return updatedUser, 0, nil
 }
 
-// UpdateStatus updaets status for provided userID
+// UpdateStatus updates status for provided userID
 func (ur UserRepo) UpdateStatus(userID uuid.UUID, status string) (int, error) {
 	if err := config.DB.
 		Model(&domain.User{}).
