@@ -48,7 +48,6 @@ func (dc CategoryRepo) Get(id string) ([]domain.Category, int, error) {
 	}
 
 	err := config.DB.
-		Debug().
 		Unscoped().
 		Where("catering_id = ? AND (deleted_at > ? OR deleted_at IS NULL)", id, time.Now()).
 		Order("created_at").
