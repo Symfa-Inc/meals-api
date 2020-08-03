@@ -37,6 +37,7 @@ func (v *Validator) ValidateRoles(roles ...string) gin.HandlerFunc {
 
 		if status == types.StatusTypesEnum.Deleted {
 			utils.CreateError(http.StatusForbidden, "user was deleted", c)
+			c.Abort()
 			return
 		}
 

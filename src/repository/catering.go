@@ -70,19 +70,18 @@ func (c CateringRepo) Get(cateringID string, query types.PaginationQuery) ([]dom
 			Find(&caterings).
 			Error
 		return caterings, total, err
-	} else {
-		config.DB.
-			Find(&caterings).
-			Count(&total)
-
-		err := config.DB.
-			Limit(limit).
-			Offset((page - 1) * limit).
-			Order("created_at DESC").
-			Find(&caterings).
-			Error
-		return caterings, total, err
 	}
+	config.DB.
+		Find(&caterings).
+		Count(&total)
+
+	err := config.DB.
+		Limit(limit).
+		Offset((page - 1) * limit).
+		Order("created_at DESC").
+		Find(&caterings).
+		Error
+	return caterings, total, err
 
 }
 
