@@ -184,7 +184,7 @@ func (m Meal) Update(c *gin.Context) {
 	for _, id := range categoryIDs {
 		_, exist := duplicates[id]
 		if exist {
-			duplicates[id] += 1
+			duplicates[id]++
 			if duplicates[id] > 10 {
 				utils.CreateError(http.StatusBadRequest, "can't add more than 10 dishes in single category for current day", c)
 				return

@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"fmt"
 	"github.com/appleboy/gofight"
 	"github.com/buger/jsonparser"
 	uuid "github.com/satori/go.uuid"
@@ -108,8 +107,8 @@ func TestDeleteCategory(t *testing.T) {
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "category not found", errorValue)
 		})
-	fmt.Println("TEST")
 }
+
 //
 func TestGetCategories(t *testing.T) {
 	r := gofight.New()
