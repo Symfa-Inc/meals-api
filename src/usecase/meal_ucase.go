@@ -175,6 +175,25 @@ func (m Meal) Update(c *gin.Context) {
 		return
 	}
 
+	var categoryIDs []uuid.UUID
+	for _, dishID := range body.Dishes {
+		result, _, _ := dishRepo.FindByID(path.ID, dishID)
+		categoryIDs = append(categoryIDs, result.CategoryID)
+	}
+	duplicates := make(map[uuid.UUID]int)
+	for _, id := range categoryIDs {
+		_, exist := duplicates[id]
+		if exist {
+			duplicates[id] += 1
+			if duplicates[id] > 10 {
+				utils.CreateError(http.StatusBadRequest, "can't add more than 10 dishes in single category for current day", c)
+				return
+			}
+		} else {
+			duplicates[id] = 1
+		}
+	}
+
 	if err := mealDishRepo.Delete(mealItem.ID.String()); err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
