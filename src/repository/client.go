@@ -44,7 +44,6 @@ func (c ClientRepo) Add(cateringID string, client *domain.Client, user domain.Us
 
 	if user.Role != types.UserRoleEnum.SuperAdmin {
 		config.DB.
-			Debug().
 			Model(&domain.User{}).
 			Where("id = ?", user.ID).
 			Update("client_id", client.ID)
