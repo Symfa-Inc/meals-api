@@ -56,11 +56,9 @@ func TestGetClients(t *testing.T) {
 
 	result, _ := userRepo.GetByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
-	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-	cateringID := cateringResult.ID.String()
 
 	// Trying to get list of clients
-	r.GET("/caterings/"+cateringID+"/clients?limit=5").
+	r.GET("/clients?limit=5").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -73,7 +71,7 @@ func TestGetClients(t *testing.T) {
 		})
 
 	// Testing pagination params
-	r.GET("/caterings/"+cateringID+"/clients?limit=5&page=2").
+	r.GET("/clients?limit=5&page=2").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -110,7 +108,7 @@ func TestDeleteClient(t *testing.T) {
 		})
 
 	// Deleting client
-	r.DELETE("/caterings/"+cateringID+"/clients/"+clientID).
+	r.DELETE("/clients/"+clientID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -119,7 +117,7 @@ func TestDeleteClient(t *testing.T) {
 		})
 
 	// Trying to delete client which already deleted
-	r.DELETE("/caterings/"+cateringID+"/clients/"+clientID).
+	r.DELETE("/clients/"+clientID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -156,7 +154,7 @@ func TestUpdateClient(t *testing.T) {
 
 	// Trying to change name of the client
 	// Should be success
-	r.PUT("/caterings/"+cateringID+"/clients/"+clientID).
+	r.PUT("/clients/"+clientID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -169,7 +167,7 @@ func TestUpdateClient(t *testing.T) {
 
 	// Trying to change name of the client with name that already exist in DB
 	// Should throw an error
-	r.PUT("/caterings/"+cateringID+"/clients/"+clientID).
+	r.PUT("/clients/"+clientID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -182,7 +180,7 @@ func TestUpdateClient(t *testing.T) {
 
 	// Trying to change a name of client with non-valid ID
 	// Should throw an error
-	r.PUT("/caterings/"+cateringID+"/clients/qwerty").
+	r.PUT("/clients/qwerty").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -196,7 +194,7 @@ func TestUpdateClient(t *testing.T) {
 	// Trying to change name of client with non-exist ID
 	// Should throw an error
 	fakeID, _ := uuid.NewV4()
-	r.PUT("/caterings/"+cateringID+"/clients/"+fakeID.String()).
+	r.PUT("/clients/"+fakeID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).

@@ -20,7 +20,7 @@ func TestIsAuthenticated(t *testing.T) {
 	r.GET("/is-authenticated").
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
-			errorValue, _ := jsonparser.GetString(data, "message")
+			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusUnauthorized, r.Code)
 			assert.Equal(t, "cookie token is empty", errorValue)
 		})
@@ -42,14 +42,12 @@ func TestIsAuthenticated(t *testing.T) {
 func TestValidator(t *testing.T) {
 	r := gofight.New()
 
-	userResult, _ := userRepo.GetByKey("role", "Client administrator")
+	userResult, _ := userRepo.GetByKey("role", "User")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
-	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-	cateringID := cateringResult.ID.String()
 
 	// Trying to access catering route with wrong permissions
 	// Should throw an error
-	r.GET("/caterings/"+cateringID+"/categories").
+	r.GET("/images").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -62,7 +60,7 @@ func TestValidator(t *testing.T) {
 
 	// Trying to access catering with right permissions
 	// Should be success
-	r.GET("/caterings/"+cateringID+"/categories").
+	r.GET("/images").
 		SetCookie(gofight.H{
 			"jwt": jwt2,
 		}).

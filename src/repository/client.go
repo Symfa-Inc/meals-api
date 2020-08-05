@@ -22,7 +22,7 @@ func NewClientRepo() *ClientRepo {
 
 // Add adds client in DB
 // returns error if that client name already exists
-func (c ClientRepo) Add(cateringID string, client *domain.Client) error {
+func (c ClientRepo) Add(cateringID string, client *domain.Client, user domain.UserClientCatering) error {
 	if err := config.DB.
 		Where("id = ?", cateringID).
 		Find(&domain.Catering{}).
@@ -41,6 +41,13 @@ func (c ClientRepo) Add(cateringID string, client *domain.Client) error {
 	}
 
 	err := config.DB.Create(client).Error
+
+	if user.Role != types.UserRoleEnum.SuperAdmin {
+		config.DB.
+			Model(&domain.User{}).
+			Where("id = ?", user.ID).
+			Update("client_id", client.ID)
+	}
 
 	var cateringSchedules []domain.CateringSchedule
 

@@ -64,20 +64,18 @@ func (u User) AddCateringUser(c *gin.Context) { //nolint:dupl
 	existingUser, err := userRepo.GetByKey("email", user.Email)
 
 	if gorm.IsRecordNotFoundError(err) {
-		if err := mailer.SendEmail(user, password); err != nil {
-			utils.CreateError(http.StatusBadRequest, err.Error(), c)
-			return
-		}
-
-		user, userErr := userRepo.Add(user)
+		userResult, userErr := userRepo.Add(user)
 
 		if userErr != nil {
 			utils.CreateError(http.StatusBadRequest, userErr.Error(), c)
 			return
 		}
 
-		c.JSON(http.StatusCreated, user)
+		go mailer.SendEmail(user, password)
+		c.JSON(http.StatusCreated, userResult)
+		return
 	}
+
 
 	if existingUser.ID != uuid.Nil {
 		utils.CreateError(http.StatusBadRequest, "user with this email already exists", c)

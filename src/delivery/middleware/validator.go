@@ -52,6 +52,7 @@ func (v *Validator) ValidateRoles(roles ...string) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		c.Set("user", user)
 		c.Next()
 	}
 }

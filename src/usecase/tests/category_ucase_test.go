@@ -109,6 +109,7 @@ func TestDeleteCategory(t *testing.T) {
 		})
 }
 
+//
 func TestGetCategories(t *testing.T) {
 	r := gofight.New()
 
@@ -116,7 +117,7 @@ func TestGetCategories(t *testing.T) {
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 	id := cateringResult.ID.String()
-	fakeID, _ := uuid.NewV4()
+	var fakeID, _ = uuid.NewV4()
 
 	// Trying to get categories from non-existing catering
 	// Should throw error
@@ -206,6 +207,6 @@ func TestUpdateCategory(t *testing.T) {
 			data := []byte(r.Body.String())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
-			assert.Equal(t, "this category already exist", errorValue)
+			assert.Equal(t, "category with that name already exist", errorValue)
 		})
 }
