@@ -201,18 +201,20 @@ func (ur UserRepo) Add(user domain.User) (domain.UserClientCatering, error) {
 
 // Delete changes status of user to deleted
 // and sets deleted_at field to 21 days from now
-func (ur UserRepo) Delete(companyID string, user domain.User) (int, error) {
+func (ur UserRepo) Delete(companyID, ctxUserRole string, user domain.User) (int, error) {
 	var totalUsers int
 	companyType := utils.DerefString(user.CompanyType)
 	if companyType == types.CompanyTypesEnum.Catering {
-		config.DB.
-			Model(&domain.User{}).
-			Where("catering_id = ? AND company_type = ? AND status != ?",
-				companyID, types.CompanyTypesEnum.Catering, types.StatusTypesEnum.Deleted).
-			Count(&totalUsers)
+		if ctxUserRole != types.UserRoleEnum.SuperAdmin {
+			config.DB.
+				Model(&domain.User{}).
+				Where("catering_id = ? AND company_type = ? AND status != ?",
+					companyID, types.CompanyTypesEnum.Catering, types.StatusTypesEnum.Deleted).
+				Count(&totalUsers)
 
-		if totalUsers == 1 {
-			return http.StatusNotFound, errors.New("can't delete last user")
+			if totalUsers == 1 {
+				return http.StatusNotFound, errors.New("can't delete last user")
+			}
 		}
 
 		if userExist := config.DB.
@@ -225,14 +227,17 @@ func (ur UserRepo) Delete(companyID string, user domain.User) (int, error) {
 		return 0, nil
 	}
 
-	config.DB.
-		Model(&domain.User{}).
-		Where("client_id = ? AND company_type = ? AND status != ?",
-			companyID, types.CompanyTypesEnum.Client, types.StatusTypesEnum.Deleted).
-		Count(&totalUsers)
+	userRole, _ := ur.GetByKey("id", user.ID.String())
+	if userRole.Role == types.UserRoleEnum.ClientAdmin && ctxUserRole != types.UserRoleEnum.SuperAdmin {
+		config.DB.
+			Model(&domain.User{}).
+			Where("client_id = ? AND company_type = ? AND status != ? AND role = ?",
+				companyID, types.CompanyTypesEnum.Client, types.StatusTypesEnum.Deleted, types.UserRoleEnum.ClientAdmin).
+			Count(&totalUsers)
 
-	if totalUsers == 1 {
-		return http.StatusBadRequest, errors.New("can't delete last user")
+		if totalUsers == 1 {
+			return http.StatusBadRequest, errors.New("can't delete last admin")
+		}
 	}
 
 	if userExist := config.DB.

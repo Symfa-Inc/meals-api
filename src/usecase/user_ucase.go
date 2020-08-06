@@ -159,7 +159,15 @@ func (u User) DeleteCateringUser(c *gin.Context) {
 	deletedAt := time.Now().AddDate(0, 0, 21).Truncate(time.Hour * 24)
 	user.DeletedAt = &deletedAt
 
-	code, err := userRepo.Delete(path.ID, user)
+	ctxUser, _ := c.Get("user")
+	ctxUserRole := ctxUser.(domain.UserClientCatering).Role
+
+	if user.ID == ctxUser.(domain.UserClientCatering).ID {
+		utils.CreateError(http.StatusBadRequest, "can't delete yourself", c)
+		return
+	}
+
+	code, err := userRepo.Delete(path.ID, ctxUserRole, user)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
@@ -367,7 +375,15 @@ func (u User) DeleteClientUser(c *gin.Context) {
 	deletedAt := time.Now().AddDate(0, 0, 21).Truncate(time.Hour * 24)
 	user.DeletedAt = &deletedAt
 
-	code, err := userRepo.Delete(path.ID, user)
+	ctxUser, _ := c.Get("user")
+	ctxUserRole := ctxUser.(domain.UserClientCatering).Role
+
+	if user.ID == ctxUser.(domain.UserClientCatering).ID {
+		utils.CreateError(http.StatusBadRequest, "can't delete yourself", c)
+		return
+	}
+
+	code, err := userRepo.Delete(path.ID, ctxUserRole, user)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
