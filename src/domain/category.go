@@ -30,6 +30,7 @@ type Category struct {
 	DeletedAt  *time.Time `sql:"index" json:"deletedAt"`
 	Name       string     `gorm:"type:varchar(30);not null" json:"name" binding:"required"`
 	CateringID uuid.UUID  `json:"-"`
+	ClientID   uuid.UUID  `json:"clientId"`
 } //@name CategoryResponse
 
 // CategoryUsecase is category interface for usecase
