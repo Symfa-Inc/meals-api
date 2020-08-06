@@ -25,7 +25,7 @@ var imageRepo = repository.NewImageRepo()
 
 // Add adds image for dish with provided ID
 // @Summary Add image for certain dish
-// @Tags catering images
+// @Tags catering dishes
 // @Produce json
 // @Param id path string false "Catering ID"
 // @Param dishId query string false "Dish ID"
@@ -35,16 +35,11 @@ var imageRepo = repository.NewImageRepo()
 // @Success 200 {object} domain.Image "default image"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
-// @Router /caterings/{id}/images [post]
+// @Router /caterings/{id}/dishes/{dishId}/images [post]
 func (i Image) Add(c *gin.Context) {
-	var path types.PathID
-	var query types.DishIDQuery
+	var path types.PathDish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
-		return
-	}
-
-	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return
 	}
 
@@ -58,7 +53,7 @@ func (i Image) Add(c *gin.Context) {
 			return
 		}
 
-		image, code, err := imageRepo.AddDefault(path.ID, query.DishID, parsedID)
+		image, code, err := imageRepo.AddDefault(path.CateringID, path.DishID, parsedID)
 
 		if err != nil {
 			utils.CreateError(code, err.Error(), c)
@@ -91,7 +86,7 @@ func (i Image) Add(c *gin.Context) {
 		Path: "/" + randomString + ext,
 	}
 
-	code, err := imageRepo.Add(path.ID, query.DishID, image)
+	code, err := imageRepo.Add(path.CateringID, path.DishID, image)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
@@ -103,7 +98,7 @@ func (i Image) Add(c *gin.Context) {
 
 // Delete deletes image from dish
 // @Summary Soft delete
-// @Tags catering images
+// @Tags catering dishes
 // @Produce json
 // @Param id path string true "Catering ID"
 // @Param imageId path string true "Image ID"
@@ -111,7 +106,7 @@ func (i Image) Add(c *gin.Context) {
 // @Success 204 "Successfully deleted"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
-// @Router /caterings/{id}/images/{imageId}/dish/{dishId} [delete]
+// @Router /caterings/{id}/dishes/{dishId}/images/{imageId} [delete]
 func (i Image) Delete(c *gin.Context) {
 	var path types.PathImageDish
 
@@ -145,7 +140,7 @@ func (i Image) Get(c *gin.Context) {
 
 // Update updates image for dish with provided ID
 // @Summary Updates image for certain dish
-// @Tags catering images
+// @Tags catering dishes
 // @Produce json
 // @Param id path string false "Catering ID"
 // @Param imageId path string false "Image ID"
@@ -155,7 +150,7 @@ func (i Image) Get(c *gin.Context) {
 // @Success 200 {object} domain.Image "default image"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
-// @Router /caterings/{id}/images/{imageId}/dish/{dishId} [put]
+// @Router /caterings/{id}/dishes/{dishId}/images/{imageId} [put]
 func (i Image) Update(c *gin.Context) {
 	var path types.PathImageDish
 

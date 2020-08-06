@@ -111,9 +111,9 @@ func SetupRouter() *gin.Engine {
 
 			// catering images
 			caAdminSuAdmin.GET("/images", image.Get)
-			caAdminSuAdmin.POST("/caterings/:id/images", image.Add)
-			caAdminSuAdmin.DELETE("/caterings/:id/images/:imageId/dish/:dishId", image.Delete)
-			caAdminSuAdmin.PUT("/caterings/:id/images/:imageId/dish/:dishId", image.Update)
+			caAdminSuAdmin.POST("/caterings/:id/dishes/:dishId/images", image.Add)
+			caAdminSuAdmin.DELETE("/caterings/:id/dishes/:dishId/images/:imageId", image.Delete)
+			caAdminSuAdmin.PUT("/caterings/:id/dishes/:dishId/images/:imageId", image.Update)
 
 			// catering meals
 			caAdminSuAdmin.POST("/caterings/:id/meals", meal.Add)
