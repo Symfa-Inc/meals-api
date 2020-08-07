@@ -20,6 +20,7 @@ type PathUser struct {
 // PathCategory struct for path binding
 type PathCategory struct {
 	ID         string `uri:"id" json:"id" binding:"required"`
+	ClientID   string `uri:"clientId" json:"clientId" binding:"required"`
 	CategoryID string `uri:"categoryID" json:"categoryID" binding:"required"`
 }
 

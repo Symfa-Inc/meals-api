@@ -71,7 +71,7 @@ func (cl Client) Add(c *gin.Context) {
 	c.JSON(http.StatusCreated, client)
 }
 
-// GetCateringClients return list of clients orders
+// GetCateringClientsOrders return list of clients orders
 // @Summary Returns list of clients orders
 // @Tags caterings clients
 // @Produce json

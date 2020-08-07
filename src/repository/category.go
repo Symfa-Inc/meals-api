@@ -73,7 +73,7 @@ func (dc CategoryRepo) Delete(path types.PathCategory) (int, error) {
 	result := config.DB.
 		Unscoped().
 		Model(&domain.Category{}).
-		Where("catering_id = ? AND id = ?  AND (deleted_at > ? OR deleted_at IS NULL)", path.ID, path.CategoryID, time.Now()).
+		Where("catering_id = ? AND id = ? AND client_id = ? AND (deleted_at > ? OR deleted_at IS NULL)", path.ID, path.CategoryID, path.ClientID, time.Now()).
 		Update("deleted_at", time.Now())
 
 	if result.Error != nil {
@@ -96,7 +96,8 @@ func (dc CategoryRepo) Update(path types.PathCategory, category *domain.Category
 		Find(&category).
 		RowsAffected; categoryExist == 0 {
 		if nameExist := config.DB.
-			Where("catering_id = ? AND name = ?", path.ID, category.Name).
+			Debug().
+			Where("catering_id = ? AND client_id = ? AND name = ?", path.ID, path.ClientID, category.Name).
 			Find(&category).
 			RowsAffected; nameExist != 0 {
 			return http.StatusBadRequest, errors.New("category with that name already exist")
