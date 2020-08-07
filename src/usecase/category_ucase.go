@@ -34,10 +34,10 @@ var categoryRepo = repository.NewCategoryRepo()
 // @Param body body request.AddCategory false "Category Name"
 // @Success 200 {object} domain.Category false "category object"
 // @Failure 400 {object} types.Error "Error"
-// @Router /caterings/{id}/categories [post]
+// @Router /caterings/{id}/clients/{clientId}/categories [post]
 func (dc Category) Add(c *gin.Context) {
 	var body request.AddCategory
-	var path types.PathID
+	var path types.PathClient
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -55,10 +55,12 @@ func (dc Category) Add(c *gin.Context) {
 	}
 
 	cateringID, _ := uuid.FromString(path.ID)
+	clientID, _ := uuid.FromString(path.ClientID)
 	category := domain.Category{
 		DeletedAt:  body.DeletedAt,
 		Name:       strings.ToLower(body.Name),
 		CateringID: cateringID,
+		ClientID: clientID,
 	}
 
 	err := categoryRepo.Add(&category)
@@ -102,15 +104,15 @@ func (dc Category) Delete(c *gin.Context) {
 // @Success 200 {array} domain.Category "array of category readings"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
-// @Router /caterings/{id}/categories [get]
+// @Router /caterings/{id}/clients/{clientId}/categories [get]
 func (dc Category) Get(c *gin.Context) {
-	var path types.PathID
+	var path types.PathClient
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	categoriesResult, code, err := categoryRepo.Get(path.ID)
+	categoriesResult, code, err := categoryRepo.Get(path.ID, path.ClientID)
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return

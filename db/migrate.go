@@ -19,19 +19,19 @@ func main() {
 	addDbConstraints()
 	fmt.Println("=== ADD DB CONSTRAINTS ===")
 
-	//dev.CreateCaterings()
-	//dev.CreateCateringSchedules()
-	//dev.CreateClients()
-	//dev.CreateClientSchedules()
+	dev.CreateCaterings()
+	dev.CreateCateringSchedules()
+	dev.CreateClients()
+	dev.CreateClientSchedules()
 	dev.CreateAdmin()
-	//dev.CreateUsers()
-	//dev.CreateMeals()
-	//dev.CreateCategories()
-	//dev.CreateDishes()
+	dev.CreateUsers()
+	dev.CreateMeals()
+	dev.CreateCategories()
+	dev.CreateDishes()
 	dev.CreateImages()
-	//dev.CreateMealDishes()
-	//dev.CreateImageDishes()
-	//dev.CreateAddresses()
+	dev.CreateMealDishes()
+	dev.CreateImageDishes()
+	dev.CreateAddresses()
 }
 
 func migrate() {
@@ -90,6 +90,7 @@ func addDbConstraints() {
 	config.DB.Model(&domain.Meal{}).AddIndex("idx_meals_date", "date")
 
 	config.DB.Model(&domain.Category{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.Category{}).AddForeignKey("client_id", "clients(id)", "CASCADE", "CASCADE")
 
 	config.DB.Model(&domain.Dish{}).AddForeignKey("category_id", "categories(id)", "CASCADE", "CASCADE")
 

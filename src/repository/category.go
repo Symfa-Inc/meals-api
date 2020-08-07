@@ -23,8 +23,8 @@ func NewCategoryRepo() *CategoryRepo {
 func (dc CategoryRepo) Add(category *domain.Category) error {
 	if exist := config.DB.
 		Unscoped().
-		Where("catering_id = ? AND name = ? AND deleted_at >  ?", category.CateringID, category.Name, category.DeletedAt).
-		Or("catering_id = ? AND name = ? AND deleted_at IS NULL", category.CateringID, category.Name).
+		Where("catering_id = ? AND client_id = ? AND name = ? AND (deleted_at >  ? OR deleted_at IS NULL)",
+			category.CateringID, category.ClientID, category.Name, category.DeletedAt).
 		Find(category).RecordNotFound(); !exist {
 
 		return errors.New("this category already exist")
@@ -36,11 +36,11 @@ func (dc CategoryRepo) Add(category *domain.Category) error {
 
 // Get returns list of categories of passed catering ID
 // returns list of categories and error
-func (dc CategoryRepo) Get(id string) ([]domain.Category, int, error) {
+func (dc CategoryRepo) Get(cateringID, clientID string) ([]domain.Category, int, error) {
 	var categories []domain.Category
 
 	if cateringRows := config.DB.
-		Where("id = ?", id).
+		Where("id = ?", cateringID).
 		Find(&domain.Catering{}).RowsAffected; cateringRows == 0 {
 
 		return nil, http.StatusNotFound, errors.New("catering with that ID is not found")
@@ -48,7 +48,8 @@ func (dc CategoryRepo) Get(id string) ([]domain.Category, int, error) {
 
 	err := config.DB.
 		Unscoped().
-		Where("catering_id = ? AND (deleted_at > ? OR deleted_at IS NULL)", id, time.Now()).
+		Where("catering_id = ? AND client_id = ? AND (deleted_at > ? OR deleted_at IS NULL)",
+			cateringID, clientID, time.Now()).
 		Order("created_at").
 		Find(&categories).
 		Error

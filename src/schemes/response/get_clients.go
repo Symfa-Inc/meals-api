@@ -10,8 +10,8 @@ type GetClients struct {
 } //@name GetClients
 
 // GetCateringClients struct
-type GetCateringClients struct {
-	Items []CateringClient `json:"items"`
+type GetClientsOrders struct {
+	Items []ClientOrder `json:"items"`
 	Page  int              `json:"page"`
 	Total int              `json:"total"`
 } //@name GetClients
@@ -30,7 +30,7 @@ type ClientInfo struct {
 }
 
 // CateringClient response struct
-type CateringClient struct {
+type ClientOrder struct {
 	ClientInfo   `json:"client"`
 	OrdersDishes string `json:"ordersDishes" gorm:"column:orders_dishes"`
 	Total        int    `json:"total" gorm:"column:total"`
