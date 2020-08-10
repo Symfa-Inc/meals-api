@@ -43,7 +43,7 @@ func SetupRouter() *gin.Engine {
 	validator := middleware.NewValidator()
 
 	configCors := cors.DefaultConfig()
-	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL"), os.Getenv("CLIENT_MOBILE_URL")}
+	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL"), os.Getenv("CLIENT_MOBILE_URL"), os.Getenv("CLIENT_MOBILE_URL_TEST")}
 
 	configCors.AllowCredentials = true
 	r.Use(cors.New(configCors))
