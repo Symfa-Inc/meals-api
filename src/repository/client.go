@@ -69,9 +69,9 @@ func (c ClientRepo) Add(cateringID string, client *domain.Client, user domain.Us
 	return err
 }
 
-// GetCateringClients returns list of catering Clients
-func (c ClientRepo) GetCateringClients(cateringID string, query types.PaginationWithDateQuery) ([]response.CateringClient, int, error) {
-	var cateringClients []response.CateringClient
+// GetCateringClientsOrders returns list of catering Clients
+func (c ClientRepo) GetCateringClientsOrders(cateringID string, query types.PaginationWithDateQuery) ([]response.ClientOrder, int, error) {
+	var cateringClients []response.ClientOrder
 	var total int
 
 	page := query.Page

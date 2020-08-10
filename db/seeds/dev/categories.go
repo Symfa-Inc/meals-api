@@ -12,6 +12,7 @@ import (
 // CreateCategories creates seeds for categories table
 func CreateCategories() {
 	cateringRepo := repository.NewCateringRepo()
+	clientRepo := repository.NewClientRepo()
 	seedExists := config.DB.
 		Where("name = ?", "init dish_categories").
 		First(&domain.Seed{}).Error
@@ -20,7 +21,8 @@ func CreateCategories() {
 			Name: "init dish_categories",
 		}
 
-		cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
+		catering, _ := cateringRepo.GetByKey("name", "Twiist")
+		client, _ := clientRepo.GetByKey("name", "Dymi")
 		var categoriesArray []domain.Category
 		utils.JSONParse("/db/seeds/data/categories.json", &categoriesArray)
 
@@ -30,7 +32,8 @@ func CreateCategories() {
 		for i := range categoriesArray {
 			go func(i int) {
 				defer wg.Done()
-				categoriesArray[i].CateringID = cateringResult.ID
+				categoriesArray[i].CateringID = catering.ID
+				categoriesArray[i].ClientID = client.ID
 				config.DB.Create(&categoriesArray[i])
 			}(i)
 		}

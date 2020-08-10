@@ -71,18 +71,18 @@ func (cl Client) Add(c *gin.Context) {
 	c.JSON(http.StatusCreated, client)
 }
 
-// GetCateringClients return list of clients
-// @Summary Returns list of clients
+// GetCateringClientsOrders return list of clients orders
+// @Summary Returns list of clients orders
 // @Tags caterings clients
 // @Produce json
 // @Param id path string true "Catering ID"
 // @Param date query string true "Date query in YYYY-MM-DDT00:00:00Z format"
 // @Param limit query int false "used for pagination"
 // @Param page query int false "used for pagination"
-// @Success 200 {object} response.GetCateringClientsSwagger "List of clients"
+// @Success 200 {object} response.GetCateringClientsSwagger "List of clients orders"
 // @Failure 400 {object} types.Error "Error"
-// @Router /caterings/{id}/clients [get]
-func (cl Client) GetCateringClients(c *gin.Context) {
+// @Router /caterings/{id}/clients-orders [get]
+func (cl Client) GetCateringClientsOrders(c *gin.Context) {
 	var query types.PaginationWithDateQuery
 	var path types.PathID
 
@@ -101,7 +101,7 @@ func (cl Client) GetCateringClients(c *gin.Context) {
 		return
 	}
 
-	result, total, err := clientRepo.GetCateringClients(path.ID, query)
+	result, total, err := clientRepo.GetCateringClientsOrders(path.ID, query)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
@@ -185,6 +185,45 @@ func (cl Client) Get(c *gin.Context) {
 	}
 
 	result, total, err := clientRepo.Get(query, cateringID, user.Role)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	if query.Page == 0 {
+		query.Page = 1
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"items": result,
+		"page":  query.Page,
+		"total": total,
+	})
+}
+
+// GetByCateringID return list of clients
+// @Summary Returns list of clients
+// @Tags clients
+// @Produce json
+// @Param limit query int false "used for pagination"
+// @Param page query int false "used for pagination"
+// @Success 200 {object} response.GetClients "List of clients"
+// @Failure 400 {object} types.Error "Error"
+// @Router /caterings/{id}/clients [get]
+func (cl Client) GetByCateringID(c *gin.Context) {
+	var path types.PathID
+	var query types.PaginationQuery
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderQuery(&query, c); err != nil {
+		return
+	}
+
+	result, total, err := clientRepo.Get(query, path.ID, "")
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
