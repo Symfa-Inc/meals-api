@@ -2,8 +2,12 @@ package config
 
 import "github.com/robfig/cron"
 
-var CRON *cron.Cron
+// CRON cron struct
+var CRON struct {
+	Cron    *cron.Cron
+	Entries []map[string][]cron.EntryID
+}
 
 func init() {
-	CRON = cron.New()
+	CRON.Cron = cron.New()
 }

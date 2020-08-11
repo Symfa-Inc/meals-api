@@ -9,7 +9,7 @@ import (
 // @title AIS Catering
 // @version 1.0.0
 func main() {
-	config.CRON.Start()
+	config.CRON.Cron.Start()
 	r := delivery.SetupRouter()
 	r.Run()
 }

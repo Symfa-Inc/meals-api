@@ -13,6 +13,8 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/jinzhu/now"
+	"github.com/robfig/cron"
+	//"github.com/robfig/cron"
 )
 
 // ClientRepo struct
@@ -222,11 +224,16 @@ func (c ClientRepo) Update(id string, client domain.Client) (int, error) {
 
 	return 0, nil
 }
-
 func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error) {
 	orderRepo := NewOrderRepo()
+	var prevStatus []bool
+
+	config.DB.
+		Model(&domain.Client{}).
+		Where("id = ?", id).
+		Pluck("auto_approve_orders", &prevStatus)
+
 	if clientExist := config.DB.
-		Debug().
 		Model(&domain.Client{}).
 		Where("id = ?", id).
 		Update(map[string]interface{}{
@@ -236,29 +243,68 @@ func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error)
 		return http.StatusNotFound, errors.New("client not found")
 	}
 
-	var clientSchedules []domain.ClientSchedule
+	if status && prevStatus[0] || !status && !prevStatus[0] {
+		return http.StatusBadRequest, errors.New("can't set the same value")
+	}
 
 	if status {
+		var clientSchedules []domain.ClientSchedule
 		config.DB.
 			Where("client_id = ?", id).
 			Find(&clientSchedules)
 
-		config.CRON.AddFunc("@every 0h0m1s", func() { fmt.Println("Every second") })
+		entry := make(map[string][]cron.EntryID)
 
-		for i, _ := range clientSchedules {
+		for i := range clientSchedules {
 			startOfWeek := now.BeginningOfWeek().UTC().Truncate(time.Hour * 24)
 			date := startOfWeek.AddDate(0, 0, i+2).UTC().Format(time.RFC3339)
-			fmt.Println(date)
+
 			// cronTime := strings.Split(schedule.End, ":")
 			cronString := utils.CronStringCreator("Europe/Moscow", "46", "18")
-			_, err := config.CRON.AddFunc(cronString, func() {
+
+			entryID, _ := config.CRON.Cron.AddFunc(cronString, func() {
 				orderRepo.ApproveOrders(id, date)
 			})
-			fmt.Println(err)
+
+			entry[id] = append(entry[id], entryID)
 		}
-		fmt.Println(len(config.CRON.Entries()))
+
+		// TODO issue here
+		if len(config.CRON.Entries) != 0 {
+			for i := range config.CRON.Entries {
+				_, found := config.CRON.Entries[i][id]
+				if !found {
+					config.CRON.Entries = append(config.CRON.Entries, entry)
+				}
+			}
+			// TODO or here
+		} else {
+			config.CRON.Entries = append(config.CRON.Entries, entry)
+		}
+	} else {
+		for i := range config.CRON.Entries {
+			fmt.Println(i)
+			if len(config.CRON.Entries) == 1 {
+				values := config.CRON.Entries[i][id]
+				for _, id := range values {
+					config.CRON.Cron.Remove(id)
+				}
+				config.CRON.Entries = nil
+			} else {
+				fmt.Println(i)
+				fmt.Println(config.CRON.Entries[i])
+				values, found := config.CRON.Entries[i][id]
+				if found {
+					for _, id := range values {
+						config.CRON.Cron.Remove(id)
+					}
+					config.CRON.Entries = append(config.CRON.Entries[:i], config.CRON.Entries[i+1:]...)
+				}
+			}
+		}
 	}
 
+	fmt.Println(config.CRON.Entries)
 	return 0, nil
 }
 
