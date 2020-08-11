@@ -311,6 +311,7 @@ func (o OrderRepo) ApproveOrders(clientID, date string) error {
 
 	if areOrdersExist := config.DB.
 		Table("orders as o").
+		Debug().
 		Select("o.id").
 		Joins("left join user_orders uo on uo.order_id = o.id").
 		Joins("left join users u on uo.user_id = u.id").
@@ -323,6 +324,7 @@ func (o OrderRepo) ApproveOrders(clientID, date string) error {
 
 	for _, order := range orderIDs {
 		config.DB.
+			Debug().
 			Model(&domain.Order{}).
 			Where("id = ? and status != ?", order.ID, types.OrderStatusTypesEnum.Canceled).
 			Update("status", types.OrderStatusTypesEnum.Approved)

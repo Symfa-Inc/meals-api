@@ -2,13 +2,17 @@ package repository
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
+	"fmt"
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/schemes/response"
 	"go_api/src/types"
+	"go_api/src/utils"
 	"net/http"
 	"time"
+
+	"github.com/jinzhu/gorm"
+	"github.com/jinzhu/now"
 )
 
 // ClientRepo struct
@@ -214,6 +218,45 @@ func (c ClientRepo) Update(id string, client domain.Client) (int, error) {
 		Update(&client).
 		RowsAffected; clientExist == 0 {
 		return http.StatusNotFound, errors.New("client not found")
+	}
+
+	return 0, nil
+}
+
+func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error) {
+	orderRepo := NewOrderRepo()
+	if clientExist := config.DB.
+		Debug().
+		Model(&domain.Client{}).
+		Where("id = ?", id).
+		Update(map[string]interface{}{
+			"auto_approve_orders": status,
+		}).
+		RowsAffected; clientExist == 0 {
+		return http.StatusNotFound, errors.New("client not found")
+	}
+
+	var clientSchedules []domain.ClientSchedule
+
+	if status {
+		config.DB.
+			Where("client_id = ?", id).
+			Find(&clientSchedules)
+
+		config.CRON.AddFunc("@every 0h0m1s", func() { fmt.Println("Every second") })
+
+		for i, _ := range clientSchedules {
+			startOfWeek := now.BeginningOfWeek().UTC().Truncate(time.Hour * 24)
+			date := startOfWeek.AddDate(0, 0, i+2).UTC().Format(time.RFC3339)
+			fmt.Println(date)
+			// cronTime := strings.Split(schedule.End, ":")
+			cronString := utils.CronStringCreator("Europe/Moscow", "46", "18")
+			_, err := config.CRON.AddFunc(cronString, func() {
+				orderRepo.ApproveOrders(id, date)
+			})
+			fmt.Println(err)
+		}
+		fmt.Println(len(config.CRON.Entries()))
 	}
 
 	return 0, nil

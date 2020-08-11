@@ -141,6 +141,8 @@ func SetupRouter() *gin.Engine {
 			// client orders
 			clAdminSuAdmin.GET("/clients/:id/orders", order.GetClientOrders)
 			clAdminSuAdmin.PUT("/clients/:id/orders", order.ApproveOrders)
+
+			clAdminSuAdmin.PUT("/clients/:id/auto-approve", client.UpdateAutoApprove)
 		}
 
 		clAdminUser := authRequired.Group("/")
