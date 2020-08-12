@@ -24,6 +24,7 @@ func CreateClients() {
 		twiistCatering, _ := cateringRepo.GetByKey("name", "Twiist")
 
 		for i := range clientsArray {
+			clientsArray[i].AutoApproveOrders = false
 			if i == 0 {
 				clientsArray[i].CateringID = twiistCatering.ID
 				config.DB.Create(&clientsArray[i])

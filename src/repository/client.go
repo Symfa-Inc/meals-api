@@ -2,13 +2,15 @@ package repository
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/schemes/response"
 	"go_api/src/types"
 	"net/http"
 	"time"
+
+	"github.com/jinzhu/gorm"
+	"github.com/jinzhu/now"
 )
 
 // ClientRepo struct
@@ -218,6 +220,81 @@ func (c ClientRepo) Update(id string, client domain.Client) (int, error) {
 
 	return 0, nil
 }
+func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error) {
+	var prevStatus []bool
+
+	config.DB.
+		Model(&domain.Client{}).
+		Where("id = ?", id).
+		Pluck("auto_approve_orders", &prevStatus)
+
+	if clientExist := config.DB.
+		Model(&domain.Client{}).
+		Where("id = ?", id).
+		Update(map[string]interface{}{
+			"auto_approve_orders": status,
+		}).
+		RowsAffected; clientExist == 0 {
+		return http.StatusNotFound, errors.New("client not found")
+	}
+
+	if status && prevStatus[0] || !status && !prevStatus[0] {
+		return http.StatusBadRequest, errors.New("can't set the same value")
+	}
+
+	if status {
+		var clientSchedules []domain.ClientSchedule
+		config.DB.
+			Where("client_id = ?", id).
+			Order("day").
+			Find(&clientSchedules)
+
+		entry := make(map[string]map[string]string)
+		scheduleDate := make(map[string]string)
+
+		for i, schedule := range clientSchedules {
+			startOfWeek := now.BeginningOfWeek().UTC().Truncate(time.Hour * 24)
+			date := startOfWeek.AddDate(0, 0, i+2).UTC().Format(time.RFC3339)
+			scheduleDate[date] = schedule.End
+			entry[id] = scheduleDate
+		}
+		config.CRON.Entries = append(config.CRON.Entries, entry)
+	} else {
+		for i := range config.CRON.Entries {
+			if len(config.CRON.Entries) == 1 {
+				config.CRON.Entries = nil
+			} else {
+				_, found := config.CRON.Entries[i][id]
+				if found {
+					config.CRON.Entries = append(config.CRON.Entries[:i], config.CRON.Entries[i+1:]...)
+				}
+			}
+		}
+	}
+	return 0, nil
+}
+
+//  InitAutoApprove init auto approve after back-end starts
+// Returns code, error
+func (c ClientRepo) InitAutoApprove(id string) (int, error) {
+	var clientSchedules []domain.ClientSchedule
+	config.DB.
+		Where("client_id = ?", id).
+		Order("day").
+		Find(&clientSchedules)
+
+	entry := make(map[string]map[string]string)
+	scheduleDate := make(map[string]string)
+
+	for i, schedule := range clientSchedules {
+		startOfWeek := now.BeginningOfWeek().UTC().Truncate(time.Hour * 24)
+		date := startOfWeek.AddDate(0, 0, i+2).UTC().Format(time.RFC3339)
+		scheduleDate[date] = schedule.End
+		entry[id] = scheduleDate
+	}
+	config.CRON.Entries = append(config.CRON.Entries, entry)
+	return 0, nil
+}
 
 // GetByKey client by provided key value arguments
 // Returns client, error
@@ -225,4 +302,12 @@ func (c ClientRepo) GetByKey(key, value string) (domain.Client, error) {
 	var client domain.Client
 	err := config.DB.Where(key+" = ?", value).First(&client).Error
 	return client, err
+}
+
+// GetAll returns all undeleted clients
+// Returns clients, error
+func (c ClientRepo) GetAll() ([]domain.Client, error) {
+	var clients []domain.Client
+	err := config.DB.Find(&clients).Error
+	return clients, err
 }

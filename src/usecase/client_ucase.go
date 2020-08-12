@@ -1,15 +1,17 @@
 package usecase
 
 import (
-	"github.com/gin-gonic/gin"
-	uuid "github.com/satori/go.uuid"
 	"go_api/src/delivery/middleware"
 	"go_api/src/domain"
 	"go_api/src/repository"
+	"go_api/src/schemes/request"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
 )
 
 // Client struct
@@ -288,6 +290,37 @@ func (cl Client) Update(c *gin.Context) {
 	}
 
 	if code, err := clientRepo.Update(path.ID, clientModal); err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+// UpdateAutoApprove updates client
+// @Summary Returns 204 if success and 4xx error if failed
+// @Produce json
+// @Accept json
+// @Tags clients
+// @Param id path string true "Client ID"
+// @Param body body request.UpdateAutoApprove false "update auto approve"
+// @Success 204 "Successfully updated"
+// @Failure 400 {object} types.Error "Error"
+// @Failure 404 {object} types.Error "Not Found"
+// @Router /clients/{id}/auto-approve [put]
+func (cl Client) UpdateAutoApprove(c *gin.Context) {
+	var path types.PathID
+	var body request.UpdateAutoApprove
+
+	if err := utils.RequestBinderBody(&body, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	if code, err := clientRepo.UpdateAutoApproveOrders(path.ID, *body.Status); err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}
