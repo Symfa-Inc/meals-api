@@ -275,6 +275,7 @@ func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error)
 				_, found := config.CRON.Entries[i][id]
 				if !found {
 					config.CRON.Entries = append(config.CRON.Entries, entry)
+					break
 				}
 			}
 			// TODO or here
@@ -283,7 +284,6 @@ func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error)
 		}
 	} else {
 		for i := range config.CRON.Entries {
-			fmt.Println(i)
 			if len(config.CRON.Entries) == 1 {
 				values := config.CRON.Entries[i][id]
 				for _, id := range values {
@@ -291,8 +291,6 @@ func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error)
 				}
 				config.CRON.Entries = nil
 			} else {
-				fmt.Println(i)
-				fmt.Println(config.CRON.Entries[i])
 				values, found := config.CRON.Entries[i][id]
 				if found {
 					for _, id := range values {
@@ -304,7 +302,8 @@ func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error)
 		}
 	}
 
-	fmt.Println(config.CRON.Entries)
+	fmt.Println(len(config.CRON.Entries))
+	fmt.Println(len(config.CRON.Cron.Entries()))
 	return 0, nil
 }
 
