@@ -60,7 +60,7 @@ func (m MealRepo) Get(mealDate time.Time, id string) ([]domain.Dish, uuid.UUID, 
 		Joins("left join dishes d on d.category_id = categories.id").
 		Joins("left join meal_dishes md on md.dish_id = d.id").
 		Joins("left join meals m on m.id = md.meal_id").
-		Where("m.id = ? AND md.deleted_at IS NULL AND (categories.deleted_at > ? OR categories.deleted_at IS NULL)", meal.ID, time.Now()).
+		Where("m.id = ? AND md.deleted_at IS NULL AND (categories.deleted_at > ? OR categories.deleted_at IS NULL)", meal.ID, mealDate).
 		Order("d.created_at").
 		Scan(&result).
 		Error

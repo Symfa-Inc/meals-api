@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 	"go_api/src/domain"
@@ -101,18 +102,30 @@ func (dc Category) Delete(c *gin.Context) {
 // @Tags catering categories
 // @Produce json
 // @Param id path string false "Catering ID"
+// @Param clientId path string false "Client ID"
+// @Param date query string false "in format YYYY-MM-DDT00:00:00Z"
 // @Success 200 {array} domain.Category "array of category readings"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/categories [get]
 func (dc Category) Get(c *gin.Context) {
 	var path types.PathClient
+	var query types.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	categoriesResult, code, err := categoryRepo.Get(path.ID, path.ClientID)
+	if err := utils.RequestBinderQuery(&query, c); err != nil {
+		return
+	}
+
+	fmt.Println(query.Date)
+	if query.Date == "" {
+		query.Date = time.Now().String()
+	}
+
+	categoriesResult, code, err := categoryRepo.Get(path.ID, path.ClientID, query.Date)
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
