@@ -2,19 +2,15 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"go_api/src/config"
 	"go_api/src/domain"
 	"go_api/src/schemes/response"
 	"go_api/src/types"
-	"go_api/src/utils"
 	"net/http"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/jinzhu/now"
-	"github.com/robfig/cron"
-	//"github.com/robfig/cron"
 )
 
 // ClientRepo struct
@@ -225,7 +221,6 @@ func (c ClientRepo) Update(id string, client domain.Client) (int, error) {
 	return 0, nil
 }
 func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error) {
-	orderRepo := NewOrderRepo()
 	var prevStatus []bool
 
 	config.DB.
@@ -251,59 +246,53 @@ func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error)
 		var clientSchedules []domain.ClientSchedule
 		config.DB.
 			Where("client_id = ?", id).
+			Order("day").
 			Find(&clientSchedules)
 
-		entry := make(map[string][]cron.EntryID)
+		entry := make(map[string]map[string]string)
+		scheduleDate := make(map[string]string)
 
-		for i := range clientSchedules {
+		for i, schedule := range clientSchedules {
 			startOfWeek := now.BeginningOfWeek().UTC().Truncate(time.Hour * 24)
 			date := startOfWeek.AddDate(0, 0, i+2).UTC().Format(time.RFC3339)
-
-			// cronTime := strings.Split(schedule.End, ":")
-			cronString := utils.CronStringCreator("Europe/Moscow", "46", "18")
-
-			entryID, _ := config.CRON.Cron.AddFunc(cronString, func() {
-				orderRepo.ApproveOrders(id, date)
-			})
-
-			entry[id] = append(entry[id], entryID)
+			scheduleDate[date] = schedule.End
+			entry[id] = scheduleDate
 		}
-
-		// TODO issue here
-		if len(config.CRON.Entries) != 0 {
-			for i := range config.CRON.Entries {
-				_, found := config.CRON.Entries[i][id]
-				if !found {
-					config.CRON.Entries = append(config.CRON.Entries, entry)
-					break
-				}
-			}
-			// TODO or here
-		} else {
-			config.CRON.Entries = append(config.CRON.Entries, entry)
-		}
+		config.CRON.Entries = append(config.CRON.Entries, entry)
 	} else {
 		for i := range config.CRON.Entries {
 			if len(config.CRON.Entries) == 1 {
-				values := config.CRON.Entries[i][id]
-				for _, id := range values {
-					config.CRON.Cron.Remove(id)
-				}
 				config.CRON.Entries = nil
 			} else {
-				values, found := config.CRON.Entries[i][id]
+				_, found := config.CRON.Entries[i][id]
 				if found {
-					for _, id := range values {
-						config.CRON.Cron.Remove(id)
-					}
 					config.CRON.Entries = append(config.CRON.Entries[:i], config.CRON.Entries[i+1:]...)
 				}
 			}
 		}
 	}
+	return 0, nil
+}
 
-	fmt.Println(len(config.CRON.Entries))
-	fmt.Println(len(config.CRON.Cron.Entries()))
+//  InitAutoApprove init auto approve after back-end starts
+// Returns code, error
+func (c ClientRepo) InitAutoApprove(id string) (int, error) {
+	var clientSchedules []domain.ClientSchedule
+	config.DB.
+		Where("client_id = ?", id).
+		Order("day").
+		Find(&clientSchedules)
+
+	entry := make(map[string]map[string]string)
+	scheduleDate := make(map[string]string)
+
+	for i, schedule := range clientSchedules {
+		startOfWeek := now.BeginningOfWeek().UTC().Truncate(time.Hour * 24)
+		date := startOfWeek.AddDate(0, 0, i+2).UTC().Format(time.RFC3339)
+		scheduleDate[date] = schedule.End
+		entry[id] = scheduleDate
+	}
+	config.CRON.Entries = append(config.CRON.Entries, entry)
 	return 0, nil
 }
 
@@ -313,4 +302,12 @@ func (c ClientRepo) GetByKey(key, value string) (domain.Client, error) {
 	var client domain.Client
 	err := config.DB.Where(key+" = ?", value).First(&client).Error
 	return client, err
+}
+
+// GetAll returns all undeleted clients
+// Returns clients, error
+func (c ClientRepo) GetAll() ([]domain.Client, error) {
+	var clients []domain.Client
+	err := config.DB.Find(&clients).Error
+	return clients, err
 }
