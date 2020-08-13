@@ -2,12 +2,13 @@ package repository
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
-	"github.com/jinzhu/now"
 	"go_api/src/config"
 	"go_api/src/domain"
 	"net/http"
 	"sort"
+
+	"github.com/jinzhu/gorm"
+	"github.com/jinzhu/now"
 )
 
 // ClientScheduleRepo struct

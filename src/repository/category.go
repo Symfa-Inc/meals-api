@@ -96,7 +96,6 @@ func (dc CategoryRepo) Update(path types.PathCategory, category *domain.Category
 		Find(&category).
 		RowsAffected; categoryExist == 0 {
 		if nameExist := config.DB.
-			Debug().
 			Where("catering_id = ? AND client_id = ? AND name = ?", path.ID, path.ClientID, category.Name).
 			Find(&category).
 			RowsAffected; nameExist != 0 {

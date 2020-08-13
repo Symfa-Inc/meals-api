@@ -3,6 +3,7 @@ package init
 import (
 	"go_api/src/config"
 	"go_api/src/repository"
+	"go_api/src/utils"
 	"time"
 )
 
@@ -19,7 +20,7 @@ func init() {
 
 	config.CRON.Cron.Start()
 	config.CRON.Cron.AddFunc("@every 0h1m0s", func() {
-		currentDay := time.Now().UTC().Truncate(time.Hour * 24).Format(time.RFC3339)
+		currentDay := utils.GetCurrentDay()
 		currentTime := time.Now().Format("15:04")
 		for _, entry := range config.CRON.Entries {
 			for entryKey, clientIdMap := range entry {

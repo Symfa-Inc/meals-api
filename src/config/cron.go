@@ -7,7 +7,7 @@ import (
 // CRON cron struct
 var CRON struct {
 	Cron    *cron.Cron
-	Entries []map[string]map[string]string
+	Entries []map[string]map[int]string
 }
 
 func init() {

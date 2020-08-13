@@ -1,13 +1,14 @@
 package usecase
 
 import (
-	"github.com/gin-gonic/gin"
 	"go_api/src/domain"
 	"go_api/src/repository"
 	"go_api/src/schemes/request"
 	"go_api/src/types"
 	"go_api/src/utils"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // ClientSchedule struct
@@ -38,13 +39,17 @@ func (cs ClientSchedule) Get(c *gin.Context) {
 	}
 
 	schedules, code, err := clientScheduleRepo.Get(path.ID)
+	client, _ := clientRepo.GetByKey("id", path.ID)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}
 
-	c.JSON(http.StatusOK, schedules)
+	c.JSON(http.StatusOK, gin.H{
+		"list":              schedules,
+		"autoApproveOrders": client.AutoApproveOrders,
+	})
 }
 
 // Update updates schedule
@@ -81,5 +86,6 @@ func (cs ClientSchedule) Update(c *gin.Context) {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}
+	clientRepo.UpdateAutoApproveSchedules(path.ID)
 	c.JSON(http.StatusOK, updatedSchedule)
 }

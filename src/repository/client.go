@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/jinzhu/now"
 )
 
 // ClientRepo struct
@@ -243,22 +242,7 @@ func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error)
 	}
 
 	if status {
-		var clientSchedules []domain.ClientSchedule
-		config.DB.
-			Where("client_id = ?", id).
-			Order("day").
-			Find(&clientSchedules)
-
-		entry := make(map[string]map[string]string)
-		scheduleDate := make(map[string]string)
-
-		for i, schedule := range clientSchedules {
-			startOfWeek := now.BeginningOfWeek().UTC().Truncate(time.Hour * 24)
-			date := startOfWeek.AddDate(0, 0, i+2).UTC().Format(time.RFC3339)
-			scheduleDate[date] = schedule.End
-			entry[id] = scheduleDate
-		}
-		config.CRON.Entries = append(config.CRON.Entries, entry)
+		c.InitAutoApprove(id)
 	} else {
 		for i := range config.CRON.Entries {
 			if len(config.CRON.Entries) == 1 {
@@ -274,26 +258,38 @@ func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error)
 	return 0, nil
 }
 
-//  InitAutoApprove init auto approve after back-end starts
+// InitAutoApprove init auto approve after back-end starts
 // Returns code, error
 func (c ClientRepo) InitAutoApprove(id string) (int, error) {
 	var clientSchedules []domain.ClientSchedule
 	config.DB.
-		Where("client_id = ?", id).
+		Where("client_id = ? AND is_working = ?", id, true).
 		Order("day").
 		Find(&clientSchedules)
 
-	entry := make(map[string]map[string]string)
-	scheduleDate := make(map[string]string)
+	entry := make(map[string]map[int]string)
+	scheduleDate := make(map[int]string)
 
-	for i, schedule := range clientSchedules {
-		startOfWeek := now.BeginningOfWeek().UTC().Truncate(time.Hour * 24)
-		date := startOfWeek.AddDate(0, 0, i+2).UTC().Format(time.RFC3339)
-		scheduleDate[date] = schedule.End
+	for _, schedule := range clientSchedules {
+		scheduleDate[schedule.Day] = schedule.End
 		entry[id] = scheduleDate
 	}
 	config.CRON.Entries = append(config.CRON.Entries, entry)
 	return 0, nil
+}
+
+func (c ClientRepo) UpdateAutoApproveSchedules(id string) {
+	for i := range config.CRON.Entries {
+		if len(config.CRON.Entries) == 1 {
+			config.CRON.Entries = nil
+		} else {
+			_, found := config.CRON.Entries[i][id]
+			if found {
+				config.CRON.Entries = append(config.CRON.Entries[:i], config.CRON.Entries[i+1:]...)
+			}
+		}
+	}
+	c.InitAutoApprove(id)
 }
 
 // GetByKey client by provided key value arguments

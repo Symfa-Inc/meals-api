@@ -43,7 +43,9 @@ func (s CateringSchedule) Get(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, schedules)
+	c.JSON(http.StatusOK, gin.H{
+		"list": schedules,
+	})
 }
 
 // Update updates schedule
