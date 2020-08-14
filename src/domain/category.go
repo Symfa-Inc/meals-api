@@ -44,8 +44,8 @@ type CategoryUsecase interface {
 // CategoryRepository is category interface for repository
 type CategoryRepository interface {
 	Add(category *Category) error
-	Get(id string) ([]Category, int, error)
+	Get(cateringID, clientID, date string) ([]Category, int, error)
 	GetByKey(id, value, cateringID string) (Category, error)
-	Delete(path types.PathCategory) error
+	Delete(path types.PathCategory) (int, error)
 	Update(path types.PathCategory, category *Category) (int, error)
 }
