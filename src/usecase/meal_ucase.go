@@ -1,11 +1,11 @@
 package usecase
 
 import (
-	"go_api/src/domain"
-	"go_api/src/repository"
-	"go_api/src/schemes/request"
-	"go_api/src/types"
-	"go_api/src/utils"
+	"github.com/Aiscom-LLC/meals-api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/src/repository"
+	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
+	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"net/http"
 	"strconv"
 	"time"
@@ -79,7 +79,7 @@ func (m Meal) Add(c *gin.Context) {
 		meal.MealID = meals[0].MealID
 		meal.Version = "V." + strconv.Itoa(len(meals)+1)
 	} else {
-		MealID, _ := uuid.NewV4()
+		MealID := uuid.NewV4()
 		meal.MealID = MealID
 		meal.Version = "V.1"
 	}

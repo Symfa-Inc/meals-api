@@ -1,9 +1,9 @@
 package delivery
 
 import (
-	"go_api/src/delivery/middleware"
-	"go_api/src/types"
-	"go_api/src/usecase"
+	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/usecase"
 	"net/http"
 	"os"
 

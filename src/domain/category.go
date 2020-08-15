@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
-	"go_api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/types"
 	"time"
 )
 
@@ -17,10 +17,7 @@ type CategoryBase struct {
 
 // BeforeCreate func which generates uuid v4 for each inserted row
 func (base *CategoryBase) BeforeCreate(scope *gorm.Scope) error {
-	uuidv4, err := uuid.NewV4()
-	if err != nil {
-		return err
-	}
+	uuidv4 := uuid.NewV4()
 	return scope.SetColumn("ID", uuidv4)
 }
 

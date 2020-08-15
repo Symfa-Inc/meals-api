@@ -2,12 +2,12 @@ package middleware
 
 import (
 	"errors"
-	"github.com/appleboy/gin-jwt"
+	"github.com/Aiscom-LLC/meals-api/src/repository"
+	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
+	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/utils"
+	"github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"go_api/src/repository"
-	"go_api/src/schemes/request"
-	"go_api/src/types"
-	"go_api/src/utils"
 	"net/http"
 	"os"
 	"time"

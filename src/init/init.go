@@ -1,9 +1,9 @@
 package init
 
 import (
-	"go_api/src/config"
-	"go_api/src/repository"
-	"go_api/src/utils"
+	"github.com/Aiscom-LLC/meals-api/src/config"
+	"github.com/Aiscom-LLC/meals-api/src/repository"
+	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"time"
 )
 

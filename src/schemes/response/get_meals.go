@@ -1,7 +1,7 @@
 package response
 
 import (
-	"go_api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/src/domain"
 
 	uuid "github.com/satori/go.uuid"
 )

@@ -1,6 +1,6 @@
 package response
 
-import "go_api/src/domain"
+import "github.com/Aiscom-LLC/meals-api/src/domain"
 
 // GetClients response scheme
 type GetClients struct {

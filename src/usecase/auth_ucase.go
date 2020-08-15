@@ -2,10 +2,10 @@ package usecase
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_api/src/delivery/middleware"
-	"go_api/src/repository"
-	"go_api/src/types"
-	"go_api/src/utils"
+	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/src/repository"
+	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"net/http"
 )
 

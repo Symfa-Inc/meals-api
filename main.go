@@ -1,9 +1,9 @@
 package main
 
 import (
-	_ "go_api/docs"
-	"go_api/src/delivery"
-	_ "go_api/src/init"
+	_ "github.com/Aiscom-LLC/meals-api/docs"
+	"github.com/Aiscom-LLC/meals-api/src/delivery"
+	_ "github.com/Aiscom-LLC/meals-api/src/init"
 )
 
 // @title AIS Catering

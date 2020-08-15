@@ -2,13 +2,13 @@ package tests
 
 import (
 	"encoding/json"
-	"github.com/appleboy/gofight"
+	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
-	"go_api/src/delivery"
-	"go_api/src/delivery/middleware"
-	"go_api/src/schemes/response"
+	"github.com/Aiscom-LLC/meals-api/src/delivery"
+	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"net/http"
 	"testing"
 )
@@ -160,7 +160,7 @@ func TestUpdateCatering(t *testing.T) {
 
 	// Trying to change name of catering with non-exist ID
 	// Should throw an error
-	fakeID, _ := uuid.NewV4()
+	fakeID := uuid.NewV4()
 	r.PUT("/caterings/"+fakeID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,

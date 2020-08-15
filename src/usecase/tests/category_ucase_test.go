@@ -1,11 +1,11 @@
 package tests
 
 import (
-	"github.com/appleboy/gofight"
+	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
-	"go_api/src/delivery"
-	"go_api/src/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/src/delivery"
+	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"net/http"
 	"testing"
 )
@@ -154,7 +154,7 @@ func TestAddCategory(t *testing.T) {
 //
 //	// Trying to update non-existing dish category
 //	// Should throw an error
-//	fakeID, _ := uuid.NewV4()
+//	fakeID := uuid.NewV4()
 //	r.PUT("/caterings/"+cateringID+"/categories/"+fakeID.String()).
 //		SetCookie(gofight.H{
 //			"jwt": jwt,

@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"go_api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/types"
 
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"

@@ -2,7 +2,7 @@ package domain
 
 import (
 	uuid "github.com/satori/go.uuid"
-	"go_api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/types"
 )
 
 // User model

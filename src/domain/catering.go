@@ -2,7 +2,7 @@ package domain
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/types"
 )
 
 // Catering model

@@ -1,15 +1,16 @@
 package tests
 
 import (
-	"github.com/appleboy/gofight"
-	"github.com/buger/jsonparser"
-	uuid "github.com/satori/go.uuid"
-	"github.com/stretchr/testify/assert"
-	"go_api/src/delivery"
-	"go_api/src/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/src/delivery"
+	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/buger/jsonparser"
+	uuid "github.com/satori/go.uuid"
+	"github.com/stretchr/testify/assert"
+	"github.com/appleboy/gofight/v2"
 )
 
 func TestAddDish(t *testing.T) {
@@ -28,7 +29,7 @@ func TestAddDish(t *testing.T) {
 	mealID := mealResult.ID.String()
 	// Trying to add dish to non-existing catering
 	// Should throw an error
-	fakeID, _ := uuid.NewV4()
+	fakeID := uuid.NewV4()
 	r.POST("/caterings/"+fakeID.String()+"/dishes").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -109,7 +110,7 @@ func TestGetDishes(t *testing.T) {
 	categoryResult, _ := categoryRepo.GetByKey("name", "супы", cateringID)
 	categoryID := categoryResult.ID.String()
 
-	fakeID, _ := uuid.NewV4()
+	fakeID := uuid.NewV4()
 
 	// Trying to get dishes with non-existing catering ID
 	// Should throw an error
@@ -163,7 +164,7 @@ func TestUpdateDish(t *testing.T) {
 	dishResult, _, _ := dishRepo.GetByKey("name", "борщ", cateringID, categoryID)
 	dishID := dishResult.ID.String()
 
-	fakeID, _ := uuid.NewV4()
+	fakeID := uuid.NewV4()
 
 	// Trying to update dish for non-existing catering
 	// Should throw an error
@@ -257,7 +258,7 @@ func TestDeleteDish(t *testing.T) {
 
 	dishResult, _, _ := dishRepo.GetByKey("name", "доширак", cateringID, categoryID)
 
-	fakeID, _ := uuid.NewV4()
+	fakeID := uuid.NewV4()
 
 	// Trying to delete non-existing dish
 	// Should throw an error
