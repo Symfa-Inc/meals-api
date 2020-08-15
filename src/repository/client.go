@@ -2,10 +2,10 @@ package repository
 
 import (
 	"errors"
-	"go_api/src/config"
-	"go_api/src/domain"
-	"go_api/src/schemes/response"
-	"go_api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/config"
+	"github.com/Aiscom-LLC/meals-api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
+	"github.com/Aiscom-LLC/meals-api/src/types"
 	"net/http"
 	"time"
 
@@ -219,6 +219,8 @@ func (c ClientRepo) Update(id string, client domain.Client) (int, error) {
 
 	return 0, nil
 }
+
+// UpdateAutoApproveOrders Updates auto approve settings
 func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error) {
 	var prevStatus []bool
 
@@ -278,6 +280,7 @@ func (c ClientRepo) InitAutoApprove(id string) (int, error) {
 	return 0, nil
 }
 
+// UpdateAutoApproveSchedules Updates schedules for auto approve settings
 func (c ClientRepo) UpdateAutoApproveSchedules(id string) {
 	for i := range config.CRON.Entries {
 		if len(config.CRON.Entries) == 1 {

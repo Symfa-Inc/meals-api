@@ -1,10 +1,10 @@
 package usecase
 
 import (
-	"go_api/src/repository"
-	"go_api/src/schemes/request"
-	"go_api/src/types"
-	"go_api/src/utils"
+	"github.com/Aiscom-LLC/meals-api/src/repository"
+	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
+	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"net/http"
 	"time"
 

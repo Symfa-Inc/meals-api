@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"go_api/db/seeds/dev"
-	"go_api/src/config"
-	"go_api/src/domain"
-	"go_api/src/types"
+	"github.com/Aiscom-LLC/meals-api/db/seeds/dev"
+	"github.com/Aiscom-LLC/meals-api/src/config"
+	"github.com/Aiscom-LLC/meals-api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/src/types"
 )
 
 func main() {
@@ -19,19 +19,19 @@ func main() {
 	addDbConstraints()
 	fmt.Println("=== ADD DB CONSTRAINTS ===")
 
-	// dev.CreateCaterings()
-	// dev.CreateCateringSchedules()
-	// dev.CreateClients()
-	// dev.CreateClientSchedules()
+	dev.CreateCaterings()
+	dev.CreateCateringSchedules()
+	dev.CreateClients()
+	dev.CreateClientSchedules()
 	dev.CreateAdmin()
-	// dev.CreateUsers()
-	// dev.CreateMeals()
-	// dev.CreateCategories()
-	// dev.CreateDishes()
+	dev.CreateUsers()
+	dev.CreateMeals()
+	dev.CreateCategories()
+	dev.CreateDishes()
 	dev.CreateImages()
-	// dev.CreateMealDishes()
-	// dev.CreateImageDishes()
-	// dev.CreateAddresses()
+	dev.CreateMealDishes()
+	dev.CreateImageDishes()
+	dev.CreateAddresses()
 }
 
 func migrate() {

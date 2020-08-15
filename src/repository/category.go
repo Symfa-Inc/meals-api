@@ -2,9 +2,9 @@ package repository
 
 import (
 	"errors"
-	"go_api/src/config"
-	"go_api/src/domain"
-	"go_api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/config"
+	"github.com/Aiscom-LLC/meals-api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/src/types"
 	"net/http"
 	"time"
 )

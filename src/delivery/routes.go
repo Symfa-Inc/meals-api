@@ -1,9 +1,9 @@
 package delivery
 
 import (
-	"go_api/src/delivery/middleware"
-	"go_api/src/types"
-	"go_api/src/usecase"
+	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/usecase"
 	"net/http"
 	"os"
 
@@ -43,7 +43,7 @@ func SetupRouter() *gin.Engine {
 	validator := middleware.NewValidator()
 
 	configCors := cors.DefaultConfig()
-	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL"), os.Getenv("CLIENT_MOBILE_URL")}
+	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL"), os.Getenv("CLIENT_MOBILE_URL"), "http://localhost:3001"}
 
 	configCors.AllowCredentials = true
 	r.Use(cors.New(configCors))
@@ -116,8 +116,8 @@ func SetupRouter() *gin.Engine {
 			caAdminSuAdmin.PUT("/caterings/:id/dishes/:dishId/images/:imageId", image.Update)
 
 			// catering meals
-			caAdminSuAdmin.POST("/caterings/:id/meals", meal.Add)
-			caAdminSuAdmin.PUT("/caterings/:id/meals/:mealId", meal.Update)
+			caAdminSuAdmin.POST("/caterings/:id/clients/:clientId/meals", meal.Add)
+			// caAdminSuAdmin.PUT("/caterings/:id/meals/:mealId", meal.Update)
 
 			// catering schedules
 			caAdminSuAdmin.PUT("/caterings/:id/schedules/:scheduleId", cateringSchedule.Update)
@@ -172,7 +172,7 @@ func SetupRouter() *gin.Engine {
 			allUsers.GET("/caterings/:id/clients/:clientId/categories", category.Get)
 
 			// catering meals
-			allUsers.GET("/caterings/:id/meals", meal.Get)
+			allUsers.GET("/caterings/:id/clients/:clientId/meals", meal.Get)
 
 			// schedules
 			allUsers.GET("/caterings/:id/schedules", cateringSchedule.Get)

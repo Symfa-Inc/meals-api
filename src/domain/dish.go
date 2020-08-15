@@ -3,7 +3,7 @@ package domain
 import (
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
-	"go_api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/types"
 )
 
 // Dish struct used in DB

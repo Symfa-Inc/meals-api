@@ -2,7 +2,7 @@ package response
 
 import (
 	uuid "github.com/satori/go.uuid"
-	"go_api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/src/domain"
 )
 
 // UserResponse struct

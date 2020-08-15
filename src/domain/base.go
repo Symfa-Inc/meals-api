@@ -16,9 +16,6 @@ type Base struct {
 
 // BeforeCreate will set a UUID rather than numeric ID
 func (base *Base) BeforeCreate(scope *gorm.Scope) error {
-	uuidv4, err := uuid.NewV4()
-	if err != nil {
-		return err
-	}
+	uuidv4 := uuid.NewV4()
 	return scope.SetColumn("ID", uuidv4)
 }

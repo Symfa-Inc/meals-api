@@ -2,7 +2,7 @@ package mailer
 
 import (
 	"bytes"
-	"go_api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"html/template"
 	"net/smtp"
 	"os"

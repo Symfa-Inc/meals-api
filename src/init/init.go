@@ -1,9 +1,9 @@
 package init
 
 import (
-	"go_api/src/config"
-	"go_api/src/repository"
-	"go_api/src/utils"
+	"github.com/Aiscom-LLC/meals-api/src/config"
+	"github.com/Aiscom-LLC/meals-api/src/repository"
+	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"time"
 )
 
@@ -23,8 +23,8 @@ func init() {
 		currentDay := utils.GetCurrentDay()
 		currentTime := time.Now().Format("15:04")
 		for _, entry := range config.CRON.Entries {
-			for entryKey, clientIdMap := range entry {
-				for key, value := range clientIdMap {
+			for entryKey, clientIDMap := range entry {
+				for key, value := range clientIDMap {
 					if currentDay == key && currentTime == value {
 						nextDay := time.Now().Add(time.Hour * 24).UTC().Truncate(time.Hour * 24).Format(time.RFC3339)
 						orderRepo.ApproveOrders(entryKey, nextDay)

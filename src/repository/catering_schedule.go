@@ -4,8 +4,8 @@ import (
 	"errors"
 	"github.com/jinzhu/gorm"
 	"github.com/jinzhu/now"
-	"go_api/src/config"
-	"go_api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/src/config"
+	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"net/http"
 )
 

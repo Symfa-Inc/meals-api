@@ -7,4 +7,4 @@ RUN go get -u -v github.com/swaggo/swag/cmd/swag
 RUN swag init
 RUN go get -v
 
-CMD ["go_api"]
+CMD ["github.com/Aiscom-LLC/meals-api"]

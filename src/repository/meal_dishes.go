@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"go_api/src/config"
-	"go_api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/src/config"
+	"github.com/Aiscom-LLC/meals-api/src/domain"
 )
 
 // MealDishesRepo struct

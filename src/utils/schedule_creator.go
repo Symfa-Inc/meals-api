@@ -2,8 +2,8 @@ package utils
 
 import (
 	uuid "github.com/satori/go.uuid"
-	"go_api/src/config"
-	"go_api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/src/config"
+	"github.com/Aiscom-LLC/meals-api/src/domain"
 )
 
 // AddDefaultCateringSchedules adds default

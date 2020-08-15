@@ -1,6 +1,6 @@
 package tests
 
-import "go_api/src/repository"
+import "github.com/Aiscom-LLC/meals-api/src/repository"
 
 var categoryRepo = repository.NewCategoryRepo()
 var clientRepo = repository.NewClientRepo()

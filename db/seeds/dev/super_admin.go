@@ -2,10 +2,10 @@ package dev
 
 import (
 	"fmt"
-	"go_api/src/config"
-	"go_api/src/domain"
-	"go_api/src/types"
-	"go_api/src/utils"
+	"github.com/Aiscom-LLC/meals-api/src/config"
+	"github.com/Aiscom-LLC/meals-api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/utils"
 )
 
 const seedName string = "init admin"

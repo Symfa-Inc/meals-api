@@ -2,7 +2,7 @@ package domain
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/types"
 )
 
 // Catering model
@@ -21,7 +21,7 @@ type CateringUsecase interface {
 
 // CateringRepository is catering interface for repository
 type CateringRepository interface {
-	Get(query types.PaginationQuery) ([]Catering, int, error)
+	Get(cateringID string, query types.PaginationQuery) ([]Catering, int, error)
 	Add(catering *Catering) error
 	Update(id string, catering Catering) (int, error)
 	Delete(id string) error
