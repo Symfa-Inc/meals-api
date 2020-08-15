@@ -8,7 +8,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-// DB is database instanse
+// DB is database instance
 var DB *gorm.DB
 
 func init() {
