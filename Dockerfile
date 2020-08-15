@@ -1,10 +1,9 @@
 FROM golang:1.14
 
-WORKDIR /go/src/go_api
+WORKDIR /go/src/github.com/Aiscom-LLC/meals-api
 COPY . .
 
-RUN go get -u -v github.com/swaggo/swag/cmd/swag
-RUN swag init
 RUN go get -v
 
-CMD ["github.com/Aiscom-LLC/meals-api"]
+CMD ["meals-api"]
+
