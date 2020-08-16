@@ -21,7 +21,7 @@ services:
       PORT: 8080
     command: bash -c "./wait-for-it.sh db:5432 -- go run db/migrate.go && go run main.go"
     volumes:
-      - .:/go/src/go_api
+      - .:/go/src/meals-api
     ports:
       - "8080:8080"
     depends_on:
