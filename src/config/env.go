@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/joho/godotenv"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type env struct {
@@ -20,7 +21,12 @@ type env struct {
 var Env env
 
 func init() {
-	_ = godotenv.Load(os.ExpandEnv("$GOPATH/src/github.com/Aiscom-LLC/meals-api/.env"))
+	dir, _ := os.Getwd()
+	err := godotenv.Load(dir + "/.env")
+
+	if err != nil {
+		panic(err)
+	}
 
 	Env = env{
 		DbHost:     os.Getenv("DB_HOST"),
