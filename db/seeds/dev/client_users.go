@@ -19,10 +19,21 @@ func CreateClientUsers() {
 
 		clientRepo := repository.NewClientRepo()
 		client, _ := clientRepo.GetByKey("name", "Dymi")
+		clients, _ := clientRepo.GetAll()
 
 		userRepo := repository.NewUserRepo()
 		adminUsers, _ := userRepo.GetAllByKey("role", types.UserRoleEnum.ClientAdmin)
 		users, _ := userRepo.GetAllByKey("role", types.UserRoleEnum.User)
+		cateringUser, _ := userRepo.GetByKey("email", "marianafox@comcubine.com")
+
+		for _, client := range clients[:3] {
+			clientUser := domain.ClientUser{
+				ClientID: client.ID,
+				UserID:   cateringUser.ID,
+				Enum:     1,
+			}
+			config.DB.Create(&clientUser)
+		}
 
 		for i, user := range users {
 			clientUser := domain.ClientUser{

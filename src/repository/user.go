@@ -48,12 +48,13 @@ func (ur UserRepo) GetAllByKey(key, value string) ([]domain.User, error) {
 func (ur UserRepo) GetByID(id string) (domain.UserClientCatering, error) {
 	var user domain.UserClientCatering
 	err := config.DB.
+		Debug().
 		Table("users as u").
 		Select("u.*, c.id as catering_id, c.name as catering_name, cl.id as client_id, cl.name as client_name").
+		Joins("left join client_users clu on clu.user_id = u.id ").
+		Joins("left join clients cl on cl.id = clu.client_id ").
 		Joins("left join catering_users cu on cu.user_id = u.id").
 		Joins("left join caterings c on c.id = cu.catering_id").
-		Joins("left join client_users clu on clu.user_id  = u.id ").
-		Joins("left join clients cl on cl.id = clu.client_id ").
 		Where("u.id = ?", id).
 		Scan(&user).
 		Error

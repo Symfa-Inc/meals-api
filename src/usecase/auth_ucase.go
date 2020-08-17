@@ -1,12 +1,13 @@
 package usecase
 
 import (
-	"github.com/gin-gonic/gin"
+	"net/http"
+
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
-	"net/http"
+	"github.com/gin-gonic/gin"
 )
 
 // Auth struct
@@ -42,7 +43,7 @@ func (a Auth) IsAuthenticated(c *gin.Context) {
 	}
 
 	id := claims[middleware.IdentityKeyID]
-	result, err := userRepo.GetByKey("id", id.(string))
+	result, err := userRepo.GetByID(id.(string))
 
 	if err != nil {
 		utils.CreateError(http.StatusUnauthorized, "token is expired", c)
