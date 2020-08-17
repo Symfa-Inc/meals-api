@@ -2,10 +2,11 @@ package middleware
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
+	"net/http"
+
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
-	"net/http"
+	"github.com/gin-gonic/gin"
 )
 
 // ValidatorMiddleware used to validate users

@@ -1,11 +1,12 @@
 package delivery
 
 import (
+	"net/http"
+	"os"
+
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/usecase"
-	"net/http"
-	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
@@ -28,7 +29,8 @@ func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
 	auth := usecase.NewAuth()
-	user := usecase.NewUser()
+	//user := usecase.NewUser()
+	cateringUser := usecase.NewCateringUser()
 	catering := usecase.NewCatering()
 	cateringSchedule := usecase.NewCateringSchedule()
 	clientSchedule := usecase.NewClientSchedule()
@@ -83,10 +85,10 @@ func SetupRouter() *gin.Engine {
 			caAdminSuAdmin.GET("/caterings/:id", catering.GetByID)
 
 			// catering users
-			caAdminSuAdmin.PUT("/caterings/:id/users/:userId", user.UpdateCateringUser)
-			caAdminSuAdmin.GET("/caterings/:id/users", user.GetCateringUsers)
-			caAdminSuAdmin.POST("/caterings/:id/users", user.AddCateringUser)
-			caAdminSuAdmin.DELETE("/caterings/:id/users/:userId", user.DeleteCateringUser)
+			/*caAdminSuAdmin.PUT("/caterings/:id/users/:userId", user.UpdateCateringUser)
+			caAdminSuAdmin.DELETE("/caterings/:id/users/:userId", user.DeleteCateringUser)*/
+			caAdminSuAdmin.POST("/caterings/:id/users", cateringUser.Add)
+			caAdminSuAdmin.GET("/caterings/:id/users", cateringUser.Get)
 
 			// catering categories
 			caAdminSuAdmin.POST("/caterings/:id/clients/:clientId/categories", category.Add)
@@ -199,10 +201,10 @@ func SetupRouter() *gin.Engine {
 			allAdmins.GET("/caterings", catering.Get)
 
 			// clients users
-			allAdmins.GET("/clients/:id/users", user.GetClientUsers)
+			/*allAdmins.GET("/clients/:id/users", user.GetClientUsers)
 			allAdmins.POST("/clients/:id/users", user.AddClientUser)
 			allAdmins.DELETE("/clients/:id/users/:userId", user.DeleteClientUser)
-			allAdmins.PUT("/clients/:id/users/:userId", user.UpdateClientUser)
+			allAdmins.PUT("/clients/:id/users/:userId", user.UpdateClientUser)*/
 
 			// client addresses
 			allAdmins.GET("/clients/:id/addresses", address.Get)

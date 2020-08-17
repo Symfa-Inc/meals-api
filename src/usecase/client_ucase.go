@@ -1,14 +1,15 @@
 package usecase
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
-	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
@@ -46,26 +47,10 @@ func (cl Client) Add(c *gin.Context) {
 		return
 	}
 
-	claims, err := middleware.Passport().GetClaimsFromJWT(c)
-
-	if err != nil {
-		utils.CreateError(http.StatusUnauthorized, err.Error(), c)
-		return
-	}
-
-	id := claims["id"].(string)
-
-	user, err := userRepo.GetByKey("id", id)
-
-	if err != nil {
-		utils.CreateError(http.StatusBadRequest, err.Error(), c)
-		return
-	}
-
 	parsedCateringID, _ := uuid.FromString(path.ID)
 	client.CateringID = parsedCateringID
 
-	if err := clientRepo.Add(path.ID, &client, user); err != nil {
+	if err := clientRepo.Add(path.ID, &client); err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}
@@ -173,6 +158,7 @@ func (cl Client) Get(c *gin.Context) {
 
 	id := claims["id"].(string)
 
+	cateringUser, err := cateringUserRepo.GetByKey("id", id)
 	user, err := userRepo.GetByKey("id", id)
 
 	if err != nil {
@@ -180,10 +166,10 @@ func (cl Client) Get(c *gin.Context) {
 		return
 	}
 
-	if user.CateringID == nil {
+	if cateringUser.CateringID == uuid.Nil {
 		cateringID = ""
 	} else {
-		cateringID = user.CateringID.String()
+		cateringID = cateringUser.CateringID.String()
 	}
 
 	result, total, err := clientRepo.Get(query, cateringID, user.Role)

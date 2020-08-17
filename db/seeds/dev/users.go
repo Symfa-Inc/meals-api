@@ -2,9 +2,9 @@ package dev
 
 import (
 	"fmt"
+
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
-	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
 )
@@ -18,11 +18,11 @@ func CreateUsers() {
 		}
 
 		hashedPassword := utils.HashString("Password12!")
-		cateringRepo := repository.NewCateringRepo()
+		/*cateringRepo := repository.NewCateringRepo()
 		catering, _ := cateringRepo.GetByKey("name", "Twiist")
 
 		clientRepo := repository.NewClientRepo()
-		client, _ := clientRepo.GetByKey("name", "Dymi")
+		client, _ := clientRepo.GetByKey("name", "Dymi")*/
 
 		var userArray []domain.User
 		var clientArray []domain.Client
@@ -31,18 +31,18 @@ func CreateUsers() {
 
 		for i := range userArray {
 			if i < 3 {
-				cateringClient, _ := clientRepo.GetByKey("name", clientArray[i].Name)
+				/*cateringClient, _ := clientRepo.GetByKey("name", clientArray[i].Name)
 				userArray[i].CompanyType = &types.CompanyTypesEnum.Catering
 				userArray[i].CateringID = &cateringClient.CateringID
-				userArray[i].ClientID = &cateringClient.ID
+				userArray[i].ClientID = &cateringClient.ID*/
 				userArray[i].Password = hashedPassword
 				userArray[i].Status = &types.StatusTypesEnum.Active
 				config.DB.Create(&userArray[i])
 			} else {
-				userArray[i].CompanyType = &types.CompanyTypesEnum.Client
+				/*userArray[i].CompanyType = &types.CompanyTypesEnum.Client
 				userArray[i].Floor = &i
 				userArray[i].CateringID = &catering.ID
-				userArray[i].ClientID = &client.ID
+				userArray[i].ClientID = &client.ID*/
 				userArray[i].Password = hashedPassword
 				userArray[i].Status = &types.StatusTypesEnum.Active
 				config.DB.Create(&userArray[i])

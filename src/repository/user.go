@@ -2,14 +2,14 @@ package repository
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
-	uuid "github.com/satori/go.uuid"
+	"net/http"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/types"
-	"github.com/Aiscom-LLC/meals-api/src/utils"
-	"net/http"
-	"time"
+	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 )
 
 // UserRepo struct
@@ -23,17 +23,40 @@ func NewUserRepo() *UserRepo {
 
 // GetByKey returns user by key
 // and error if exist
-func (ur UserRepo) GetByKey(key, value string) (domain.UserClientCatering, error) {
-	var user domain.UserClientCatering
+func (ur UserRepo) GetByKey(key, value string) (domain.User, error) {
+	var user domain.User
 	err := config.DB.
 		Unscoped().
-		Model(&domain.User{}).
-		Select("users.*, c.id as catering_id, c.name as catering_name, ci.id as client_id, ci.name as client_name").
-		Joins("left join caterings c on c.id = users.catering_id").
-		Joins("left join clients ci on ci.id = users.client_id").
-		Where("users."+key+" = ?", value).
-		Scan(&user).Error
+		Where(key+" = ?", value).
+		First(&user).Error
 
+	return user, err
+}
+
+// GetAllByKey returns users by key
+// and error if exist
+func (ur UserRepo) GetAllByKey(key, value string) ([]domain.User, error) {
+	var user []domain.User
+	err := config.DB.
+		Unscoped().
+		Where(key+" = ?", value).
+		Find(&user).Error
+
+	return user, err
+}
+
+func (ur UserRepo) GetByID(id string) (domain.UserClientCatering, error) {
+	var user domain.UserClientCatering
+	err := config.DB.
+		Table("users as u").
+		Select("u.*, c.id as catering_id, c.name as catering_name, cl.id as client_id, cl.name as client_name").
+		Joins("left join catering_users cu on cu.user_id = u.id").
+		Joins("left join caterings c on c.id = cu.catering_id").
+		Joins("left join client_users clu on clu.user_id  = u.id ").
+		Joins("left join clients cl on cl.id = clu.client_id ").
+		Where("u.id = ?", id).
+		Scan(&user).
+		Error
 	return user, err
 }
 
@@ -183,25 +206,18 @@ func (ur UserRepo) Get(companyID, companyType, userRole string, pagination types
 
 // Add adds new user for certain company passed in user struct
 // returns user and error
-func (ur UserRepo) Add(user domain.User) (domain.UserClientCatering, error) {
-	var createdUser domain.UserClientCatering
+func (ur UserRepo) Add(user domain.User) (domain.User, error) {
 	if err := config.DB.
-		Model(&domain.User{}).
 		Create(&user).
-		Select("users.*, c.id as catering_id, c.name as catering_name, ci.id as client_id, ci.name as client_name").
-		Joins("left join caterings c on c.id = users.catering_id").
-		Joins("left join clients ci on ci.id = users.client_id").
-		Where("users.id = ?", user.ID).
-		Scan(&createdUser).
 		Error; err != nil {
-		return domain.UserClientCatering{}, err
+		return domain.User{}, err
 	}
-	return createdUser, nil
+	return user, nil
 }
 
 // Delete changes status of user to deleted
 // and sets deleted_at field to 21 days from now
-func (ur UserRepo) Delete(companyID, ctxUserRole string, user domain.User) (int, error) {
+/*func (ur UserRepo) Delete(companyID, ctxUserRole string, user domain.User) (int, error) {
 	var totalUsers int
 	companyType := utils.DerefString(user.CompanyType)
 	if companyType == types.CompanyTypesEnum.Catering {
@@ -248,11 +264,11 @@ func (ur UserRepo) Delete(companyID, ctxUserRole string, user domain.User) (int,
 		return http.StatusBadRequest, errors.New("user not found")
 	}
 	return 0, nil
-}
+}*/
 
 // Update updates user for passed company ID
 // checks if user belongs to client or catering
-func (ur UserRepo) Update(companyID string, user domain.User) (domain.UserClientCatering, int, error) {
+/*func (ur UserRepo) Update(companyID string, user domain.User) (domain.UserClientCatering, int, error) {
 	companyType := utils.DerefString(user.CompanyType)
 	var prevUser domain.User
 	userStatus := utils.DerefString(user.Status)
@@ -346,7 +362,7 @@ func (ur UserRepo) Update(companyID string, user domain.User) (domain.UserClient
 	}
 
 	return updatedUser, 0, nil
-}
+}*/
 
 // UpdateStatus updates status for provided userID
 func (ur UserRepo) UpdateStatus(userID uuid.UUID, status string) (int, error) {

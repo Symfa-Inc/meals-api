@@ -1,17 +1,7 @@
 package usecase
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
-	uuid "github.com/satori/go.uuid"
-	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
-	"github.com/Aiscom-LLC/meals-api/src/domain"
-	"github.com/Aiscom-LLC/meals-api/src/mailer"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
-	"github.com/Aiscom-LLC/meals-api/src/types"
-	"github.com/Aiscom-LLC/meals-api/src/utils"
-	"net/http"
-	"time"
 )
 
 // User struct
@@ -25,7 +15,7 @@ func NewUser() *User {
 
 var userRepo = repository.NewUserRepo()
 
-// AddCateringUser creates user for catering
+/*// AddCateringUser creates user for catering
 // @Summary Returns error or 201 status code if success
 // @Produce json
 // @Accept json
@@ -53,8 +43,8 @@ func (u User) AddCateringUser(c *gin.Context) { //nolint:dupl
 	}
 
 	parsedID, _ := uuid.FromString(path.ID)
-	user.CateringID = &parsedID
-	user.CompanyType = &types.CompanyTypesEnum.Catering
+	//user.CateringID = &parsedID
+	//user.CompanyType = &types.CompanyTypesEnum.Catering
 	user.Role = types.UserRoleEnum.CateringAdmin
 	user.Status = &types.StatusTypesEnum.Invited
 
@@ -65,6 +55,16 @@ func (u User) AddCateringUser(c *gin.Context) { //nolint:dupl
 
 	if gorm.IsRecordNotFoundError(err) {
 		userResult, userErr := userRepo.Add(user)
+
+		cateringUser := domain.CateringUser{
+			UserID:     userResult.ID,
+			CateringID: parsedID,
+		}
+
+		if err := cateringUserRepo.Add(cateringUser); err != nil {
+			utils.CreateError(http.StatusBadRequest, err.Error(), c)
+			return
+		}
 
 		if userErr != nil {
 			utils.CreateError(http.StatusBadRequest, userErr.Error(), c)
@@ -153,7 +153,7 @@ func (u User) DeleteCateringUser(c *gin.Context) {
 
 	parsedUserID, _ := uuid.FromString(path.UserID)
 	user.ID = parsedUserID
-	user.CompanyType = &types.CompanyTypesEnum.Catering
+	//user.CompanyType = &types.CompanyTypesEnum.Catering
 	user.Status = &types.StatusTypesEnum.Deleted
 	deletedAt := time.Now().AddDate(0, 0, 21).Truncate(time.Hour * 24)
 	user.DeletedAt = &deletedAt
@@ -435,4 +435,4 @@ func (u User) UpdateClientUser(c *gin.Context) { //nolint:dupl
 	}
 
 	c.JSON(http.StatusOK, updatedUser)
-}
+}*/

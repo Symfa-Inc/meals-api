@@ -2,12 +2,13 @@ package repository
 
 import (
 	"errors"
+	"net/http"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/src/types"
-	"net/http"
-	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -23,7 +24,7 @@ func NewClientRepo() *ClientRepo {
 
 // Add adds client in DB
 // returns error if that client name already exists
-func (c ClientRepo) Add(cateringID string, client *domain.Client, user domain.UserClientCatering) error {
+func (c ClientRepo) Add(cateringID string, client *domain.Client) error {
 	if err := config.DB.
 		Where("id = ?", cateringID).
 		Find(&domain.Catering{}).
@@ -42,13 +43,6 @@ func (c ClientRepo) Add(cateringID string, client *domain.Client, user domain.Us
 	}
 
 	err := config.DB.Create(client).Error
-
-	if user.Role != types.UserRoleEnum.SuperAdmin {
-		config.DB.
-			Model(&domain.User{}).
-			Where("id = ?", user.ID).
-			Update("client_id", client.ID)
-	}
 
 	var cateringSchedules []domain.CateringSchedule
 
