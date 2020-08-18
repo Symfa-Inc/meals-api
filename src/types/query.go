@@ -30,8 +30,7 @@ type CategoryIDQuery struct {
 
 // UserFilterQuery used to filter and sort users in DB
 type UserFilterQuery struct {
-	Query      string `form:"q"`
-	Role       string `form:"role"`
-	ClientName string `form:"client"`
-	Status     string `form:"status"`
+	Query  string `form:"q"`
+	Role   string `form:"role"`
+	Status string `form:"status"`
 }

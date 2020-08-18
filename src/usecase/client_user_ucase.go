@@ -6,6 +6,7 @@ import (
 
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/mailer"
+	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
@@ -15,28 +16,30 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// CateringUser struct
-type CateringUser struct{}
+// ClientUser struct
+type ClientUser struct{}
 
-// NewCateringUser returns pointer to caterign
+// NewClientUser returns pointer to client
 // user struct with all methods
-func NewCateringUser() *CateringUser {
-	return &CateringUser{}
+func NewClientUser() *ClientUser {
+	return &ClientUser{}
 }
 
-// Add creates user for catering
+var clientUserRepo = repository.NewClientUserRepo()
+
+// Add creates user for client
 // @Summary Returns error or 201 status code if success
 // @Produce json
 // @Accept json
-// @Tags caterings users
-// @Param id path string false "Catering ID"
-// @Param body body request.CateringUser false "Catering user"
-// @Success 201 {object} response.UserResponse false "Catering user"
+// @Tags clients users
+// @Param id path string false "Client ID"
+// @Param body body request.ClientUser false "Client user"
+// @Success 201 {object} response.UserResponse false "Client user"
 // @Failure 400 {object} types.Error "Error"
-// @Router /caterings/{id}/users [post]
-func (cu *CateringUser) Add(c *gin.Context) {
+// @Router /clients/{id}/users [post]
+func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 	var path types.PathID
-	var body request.CateringUser
+	var body request.ClientUser
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -54,13 +57,8 @@ func (cu *CateringUser) Add(c *gin.Context) {
 		return
 	}
 
-	parsedID, err := uuid.FromString(path.ID)
-	if err != nil {
-		utils.CreateError(http.StatusBadRequest, err.Error(), c)
-		return
-	}
-
-	user.Role = types.UserRoleEnum.CateringAdmin
+	parsedID, _ := uuid.FromString(path.ID)
+	user.CompanyType = &types.CompanyTypesEnum.Client
 	user.Status = &types.StatusTypesEnum.Invited
 
 	password := utils.GenerateString(10)
@@ -69,19 +67,21 @@ func (cu *CateringUser) Add(c *gin.Context) {
 	existingUser, err := userRepo.GetByKey("email", user.Email)
 
 	if gorm.IsRecordNotFoundError(err) {
-		userResult, userErr := userRepo.Add(user)
 
-		cateringUser := domain.CateringUser{
-			UserID:     userResult.ID,
-			CateringID: parsedID,
+		user, userErr := userRepo.Add(user)
+
+		clientUser := domain.ClientUser{
+			UserID:   user.ID,
+			ClientID: parsedID,
+			Floor:    body.Floor,
 		}
 
-		if err := cateringUserRepo.Add(cateringUser); err != nil {
+		if err := clientUserRepo.Add(clientUser); err != nil {
 			utils.CreateError(http.StatusBadRequest, err.Error(), c)
 			return
 		}
 
-		userClientCatering, err := userRepo.GetByID(userResult.ID.String())
+		userClientCatering, err := userRepo.GetByID(user.ID.String())
 
 		if err != nil {
 			utils.CreateError(http.StatusBadRequest, err.Error(), c)
@@ -99,25 +99,26 @@ func (cu *CateringUser) Add(c *gin.Context) {
 	}
 
 	if existingUser.ID != uuid.Nil {
-		utils.CreateError(http.StatusBadRequest, "user with that email already exists", c)
+		utils.CreateError(http.StatusBadRequest, "user with that email already exist", c)
 		return
 	}
 }
 
-// Get return list of catering users
-// @Summary Returns list of catering users
-// @Tags caterings users
+// Get return list of client users
+// @Summary Returns list of client users
+// @Tags clients users
 // @Produce json
-// @Param id path string false "Catering ID"
+// @Param id path string false "Client ID"
 // @Param limit query int false "used for pagination"
 // @Param page query int false "used for pagination"
 // @Param q query string false "used query search"
 // @Param role query string false "used for role sort"
-// @Success 200 {array} response.UserResponse false "Catering user"
+// @Param status query string false "used for status sort"
+// @Success 200 {array} response.UserResponse "List of client users"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Error"
-// @Router /caterings/{id}/users [get]
-func (cu *CateringUser) Get(c *gin.Context) { //nolint:dupl
+// @Router /clients/{id}/users [get]
+func (cu *ClientUser) Get(c *gin.Context) { //nolint:dupl
 	var path types.PathID
 	var paginationQuery types.PaginationQuery
 	var filterQuery types.UserFilterQuery
@@ -134,7 +135,10 @@ func (cu *CateringUser) Get(c *gin.Context) { //nolint:dupl
 		return
 	}
 
-	users, total, code, err := cateringUserRepo.Get(path.ID, paginationQuery, filterQuery)
+	ctxUser, _ := c.Get("user")
+	ctxUserRole := ctxUser.(domain.User).Role
+
+	users, total, code, err := clientUserRepo.Get(path.ID, ctxUserRole, paginationQuery, filterQuery)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
@@ -152,18 +156,18 @@ func (cu *CateringUser) Get(c *gin.Context) { //nolint:dupl
 	})
 }
 
-// Delete deletes user of catering
+// Delete deletes user of client
 // @Summary Returns error or 204 status code if success
 // @Produce json
 // @Accept json
-// @Tags caterings users
-// @Param id path string false "Catering ID"
+// @Tags clients users
+// @Param id path string false "Client ID"
 // @Param userId path string false "User ID"
 // @Success 204 "Successfully deleted"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Error"
-// @Router /caterings/{id}/users/{userId} [delete]
-func (cu *CateringUser) Delete(c *gin.Context) {
+// @Router /clients/{id}/users/{userId} [delete]
+func (cu *ClientUser) Delete(c *gin.Context) {
 	var path types.PathUser
 	var user domain.User
 
@@ -185,7 +189,7 @@ func (cu *CateringUser) Delete(c *gin.Context) {
 		return
 	}
 
-	code, err := cateringUserRepo.Delete(path.ID, ctxUserRole, user)
+	code, err := clientUserRepo.Delete(path.ID, ctxUserRole, user)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
@@ -195,27 +199,28 @@ func (cu *CateringUser) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// Update updates user of catering
+// Update updates user of client
 // @Summary Returns error or 200 status code if success
 // @Produce json
 // @Accept json
-// @Tags caterings users
-// @Param id path string false "Catering ID"
+// @Tags clients users
+// @Param id path string false "Client ID"
 // @Param userId path string false "User ID"
-// @Param body body request.CateringUserUpdate false "Catering user"
-// @Success 200 {object} response.UserResponse false "Catering user"
+// @Param body body request.ClientUserUpdate false "Client user"
+// @Success 200 {object} response.UserResponse false "Client user"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Error"
-// @Router /caterings/{id}/users/{userId} [put]
-func (cu *CateringUser) Update(c *gin.Context) { //nolint:dupl
+// @Router /clients/{id}/users/{userId} [put]
+func (cu *ClientUser) Update(c *gin.Context) { //nolint:dupl
 	var path types.PathUser
+	var body request.ClientUserUpdate
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	if err := utils.RequestBinderBody(&user, c); err != nil {
+	if err := utils.RequestBinderBody(&body, c); err != nil {
 		return
 	}
 
@@ -226,11 +231,14 @@ func (cu *CateringUser) Update(c *gin.Context) { //nolint:dupl
 		}
 	}
 
+	copier.Copy(&user, &body)
+
 	parsedUserID, _ := uuid.FromString(path.UserID)
-	user.CompanyType = &types.CompanyTypesEnum.Catering
+	user.CompanyType = &types.CompanyTypesEnum.Client
 	user.ID = parsedUserID
 
-	code, err := cateringUserRepo.Update(&user)
+	code, err := clientUserRepo.Update(&user, body.Floor)
+
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return

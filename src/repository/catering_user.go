@@ -7,7 +7,9 @@ import (
 
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"github.com/jinzhu/gorm"
 )
 
@@ -36,13 +38,12 @@ func (cur *CateringUserRepo) Add(cateringUser domain.CateringUser) error {
 	return err
 }
 
-func (cur *CateringUserRepo) Get(cateringID string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]domain.UserClientCatering, int, int, error) {
-	var users []domain.UserClientCatering
+func (cur *CateringUserRepo) Get(cateringID string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]response.GetCateringUser, int, int, error) {
+	var users []response.GetCateringUser
 	var total int
 	page := pagination.Page
 	limit := pagination.Limit
 	role := filters.Role
-	clientName := filters.ClientName
 	querySearch := filters.Query
 
 	if page == 0 {
@@ -53,20 +54,13 @@ func (cur *CateringUserRepo) Get(cateringID string, pagination types.PaginationQ
 		limit = 10
 	}
 
-	if clientName != "" {
-		clientName = "AND cl.name ILIKE " + "'%" + clientName + "%'"
-	}
-
 	if err := config.DB.
-		Debug().
 		Unscoped().
 		Table("users as u").
 		Joins("left join catering_users cu on cu.user_id = u.id").
 		Joins("left join caterings c on c.id = cu.catering_id").
-		Joins("left join client_users clu on clu.user_id  = u.id ").
-		Joins("left join clients cl on cl.id = clu.client_id ").
 		Where("cu.catering_id = ? AND (first_name || last_name) ILIKE ?"+
-			" AND CAST(u.role AS text) ILIKE ? "+clientName+
+			" AND CAST(u.role AS text) ILIKE ?"+
 			" AND (u.deleted_at > ? OR u.deleted_at IS NULL)", cateringID, "%"+querySearch+"%", "%"+role+"%", time.Now()).
 		Count(&total).
 		Error; err != nil {
@@ -77,18 +71,15 @@ func (cur *CateringUserRepo) Get(cateringID string, pagination types.PaginationQ
 	}
 
 	if err := config.DB.
-		Debug().
 		Unscoped().
 		Limit(limit).
 		Offset((page-1)*limit).
 		Table("users as u").
-		Select("u.*, c.id as catering_id, c.name as catering_name, cl.id as client_id, cl.name as client_name").
+		Select("u.*").
 		Joins("left join catering_users cu on cu.user_id = u.id").
 		Joins("left join caterings c on c.id = cu.catering_id").
-		Joins("left join client_users clu on clu.user_id  = u.id ").
-		Joins("left join clients cl on cl.id = clu.client_id ").
 		Where("cu.catering_id = ? AND (first_name || last_name) ILIKE ?"+
-			" AND CAST(u.role AS text) ILIKE ? "+clientName+
+			" AND CAST(u.role AS text) ILIKE ? "+
 			" AND (u.deleted_at > ? OR u.deleted_at IS NULL)", cateringID, "%"+querySearch+"%", "%"+role+"%", time.Now()).
 		Order("created_at DESC, first_name ASC").
 		Scan(&users).
@@ -99,9 +90,79 @@ func (cur *CateringUserRepo) Get(cateringID string, pagination types.PaginationQ
 		return nil, 0, http.StatusBadRequest, err
 	}
 
-	for i := range users {
-		users[i].CompanyType = &types.CompanyTypesEnum.Catering
+	return users, total, 0, nil
+}
+
+func (cur *CateringUserRepo) Delete(cateringID, ctxUserRole string, user domain.User) (int, error) {
+	var totalUsers int
+	if ctxUserRole != types.UserRoleEnum.SuperAdmin {
+		config.DB.
+			Table("users as u").
+			Joins("left join catering_users cu on cu.user_id = u.id").
+			Where("cu.catering_id = ? AND u.status != ?",
+				cateringID, types.StatusTypesEnum.Deleted).
+			Count(&totalUsers)
+
+		if totalUsers == 1 {
+			return http.StatusBadRequest, errors.New("can't delete last user")
+		}
 	}
 
-	return users, total, 0, nil
+	if userExist := config.DB.
+		Table("users as u").
+		Where("u.id = ?", user.ID).
+		Update(&user).
+		RowsAffected; userExist == 0 {
+		return http.StatusNotFound, errors.New("user not found")
+	}
+	return 0, nil
+}
+
+func (cur *CateringUserRepo) Update(user *domain.User) (int, error) {
+	var prevUser domain.User
+	userStatus := utils.DerefString(user.Status)
+
+	if userExist := config.DB.
+		Where("id = ? AND email = ?", user.ID, user.Email).
+		Find(&domain.User{}).
+		RowsAffected; userExist == 0 {
+		if emailExist := config.DB.
+			Where("email = ?", user.Email).
+			Find(&domain.User{}).
+			RowsAffected; emailExist != 0 {
+			return http.StatusBadRequest, errors.New("user with this email already exists")
+		}
+	}
+
+	config.DB.
+		Unscoped().
+		Model(&domain.User{}).
+		Find(&prevUser).
+		Where("AND users.id = ? AND (users.deleted_at > ? OR users.deleted_at IS NULL)",
+			user.ID, time.Now())
+
+	if err := config.DB.
+		Unscoped().
+		Model(&domain.User{}).
+		Update(user).
+		Error; err != nil {
+
+		if gorm.IsRecordNotFoundError(err) {
+			return http.StatusNotFound, errors.New("user not found")
+		}
+		return http.StatusBadRequest, err
+	}
+
+	prevUserStatus := utils.DerefString(prevUser.Status)
+	if userStatus == types.StatusTypesEnum.Active && prevUserStatus == types.StatusTypesEnum.Deleted {
+		config.DB.
+			Unscoped().
+			Model(&domain.User{}).
+			Update(user).
+			Update(map[string]interface{}{
+				"DeletedAt": user.DeletedAt,
+			}).
+			Where("(users.deleted_at > ? OR users.deleted_at IS NULL)", time.Now())
+	}
+	return 0, nil
 }

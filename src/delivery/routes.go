@@ -31,6 +31,7 @@ func SetupRouter() *gin.Engine {
 	auth := usecase.NewAuth()
 	//user := usecase.NewUser()
 	cateringUser := usecase.NewCateringUser()
+	clientUser := usecase.NewClientUser()
 	catering := usecase.NewCatering()
 	cateringSchedule := usecase.NewCateringSchedule()
 	clientSchedule := usecase.NewClientSchedule()
@@ -85,10 +86,10 @@ func SetupRouter() *gin.Engine {
 			caAdminSuAdmin.GET("/caterings/:id", catering.GetByID)
 
 			// catering users
-			/*caAdminSuAdmin.PUT("/caterings/:id/users/:userId", user.UpdateCateringUser)
-			caAdminSuAdmin.DELETE("/caterings/:id/users/:userId", user.DeleteCateringUser)*/
+			caAdminSuAdmin.PUT("/caterings/:id/users/:userId", cateringUser.Update)
 			caAdminSuAdmin.POST("/caterings/:id/users", cateringUser.Add)
 			caAdminSuAdmin.GET("/caterings/:id/users", cateringUser.Get)
+			caAdminSuAdmin.DELETE("/caterings/:id/users/:userId", cateringUser.Delete)
 
 			// catering categories
 			caAdminSuAdmin.POST("/caterings/:id/clients/:clientId/categories", category.Add)
@@ -119,7 +120,6 @@ func SetupRouter() *gin.Engine {
 
 			// catering meals
 			caAdminSuAdmin.POST("/caterings/:id/clients/:clientId/meals", meal.Add)
-			// caAdminSuAdmin.PUT("/caterings/:id/meals/:mealId", meal.Update)
 
 			// catering schedules
 			caAdminSuAdmin.PUT("/caterings/:id/schedules/:scheduleId", cateringSchedule.Update)
@@ -201,10 +201,10 @@ func SetupRouter() *gin.Engine {
 			allAdmins.GET("/caterings", catering.Get)
 
 			// clients users
-			/*allAdmins.GET("/clients/:id/users", user.GetClientUsers)
-			allAdmins.POST("/clients/:id/users", user.AddClientUser)
-			allAdmins.DELETE("/clients/:id/users/:userId", user.DeleteClientUser)
-			allAdmins.PUT("/clients/:id/users/:userId", user.UpdateClientUser)*/
+			allAdmins.DELETE("/clients/:id/users/:userId", clientUser.Delete)
+			allAdmins.PUT("/clients/:id/users/:userId", clientUser.Update)
+			allAdmins.POST("/clients/:id/users", clientUser.Add)
+			allAdmins.GET("/clients/:id/users", clientUser.Get)
 
 			// client addresses
 			allAdmins.GET("/clients/:id/addresses", address.Get)

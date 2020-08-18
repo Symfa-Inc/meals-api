@@ -2,11 +2,12 @@ package mailer
 
 import (
 	"bytes"
-	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"html/template"
 	"net/smtp"
 	"os"
 	"strings"
+
+	"github.com/Aiscom-LLC/meals-api/src/domain"
 )
 
 var auth smtp.Auth

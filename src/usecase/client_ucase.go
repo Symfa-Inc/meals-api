@@ -158,8 +158,8 @@ func (cl Client) Get(c *gin.Context) {
 
 	id := claims["id"].(string)
 
-	cateringUser, err := cateringUserRepo.GetByKey("id", id)
-	user, err := userRepo.GetByKey("id", id)
+	cateringUser, err := cateringUserRepo.GetByKey("user_id", id)
+	user, err := userRepo.GetByID(id)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
@@ -194,6 +194,7 @@ func (cl Client) Get(c *gin.Context) {
 // @Summary Returns list of clients
 // @Tags clients
 // @Produce json
+// @Param id path string false "Catering ID"
 // @Param limit query int false "used for pagination"
 // @Param page query int false "used for pagination"
 // @Success 200 {object} response.GetClients "List of clients"

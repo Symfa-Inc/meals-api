@@ -1,13 +1,12 @@
 package repository
 
 import (
-	"errors"
 	"net/http"
-	"time"
 
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 )
@@ -48,28 +47,44 @@ func (ur UserRepo) GetAllByKey(key, value string) ([]domain.User, error) {
 func (ur UserRepo) GetByID(id string) (domain.UserClientCatering, error) {
 	var user domain.UserClientCatering
 	err := config.DB.
-		Debug().
 		Table("users as u").
-		Select("u.*, c.id as catering_id, c.name as catering_name, cl.id as client_id, cl.name as client_name").
-		Joins("left join client_users clu on clu.user_id = u.id ").
-		Joins("left join clients cl on cl.id = clu.client_id ").
-		Joins("left join catering_users cu on cu.user_id = u.id").
-		Joins("left join caterings c on c.id = cu.catering_id").
+		Select("u.*").
 		Where("u.id = ?", id).
 		Scan(&user).
 		Error
+
+	company := utils.DerefString(user.CompanyType)
+
+	if company == types.CompanyTypesEnum.Catering {
+		config.DB.
+			Table("users as u").
+			Select("c.id as catering_id").
+			Joins("left join catering_users cu on cu.user_id = u.id").
+			Joins("left join caterings c on c.id = cu.catering_id").
+			Where("u.id = ?", id).
+			Scan(&user)
+	} else if company == types.CompanyTypesEnum.Client {
+		config.DB.
+			Table("users as u").
+			Select("cl.id as client_id, c.id as catering_id, clu.floor").
+			Joins("left join client_users clu on clu.user_id = u.id ").
+			Joins("left join clients cl on cl.id = clu.client_id ").
+			Joins("left join caterings c on c.id = cl.catering_id").
+			Where("u.id = ?", id).
+			Scan(&user)
+	}
+
 	return user, err
 }
 
 // Get returns list of users for provided company
-func (ur UserRepo) Get(companyID, companyType, userRole string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]domain.UserClientCatering, int, int, error) {
+/*func (ur UserRepo) Get(companyID, companyType, userRole string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]domain.UserClientCatering, int, int, error) {
 	var users []domain.UserClientCatering
 	var total int
 	page := pagination.Page
 	limit := pagination.Limit
 	status := filters.Status
 	role := filters.Role
-	clientName := filters.ClientName
 	querySearch := filters.Query
 
 	if page == 0 {
@@ -203,7 +218,7 @@ func (ur UserRepo) Get(companyID, companyType, userRole string, pagination types
 		return nil, 0, http.StatusBadRequest, err
 	}
 	return users, total, 0, nil
-}
+}*/
 
 // Add adds new user for certain company passed in user struct
 // returns user and error
