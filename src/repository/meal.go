@@ -48,7 +48,9 @@ func (m MealRepo) Get(mealDate time.Time, id, clientID string) ([]response.GetMe
 
 	if err := config.DB.
 		Where("catering_id = ? AND client_id = ? AND date = ?", id, clientID, mealDate).
-		Find(&meals).Error; err != nil {
+		Order("created_at").
+		Find(&meals).
+		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return []response.GetMeal{}, http.StatusNotFound, err
 		}

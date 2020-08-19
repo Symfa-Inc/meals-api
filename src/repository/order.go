@@ -322,7 +322,8 @@ func (o OrderRepo) ApproveOrders(clientID, date string) error {
 		Select("o.id").
 		Joins("left join user_orders uo on uo.order_id = o.id").
 		Joins("left join users u on uo.user_id = u.id").
-		Where("u.client_id = ? AND u.company_type = ? AND o.date = ?"+
+		Joins("left join client_users cu on uo.user_id = cu.user_id").
+		Where("cu.client_id = ? AND u.company_type = ? AND o.date = ?"+
 			" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
 		Scan(&orderIDs).
 		RowsAffected; areOrdersExist == 0 {
