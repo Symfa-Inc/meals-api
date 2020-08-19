@@ -2,15 +2,16 @@ package middleware
 
 import (
 	"errors"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
-	"github.com/appleboy/gin-jwt/v2"
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"os"
-	"time"
 )
 
 // IdentityKeyID is used to tell
@@ -40,7 +41,7 @@ func Passport() *jwt.GinJWTMiddleware {
 		LoginResponse: func(c *gin.Context, i int, s string, t time.Time) {
 			value, _ := Passport().ParseTokenString(s)
 			id := jwt.ExtractClaimsFromToken(value)["id"]
-			result, err := userRepo.GetByKey("id", id.(string))
+			result, err := userRepo.GetByID(id.(string))
 
 			if err != nil {
 				utils.CreateError(http.StatusUnauthorized, err.Error(), c)

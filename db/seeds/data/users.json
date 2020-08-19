@@ -3,54 +3,63 @@
     "firstName": "Mariana",
     "lastName": "Fox",
     "email": "marianafox@comcubine.com",
-    "role": "Catering administrator"
+    "role": "Catering administrator",
+    "companyType": "catering"
   },
   {
     "firstName": "Maggie",
     "lastName": "Todd",
     "email": "maggietodd@comcubine.com",
-    "role": "Catering administrator"
+    "role": "Catering administrator",
+    "companyType": "catering"
   },
   {
     "firstName": "Aline",
     "lastName": "Glenn",
     "email": "alineglenn@comcubine.com",
-    "role": "Catering administrator"
+    "role": "Catering administrator",
+    "companyType": "catering"
   },
   {
     "firstName": "Ginger",
     "lastName": "Love",
     "email": "gingerlove@comcubine.com",
-    "role": "Client administrator"
+    "role": "Client administrator", 
+    "companyType": "client"
   },
   {
     "firstName": "Hayden",
     "lastName": "Daniel",
     "email": "haydendaniel@comcubine.com",
-    "role": "Client administrator"
+    "role": "Client administrator", 
+    "companyType": "client"
   },
   {
     "firstName": "Melody",
     "lastName": "Bond",
     "email": "melodybond@comcubine.com",
-    "role": "Client administrator"
+    "role": "Client administrator", 
+    "companyType": "client"
   },
   {
     "firstName": "user1",
     "lastName": "lastname",
     "email": "user1@meals.com",
-    "role": "User"
+    "role": "User", 
+    "companyType": "client"
   },
   {
     "firstName": "user2",
     "lastName": "lastname",
     "email": "user2@meals.com",
-    "role": "User"
+    "role": "User", 
+    "companyType": "client"
   },
   {
     "firstName": "user3",
     "lastName": "lastname",
     "email": "user3@meals.com",
-    "role": "User"
+    "role": "User", 
+    "companyType": "client"
   }
 ]

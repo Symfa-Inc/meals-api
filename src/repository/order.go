@@ -2,13 +2,14 @@ package repository
 
 import (
 	"errors"
+	"net/http"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/src/types"
-	"net/http"
-	"time"
 
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
@@ -153,7 +154,6 @@ func (o OrderRepo) GetUserOrder(userID, date string) (response.UserOrder, int, e
 // GetOrders return list of orders for catering or client
 func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (response.SummaryOrderResult, int, error) {
 	var result response.SummaryOrderResult
-	//var ordersStatus []string
 
 	if companyType == types.CompanyTypesEnum.Client {
 		result.Status = o.GetOrdersStatus(clientID, date)
@@ -161,12 +161,13 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 		if err := config.DB.
 			Model(&domain.User{}).
 			Select("distinct on (c.id) c.name as category_name, c.id as category_id").
+			Joins("left join client_users cu on cu.user_id = users.id").
 			Joins("left join user_orders uo on uo.user_id = users.id").
 			Joins("left join orders o on uo.order_id = o.id").
 			Joins("left join order_dishes od on od.order_id = o.id").
 			Joins("left join dishes d on od.dish_id = d.id").
 			Joins("left join categories c on c.id = d.category_id").
-			Where("users.client_id = ? AND users.company_type = ? AND o.date = ?"+
+			Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
 				" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
 			Scan(&result.SummaryOrders).
 			Error; err != nil {
@@ -177,12 +178,13 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 			if err := config.DB.
 				Model(&domain.User{}).
 				Select("d.name, sum(od.amount) as amount").
+				Joins("left join client_users cu on cu.user_id = users.id").
 				Joins("left join user_orders uo on uo.user_id = users.id").
 				Joins("left join orders o on uo.order_id = o.id").
 				Joins("left join order_dishes od on od.order_id = o.id").
 				Joins("left join dishes d on od.dish_id = d.id").
 				Joins("left join categories c on c.id = d.category_id").
-				Where("users.client_id = ? AND users.company_type = ? AND o.date = ?"+
+				Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
 					" AND c.id = ? and o.status != ?",
 					clientID, types.CompanyTypesEnum.Client, date, result.SummaryOrders[i].ID, types.OrderStatusTypesEnum.Canceled).
 				Group("d.name").
@@ -194,10 +196,11 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 		if err := config.DB.
 			Model(&domain.User{}).
 			Select("concat_ws(' ', users.last_name, users.first_name) as full_name,"+
-				" users.floor, users.id, o.total, o.comment").
+				" cu.floor, users.id, o.total, o.comment").
+			Joins("left join client_users cu on cu.user_id = users.id").
 			Joins("left join user_orders uo on uo.user_id = users.id").
 			Joins("left join orders o on uo.order_id = o.id").
-			Where("users.client_id = ? AND users.company_type = ? AND o.date = ?"+
+			Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
 				" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
 			Scan(&result.UserOrders).
 			Error; err != nil {
@@ -208,11 +211,12 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 			if err := config.DB.
 				Model(&domain.User{}).
 				Select("d.name, od.amount").
+				Joins("left join client_users cu on cu.user_id = users.id").
 				Joins("left join user_orders uo on uo.user_id = users.id").
 				Joins("left join orders o on uo.order_id = o.id").
 				Joins("left join order_dishes od on od.order_id = o.id").
 				Joins("left join dishes d on od.dish_id = d.id").
-				Where("users.client_id = ? AND users.company_type = ? AND o.date = ?"+
+				Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
 					" AND uo.user_id = ? AND o.status != ?",
 					clientID, types.CompanyTypesEnum.Client, date, result.UserOrders[i].ID, types.OrderStatusTypesEnum.Canceled).
 				Scan(&result.UserOrders[i].Items).
@@ -235,12 +239,13 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 	if err := config.DB.
 		Model(&domain.User{}).
 		Select("distinct on (c.id) c.name as category_name, c.id as category_id").
+		Joins("left join client_users cu on cu.user_id = users.id").
 		Joins("left join user_orders uo on uo.user_id = users.id").
 		Joins("left join orders o on uo.order_id = o.id").
 		Joins("left join order_dishes od on od.order_id = o.id").
 		Joins("left join dishes d on od.dish_id = d.id").
 		Joins("left join categories c on c.id = d.category_id").
-		Where("users.client_id = ? AND users.company_type = ? AND o.date = ? AND o.status = ?",
+		Where("cu.client_id = ? AND users.company_type = ? AND o.date = ? AND o.status = ?",
 			clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Approved).
 		Scan(&result.SummaryOrders).
 		Error; err != nil {
@@ -251,12 +256,13 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 		if err := config.DB.
 			Model(&domain.User{}).
 			Select("d.name, sum(od.amount) as amount").
+			Joins("left join client_users cu on cu.user_id = users.id").
 			Joins("left join user_orders uo on uo.user_id = users.id").
 			Joins("left join orders o on uo.order_id = o.id").
 			Joins("left join order_dishes od on od.order_id = o.id").
 			Joins("left join dishes d on od.dish_id = d.id").
 			Joins("left join categories c on c.id = d.category_id").
-			Where("users.client_id = ? AND users.company_type = ? AND o.date = ?"+
+			Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
 				" AND c.id = ? AND o.status = ?",
 				clientID, types.CompanyTypesEnum.Client, date, result.SummaryOrders[i].ID, types.OrderStatusTypesEnum.Approved).
 			Group("d.name").
@@ -269,10 +275,11 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 	if err := config.DB.
 		Model(&domain.User{}).
 		Select("concat_ws(' ', users.last_name, users.first_name) as full_name,"+
-			" users.floor, users.id, o.total, o.comment").
+			" cu.floor, users.id, o.total, o.comment").
+		Joins("left join client_users cu on cu.user_id = users.id").
 		Joins("left join user_orders uo on uo.user_id = users.id").
 		Joins("left join orders o on uo.order_id = o.id").
-		Where("users.client_id = ? AND users.company_type = ? AND o.date = ?"+
+		Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
 			" AND o.status = ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Approved).
 		Scan(&result.UserOrders).
 		Error; err != nil {
@@ -283,11 +290,12 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 		if err := config.DB.
 			Model(&domain.User{}).
 			Select("d.name, od.amount").
+			Joins("left join client_users cu on cu.user_id = users.id").
 			Joins("left join user_orders uo on uo.user_id = users.id").
 			Joins("left join orders o on uo.order_id = o.id").
 			Joins("left join order_dishes od on od.order_id = o.id").
 			Joins("left join dishes d on od.dish_id = d.id").
-			Where("users.client_id = ? AND users.company_type = ? AND o.date = ?"+
+			Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
 				" AND uo.user_id = ? AND o.status = ?", clientID, types.CompanyTypesEnum.Client, date, result.UserOrders[i].ID, types.OrderStatusTypesEnum.Approved).
 			Scan(&result.UserOrders[i].Items).
 			Error; err != nil {
@@ -314,7 +322,8 @@ func (o OrderRepo) ApproveOrders(clientID, date string) error {
 		Select("o.id").
 		Joins("left join user_orders uo on uo.order_id = o.id").
 		Joins("left join users u on uo.user_id = u.id").
-		Where("u.client_id = ? AND u.company_type = ? AND o.date = ?"+
+		Joins("left join client_users cu on uo.user_id = cu.user_id").
+		Where("cu.client_id = ? AND u.company_type = ? AND o.date = ?"+
 			" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
 		Scan(&orderIDs).
 		RowsAffected; areOrdersExist == 0 {
@@ -353,9 +362,10 @@ func (o OrderRepo) GetOrdersStatus(clientID, date string) *string {
 	config.DB.
 		Model(&domain.User{}).
 		Select("o.status").
+		Joins("left join client_users cu on cu.user_id = users.id").
 		Joins("left join user_orders uo on uo.user_id = users.id").
 		Joins("left join orders o on uo.order_id = o.id").
-		Where("users.client_id = ? AND users.company_type = ? AND o.date = ?"+
+		Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
 			" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
 		Pluck("o.status", &ordersStatus)
 

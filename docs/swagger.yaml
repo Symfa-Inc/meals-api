@@ -287,24 +287,8 @@ definitions:
       start:
         type: string
     type: object
-  domain.UserCatering:
-    properties:
-      cateringId:
-        type: string
-      cateringName:
-        type: string
-    type: object
-  domain.UserClient:
-    properties:
-      clientId:
-        type: string
-      clientName:
-        type: string
-    type: object
   request.CateringUser:
     properties:
-      clientID:
-        type: string
       email:
         example: d.novikov@wellyes.ru
         type: string
@@ -317,8 +301,6 @@ definitions:
     type: object
   request.CateringUserUpdate:
     properties:
-      clientID:
-        type: string
       email:
         example: d.novikov@wellyes.ru
         type: string
@@ -504,10 +486,10 @@ definitions:
     type: object
   response.UserResponse:
     properties:
-      catering:
-        $ref: '#/definitions/domain.UserCatering'
-      client:
-        $ref: '#/definitions/domain.UserClient'
+      cateringId:
+        type: string
+      clientId:
+        type: string
       companyType:
         type: string
       email:
@@ -661,6 +643,10 @@ paths:
   /caterings/{id}/clients:
     get:
       parameters:
+      - description: Catering ID
+        in: path
+        name: id
+        type: string
       - description: used for pagination
         in: query
         name: limit
@@ -1314,10 +1300,6 @@ paths:
       - description: used for role sort
         in: query
         name: role
-        type: string
-      - description: used for client sort
-        in: query
-        name: client
         type: string
       produces:
       - application/json

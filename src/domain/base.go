@@ -1,9 +1,10 @@
 package domain
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
-	"time"
 )
 
 // Base contains common columns for all tables.

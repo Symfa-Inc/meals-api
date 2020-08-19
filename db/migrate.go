@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/Aiscom-LLC/meals-api/db/seeds/dev"
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
@@ -19,19 +20,21 @@ func main() {
 	addDbConstraints()
 	fmt.Println("=== ADD DB CONSTRAINTS ===")
 
-	dev.CreateCaterings()
+	/*dev.CreateCaterings()
 	dev.CreateCateringSchedules()
 	dev.CreateClients()
-	dev.CreateClientSchedules()
+	dev.CreateClientSchedules()*/
 	dev.CreateAdmin()
-	dev.CreateUsers()
+	/*dev.CreateUsers()
+	dev.CreateCateringUsers()
+	dev.CreateClientUsers()
 	dev.CreateMeals()
 	dev.CreateCategories()
-	dev.CreateDishes()
+	dev.CreateDishes()*/
 	dev.CreateImages()
-	dev.CreateMealDishes()
+	/*dev.CreateMealDishes()
 	dev.CreateImageDishes()
-	dev.CreateAddresses()
+	dev.CreateAddresses()*/
 }
 
 func migrate() {
@@ -45,23 +48,27 @@ func migrate() {
 		&domain.Dish{},
 		&domain.Category{},
 		&domain.Meal{},
-		&domain.User{},
 		&domain.Address{},
 		&domain.ClientSchedule{},
+		&domain.ClientUser{},
 		&domain.Client{},
 		&domain.CateringSchedule{},
+		&domain.CateringUser{},
 		&domain.Catering{},
+		&domain.User{},
 		&domain.Seed{},
 	)
 
 	config.DB.AutoMigrate(
+		&domain.Seed{},
+		&domain.User{},
 		&domain.Catering{},
+		&domain.CateringUser{},
 		&domain.CateringSchedule{},
 		&domain.Client{},
+		&domain.ClientUser{},
 		&domain.Address{},
 		&domain.ClientSchedule{},
-		&domain.User{},
-		&domain.Seed{},
 		&domain.Meal{},
 		&domain.Category{},
 		&domain.Dish{},
@@ -76,8 +83,11 @@ func migrate() {
 }
 
 func addDbConstraints() {
-	config.DB.Model(&domain.User{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
-	config.DB.Model(&domain.User{}).AddForeignKey("client_id", "clients(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.CateringUser{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.CateringUser{}).AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
+
+	config.DB.Model(&domain.ClientUser{}).AddForeignKey("client_id", "clients(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.ClientUser{}).AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
 
 	config.DB.Model(&domain.Address{}).AddForeignKey("client_id", "clients(id)", "CASCADE", "CASCADE")
 

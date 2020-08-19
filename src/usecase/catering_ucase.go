@@ -1,14 +1,16 @@
 package usecase
 
 import (
-	"github.com/gin-gonic/gin"
+	"net/http"
+
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
-	"net/http"
+	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
 )
 
 // Catering struct
@@ -21,6 +23,7 @@ func NewCatering() *Catering {
 }
 
 var cateringRepo = repository.NewCateringRepo()
+var cateringUserRepo = repository.NewCateringUserRepo()
 
 // Add creates catering
 // @Summary Returns error or 201 status code if success
@@ -123,14 +126,9 @@ func (ca Catering) Get(c *gin.Context) {
 
 	id := claims["id"].(string)
 
-	user, err := userRepo.GetByKey("id", id)
+	user, _ := cateringUserRepo.GetByKey("id", id)
 
-	if err != nil {
-		utils.CreateError(http.StatusBadRequest, err.Error(), c)
-		return
-	}
-
-	if user.CateringID == nil {
+	if user.CateringID == uuid.Nil {
 		cateringID = ""
 	} else {
 		cateringID = user.CateringID.String()

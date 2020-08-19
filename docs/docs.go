@@ -232,6 +232,12 @@ var doc = `{
                 "summary": "Returns list of clients",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Catering ID",
+                        "name": "id",
+                        "in": "path"
+                    },
+                    {
                         "type": "integer",
                         "description": "used for pagination",
                         "name": "limit",
@@ -1227,12 +1233,6 @@ var doc = `{
                         "type": "string",
                         "description": "used for role sort",
                         "name": "role",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "used for client sort",
-                        "name": "client",
                         "in": "query"
                     }
                 ],
@@ -2937,34 +2937,9 @@ var doc = `{
                 }
             }
         },
-        "domain.UserCatering": {
-            "type": "object",
-            "properties": {
-                "cateringId": {
-                    "type": "string"
-                },
-                "cateringName": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.UserClient": {
-            "type": "object",
-            "properties": {
-                "clientId": {
-                    "type": "string"
-                },
-                "clientName": {
-                    "type": "string"
-                }
-            }
-        },
         "request.CateringUser": {
             "type": "object",
             "properties": {
-                "clientID": {
-                    "type": "string"
-                },
                 "email": {
                     "type": "string",
                     "example": "d.novikov@wellyes.ru"
@@ -2982,9 +2957,6 @@ var doc = `{
         "request.CateringUserUpdate": {
             "type": "object",
             "properties": {
-                "clientID": {
-                    "type": "string"
-                },
                 "email": {
                     "type": "string",
                     "example": "d.novikov@wellyes.ru"
@@ -3264,11 +3236,11 @@ var doc = `{
         "response.UserResponse": {
             "type": "object",
             "properties": {
-                "catering": {
-                    "$ref": "#/definitions/domain.UserCatering"
+                "cateringId": {
+                    "type": "string"
                 },
-                "client": {
-                    "$ref": "#/definitions/domain.UserClient"
+                "clientId": {
+                    "type": "string"
                 },
                 "companyType": {
                     "type": "string"

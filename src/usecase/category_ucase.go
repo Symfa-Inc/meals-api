@@ -1,17 +1,17 @@
 package usecase
 
 import (
-	"fmt"
-	"github.com/gin-gonic/gin"
-	uuid "github.com/satori/go.uuid"
+	"net/http"
+	"strings"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
-	"net/http"
-	"strings"
-	"time"
+	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
 )
 
 // Category struct
@@ -120,7 +120,6 @@ func (dc Category) Get(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(query.Date)
 	if query.Date == "" {
 		query.Date = time.Now().String()
 	}
