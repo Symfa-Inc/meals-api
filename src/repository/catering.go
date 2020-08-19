@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -59,7 +58,6 @@ func (c CateringRepo) Get(cateringID string, query types.PaginationQuery) ([]dom
 	}
 
 	if cateringID != "" {
-		fmt.Println("triggered")
 		config.DB.
 			Find(&caterings).
 			Where("id = ?", cateringID).

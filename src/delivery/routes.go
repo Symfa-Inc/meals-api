@@ -29,7 +29,6 @@ func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
 	auth := usecase.NewAuth()
-	//user := usecase.NewUser()
 	cateringUser := usecase.NewCateringUser()
 	clientUser := usecase.NewClientUser()
 	catering := usecase.NewCatering()
@@ -46,7 +45,7 @@ func SetupRouter() *gin.Engine {
 	validator := middleware.NewValidator()
 
 	configCors := cors.DefaultConfig()
-	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL"), os.Getenv("CLIENT_MOBILE_URL"), "http://localhost:3001"}
+	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL"), os.Getenv("CLIENT_MOBILE_URL")}
 
 	configCors.AllowCredentials = true
 	r.Use(cors.New(configCors))

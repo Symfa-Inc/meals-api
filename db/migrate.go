@@ -20,21 +20,21 @@ func main() {
 	addDbConstraints()
 	fmt.Println("=== ADD DB CONSTRAINTS ===")
 
-	dev.CreateCaterings()
+	/*dev.CreateCaterings()
 	dev.CreateCateringSchedules()
 	dev.CreateClients()
-	dev.CreateClientSchedules()
+	dev.CreateClientSchedules()*/
 	dev.CreateAdmin()
-	dev.CreateUsers()
+	/*dev.CreateUsers()
 	dev.CreateCateringUsers()
 	dev.CreateClientUsers()
 	dev.CreateMeals()
 	dev.CreateCategories()
-	dev.CreateDishes()
+	dev.CreateDishes()*/
 	dev.CreateImages()
-	dev.CreateMealDishes()
+	/*dev.CreateMealDishes()
 	dev.CreateImageDishes()
-	dev.CreateAddresses()
+	dev.CreateAddresses()*/
 }
 
 func migrate() {

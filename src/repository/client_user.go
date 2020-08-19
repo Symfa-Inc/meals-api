@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -152,7 +151,6 @@ func (cur *ClientUserRepo) Update(user *domain.User, floor *int) (int, error) {
 		}
 		return http.StatusBadRequest, err
 	}
-	fmt.Println(floor)
 	if floor != nil {
 		config.DB.
 			Unscoped().
