@@ -85,8 +85,8 @@ func (c ClientRepo) GetCateringClientsOrders(cateringID string, query types.Pagi
 		Offset((page-1)*limit).
 		Model(&domain.Client{}).
 		Select("clients.name, clients.id, concat_ws('/', count(distinct od.order_id), sum(od.amount)) as orders_dishes").
-		Joins("left join users u on u.client_id = clients.id").
-		Joins("left join user_orders uo on u.id = uo.user_id").
+		Joins("left join client_users cu on cu.client_id = clients.id").
+		Joins("left join user_orders uo on cu.user_id = uo.user_id").
 		Joins("left join orders o on uo.order_id = o.id").
 		Joins("left join order_dishes od on od.order_id = o.id").
 		Where("clients.catering_id = ? AND o.status = ? AND o.date = ?", cateringID, types.OrderStatusTypesEnum.Approved, query.Date).
@@ -102,8 +102,8 @@ func (c ClientRepo) GetCateringClientsOrders(cateringID string, query types.Pagi
 			Offset((page-1)*limit).
 			Model(&domain.Client{}).
 			Select("o.total as total").
-			Joins("left join users u on u.client_id = clients.id").
-			Joins("left join user_orders uo on u.id = uo.user_id").
+			Joins("left join client_users cu on cu.client_id = clients.id").
+			Joins("left join user_orders uo on cu.user_id = uo.user_id").
 			Joins("left join orders o on uo.order_id = o.id").
 			Where("clients.catering_id = ? AND o.status = ? AND o.date = ?", cateringID, types.OrderStatusTypesEnum.Approved, query.Date).
 			Group("clients.name, clients.id").

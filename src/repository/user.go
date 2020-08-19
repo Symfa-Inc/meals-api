@@ -58,7 +58,7 @@ func (ur UserRepo) GetByID(id string) (domain.UserClientCatering, error) {
 	if company == types.CompanyTypesEnum.Catering {
 		config.DB.
 			Table("users as u").
-			Select("c.id as catering_id").
+			Select("c.id as catering_id, c.name as catering_name").
 			Joins("left join catering_users cu on cu.user_id = u.id").
 			Joins("left join caterings c on c.id = cu.catering_id").
 			Where("u.id = ?", id).
@@ -66,7 +66,7 @@ func (ur UserRepo) GetByID(id string) (domain.UserClientCatering, error) {
 	} else if company == types.CompanyTypesEnum.Client {
 		config.DB.
 			Table("users as u").
-			Select("cl.id as client_id, c.id as catering_id, clu.floor").
+			Select("cl.id as client_id, cl.name as client_name, c.name as catering_name, c.id as catering_id, clu.floor").
 			Joins("left join client_users clu on clu.user_id = u.id ").
 			Joins("left join clients cl on cl.id = clu.client_id ").
 			Joins("left join caterings c on c.id = cl.catering_id").

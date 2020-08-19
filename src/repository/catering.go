@@ -2,12 +2,14 @@ package repository
 
 import (
 	"errors"
+	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
-	"net/http"
-	"time"
 )
 
 // CateringRepo struct
@@ -57,6 +59,7 @@ func (c CateringRepo) Get(cateringID string, query types.PaginationQuery) ([]dom
 	}
 
 	if cateringID != "" {
+		fmt.Println("triggered")
 		config.DB.
 			Find(&caterings).
 			Where("id = ?", cateringID).

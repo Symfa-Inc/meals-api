@@ -2,11 +2,12 @@ package repository
 
 import (
 	"errors"
+	"net/http"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
-	"net/http"
-	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -95,10 +96,11 @@ func (m MealRepo) Get(mealDate time.Time, id, clientID string) ([]response.GetMe
 	}
 
 	if mealsResponse == nil {
+		//return nil, http.StatusNotFound, errors.New("meal for current day not found")
 		mealsResponse = make([]response.GetMeal, 0)
 	}
 
-	return mealsResponse, http.StatusBadRequest, nil
+	return mealsResponse, 0, nil
 }
 
 // GetByKey get meal by provided key value arguments

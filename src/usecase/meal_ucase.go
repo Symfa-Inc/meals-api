@@ -1,14 +1,15 @@
 package usecase
 
 import (
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
-	"net/http"
-	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
@@ -49,7 +50,7 @@ func (m Meal) Add(c *gin.Context) {
 	}
 
 	ctxUser, _ := c.Get("user")
-	ctxUserName := ctxUser.(domain.UserClientCatering).FirstName + " " + ctxUser.(domain.UserClientCatering).LastName
+	ctxUserName := ctxUser.(domain.User).FirstName + " " + ctxUser.(domain.User).LastName
 
 	parsedCateringID, _ := uuid.FromString(path.ID)
 	parsedClientID, _ := uuid.FromString(path.ClientID)
@@ -109,7 +110,9 @@ func (m Meal) Add(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusCreated, meal)
+	result, _, _ := mealRepo.Get(body.Date, path.ID, path.ClientID)
+
+	c.JSON(http.StatusCreated, result)
 }
 
 // Get returns array of meals
@@ -160,72 +163,3 @@ func (m Meal) Get(c *gin.Context) {
 
 	c.JSON(http.StatusOK, result)
 }
-
-// Update updates the menu for provided day, takes an array of dish Ids
-// @Summary Returns 204 if success and 4xx if error
-// @Produce json
-// @Accept json
-// @Tags catering meals
-// @Param id path string true "Catering ID"
-// @Param mealId path string false "Meal ID"
-// @Param body body request.UpdateMeal false "Meal date"
-// @Success 204 "Successfully updated"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
-// @Router /caterings/{id}/meals/{mealId} [put]
-/*func (m Meal) Update(c *gin.Context) {
-	var path types.PathMeal
-	var body request.UpdateMeal
-
-	if err := utils.RequestBinderURI(&path, c); err != nil {
-		return
-	}
-
-	if err := utils.RequestBinderBody(&body, c); err != nil {
-		return
-	}
-
-	mealItem, code, err := mealRepo.GetByKey("id", path.MealID)
-
-	if err != nil {
-		utils.CreateError(code, err.Error(), c)
-		return
-	}
-
-	var categoryIDs []uuid.UUID
-	for _, dishID := range body.Dishes {
-		result, _, _ := dishRepo.FindByID(path.ID, dishID)
-		categoryIDs = append(categoryIDs, result.CategoryID)
-	}
-	duplicates := make(map[uuid.UUID]int)
-	for _, id := range categoryIDs {
-		_, exist := duplicates[id]
-		if exist {
-			duplicates[id]++
-			if duplicates[id] > 10 {
-				utils.CreateError(http.StatusBadRequest, "can't add more than 10 dishes in single category for current day", c)
-				return
-			}
-		} else {
-			duplicates[id] = 1
-		}
-	}
-
-	if err := mealDishRepo.Delete(mealItem.ID.String()); err != nil {
-		utils.CreateError(http.StatusBadRequest, err.Error(), c)
-		return
-	}
-
-	for _, dishID := range body.Dishes {
-		dishIDParsed, _ := uuid.FromString(dishID)
-		mealDish := domain.MealDish{
-			MealID: mealItem.ID,
-			DishID: dishIDParsed,
-		}
-		if err := mealDishRepo.Add(mealDish); err != nil {
-			utils.CreateError(http.StatusBadRequest, err.Error(), c)
-			return
-		}
-	}
-	c.Status(http.StatusNoContent)
-}*/

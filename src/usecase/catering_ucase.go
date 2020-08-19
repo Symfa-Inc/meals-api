@@ -126,12 +126,7 @@ func (ca Catering) Get(c *gin.Context) {
 
 	id := claims["id"].(string)
 
-	user, err := cateringUserRepo.GetByKey("id", id)
-
-	if err != nil {
-		utils.CreateError(http.StatusBadRequest, err.Error(), c)
-		return
-	}
+	user, _ := cateringUserRepo.GetByKey("id", id)
 
 	if user.CateringID == uuid.Nil {
 		cateringID = ""
