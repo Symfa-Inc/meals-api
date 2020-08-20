@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/Aiscom-LLC/meals-api/src/delivery"
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
@@ -16,6 +17,8 @@ import (
 func TestAddClient(t *testing.T) {
 	r := gofight.New()
 
+	userRepo := repository.NewUserRepo()
+	cateringRepo := repository.NewCateringRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
@@ -54,6 +57,7 @@ func TestAddClient(t *testing.T) {
 func TestGetClients(t *testing.T) {
 	r := gofight.New()
 
+	userRepo := repository.NewUserRepo()
 	result, _ := userRepo.GetByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
 
@@ -87,6 +91,8 @@ func TestGetClients(t *testing.T) {
 func TestDeleteClient(t *testing.T) {
 	r := gofight.New()
 
+	userRepo := repository.NewUserRepo()
+	cateringRepo := repository.NewCateringRepo()
 	result, _ := userRepo.GetByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
@@ -132,6 +138,8 @@ func TestDeleteClient(t *testing.T) {
 func TestUpdateClient(t *testing.T) {
 	r := gofight.New()
 
+	userRepo := repository.NewUserRepo()
+	cateringRepo := repository.NewCateringRepo()
 	result, _ := userRepo.GetByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")

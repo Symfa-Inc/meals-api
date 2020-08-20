@@ -3,6 +3,7 @@ package tests
 import (
 	"github.com/Aiscom-LLC/meals-api/src/delivery"
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"net/http"
 	"testing"
 	"time"
@@ -16,6 +17,10 @@ import (
 func TestAddDish(t *testing.T) {
 	r := gofight.New()
 
+	categoryRepo := repository.NewCategoryRepo()
+	userRepo := repository.NewUserRepo()
+	mealRepo := repository.NewMealRepo()
+	cateringRepo := repository.NewCateringRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
@@ -101,6 +106,9 @@ func TestAddDish(t *testing.T) {
 func TestGetDishes(t *testing.T) {
 	r := gofight.New()
 
+	categoryRepo := repository.NewCategoryRepo()
+	userRepo := repository.NewUserRepo()
+	cateringRepo := repository.NewCateringRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
@@ -152,6 +160,10 @@ func TestGetDishes(t *testing.T) {
 func TestUpdateDish(t *testing.T) {
 	r := gofight.New()
 
+	categoryRepo := repository.NewCategoryRepo()
+	userRepo := repository.NewUserRepo()
+	dishRepo := repository.NewDishRepo()
+	cateringRepo := repository.NewCateringRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
@@ -247,6 +259,10 @@ func TestUpdateDish(t *testing.T) {
 func TestDeleteDish(t *testing.T) {
 	r := gofight.New()
 
+	categoryRepo := repository.NewCategoryRepo()
+	userRepo := repository.NewUserRepo()
+	dishRepo := repository.NewDishRepo()
+	cateringRepo := repository.NewCateringRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 

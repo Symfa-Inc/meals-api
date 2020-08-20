@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+
 	"github.com/jinzhu/gorm"
 
 	// gorm postgres type

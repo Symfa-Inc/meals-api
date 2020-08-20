@@ -3,6 +3,7 @@ package tests
 import (
 	"github.com/Aiscom-LLC/meals-api/src/delivery"
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
@@ -13,6 +14,9 @@ import (
 func TestAddCategory(t *testing.T) {
 	r := gofight.New()
 
+	clientRepo := repository.NewClientRepo()
+	userRepo := repository.NewUserRepo()
+	cateringRepo := repository.NewCateringRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
@@ -65,6 +69,9 @@ func TestAddCategory(t *testing.T) {
 //func TestDeleteCategory(t *testing.T) {
 //	r := gofight.New()
 //
+//  clientRepo := repository.NewClientRepo()
+//  userRepo := repository.NewUserRepo()
+//  cateringRepo := repository.NewCateringRepo()
 //	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 //	cateringResult, _ := cateringRepo.GetByKey("name", "Pheast")
 //	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
@@ -113,7 +120,10 @@ func TestAddCategory(t *testing.T) {
 ////
 //func TestGetCategories(t *testing.T) {
 //	r := gofight.New()
-//
+
+//  clientRepo := repository.NewClientRepo()
+//  userRepo := repository.NewUserRepo()
+//  cateringRepo := repository.NewCateringRepo()
 //	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 //	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 //	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
@@ -147,6 +157,9 @@ func TestAddCategory(t *testing.T) {
 //func TestUpdateCategory(t *testing.T) {
 //	r := gofight.New()
 //
+//  clientRepo := repository.NewClientRepo()
+//  userRepo := repository.NewUserRepo()
+//  cateringRepo := repository.NewCateringRepo()
 //	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 //	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 //	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})

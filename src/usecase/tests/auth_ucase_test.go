@@ -3,6 +3,7 @@ package tests
 import (
 	"github.com/Aiscom-LLC/meals-api/src/delivery"
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
@@ -13,6 +14,7 @@ import (
 func TestIsAuthenticated(t *testing.T) {
 	r := gofight.New()
 
+	userRepo := repository.NewUserRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
@@ -42,6 +44,7 @@ func TestIsAuthenticated(t *testing.T) {
 func TestValidator(t *testing.T) {
 	r := gofight.New()
 
+	userRepo := repository.NewUserRepo()
 	userResult, _ := userRepo.GetByKey("role", "User")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
