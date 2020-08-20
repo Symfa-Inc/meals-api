@@ -62,6 +62,7 @@ func (cu *CateringUser) Add(c *gin.Context) {
 
 	user.Role = types.UserRoleEnum.CateringAdmin
 	user.Status = &types.StatusTypesEnum.Invited
+	user.CompanyType = &types.CompanyTypesEnum.Catering
 
 	password := utils.GenerateString(10)
 	user.Password = utils.HashString(password)
