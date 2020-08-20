@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
-	"github.com/appleboy/gofight/v2"
 )
 
 func TestAddDish(t *testing.T) {

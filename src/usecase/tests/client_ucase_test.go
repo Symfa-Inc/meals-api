@@ -2,13 +2,13 @@ package tests
 
 import (
 	"encoding/json"
+	"github.com/Aiscom-LLC/meals-api/src/delivery"
+	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
-	"github.com/Aiscom-LLC/meals-api/src/delivery"
-	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
-	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"net/http"
 	"testing"
 )

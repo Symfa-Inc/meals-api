@@ -1,4 +1,5 @@
 package tests
+
 //
 //import (
 //	"github.com/appleboy/gofight/v2"

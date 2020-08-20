@@ -2,10 +2,10 @@ package repository
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
-	uuid "github.com/satori/go.uuid"
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
+	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"os"
 )

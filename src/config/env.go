@@ -22,11 +22,7 @@ var Env env
 
 func init() {
 	dir, _ := os.Getwd()
-	err := godotenv.Load(dir + "/.env")
-
-	if err != nil {
-		panic(err)
-	}
+	_ = godotenv.Load(dir + "/.env")
 
 	Env = env{
 		DbHost:     os.Getenv("DB_HOST"),

@@ -1,12 +1,12 @@
 package usecase
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
+	"github.com/gin-gonic/gin"
 	"net/http"
 )
 

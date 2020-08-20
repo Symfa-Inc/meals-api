@@ -1,11 +1,11 @@
 package tests
 
 import (
+	"github.com/Aiscom-LLC/meals-api/src/delivery"
+	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
-	"github.com/Aiscom-LLC/meals-api/src/delivery"
-	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"net/http"
 	"testing"
 )

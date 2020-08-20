@@ -1,10 +1,10 @@
 package domain
 
 import (
+	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
-	"github.com/Aiscom-LLC/meals-api/src/types"
 	"time"
 )
 

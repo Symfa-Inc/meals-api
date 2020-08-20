@@ -2,10 +2,10 @@ package repository
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/jinzhu/gorm"
 	"net/http"
 	"time"
 )

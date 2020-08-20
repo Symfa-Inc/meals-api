@@ -1,9 +1,9 @@
 package domain
 
 import (
+	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
-	"github.com/Aiscom-LLC/meals-api/src/types"
 )
 
 // Dish struct used in DB
