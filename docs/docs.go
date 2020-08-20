@@ -531,6 +531,12 @@ var doc = `{
                     },
                     {
                         "type": "string",
+                        "description": "Client ID",
+                        "name": "clientId",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
                         "description": "Category ID",
                         "name": "categoryID",
                         "in": "path",

@@ -2,11 +2,12 @@ package repository
 
 import (
 	"errors"
+	"net/http"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/types"
-	"net/http"
-	"time"
 )
 
 // CategoryRepo struct
@@ -71,10 +72,11 @@ func (dc CategoryRepo) GetByKey(key, value, cateringID string) (domain.Category,
 // returns gorm.DB struct with methods
 func (dc CategoryRepo) Delete(path types.PathCategory) (int, error) {
 	result := config.DB.
+		Debug().
 		Unscoped().
 		Model(&domain.Category{}).
 		Where("catering_id = ? AND id = ? AND client_id = ? AND (deleted_at > ? OR deleted_at IS NULL)", path.ID, path.CategoryID, path.ClientID, time.Now()).
-		Update("deleted_at", time.Now())
+		Update("deleted_at", time.Now().UTC().Truncate(time.Hour*24).AddDate(0, 0, 1))
 
 	if result.Error != nil {
 		return http.StatusBadRequest, result.Error

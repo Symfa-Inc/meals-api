@@ -79,6 +79,7 @@ func (dc Category) Add(c *gin.Context) {
 // @Tags catering categories
 // @Produce json
 // @Param id path string true "Catering ID"
+// @Param clientId path string false "Client ID"
 // @Param categoryID path string true "Category ID"
 // @Success 204 "Successfully deleted"
 // @Failure 404 {object} types.Error "Not Found"
@@ -121,7 +122,7 @@ func (dc Category) Get(c *gin.Context) {
 	}
 
 	if query.Date == "" {
-		query.Date = time.Now().String()
+		query.Date = time.Now().Format(time.RFC3339)
 	}
 
 	categoriesResult, code, err := categoryRepo.Get(path.ID, path.ClientID, query.Date)

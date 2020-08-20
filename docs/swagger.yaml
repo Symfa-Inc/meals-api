@@ -803,6 +803,10 @@ paths:
         name: id
         required: true
         type: string
+      - description: Client ID
+        in: path
+        name: clientId
+        type: string
       - description: Category ID
         in: path
         name: categoryID
