@@ -221,7 +221,7 @@ func (cu *CateringUser) Update(c *gin.Context) { //nolint:dupl
 		return
 	}
 
-	if user.Email != "" {
+	if body.Email != "" {
 		if ok := utils.IsEmailValid(body.Email); !ok {
 			utils.CreateError(http.StatusBadRequest, "email is not valid", c)
 			return
