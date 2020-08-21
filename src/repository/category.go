@@ -49,9 +49,7 @@ func (dc CategoryRepo) Get(cateringID, clientID, date string) ([]domain.Category
 
 	err := config.DB.
 		Debug().
-		Unscoped().
-		Where("catering_id = ? AND client_id = ? AND (date = ? or date IS NULL) AND (deleted_at > ? OR deleted_at IS NULL)",
-			cateringID, clientID, date, date).
+		Where("catering_id = ? AND client_id = ? AND (date = ? or date IS NULL) ", cateringID, clientID, date).
 		Order("created_at").
 		Find(&categories).
 		Error
