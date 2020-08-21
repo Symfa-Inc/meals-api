@@ -23,8 +23,8 @@ func TestAddCateringUser(t *testing.T) {
 	cateringResult, _:= cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
 
-	//Trying to create new Catering user
-	//Must return success
+	// Trying to create new Catering user
+	// Should be success
 	r.POST("/caterings/"+cateringResult.ID.String()+"/users").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -38,8 +38,8 @@ func TestAddCateringUser(t *testing.T) {
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
 
-	// Create user which email is already exist
-	// Should return error
+	// Trying to create user which email is already exist
+	// Should return an error
 	r.POST("/caterings/"+cateringID+"/users").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -54,7 +54,7 @@ func TestAddCateringUser(t *testing.T) {
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "email is not valid", errorValue)
-	})
+		})
 
 	r.POST("/caterings/"+cateringID+"/users").
 		SetCookie(gofight.H{
@@ -88,18 +88,17 @@ func TestGetCateringUsers(t *testing.T) {
 	r.GET("/caterings/"+cateringID+"/users").
 		SetCookie(gofight.H{
 			"jwt": jwt,
-	}).
+		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
 			var result response.GetCateringUser
 			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, http.StatusOK, r.Code)
-	})
+		})
 
 	// Trying to get users on broken URI
-	// Must return an error
-	cateringID += "1"
-	r.GET("/caterings/"+cateringID+"/users?limit=5").
+	// Should return an error
+	r.GET("/caterings/"+"qwerty"+"/users?limit=5").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -128,13 +127,13 @@ func TestDeleteCateringUsers(t *testing.T) {
 	r.DELETE("/caterings/"+cateringID+"/users/"+userID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
-	}).
+		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
-	})
+		})
 
 	// Trying to delete itself
-	// Must return an error
+	// Should return an error
 	r.DELETE("/clients/"+cateringID+"/users/"+userResult.ID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -144,7 +143,7 @@ func TestDeleteCateringUsers(t *testing.T) {
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "can't delete yourself", errorValue)
-	})
+		})
 }
 
 func TestUpdateClientUsers(t *testing.T) {
@@ -159,7 +158,7 @@ func TestUpdateClientUsers(t *testing.T) {
 	user, _ := userRepo.GetByKey("email", "user3@meals.com")
 	userID := user.ID.String()
 
-	// Try to change name of user
+	// Trying to change name of user
 	// Should be success
 	r.PUT("/caterings/"+cateringID+"/users/"+userID).
 		SetCookie(gofight.H{
@@ -172,6 +171,8 @@ func TestUpdateClientUsers(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
+	// Trying to change email to invalid
+	// Should return an error
 	r.PUT("/caterings/"+cateringID+"/users/"+userID).
 		SetCookie(gofight.H{
 			"jwt": jwt,

@@ -1,11 +1,9 @@
 package tests
 
 import (
-	"encoding/json"
 	"github.com/Aiscom-LLC/meals-api/src/delivery"
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
-	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
@@ -40,8 +38,8 @@ func TestAddClientUser(t *testing.T) {
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
 
-	// Create user with exist email
-	// Should return BadRequest error
+	// Trying to create user with exist email
+	// Should return an error
 	r.POST("/clients/"+clientID+"/users").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -55,7 +53,7 @@ func TestAddClientUser(t *testing.T) {
 		}).
 
 	// Trying to create user with already existing email
-	// Must return an error
+	// Should return an error
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
 			errorValue, _ := jsonparser.GetString(data, "error")
@@ -64,7 +62,7 @@ func TestAddClientUser(t *testing.T) {
 		})
 
 	// Trying to create user with invalid email
-	// Should return BadRequest error
+	// Should return an error
 	r.POST("/clients/"+clientID+"/users").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -101,16 +99,13 @@ func TestGetClientUsers(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
-			var result response.GetClientUser
-			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
 	// Trying to get users on broken URI
-	// Must return an error
-	clientID += "1"
-	r.GET("/clients/"+clientID+"/users?limit=5").
+	// Should return an error
+
+	r.GET("/clients/"+"qwerty"+"/users?limit=5").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -139,7 +134,7 @@ func TestDeleteClientUsers(t *testing.T) {
 	var userID string
 
 	//	Trying to create new client user
-	// Should be success
+	//  Should be success
 	r.POST("/clients/"+clientID+"/users").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -157,8 +152,8 @@ func TestDeleteClientUsers(t *testing.T) {
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
 
-		// Delete client simple user
-		// Must be success
+	// Trying to delete client simple user
+	// Should be success
 	r.DELETE("/clients/"+clientID+"/users/"+userID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -185,7 +180,7 @@ func TestDeleteClientUsers(t *testing.T) {
 		})
 
 	// Trying to delete SUPER USER
-	// Must return error
+	// Should return an error
 	r.DELETE("/clients/"+clientID+"/users/"+result.ID.String()).
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -239,5 +234,20 @@ func TestUpdateClientUser(t *testing.T) {
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
+		})
+	// Trying to change email to invalid
+	//Should return an error
+	r.PUT("/clients/"+clientID+"/users/"+userID).
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		SetJSON(gofight.D{
+			"email": "newCoolNamedas",
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			data := []byte(r.Body.String())
+			errorValue, _ := jsonparser.GetString(data, "error")
+			assert.Equal(t, http.StatusBadRequest, r.Code)
+			assert.Equal(t, "email is not valid", errorValue)
 		})
 }
