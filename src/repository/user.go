@@ -73,7 +73,6 @@ func (ur UserRepo) GetByID(id string) (domain.UserClientCatering, error) {
 			Where("u.id = ?", id).
 			Scan(&user)
 	}
-
 	return user, err
 }
 

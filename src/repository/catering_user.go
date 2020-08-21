@@ -9,7 +9,6 @@ import (
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/src/types"
-	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"github.com/jinzhu/gorm"
 )
 
@@ -75,7 +74,7 @@ func (cur *CateringUserRepo) Get(cateringID string, pagination types.PaginationQ
 		Limit(limit).
 		Offset((page-1)*limit).
 		Table("users as u").
-		Select("u.*").
+		Select("u.*, c.id as catering_id, c.name as catering_name").
 		Joins("left join catering_users cu on cu.user_id = u.id").
 		Joins("left join caterings c on c.id = cu.catering_id").
 		Where("cu.catering_id = ? AND (first_name || last_name) ILIKE ?"+
@@ -119,9 +118,6 @@ func (cur *CateringUserRepo) Delete(cateringID, ctxUserRole string, user domain.
 }
 
 func (cur *CateringUserRepo) Update(user *domain.User) (int, error) {
-	var prevUser domain.User
-	userStatus := utils.DerefString(user.Status)
-
 	if userExist := config.DB.
 		Where("id = ? AND email = ?", user.ID, user.Email).
 		Find(&domain.User{}).
@@ -134,13 +130,6 @@ func (cur *CateringUserRepo) Update(user *domain.User) (int, error) {
 		}
 	}
 
-	config.DB.
-		Unscoped().
-		Model(&domain.User{}).
-		Find(&prevUser).
-		Where("AND users.id = ? AND (users.deleted_at > ? OR users.deleted_at IS NULL)",
-			user.ID, time.Now())
-
 	if err := config.DB.
 		Unscoped().
 		Model(&domain.User{}).
@@ -151,18 +140,6 @@ func (cur *CateringUserRepo) Update(user *domain.User) (int, error) {
 			return http.StatusNotFound, errors.New("user not found")
 		}
 		return http.StatusBadRequest, err
-	}
-
-	prevUserStatus := utils.DerefString(prevUser.Status)
-	if userStatus == types.StatusTypesEnum.Active && prevUserStatus == types.StatusTypesEnum.Deleted {
-		config.DB.
-			Unscoped().
-			Model(&domain.User{}).
-			Update(user).
-			Update(map[string]interface{}{
-				"DeletedAt": user.DeletedAt,
-			}).
-			Where("(users.deleted_at > ? OR users.deleted_at IS NULL)", time.Now())
 	}
 	return 0, nil
 }

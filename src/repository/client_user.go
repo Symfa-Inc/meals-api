@@ -9,7 +9,6 @@ import (
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/src/types"
-	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"github.com/jinzhu/gorm"
 )
 
@@ -73,7 +72,7 @@ func (cur *ClientUserRepo) Get(clientID, userRole string, pagination types.Pagin
 		Limit(limit).
 		Offset((page-1)*limit).
 		Table("users as u").
-		Select("u.*, cu.floor").
+		Select("u.*, cu.floor, c.id as client_id, c.name as client_name").
 		Joins("left join client_users cu on cu.user_id = u.id").
 		Joins("left join clients c on c.id = cu.client_id").
 		Where("cu.client_id = ?"+userConditional+" AND (first_name || last_name) ILIKE ?"+
@@ -119,9 +118,6 @@ func (cur *ClientUserRepo) Delete(clientID, ctxUserRole string, user domain.User
 }
 
 func (cur *ClientUserRepo) Update(user *domain.User, floor *int) (int, error) {
-	var prevUser domain.User
-	userStatus := utils.DerefString(user.Status)
-
 	if userExist := config.DB.
 		Where("id = ? AND email = ?", user.ID, user.Email).
 		Find(&domain.User{}).
@@ -133,13 +129,6 @@ func (cur *ClientUserRepo) Update(user *domain.User, floor *int) (int, error) {
 			return http.StatusBadRequest, errors.New("user with this email already exists")
 		}
 	}
-
-	config.DB.
-		Unscoped().
-		Model(&domain.User{}).
-		Find(&prevUser).
-		Where("AND users.id = ? AND (users.deleted_at > ? OR users.deleted_at IS NULL)",
-			user.ID, time.Now())
 
 	if err := config.DB.
 		Unscoped().
@@ -160,16 +149,5 @@ func (cur *ClientUserRepo) Update(user *domain.User, floor *int) (int, error) {
 				user.ID, time.Now())
 	}
 
-	prevUserStatus := utils.DerefString(prevUser.Status)
-	if userStatus == types.StatusTypesEnum.Active && prevUserStatus == types.StatusTypesEnum.Deleted {
-		config.DB.
-			Unscoped().
-			Model(&domain.User{}).
-			Update(user).
-			Update(map[string]interface{}{
-				"DeletedAt": user.DeletedAt,
-			}).
-			Where("(users.deleted_at > ? OR users.deleted_at IS NULL)", time.Now())
-	}
 	return 0, nil
 }
