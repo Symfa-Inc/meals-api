@@ -20,7 +20,7 @@ func TestAddCateringUser(t *testing.T) {
 	var userRepo = repository.NewUserRepo()
 	userResult, _ := userRepo.GetByKey("email", "marianafox@comcubine.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
-	cateringResult, _:= cateringRepo.GetByKey("name", "Twiist")
+	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
 
 	// Trying to create new Catering user
@@ -30,9 +30,9 @@ func TestAddCateringUser(t *testing.T) {
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"email": "d.novikov@wellyes.ru",
+			"email":     "d.novikov@wellyes.ru",
 			"firstName": "Dmitry",
-			"lastName": "Novikov",
+			"lastName":  "Novikov",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusCreated, r.Code)
@@ -45,9 +45,9 @@ func TestAddCateringUser(t *testing.T) {
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"email": "alineglenn/.omcubine.com",
+			"email":     "alineglenn/.omcubine.com",
 			"firstName": "ExampleFName",
-			"lastName": "ExampleLName",
+			"lastName":  "ExampleLName",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
@@ -61,9 +61,9 @@ func TestAddCateringUser(t *testing.T) {
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"email": "admin@meals.com",
+			"email":     "admin@meals.com",
 			"firstName": "ExampleFName",
-			"lastName": "ExampleLName",
+			"lastName":  "ExampleLName",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
@@ -80,7 +80,7 @@ func TestGetCateringUsers(t *testing.T) {
 	var userRepo = repository.NewUserRepo()
 	userResult, _ := userRepo.GetByKey("email", "marianafox@comcubine.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
-	cateringResult, _:= cateringRepo.GetByKey("name", "Twiist")
+	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
 
 	// Trying to get all users
@@ -98,7 +98,7 @@ func TestGetCateringUsers(t *testing.T) {
 
 	// Trying to get users on broken URI
 	// Should return an error
-	r.GET("/caterings/"+"qwerty"+"/users?limit=5").
+	r.GET("/caterings/qwerty/users?limit=5").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -117,7 +117,7 @@ func TestDeleteCateringUsers(t *testing.T) {
 	var userRepo = repository.NewUserRepo()
 	userResult, _ := userRepo.GetByKey("email", "marianafox@comcubine.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
-	cateringResult, _:= cateringRepo.GetByKey("name", "Twiist")
+	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
 	user, _ := userRepo.GetByKey("email", "user2@meals.com")
 	userID := user.ID.String()

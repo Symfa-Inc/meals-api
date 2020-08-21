@@ -52,8 +52,8 @@ func TestAddClientUser(t *testing.T) {
 			"role":      "User",
 		}).
 
-	// Trying to create user with already existing email
-	// Should return an error
+		// Trying to create user with already existing email
+		// Should return an error
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
 			errorValue, _ := jsonparser.GetString(data, "error")
@@ -105,7 +105,7 @@ func TestGetClientUsers(t *testing.T) {
 	// Trying to get users on broken URI
 	// Should return an error
 
-	r.GET("/clients/"+"qwerty"+"/users?limit=5").
+	r.GET("/clients/qwerty/users?limit=5").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
