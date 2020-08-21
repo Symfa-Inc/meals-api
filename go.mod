@@ -7,6 +7,10 @@ require (
 	github.com/appleboy/gin-jwt/v2 v2.6.4
 	github.com/appleboy/gofight/v2 v2.1.2
 	github.com/buger/jsonparser v1.0.0
+	github.com/cosmtrek/air v1.21.2 // indirect
+	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
+	github.com/creack/pty v1.1.11 // indirect
+	github.com/fatih/color v1.9.0 // indirect
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/static v0.0.0-20200815103939-31fb0c56a3d1
 	github.com/gin-gonic/gin v1.6.3
@@ -14,23 +18,27 @@ require (
 	github.com/go-openapi/swag v0.19.9 // indirect
 	github.com/go-playground/validator/v10 v10.3.0 // indirect
 	github.com/golang/protobuf v1.4.2 // indirect
+	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jinzhu/now v1.1.1
 	github.com/joho/godotenv v1.3.0
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/lib/pq v1.8.0 // indirect
-	github.com/mailru/easyjson v0.7.3 // indirect
+	github.com/mailru/easyjson v0.7.6 // indirect
+	github.com/mattn/go-colorable v0.1.7 // indirect
+	github.com/pelletier/go-toml v1.8.0 // indirect
 	github.com/robfig/cron v1.2.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.5.1
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.7
+	github.com/urfave/cli/v2 v2.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de
 	golang.org/x/net v0.0.0-20200813134508-3edf25e44fcc // indirect
-	golang.org/x/sys v0.0.0-20200817085935-3ff754bf58a9 // indirect
-	golang.org/x/tools v0.0.0-20200817023811-d00afeaade8f // indirect
+	golang.org/x/sys v0.0.0-20200820212457-1fb795427249 // indirect
+	golang.org/x/tools v0.0.0-20200820180210-c8f393745106 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 )

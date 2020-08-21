@@ -17,7 +17,7 @@ import (
 func TestAddCatering(t *testing.T) {
 	r := gofight.New()
 
-    userRepo := repository.NewUserRepo()
+	userRepo := repository.NewUserRepo()
 	cateringName := "newcatering"
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})

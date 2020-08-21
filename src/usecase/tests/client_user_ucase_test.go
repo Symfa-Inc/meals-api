@@ -106,6 +106,9 @@ func TestGetClientUsers(t *testing.T) {
 			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
+
+	// Trying to get users on broken URI
+	// Must return an error
 	clientID += "1"
 	r.GET("/clients/"+clientID+"/users?limit=5").
 		SetCookie(gofight.H{
