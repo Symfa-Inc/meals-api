@@ -171,4 +171,18 @@ func TestUpdateClientUsers(t *testing.T) {
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
+
+	r.PUT("/caterings/"+cateringID+"/users/"+userID).
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		SetJSON(gofight.D{
+			"email": "newCoolNamedas",
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			data := []byte(r.Body.String())
+			errorValue, _ := jsonparser.GetString(data, "error")
+			assert.Equal(t, http.StatusBadRequest, r.Code)
+			assert.Equal(t, "email is not valid", errorValue)
+		})
 }

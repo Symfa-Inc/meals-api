@@ -224,7 +224,7 @@ func (cu *ClientUser) Update(c *gin.Context) { //nolint:dupl
 		return
 	}
 
-	if user.Email != "" {
+	if body.Email != "" {
 		if ok := utils.IsEmailValid(user.Email); !ok {
 			utils.CreateError(http.StatusBadRequest, "email is not valid", c)
 			return

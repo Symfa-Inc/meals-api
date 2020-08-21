@@ -373,6 +373,7 @@ definitions:
     properties:
       client:
         $ref: '#/definitions/response.ClientInfo'
+        type: object
       ordersDishes:
         type: string
       total:
@@ -451,10 +452,12 @@ definitions:
         type: string
       summary:
         $ref: '#/definitions/response.SummaryOrder'
+        type: object
       summaryTotal:
         type: integer
       userOrders:
         $ref: '#/definitions/response.SummaryUserOrder'
+        type: object
     type: object
   response.SummaryUserOrder:
     properties:
