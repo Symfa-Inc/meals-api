@@ -32,6 +32,7 @@ var categoryRepo = repository.NewCategoryRepo()
 // @Accept json
 // @Tags catering categories
 // @Param id path string true "Catering ID"
+// @Param clientId path string true "Client ID"
 // @Param body body request.AddCategory false "Category Name"
 // @Success 200 {object} domain.Category false "category object"
 // @Failure 400 {object} types.Error "Error"
@@ -48,17 +49,10 @@ func (dc Category) Add(c *gin.Context) {
 		return
 	}
 
-	if body.DeletedAt != nil {
-		if body.DeletedAt.Sub(time.Now()).Hours() < 0 {
-			utils.CreateError(http.StatusBadRequest, "can't create dish category with already passed deletedAt date", c)
-			return
-		}
-	}
-
 	cateringID, _ := uuid.FromString(path.ID)
 	clientID, _ := uuid.FromString(path.ClientID)
 	category := domain.Category{
-		DeletedAt:  body.DeletedAt,
+		Date:       body.Date,
 		Name:       strings.ToLower(body.Name),
 		CateringID: cateringID,
 		ClientID:   clientID,

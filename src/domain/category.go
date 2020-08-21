@@ -1,30 +1,17 @@
 package domain
 
 import (
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
-	"time"
 )
-
-// CategoryBase struct without deletedAt
-type CategoryBase struct {
-	ID        uuid.UUID `gorm:"type:uuid;" json:"id"`
-	CreatedAt time.Time `json:"-"`
-	UpdatedAt time.Time `json:"-"`
-}
-
-// BeforeCreate func which generates uuid v4 for each inserted row
-func (base *CategoryBase) BeforeCreate(scope *gorm.Scope) error {
-	uuidv4 := uuid.NewV4()
-	return scope.SetColumn("ID", uuidv4)
-}
 
 // Category struct
 type Category struct {
-	CategoryBase
-	DeletedAt  *time.Time `sql:"index" json:"deletedAt"`
+	Base
+	Date       *time.Time `json:"date"`
 	Name       string     `gorm:"type:varchar(30);not null" json:"name" binding:"required"`
 	CateringID uuid.UUID  `json:"-"`
 	ClientID   uuid.UUID  `json:"clientId"`
