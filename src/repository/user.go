@@ -5,6 +5,8 @@ import (
 
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 )
@@ -46,15 +48,31 @@ func (ur UserRepo) GetByID(id string) (domain.UserClientCatering, error) {
 	var user domain.UserClientCatering
 	err := config.DB.
 		Table("users as u").
-		Select("u.*, cl.id as client_id, cl.name as client_name, c.name as catering_name, c.id as catering_id, clu.floor").
-		Joins("left join catering_users cu on cu.user_id = u.id").
-		Joins("left join caterings c on c.id = cu.catering_id").
-		Joins("left join client_users clu on clu.user_id = u.id ").
-		Joins("left join clients cl on cl.id = clu.client_id ").
+		Select("u.*").
 		Where("u.id = ?", id).
 		Scan(&user).
 		Error
 
+	company := utils.DerefString(user.CompanyType)
+
+	if company == types.CompanyTypesEnum.Catering {
+		config.DB.
+			Table("users as u").
+			Select("c.id as catering_id, c.name as catering_name").
+			Joins("left join catering_users cu on cu.user_id = u.id").
+			Joins("left join caterings c on c.id = cu.catering_id").
+			Where("u.id = ?", id).
+			Scan(&user)
+	} else if company == types.CompanyTypesEnum.Client {
+		config.DB.
+			Table("users as u").
+			Select("cl.id as client_id, cl.name as client_name, c.name as catering_name, c.id as catering_id, clu.floor").
+			Joins("left join client_users clu on clu.user_id = u.id ").
+			Joins("left join clients cl on cl.id = clu.client_id ").
+			Joins("left join caterings c on c.id = cl.catering_id").
+			Where("u.id = ?", id).
+			Scan(&user)
+	}
 	return user, err
 }
 

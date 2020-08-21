@@ -210,22 +210,25 @@ func (cu *CateringUser) Delete(c *gin.Context) {
 // @Router /caterings/{id}/users/{userId} [put]
 func (cu *CateringUser) Update(c *gin.Context) { //nolint:dupl
 	var path types.PathUser
+	var body request.CateringUserUpdate
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	if err := utils.RequestBinderBody(&user, c); err != nil {
+	if err := utils.RequestBinderBody(&body, c); err != nil {
 		return
 	}
 
 	if user.Email != "" {
-		if ok := utils.IsEmailValid(user.Email); !ok {
+		if ok := utils.IsEmailValid(body.Email); !ok {
 			utils.CreateError(http.StatusBadRequest, "email is not valid", c)
 			return
 		}
 	}
+
+	copier.Copy(&user, &body)
 
 	parsedUserID, _ := uuid.FromString(path.UserID)
 	user.CompanyType = &types.CompanyTypesEnum.Catering
