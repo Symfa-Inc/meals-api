@@ -103,10 +103,7 @@ func TestGetCateringUsers(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
-			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
-			assert.Equal(t, "pq: invalid input syntax for type uuid: \""+cateringID+"\"", errorValue)
 		})
 }
 
