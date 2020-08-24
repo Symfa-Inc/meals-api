@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"fmt"
 	"github.com/Aiscom-LLC/meals-api/src/delivery"
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
@@ -22,7 +21,7 @@ func TestAddAddress(t *testing.T) {
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()
 
-	// Trying to creat new address
+	// Trying to create new address
 	// Should be success
 	r.POST("/clients/"+clientID+"/addresses").
 		SetCookie(gofight.H{
@@ -38,8 +37,8 @@ func TestAddAddress(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
-	// Trying to creat new address with invalid or not full data
-	// Should return an error
+	// Trying to create new address with invalid or not full data
+	// Should be either invalid data or something like "with not all fields filled"
 	r.POST("/clients/"+clientID+"/addresses").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -51,7 +50,7 @@ func TestAddAddress(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 
-	// Trying to creat new address on non-valid client ID
+	// Trying to create new address with non-valid
 	// Should return an error
 	r.POST("/clients/qwerty/addresses").
 		SetCookie(gofight.H{
@@ -67,12 +66,9 @@ func TestAddAddress(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 
-	// Trying to creat new address without authorize
+	// Trying to create new address without authorize
 	// Should return an error
 	r.POST("/clients/qwerty/addresses").
-		SetCookie(gofight.H{
-			"jwt": "jwt",
-		}).
 		SetJSON(gofight.D{
 			"city":   "Sochi",
 			"street": "Gagar",
@@ -120,9 +116,6 @@ func TestGetAddress(t *testing.T) {
 	// Trying to get list of addresses without authorize
 	// Should return an error
 	r.GET("/clients/qwwerty/addresses").
-		SetCookie(gofight.H{
-			"jwt": "qwert",
-		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusUnauthorized, r.Code)
 		})
@@ -142,7 +135,7 @@ func TestDeleteAddress(t *testing.T) {
 	var addressID string
 	var addressID2 string
 
-	// Trying to creat 2 new address
+	// Trying to create 2 new address
 	// Should be success
 	r.POST("/clients/"+clientID+"/addresses").
 		SetCookie(gofight.H{
@@ -226,7 +219,7 @@ func TestUpdateAddress(t *testing.T) {
 	simpleJwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{simpleUser.ID.String()})
 	var addressID string
 
-	// Trying to creat new address
+	// Trying to create new address
 	// Should be success
 	r.POST("/clients/"+clientID+"/addresses").
 		SetCookie(gofight.H{
@@ -257,9 +250,7 @@ func TestUpdateAddress(t *testing.T) {
 			"street": "stridasng",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			fmt.Println(r.Body.String())
 			assert.Equal(t, http.StatusOK, r.Code)
-
 		})
 
 	// Trying to change invalid data for address
@@ -297,7 +288,7 @@ func TestUpdateAddress(t *testing.T) {
 			assert.Equal(t, "no permissions", errorValue)
 		})
 
-	// Trying to change data for address which not found
+	// Trying to update address which doesn't exist
 	// Should return an error
 	r.PUT("/clients/"+clientID+"/addresses/qwerty").
 		SetCookie(gofight.H{
@@ -313,12 +304,9 @@ func TestUpdateAddress(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 
-	// Trying to change data for address without authorize
+	// Trying to change data for address without authorization
 	// Should return an error
 	r.PUT("/clients/"+clientID+"/addresses/"+addressID).
-		SetCookie(gofight.H{
-			"jwt": "jwt",
-		}).
 		SetJSON(gofight.D{
 			"citdy":   "stdasg",
 			"flodor":  1,
