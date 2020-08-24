@@ -158,7 +158,7 @@ func (cl Client) Get(c *gin.Context) {
 
 	id := claims["id"].(string)
 
-	cateringUser, err := cateringUserRepo.GetByKey("user_id", id)
+	cateringUser, _ := cateringUserRepo.GetByKey("user_id", id)
 	user, err := userRepo.GetByID(id)
 
 	if err != nil {

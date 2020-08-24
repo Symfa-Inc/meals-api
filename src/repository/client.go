@@ -193,7 +193,7 @@ func (c ClientRepo) Delete(id string) error {
 func (c ClientRepo) Update(id string, client domain.Client) (int, error) {
 	if clientExist := config.DB.
 		Where("name = ? AND id = ?", client.Name, id).
-		Find(&client).
+		Find(&domain.Client{}).
 		RowsAffected; clientExist == 0 {
 		if nameExist := config.DB.
 			Where("name = ?", client.Name).

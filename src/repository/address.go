@@ -64,7 +64,6 @@ func (a AddressRepo) Delete(path types.PathAddress) error {
 // Update updates entity
 // returns error or nil and status code
 func (a AddressRepo) Update(path types.PathAddress, address domain.Address) (domain.Address, error) {
-
 	if err := config.DB.Model(&address).
 		Where("id = ? AND client_id = ?", path.AddressID, path.ID).
 		Update(&address).
