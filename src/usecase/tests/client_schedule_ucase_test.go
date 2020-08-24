@@ -14,19 +14,19 @@ import (
 	"testing"
 )
 
-func TestGetCateringSchedules(t *testing.T) {
+func TestGetClientSchedules(t *testing.T) {
 	r := gofight.New()
 
 	var userRepo = repository.NewUserRepo()
-	var cateringRepo = repository.NewCateringRepo()
+	var cateringRepo = repository.NewClientRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
-	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-	cateringID := cateringResult.ID.String()
+	clientResult, _ := cateringRepo.GetByKey("name", "Dymi")
+	clientID := clientResult.ID.String()
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 
 	// Trying to get list of schedules
 	// Should be success
-	r.GET("/caterings/"+cateringID+"/schedules").
+	r.GET("/clients/"+clientID+"/schedules").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -34,9 +34,9 @@ func TestGetCateringSchedules(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
-	// Trying to get list of schedules with non-valid catering id
+	// Trying to get list of schedules with non-valid client id
 	// Should throw an error
-	r.GET("/caterings/qwerty/schedules").
+	r.GET("/clients/+clientID/schedules").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -47,7 +47,7 @@ func TestGetCateringSchedules(t *testing.T) {
 	// Trying to get list of schedules with non-existing catering id
 	// Should throw an error
 	fakeID := uuid.NewV4()
-	r.GET("/caterings/"+fakeID.String()+"/schedules").
+	r.GET("/clients/"+fakeID.String()+"/schedules").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -56,21 +56,21 @@ func TestGetCateringSchedules(t *testing.T) {
 		})
 }
 
-func TestUpdateCateringSchedule(t *testing.T) {
+func TestUpdateClientSchedule(t *testing.T) {
 	r := gofight.New()
 
 	var userRepo = repository.NewUserRepo()
-	var cateringRepo = repository.NewCateringRepo()
+	var cateringRepo = repository.NewClientRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
-	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-	cateringID := cateringResult.ID.String()
+	clientResult, _ := cateringRepo.GetByKey("name", "Dymi")
+	clientID := clientResult.ID.String()
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
-	var result []domain.CateringSchedule
+	var result []domain.ClientSchedule
 	var scheduleID string
 
 	// Trying to get list of schedules
 	// Should be success
-	r.GET("/caterings/"+cateringID+"/schedules").
+	r.GET("/clients/"+clientID+"/schedules").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -84,7 +84,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 
 	// Trying to update existing schedule
 	// Should be success
-	r.PUT("/caterings/"+cateringID+"/schedules/"+scheduleID).
+	r.PUT("/clients/"+clientID+"/schedules/"+scheduleID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -99,12 +99,12 @@ func TestUpdateCateringSchedule(t *testing.T) {
 
 	// Trying to update existing schedule with wrong start date
 	// Should throw an error
-	r.PUT("/caterings/"+cateringID+"/schedules/"+scheduleID).
+	r.PUT("/clients/"+clientID+"/schedules/"+scheduleID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"start": "16:00",
+			"start": "19:00",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
@@ -115,28 +115,30 @@ func TestUpdateCateringSchedule(t *testing.T) {
 
 	// Trying to update existing schedule with wrong end date
 	// Should throw an error
-	r.PUT("/caterings/"+cateringID+"/schedules/"+scheduleID).
+	r.PUT("/clients/"+clientID+"/schedules/"+scheduleID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"end": "11:00",
+			"end": "19:00",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
-			assert.Equal(t, "end date can't be earlier than start date", errorValue)
+			assert.Equal(t, "new end time can't be later than catering's end time", errorValue)
 		})
 
-	// Trying to update schedule with non-valid catering id
+	// Trying to update schedule with non-valid client id
 	// Should throw an error
-	r.PUT("/caterings/qwerty/schedules/"+scheduleID).
+	r.PUT("/clients/+clientID+/schedules/"+scheduleID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"end": "12:00",
+			"isWorking": false,
+			"start":     "12:00",
+			"end":       "14:00",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
@@ -145,46 +147,50 @@ func TestUpdateCateringSchedule(t *testing.T) {
 	// Trying to update schedule with non-existing catering id
 	// Should throw an error
 	fakeID := uuid.NewV4()
-	r.PUT("/caterings/"+fakeID.String()+"/schedules/"+scheduleID).
+	r.PUT("/clients/"+fakeID.String()+"/schedules/"+scheduleID).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"end": "12:00",
+			"isWorking": false,
+			"start":     "12:00",
+			"end":       "14:00",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
-			assert.Equal(t, "catering with that id not found", errorValue)
+			assert.Equal(t, "client with that id not found", errorValue)
 		})
 
 	// Trying to update schedule with non-existing schedule id
 	// Should throw an error
-	r.PUT("/caterings/"+cateringID+"/schedules/"+fakeID.String()).
+	r.PUT("/clients/"+clientID+"/schedules/+scheduleID").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"end": "12:00",
+			"isWorking": false,
+			"start":     "12:00",
+			"end":       "14:00",
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusBadRequest, r.Code)
+		})
+
+	r.PUT("/clients/"+clientID+"/schedules/"+fakeID.String()).
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		SetJSON(gofight.D{
+			"isWorking": false,
+			"start":     "12:00",
+			"end":       "14:00",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
-			assert.Equal(t, "schedule with that id not found", errorValue)
-		})
-
-	// Trying to update schedule with non-valid schedule id
-	// Should throw an error
-	r.PUT("/caterings/"+cateringID+"/schedules/qwerty").
-		SetCookie(gofight.H{
-			"jwt": jwt,
-		}).
-		SetJSON(gofight.D{
-			"end": "12:00",
-		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			assert.Equal(t, http.StatusBadRequest, r.Code)
+			assert.Equal(t, "client schedule with that id not found", errorValue)
 		})
 }
