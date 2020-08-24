@@ -65,19 +65,6 @@ func TestAddAddress(t *testing.T) {
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
-
-	// Trying to create new address without authorize
-	// Should return an error
-	r.POST("/clients/qwerty/addresses").
-		SetJSON(gofight.D{
-			"city":   "Sochi",
-			"street": "Gagar",
-			"house":  "31",
-			"floor":  2,
-		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			assert.Equal(t, http.StatusUnauthorized, r.Code)
-		})
 }
 
 func TestGetAddress(t *testing.T) {
@@ -111,13 +98,6 @@ func TestGetAddress(t *testing.T) {
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "client with that ID is not found", errorValue)
-		})
-
-	// Trying to get list of addresses without authorize
-	// Should return an error
-	r.GET("/clients/qwwerty/addresses").
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			assert.Equal(t, http.StatusUnauthorized, r.Code)
 		})
 }
 
@@ -302,21 +282,5 @@ func TestUpdateAddress(t *testing.T) {
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
-		})
-
-	// Trying to change data for address without authorization
-	// Should return an error
-	r.PUT("/clients/"+clientID+"/addresses/"+addressID).
-		SetJSON(gofight.D{
-			"citdy":   "stdasg",
-			"flodor":  1,
-			"houdse":  "sdsring",
-			"stdreet": "stridasng",
-		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
-			errorValue, _ := jsonparser.GetString(data, "message")
-			assert.Equal(t, http.StatusUnauthorized, r.Code)
-			assert.Equal(t, "token contains an invalid number of segments", errorValue)
 		})
 }
