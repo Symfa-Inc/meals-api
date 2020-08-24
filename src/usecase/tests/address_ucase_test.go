@@ -130,7 +130,7 @@ func TestDeleteAddress(t *testing.T) {
 	clientID := clientResult.ID.String()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	simpleUser, _ := userRepo.GetByKey("email", "user1@meals.com")
-	simpleJwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{simpleUser.ID.String()})
+	userJWT, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{simpleUser.ID.String()})
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 	var addressID string
 	var addressID2 string
@@ -179,7 +179,7 @@ func TestDeleteAddress(t *testing.T) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 
-	// Trying to delete not found address
+	// Trying to delete non-existing address
 	// Should return an error
 	r.DELETE("/clients/"+clientID+"/addresses/qwewr").
 		SetCookie(gofight.H{
@@ -192,11 +192,11 @@ func TestDeleteAddress(t *testing.T) {
 			assert.Equal(t, "address not found", errorValue)
 		})
 
-	// Trying to delete address by simple user
+	// Trying to delete address by user without permissions
 	// Should return an error
 	r.DELETE("/clients/"+clientID+"/addresses/"+addressID2).
 		SetCookie(gofight.H{
-			"jwt": simpleJwt,
+			"jwt": userJWT,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
@@ -216,7 +216,7 @@ func TestUpdateAddress(t *testing.T) {
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()
 	simpleUser, _ := userRepo.GetByKey("email", "user1@meals.com")
-	simpleJwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{simpleUser.ID.String()})
+	userJWT, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{simpleUser.ID.String()})
 	var addressID string
 
 	// Trying to create new address
@@ -269,11 +269,11 @@ func TestUpdateAddress(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 
-	// Trying to change data for address by simple user
+	// Trying to change data for address by user without permissions
 	// Should return an error
 	r.PUT("/clients/"+clientID+"/addresses/"+addressID).
 		SetCookie(gofight.H{
-			"jwt": simpleJwt,
+			"jwt": userJWT,
 		}).
 		SetJSON(gofight.D{
 			"citdy":   "stdasg",
