@@ -37,8 +37,8 @@ func TestAddAddress(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
-	// Trying to create new address with invalid or not full data
-	// Should be either invalid data or something like "with not all fields filled"
+	// Trying to create new address with invalid data
+	// Should return an error
 	r.POST("/clients/"+clientID+"/addresses").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -253,7 +253,7 @@ func TestUpdateAddress(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
-	// Trying to change invalid data for address
+	// Trying to change address with invalid data
 	// Should return an error
 	r.PUT("/clients/"+clientID+"/addresses/"+addressID).
 		SetCookie(gofight.H{
