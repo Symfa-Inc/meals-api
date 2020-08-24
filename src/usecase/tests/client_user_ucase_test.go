@@ -38,7 +38,7 @@ func TestAddClientUser(t *testing.T) {
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
 
-	// Trying to create user with exist email
+	// Trying to create user with already existing email
 	// Should return an error
 	r.POST("/clients/"+clientID+"/users").
 		SetCookie(gofight.H{
@@ -51,9 +51,6 @@ func TestAddClientUser(t *testing.T) {
 			"lastName":  "NewLast_Name",
 			"role":      "User",
 		}).
-
-		// Trying to create user with already existing email
-		// Should return an error
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
 			errorValue, _ := jsonparser.GetString(data, "error")
@@ -92,8 +89,8 @@ func TestGetClientUsers(t *testing.T) {
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()
 
-	//Trying to get list of users
-	//Should be success
+	// Trying to get list of users
+	// Should be success
 	r.GET("/clients/"+clientID+"/users?limit=5").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -102,9 +99,8 @@ func TestGetClientUsers(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
-	// Trying to get users on broken URI
+	// Trying to get user with non-valid catering ID
 	// Should return an error
-
 	r.GET("/clients/qwerty/users?limit=5").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -123,15 +119,14 @@ func TestDeleteClientUsers(t *testing.T) {
 	admin1, _ := userRepo.GetByKey("email", "marianafox@comcubine.com")
 	admin2, _ := userRepo.GetByKey("email", "maggietodd@comcubine.com")
 	clientAdmin, _ := userRepo.GetByKey("email", "melodybond@comcubine.com")
-
 	adminJWT, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{clientAdmin.ID.String()})
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()
 	var userID string
 
-	//	Trying to create new client user
-	//  Should be success
+	// Trying to create new client user
+	// Should be success
 	r.POST("/clients/"+clientID+"/users").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -168,6 +163,7 @@ func TestDeleteClientUsers(t *testing.T) {
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
+
 	r.DELETE("/clients/"+clientID+"/users/"+admin2.ID.String()).
 		SetCookie(gofight.H{
 			"jwt": adminJWT,
@@ -201,7 +197,7 @@ func TestUpdateClientUser(t *testing.T) {
 	clientID := clientResult.ID.String()
 	var userID string
 
-	//	Trying to create new client user
+	// Trying to create new client user
 	// Should be success
 	r.POST("/clients/"+clientID+"/users").
 		SetCookie(gofight.H{
@@ -232,8 +228,9 @@ func TestUpdateClientUser(t *testing.T) {
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
+
 	// Trying to change email to invalid
-	//Should return an error
+	// Should return an error
 	r.PUT("/clients/"+clientID+"/users/"+userID).
 		SetCookie(gofight.H{
 			"jwt": jwt,

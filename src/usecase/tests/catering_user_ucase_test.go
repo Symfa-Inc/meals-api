@@ -96,7 +96,7 @@ func TestGetCateringUsers(t *testing.T) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
-	// Trying to get users on broken URI
+	// Trying to get user with non-valid catering ID
 	// Should return an error
 	r.GET("/caterings/qwerty/users?limit=5").
 		SetCookie(gofight.H{
