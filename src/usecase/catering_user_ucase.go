@@ -67,7 +67,7 @@ func (cu *CateringUser) Add(c *gin.Context) {
 	password := utils.GenerateString(10)
 	user.Password = utils.HashString(password)
 
-	existingUser, err := userRepo.GetByKey("email", user.Email)
+	existingUsers, err := userRepo.GetAllByKey("email", user.Email)
 
 	if gorm.IsRecordNotFoundError(err) {
 		userResult, userErr := userRepo.Add(user)
@@ -99,10 +99,39 @@ func (cu *CateringUser) Add(c *gin.Context) {
 		return
 	}
 
-	if existingUser.ID != uuid.Nil {
-		utils.CreateError(http.StatusBadRequest, "user with that email already exists", c)
+	for i := range existingUsers {
+		if *existingUsers[i].Status != types.StatusTypesEnum.Deleted {
+			utils.CreateError(http.StatusBadRequest, "user with that email already exist", c)
+			return
+		}
+	}
+	user, userErr := userRepo.Add(user)
+
+	cateringUser := domain.CateringUser{
+		UserID:     user.ID,
+		CateringID: parsedID,
+	}
+
+	if err := cateringUserRepo.Add(cateringUser); err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}
+
+	userClientCatering, err := userRepo.GetByID(user.ID.String())
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	if userErr != nil {
+		utils.CreateError(http.StatusBadRequest, userErr.Error(), c)
+		return
+	}
+
+	go mailer.SendEmail(user, password)
+	c.JSON(http.StatusCreated, userClientCatering)
+	return
 }
 
 // Get return list of catering users
