@@ -65,7 +65,6 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 	user.Password = utils.HashString(password)
 
 	existingUsers, err := userRepo.GetAllByKey("email", user.Email)
-	//fmt.Println(existingUsers)
 	if gorm.IsRecordNotFoundError(err) {
 		user, userErr := userRepo.Add(user)
 
