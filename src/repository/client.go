@@ -2,13 +2,12 @@ package repository
 
 import (
 	"errors"
-	"net/http"
-	"time"
-
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/src/types"
+	"net/http"
+	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -170,6 +169,7 @@ func (c ClientRepo) Get(query types.PaginationQuery, cateringID, role string) ([
 
 // Delete soft delete of client
 func (c ClientRepo) Delete(id string) error {
+	var clientUsers []domain.ClientUser
 	if clientExist := config.DB.
 		Where("id = ?", id).
 		Delete(&domain.Client{}).
@@ -178,13 +178,18 @@ func (c ClientRepo) Delete(id string) error {
 	}
 
 	config.DB.
-		Model(&domain.User{}).
-		Where("client_id = ? AND company_type = ?", id, types.CompanyTypesEnum.Client).
-		Update(map[string]interface{}{
-			"status":     types.StatusTypesEnum.Deleted,
-			"deleted_at": time.Now(),
-		})
+		Where("client_id = ?", id).
+		Find(&clientUsers)
 
+	for i := range clientUsers {
+		config.DB.
+			Model(&domain.User{}).
+			Where("id = ?", clientUsers[i].UserID).
+			Update(map[string]interface{}{
+				"status":     types.StatusTypesEnum.Deleted,
+				"deleted_at": time.Now(),
+			})
+	}
 	return nil
 }
 

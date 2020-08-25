@@ -97,6 +97,7 @@ func (c CateringRepo) GetByKey(key, value string) (domain.Catering, error) {
 // Delete soft delete of catering with passed id
 // returns error if exists
 func (c CateringRepo) Delete(id string) error {
+	var cateringUsers []domain.CateringUser
 	if cateringExist := config.DB.
 		Where("id = ?", id).
 		Delete(&domain.Catering{}).
@@ -105,13 +106,18 @@ func (c CateringRepo) Delete(id string) error {
 	}
 
 	config.DB.
-		Model(&domain.User{}).
-		Where("catering_id = ? AND company_type = ?", id, types.CompanyTypesEnum.Catering).
-		Update(map[string]interface{}{
-			"status":     types.StatusTypesEnum.Deleted,
-			"deleted_at": time.Now(),
-		})
+		Where("catering_id = ?", id).
+		Find(&cateringUsers)
 
+	for i := range cateringUsers {
+		config.DB.
+			Model(&domain.User{}).
+			Where("id = ?", cateringUsers[i].UserID).
+			Update(map[string]interface{}{
+				"status":     types.StatusTypesEnum.Deleted,
+				"deleted_at": time.Now(),
+			})
+	}
 	return nil
 }
 

@@ -48,8 +48,8 @@ func (dc CategoryRepo) Get(cateringID, clientID, date string) ([]domain.Category
 	}
 
 	err := config.DB.
-		Debug().
-		Where("catering_id = ? AND client_id = ? AND (date = ? or date IS NULL) ", cateringID, clientID, date).
+		Unscoped().
+		Where("catering_id = ? AND client_id = ? AND (date = ? or date IS NULL) AND (deleted_at > ? OR deleted_at IS NULL)", cateringID, clientID, date, date).
 		Order("created_at").
 		Find(&categories).
 		Error
@@ -71,7 +71,6 @@ func (dc CategoryRepo) GetByKey(key, value, cateringID string) (domain.Category,
 // returns gorm.DB struct with methods
 func (dc CategoryRepo) Delete(path types.PathCategory) (int, error) {
 	result := config.DB.
-		Debug().
 		Unscoped().
 		Model(&domain.Category{}).
 		Where("catering_id = ? AND id = ? AND client_id = ? AND (deleted_at > ? OR deleted_at IS NULL)", path.ID, path.CategoryID, path.ClientID, time.Now()).

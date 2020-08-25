@@ -19,17 +19,17 @@ type User struct {
 
 // UserClientCatering struct for joined catering and clients table
 type UserClientCatering struct {
-	ID           uuid.UUID `gorm:"type:uuid;" json:"id"`
-	FirstName    string    `gorm:"type:varchar(20)" json:"firstName"`
-	LastName     string    `gorm:"type:varchar(20)" json:"lastName"`
-	Email        string    `gorm:"type:varchar(30);unique;not null" json:"email"`
-	Password     string    `gorm:"type:varchar(100);not null" json:"-"`
-	CompanyType  *string   `sql:"type:company_types" gorm:"type:varchar(20);null" json:"companyType"`
+	ID           uuid.UUID `json:"id"`
+	FirstName    string    `json:"firstName"`
+	LastName     string    `json:"lastName"`
+	Email        string    `json:"email"`
+	Password     string    `json:"-"`
+	CompanyType  *string   `json:"companyType"`
 	UserCatering `json:"catering"`
 	UserClient   `json:"client"`
-	Role         string  `sql:"type:user_roles" json:"role"`
+	Role         string  `json:"role"`
 	Floor        *int    `json:"floor"`
-	Status       *string `sql:"type:status_types" gorm:"type:varchar(10);null" json:"status"`
+	Status       *string `json:"status"`
 } //@name UsersResponse
 
 type UserCatering struct {
