@@ -64,11 +64,9 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 	password := utils.GenerateString(10)
 	user.Password = utils.HashString(password)
 
-	existingUser, err := userRepo.GetByKey("email", user.Email)
-	var userStatus string
-	userStatus = *existingUser.Status
-
-	if gorm.IsRecordNotFoundError(err){
+	existingUsers, err := userRepo.GetAllByKey("email", user.Email)
+	//fmt.Println(existingUsers)
+	if gorm.IsRecordNotFoundError(err) {
 		user, userErr := userRepo.Add(user)
 
 		clientUser := domain.ClientUser{
@@ -99,24 +97,40 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 		return
 	}
 
-	// Checking for empty var, then check status and add user if status "deleted"
-	if existingUser.ID != uuid.Nil {
-		if userStatus == "deleted" {
-			user, _ := userRepo.Add(user)
-			_ = domain.ClientUser{
-				UserID:   user.ID,
-				ClientID: parsedID,
-				Floor:    body.Floor,
-			}
-			userClientCatering, _ := userRepo.GetByID(user.ID.String())
-			go mailer.SendEmail(user, password)
-			c.JSON(http.StatusCreated, userClientCatering)
+	for i := range existingUsers {
+		if *existingUsers[i].Status != types.StatusTypesEnum.Deleted {
+			utils.CreateError(http.StatusBadRequest, "user with that email already exist", c)
 			return
 		}
-		utils.CreateError(http.StatusBadRequest, "user with that email already exist", c)
+	}
+	user, userErr := userRepo.Add(user)
+
+	clientUser := domain.ClientUser{
+		UserID:   user.ID,
+		ClientID: parsedID,
+		Floor:    body.Floor,
+	}
+
+	if err := clientUserRepo.Add(clientUser); err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}
-	//status deleted
+
+	userClientCatering, err := userRepo.GetByID(user.ID.String())
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	if userErr != nil {
+		utils.CreateError(http.StatusBadRequest, userErr.Error(), c)
+		return
+	}
+
+	go mailer.SendEmail(user, password)
+	c.JSON(http.StatusCreated, userClientCatering)
+	return
 }
 
 // Get return list of client users
