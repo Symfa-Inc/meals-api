@@ -65,9 +65,10 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 	user.Password = utils.HashString(password)
 
 	existingUser, err := userRepo.GetByKey("email", user.Email)
+	var userStatus string
+	userStatus = *existingUser.Status
 
-	if gorm.IsRecordNotFoundError(err) {
-
+	if gorm.IsRecordNotFoundError(err){
 		user, userErr := userRepo.Add(user)
 
 		clientUser := domain.ClientUser{
@@ -98,10 +99,24 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 		return
 	}
 
+	// Checking for empty var, then check status and add user if status "deleted"
 	if existingUser.ID != uuid.Nil {
+		if userStatus == "deleted" {
+			user, _ := userRepo.Add(user)
+			_ = domain.ClientUser{
+				UserID:   user.ID,
+				ClientID: parsedID,
+				Floor:    body.Floor,
+			}
+			userClientCatering, _ := userRepo.GetByID(user.ID.String())
+			go mailer.SendEmail(user, password)
+			c.JSON(http.StatusCreated, userClientCatering)
+			return
+		}
 		utils.CreateError(http.StatusBadRequest, "user with that email already exist", c)
 		return
 	}
+	//status deleted
 }
 
 // Get return list of client users
