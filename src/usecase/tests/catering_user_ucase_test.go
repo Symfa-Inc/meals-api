@@ -22,8 +22,27 @@ func TestAddCateringUser(t *testing.T) {
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
+	email := "test@mail.ru"
+	var newUserID string
 
 	// Trying to create new Catering user
+	// Should be success
+	r.POST("/caterings/"+cateringResult.ID.String()+"/users").
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		SetJSON(gofight.D{
+			"email":     email,
+			"firstName": "Dmitry",
+			"lastName":  "Novikov",
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			data := []byte(r.Body.String())
+			newUserID, _ = jsonparser.GetString(data, "id")
+			assert.Equal(t, http.StatusCreated, r.Code)
+		})
+
+	// Trying to create second new Catering user
 	// Should be success
 	r.POST("/caterings/"+cateringResult.ID.String()+"/users").
 		SetCookie(gofight.H{
@@ -38,8 +57,7 @@ func TestAddCateringUser(t *testing.T) {
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
 
-	// Trying to create user which email is already exist
-	// Should return an error
+	// Trying to create user with non-valid email
 	r.POST("/caterings/"+cateringID+"/users").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -56,6 +74,8 @@ func TestAddCateringUser(t *testing.T) {
 			assert.Equal(t, "email is not valid", errorValue)
 		})
 
+	// Trying to create user which email is already exist
+	// Should be success
 	r.POST("/caterings/"+cateringID+"/users").
 		SetCookie(gofight.H{
 			"jwt": jwt,
@@ -69,7 +89,32 @@ func TestAddCateringUser(t *testing.T) {
 			data := []byte(r.Body.String())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
-			assert.Equal(t, "user with that email already exists", errorValue)
+			assert.Equal(t, "user with that email already exist", errorValue)
+		})
+
+	// Trying to delete user
+	// Should be success
+	r.DELETE("/caterings/"+cateringID+"/users/"+newUserID).
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusNoContent, r.Code)
+		})
+
+	// Trying to create new user with email which already exist but have status "deleted"
+	// Should be success
+	r.POST("/caterings/"+cateringResult.ID.String()+"/users").
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		SetJSON(gofight.D{
+			"email":     email,
+			"firstName": "Dmitry",
+			"lastName":  "Novikov",
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			assert.Equal(t, http.StatusCreated, r.Code)
 		})
 }
 
