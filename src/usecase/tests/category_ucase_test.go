@@ -107,7 +107,7 @@ func TestDeleteCategory(t *testing.T) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 
-	// Trying to delete category with non-exiting client
+	// Trying to delete category with non-existing client
 	// Should return an error
 	r.DELETE("/caterings/"+cateringID+"/clients/"+fakeID.String()+"/categories/"+categoryID).
 		SetCookie(gofight.H{
@@ -120,7 +120,7 @@ func TestDeleteCategory(t *testing.T) {
 			assert.Equal(t, "category not found", errorValue)
 		})
 
-	// Trying to delete category with non-exiting catering
+	// Trying to delete category with non-existing catering
 	// Should return an error
 	r.DELETE("/caterings/"+cateringID+"/clients/"+clientID+"/categories/"+fakeID.String()).
 		SetCookie(gofight.H{
