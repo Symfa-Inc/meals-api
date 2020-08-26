@@ -23,18 +23,27 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1
-        with:
-          envkey_CLIENT_URL: "*"
-          envkey_PORT: 8080
-          envkey_HOST: 0.0.0.0
-          envkey_DB_HOST: localhost
-          envkey_DB_PORT: 5432
-          envkey_DB_USER: postgres
-          envkey_DB_PASSWORD: postgres
-          envkey_DB_NAME: meals
-          file_name: .env
+      env:
+        CLIENT_URL: "*"
+        PORT: 8080
+        HOST: 0.0.0.0
+        DB_HOST: localhost
+        DB_PORT: 5432
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+        DB_NAME: meals
+#        - name: Make envfile
+#        uses: SpicyPizza/create-envfile@v1
+#        with:
+#          envkey_CLIENT_URL: "*"
+#          envkey_PORT: 8080
+#          envkey_HOST: 0.0.0.0
+#          envkey_DB_HOST: localhost
+#          envkey_DB_PORT: 5432
+#          envkey_DB_USER: postgres
+#          envkey_DB_PASSWORD: postgres
+#          envkey_DB_NAME: meals
+#          file_name: .env
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -45,12 +54,12 @@ jobs:
         run: go run db/migrate.go
       - name: Test
         run: go test ./...
-        env:
-          CLIENT_URL: "*"
-          PORT: 8080
-          HOST: 0.0.0.0
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_USER: postgres
-          DB_PASSWORD: postgres
-          DB_NAME: meals
+#        env:
+#          CLIENT_URL: "*"
+#          PORT: 8080
+#          HOST: 0.0.0.0
+#          DB_HOST: localhost
+#          DB_PORT: 5432
+#          DB_USER: postgres
+#          DB_PASSWORD: postgres
+#          DB_NAME: meals
