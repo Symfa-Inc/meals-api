@@ -105,7 +105,7 @@ func TestAddMeal(t *testing.T) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
-			assert.Equal(t, "can't add 2 same dishes, please increment amount field instead", errorValue)
+			assert.Equal(t, "can't add 2 same dishes", errorValue)
 		})
 }
 
