@@ -10,5 +10,7 @@ import (
 // @version 1.0.0
 func main() {
 	r := delivery.SetupRouter()
-	r.Run()
+	if err := r.Run(); err != nil {
+		panic(err)
+	}
 }

@@ -21,8 +21,6 @@ func NewClientUserRepo() *ClientUserRepo {
 	return &ClientUserRepo{}
 }
 
-var userRepo = NewUserRepo()
-
 func (cur *ClientUserRepo) Add(clientUser domain.ClientUser) error {
 	err := config.DB.
 		Create(&clientUser).

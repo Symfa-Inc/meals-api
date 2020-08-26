@@ -22,7 +22,7 @@ func TestGetCateringSchedules(t *testing.T) {
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	// Trying to get list of schedules
 	// Should be success
@@ -64,7 +64,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	var result []domain.CateringSchedule
 	var scheduleID string
 
@@ -75,7 +75,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			list, _, _, _ := jsonparser.Get(data, "list")
 			_ = json.Unmarshal(list, &result)
 			scheduleID = result[0].ID.String()
@@ -107,7 +107,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 			"start": "16:00",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "end date can't be earlier than start date", errorValue)
@@ -123,7 +123,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 			"end": "11:00",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "end date can't be earlier than start date", errorValue)
@@ -153,7 +153,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 			"end": "12:00",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "catering with that id not found", errorValue)
@@ -169,7 +169,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 			"end": "12:00",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "schedule with that id not found", errorValue)
