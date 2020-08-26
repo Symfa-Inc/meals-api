@@ -23,15 +23,6 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      env:
-        CLIENT_URL: "*"
-        PORT: 8080
-        HOST: 0.0.0.0
-        DB_HOST: localhost
-        DB_PORT: 5432
-        DB_USER: postgres
-        DB_PASSWORD: postgres
-        DB_NAME: meals
 #        - name: Make envfile
 #        uses: SpicyPizza/create-envfile@v1
 #        with:
@@ -52,6 +43,15 @@ jobs:
         uses: actions/checkout@v2
       - name: Create Seeds
         run: go run db/migrate.go
+        env:
+          CLIENT_URL: "*"
+          PORT: 8080
+          HOST: 0.0.0.0
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_NAME: meals
       - name: Test
         run: go test ./...
 #        env:
