@@ -25,9 +25,9 @@ func TestAddMeal(t *testing.T) {
 	categoryID := categoryResult.ID.String()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	dishResult, _, _ := dishRepo.GetByKey("name", "доширак", cateringID, categoryID)
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
-	var dishID [1]string
-	dishID[0] = dishResult.ID.String()
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
+	var dishIDs []string
+	dishIDs = append(dishIDs, dishResult.ID.String())
 
 	// Trying to create meal
 	// Should be success
@@ -37,7 +37,7 @@ func TestAddMeal(t *testing.T) {
 		}).
 		SetJSON(gofight.D{
 			"date":   "2120-06-20T00:00:00Z",
-			"dishes": dishID,
+			"dishes": dishIDs,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusCreated, r.Code)
@@ -65,7 +65,7 @@ func TestAddMeal(t *testing.T) {
 		}).
 		SetJSON(gofight.D{
 			"date":   "1120-06-20T00:00:00Z",
-			"dishes": dishID,
+			"dishes": dishIDs,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := []byte(r.Body.String())
@@ -89,6 +89,24 @@ func TestAddMeal(t *testing.T) {
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNotFound, r.Code)
 		})
+
+	// Trying to create meal with two same dish
+	// Should return an error
+	dishIDs = append(dishIDs, dishResult.ID.String())
+	r.POST("/caterings/"+cateringID+"/clients/"+categoryID+"/meals").
+		SetCookie(gofight.H{
+			"jwt": jwt,
+		}).
+		SetJSON(gofight.D{
+			"date":   "2120-06-20T00:00:00Z",
+			"dishes": dishIDs,
+		}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			data := []byte(r.Body.String())
+			errorValue, _ := jsonparser.GetString(data, "error")
+			assert.Equal(t, http.StatusBadRequest, r.Code)
+			assert.Equal(t, "can't add 2 same dishes, please increment amount field instead", errorValue)
+		})
 }
 
 func TestGetMeal(t *testing.T) {
@@ -102,7 +120,7 @@ func TestGetMeal(t *testing.T) {
 	categoryResult, _ := categoryRepo.GetByKey("name", "гарнир", cateringID)
 	categoryID := categoryResult.ID.String()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	// Trying to get list of meal
 	// Should be success
