@@ -31,4 +31,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Test
+          env:
+            PORT: 8080
+            HOST: 0.0.0.0
+            DB_HOST: localhost
+            DB_PORT: 5432
+            DB_USER: postgres
+            DB_PASSWORD: postgres
+            DB_NAME: meals
         run: go test ./...
