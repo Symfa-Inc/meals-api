@@ -16,7 +16,7 @@ func TestAddOrder(t *testing.T) {
 
 	type Dish struct {
 		Amount int    `json:"amount"`
-		ID string `json:"dishId"`
+		ID     string `json:"dishId"`
 	}
 	type Order struct {
 		Comment string `json:"comment"`
@@ -102,7 +102,7 @@ func TestGetOrder(t *testing.T) {
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
-	})
+		})
 
 	// Trying to get list of order with non-existing date
 	// Should return an error
