@@ -2,12 +2,13 @@ package repository
 
 import (
 	"errors"
+	"net/http"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/src/types"
-	"net/http"
-	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -243,7 +244,7 @@ func (c ClientRepo) UpdateAutoApproveOrders(id string, status bool) (int, error)
 	}
 
 	if status {
-		c.InitAutoApprove(id)
+		_, _ = c.InitAutoApprove(id)
 	} else {
 		for i := range config.CRON.Entries {
 			if len(config.CRON.Entries) == 1 {
