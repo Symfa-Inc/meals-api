@@ -43,7 +43,7 @@ func TestAddCatering(t *testing.T) {
 			"name": cateringName,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := (r.Body.Bytes())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "catering with that name already exist", errorValue)
@@ -74,7 +74,7 @@ func TestDeleteCatering(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := (r.Body.Bytes())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "catering not found", errorValue)
@@ -86,7 +86,7 @@ func TestGetCaterings(t *testing.T) {
 
 	userRepo := repository.NewUserRepo()
 	result, _ := userRepo.GetByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: result.ID.String()})
 
 	// Trying to get list of caterings
 	r.GET("/caterings?limit=10").
@@ -94,7 +94,7 @@ func TestGetCaterings(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := (r.Body.Bytes())
+			data := r.Body.Bytes()
 			var result response.GetCaterings
 			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, http.StatusOK, r.Code)
@@ -108,7 +108,7 @@ func TestGetCaterings(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := (r.Body.Bytes())
+			data := r.Body.Bytes()
 			var result response.GetCaterings
 			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, http.StatusOK, r.Code)

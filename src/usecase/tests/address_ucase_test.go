@@ -95,7 +95,7 @@ func TestGetAddress(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := (r.Body.Bytes())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "client with that ID is not found", errorValue)
@@ -129,7 +129,7 @@ func TestDeleteAddress(t *testing.T) {
 			"floor":  2,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := (r.Body.Bytes())
+			data := r.Body.Bytes()
 			addressID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
@@ -145,7 +145,7 @@ func TestDeleteAddress(t *testing.T) {
 			"floor":  2,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := (r.Body.Bytes())
+			data := r.Body.Bytes()
 			addressID2, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
@@ -167,7 +167,7 @@ func TestDeleteAddress(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := (r.Body.Bytes())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "address not found", errorValue)
@@ -180,7 +180,7 @@ func TestDeleteAddress(t *testing.T) {
 			"jwt": userJWT,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := (r.Body.Bytes())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusForbidden, r.Code)
 			assert.Equal(t, "no permissions", errorValue)
@@ -213,7 +213,7 @@ func TestUpdateAddress(t *testing.T) {
 			"floor":  2,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := (r.Body.Bytes())
+			data := r.Body.Bytes()
 			addressID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
@@ -263,7 +263,7 @@ func TestUpdateAddress(t *testing.T) {
 			"stdreet": "stridasng",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := (r.Body.Bytes())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusForbidden, r.Code)
 			assert.Equal(t, "no permissions", errorValue)
