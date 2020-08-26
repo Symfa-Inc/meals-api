@@ -292,7 +292,7 @@ func (c ClientRepo) UpdateAutoApproveSchedules(id string) {
 			}
 		}
 	}
-	c.InitAutoApprove(id)
+	_ = c.InitAutoApprove(id)
 }
 
 // GetByKey client by provided key value arguments

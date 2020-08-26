@@ -1,14 +1,15 @@
 package tests
 
 import (
+	"net/http"
+	"testing"
+
 	"github.com/Aiscom-LLC/meals-api/src/delivery"
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	"github.com/go-playground/assert/v2"
-	"net/http"
-	"testing"
 )
 
 func TestAddAddress(t *testing.T) {
@@ -94,7 +95,7 @@ func TestGetAddress(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "client with that ID is not found", errorValue)
@@ -128,7 +129,7 @@ func TestDeleteAddress(t *testing.T) {
 			"floor":  2,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			addressID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusOK, r.Code)
 		})

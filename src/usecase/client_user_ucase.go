@@ -50,7 +50,10 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 		return
 	}
 
-	copier.Copy(&user, &body)
+	if err := copier.Copy(&user, &body); err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
 
 	if ok := utils.IsEmailValid(user.Email); !ok {
 		utils.CreateError(http.StatusBadRequest, "email is not valid", c)
@@ -91,6 +94,7 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 			return
 		}
 
+		// nolint:errcheck
 		go mailer.SendEmail(user, password)
 		c.JSON(http.StatusCreated, userClientCatering)
 		return

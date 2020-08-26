@@ -133,6 +133,7 @@ func (cu *CateringUser) Add(c *gin.Context) {
 		return
 	}
 
+	// nolint:errcheck
 	go mailer.SendEmail(user, password)
 	c.JSON(http.StatusCreated, userClientCatering)
 	return
@@ -261,7 +262,10 @@ func (cu *CateringUser) Update(c *gin.Context) { //nolint:dupl
 		}
 	}
 
-	copier.Copy(&user, &body)
+	if err := copier.Copy(&user, &body); err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
 
 	parsedUserID, _ := uuid.FromString(path.UserID)
 	user.CompanyType = &types.CompanyTypesEnum.Catering
