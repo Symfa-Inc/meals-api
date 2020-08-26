@@ -20,7 +20,7 @@ func init() {
 	db, err := gorm.Open("postgres", connectionString)
 
 	if err != nil {
-		panic(err)
+		panic(Env)
 	}
 
 	DB = db
