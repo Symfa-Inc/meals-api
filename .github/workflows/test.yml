@@ -8,8 +8,17 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Env
-        - run: cp .env.example .env
+       - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1
+        with:
+          PORT: 8080
+          HOST: 0.0.0.0
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_NAME: meals
+          file_name: .env
       - name: Install Go
         uses: actions/setup-go@v2
         with:
