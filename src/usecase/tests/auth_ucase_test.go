@@ -16,7 +16,7 @@ func TestIsAuthenticated(t *testing.T) {
 
 	userRepo := repository.NewUserRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	// Trying to login without jwt cookie
 	r.GET("/is-authenticated").
@@ -46,7 +46,7 @@ func TestValidator(t *testing.T) {
 
 	userRepo := repository.NewUserRepo()
 	userResult, _ := userRepo.GetByKey("role", "User")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	// Trying to access catering route with wrong permissions
 	// Should throw an error

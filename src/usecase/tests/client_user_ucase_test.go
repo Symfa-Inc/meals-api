@@ -17,7 +17,7 @@ func TestAddClientUser(t *testing.T) {
 	var clientRepo = repository.NewClientRepo()
 	var userRepo = repository.NewUserRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()
 	email := "testssss@mail.ru"

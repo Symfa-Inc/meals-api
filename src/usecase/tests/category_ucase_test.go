@@ -22,7 +22,7 @@ func TestAddCategory(t *testing.T) {
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	// Trying to add category to non-existing ID
 	// Should throw error
@@ -76,7 +76,7 @@ func TestDeleteCategory(t *testing.T) {
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	cateringID := cateringResult.ID.String()
 	clientID := clientResult.ID.String()
 	fakeID := uuid.NewV4()
@@ -143,7 +143,7 @@ func TestGetCategories(t *testing.T) {
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	id := cateringResult.ID.String()
 	clientID := clientResult.ID.String()
 	fakeID := uuid.NewV4()
@@ -181,7 +181,7 @@ func TestUpdateCategory(t *testing.T) {
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	cateringID := cateringResult.ID.String()
 	clientID := clientResult.ID.String()
 	var categoryID string

@@ -20,7 +20,7 @@ func TestAddCatering(t *testing.T) {
 	userRepo := repository.NewUserRepo()
 	cateringName := "newcatering"
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	// Create new catering
 	r.POST("/caterings").
@@ -57,7 +57,7 @@ func TestDeleteCatering(t *testing.T) {
 	cateringRepo := repository.NewCateringRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Gink")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	// Deleting catering
 	r.DELETE("/caterings/"+cateringResult.ID.String()).
@@ -124,7 +124,7 @@ func TestUpdateCatering(t *testing.T) {
 	cateringRepo := repository.NewCateringRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	result, _ := cateringRepo.GetByKey("name", "Telpod")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	// Trying to change name of the catering
 	// Should be success

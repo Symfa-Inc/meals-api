@@ -136,7 +136,6 @@ func (cu *CateringUser) Add(c *gin.Context) {
 	// nolint:errcheck
 	go mailer.SendEmail(user, password)
 	c.JSON(http.StatusCreated, userClientCatering)
-	return
 }
 
 // Get return list of catering users

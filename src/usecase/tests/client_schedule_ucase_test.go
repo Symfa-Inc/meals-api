@@ -22,7 +22,7 @@ func TestGetClientSchedules(t *testing.T) {
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	clientResult, _ := cateringRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	// Trying to get list of schedules
 	// Should be success
@@ -64,7 +64,7 @@ func TestUpdateClientSchedule(t *testing.T) {
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	clientResult, _ := cateringRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	var result []domain.ClientSchedule
 	var scheduleID string
 
