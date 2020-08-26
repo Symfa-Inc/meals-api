@@ -64,7 +64,7 @@ func TestAddOrder(t *testing.T) {
 		}).
 		SetJSONInterface(test).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "order for current day already created", errorValue)
@@ -84,7 +84,7 @@ func TestAddOrder(t *testing.T) {
 		}).
 		SetJSONInterface(test).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "can't add 2 same dishes, please increment amount field instead", errorValue)
@@ -117,7 +117,7 @@ func TestGetOrder(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "record not found", errorValue)
