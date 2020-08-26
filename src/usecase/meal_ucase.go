@@ -98,7 +98,7 @@ func (m Meal) Add(c *gin.Context) {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}
-	for i, dish := range body.Dishes{
+	for i, dish := range body.Dishes {
 		for j := i + 1; j < len(body.Dishes); j++ {
 			if dish == body.Dishes[i] {
 				utils.CreateError(http.StatusBadRequest, "can't add 2 same dishes, please increment amount field instead", c)
