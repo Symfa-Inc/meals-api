@@ -94,7 +94,7 @@ func TestDeleteClient(t *testing.T) {
 	userRepo := repository.NewUserRepo()
 	cateringRepo := repository.NewCateringRepo()
 	result, _ := userRepo.GetByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: result.ID.String()})
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
 	var clientID string
@@ -141,7 +141,7 @@ func TestUpdateClient(t *testing.T) {
 	userRepo := repository.NewUserRepo()
 	cateringRepo := repository.NewCateringRepo()
 	result, _ := userRepo.GetByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: result.ID.String()})
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
 	var clientID string
