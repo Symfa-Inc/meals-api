@@ -45,7 +45,7 @@ jobs:
       - name: Test
         run: go test ./...
         env:
-          CLIENT_URL: *
+          CLIENT_URL: "*"
           PORT: 8080
           HOST: 0.0.0.0
           DB_HOST: localhost
