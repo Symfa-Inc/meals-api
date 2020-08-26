@@ -22,7 +22,7 @@ func TestAddCategory(t *testing.T) {
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	// Trying to add category to non-existing ID
 	// Should throw error
@@ -60,7 +60,7 @@ func TestAddCategory(t *testing.T) {
 			"name": "закуски",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "this category already exist", errorValue)
@@ -76,7 +76,7 @@ func TestDeleteCategory(t *testing.T) {
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	cateringID := cateringResult.ID.String()
 	clientID := clientResult.ID.String()
 	fakeID := uuid.NewV4()
@@ -92,7 +92,7 @@ func TestDeleteCategory(t *testing.T) {
 			"name": "testFeed",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			categoryID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
@@ -114,7 +114,7 @@ func TestDeleteCategory(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "category not found", errorValue)
@@ -127,7 +127,7 @@ func TestDeleteCategory(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "category not found", errorValue)
@@ -143,7 +143,7 @@ func TestGetCategories(t *testing.T) {
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	id := cateringResult.ID.String()
 	clientID := clientResult.ID.String()
 	fakeID := uuid.NewV4()
@@ -155,7 +155,7 @@ func TestGetCategories(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "catering with that ID is not found", errorValue)
@@ -181,7 +181,7 @@ func TestUpdateCategory(t *testing.T) {
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	cateringID := cateringResult.ID.String()
 	clientID := clientResult.ID.String()
 	var categoryID string
@@ -236,7 +236,7 @@ func TestUpdateCategory(t *testing.T) {
 			"name": "qwerty",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			categoryID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
@@ -264,7 +264,7 @@ func TestUpdateCategory(t *testing.T) {
 			"name": "салаты",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "category with that name already exist", errorValue)

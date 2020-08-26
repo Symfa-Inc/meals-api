@@ -20,7 +20,7 @@ func TestAddClient(t *testing.T) {
 	userRepo := repository.NewUserRepo()
 	cateringRepo := repository.NewCateringRepo()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{userResult.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
 
@@ -33,7 +33,7 @@ func TestAddClient(t *testing.T) {
 			"name": "newclientname",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			name, _ := jsonparser.GetString(data, "name")
 			assert.Equal(t, http.StatusCreated, r.Code)
 			assert.Equal(t, "newclientname", name)
@@ -47,7 +47,7 @@ func TestAddClient(t *testing.T) {
 			"name": "newclientname",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "client with that name already exist", errorValue)
@@ -59,7 +59,7 @@ func TestGetClients(t *testing.T) {
 
 	userRepo := repository.NewUserRepo()
 	result, _ := userRepo.GetByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: result.ID.String()})
 
 	// Trying to get list of clients
 	r.GET("/clients?limit=5").
@@ -67,7 +67,7 @@ func TestGetClients(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			var result response.GetClients
 			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, http.StatusOK, r.Code)
@@ -80,7 +80,7 @@ func TestGetClients(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			var result response.GetClients
 			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, http.StatusOK, r.Code)
@@ -94,7 +94,7 @@ func TestDeleteClient(t *testing.T) {
 	userRepo := repository.NewUserRepo()
 	cateringRepo := repository.NewCateringRepo()
 	result, _ := userRepo.GetByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: result.ID.String()})
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
 	var clientID string
@@ -108,7 +108,7 @@ func TestDeleteClient(t *testing.T) {
 			"name": "yandex",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			clientID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
@@ -128,7 +128,7 @@ func TestDeleteClient(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "client not found", errorValue)
@@ -141,7 +141,7 @@ func TestUpdateClient(t *testing.T) {
 	userRepo := repository.NewUserRepo()
 	cateringRepo := repository.NewCateringRepo()
 	result, _ := userRepo.GetByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: result.ID.String()})
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
 	var clientID string
@@ -155,7 +155,7 @@ func TestUpdateClient(t *testing.T) {
 			"name": "google",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := r.Body.Bytes()
 			clientID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})

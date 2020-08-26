@@ -50,7 +50,10 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 		return
 	}
 
-	copier.Copy(&user, &body)
+	if err := copier.Copy(&user, &body); err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
 
 	if ok := utils.IsEmailValid(user.Email); !ok {
 		utils.CreateError(http.StatusBadRequest, "email is not valid", c)
@@ -91,6 +94,7 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 			return
 		}
 
+		// nolint:errcheck
 		go mailer.SendEmail(user, password)
 		c.JSON(http.StatusCreated, userClientCatering)
 		return
@@ -127,9 +131,9 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 		return
 	}
 
+	// nolint:errcheck
 	go mailer.SendEmail(user, password)
 	c.JSON(http.StatusCreated, userClientCatering)
-	return
 }
 
 // Get return list of client users
@@ -259,7 +263,10 @@ func (cu *ClientUser) Update(c *gin.Context) { //nolint:dupl
 		}
 	}
 
-	copier.Copy(&user, &body)
+	if err := copier.Copy(&user, &body); err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
 
 	parsedUserID, _ := uuid.FromString(path.UserID)
 	user.CompanyType = &types.CompanyTypesEnum.Client
@@ -272,6 +279,6 @@ func (cu *ClientUser) Update(c *gin.Context) { //nolint:dupl
 		return
 	}
 
-	updatedUser, err := userRepo.GetByID(path.UserID)
+	updatedUser, _ := userRepo.GetByID(path.UserID)
 	c.JSON(http.StatusOK, updatedUser)
 }
