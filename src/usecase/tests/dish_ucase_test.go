@@ -96,7 +96,7 @@ func TestAddDish(t *testing.T) {
 			"weight":     250,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "this dish already exist in that category", errorValue)
@@ -127,7 +127,7 @@ func TestGetDishes(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "catering with that ID doesn't exist", errorValue)
@@ -140,7 +140,7 @@ func TestGetDishes(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "category with that ID doesn't exist", errorValue)
@@ -192,7 +192,7 @@ func TestUpdateDish(t *testing.T) {
 			"weight":     250,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "catering not found", errorValue)
@@ -212,7 +212,7 @@ func TestUpdateDish(t *testing.T) {
 			"weight":     250,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "dish category not found", errorValue)
@@ -232,7 +232,7 @@ func TestUpdateDish(t *testing.T) {
 			"weight":     250,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "dish not found", errorValue)
@@ -283,7 +283,7 @@ func TestDeleteDish(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "dish not found", errorValue)
@@ -306,7 +306,7 @@ func TestDeleteDish(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "dish not found", errorValue)

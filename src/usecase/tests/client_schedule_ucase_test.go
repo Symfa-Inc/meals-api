@@ -75,7 +75,7 @@ func TestUpdateClientSchedule(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			list, _, _, _ := jsonparser.Get(data, "list")
 			_ = json.Unmarshal(list, &result)
 			scheduleID = result[0].ID.String()
@@ -107,7 +107,7 @@ func TestUpdateClientSchedule(t *testing.T) {
 			"start": "19:00",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "end date can't be earlier than start date", errorValue)
@@ -123,7 +123,7 @@ func TestUpdateClientSchedule(t *testing.T) {
 			"end": "19:00",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "new end time can't be later than catering's end time", errorValue)
@@ -157,7 +157,7 @@ func TestUpdateClientSchedule(t *testing.T) {
 			"end":       "14:00",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "client with that id not found", errorValue)
@@ -188,7 +188,7 @@ func TestUpdateClientSchedule(t *testing.T) {
 			"end":       "14:00",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "client schedule with that id not found", errorValue)

@@ -111,7 +111,7 @@ func TestDeleteAddress(t *testing.T) {
 	clientID := clientResult.ID.String()
 	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
 	simpleUser, _ := userRepo.GetByKey("email", "user1@meals.com")
-	userJWT, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{simpleUser.ID.String()})
+	userJWT, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: simpleUser.ID.String()})
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	var addressID string
 	var addressID2 string
@@ -213,7 +213,7 @@ func TestUpdateAddress(t *testing.T) {
 			"floor":  2,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			addressID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
@@ -263,7 +263,7 @@ func TestUpdateAddress(t *testing.T) {
 			"stdreet": "stridasng",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusForbidden, r.Code)
 			assert.Equal(t, "no permissions", errorValue)

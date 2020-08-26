@@ -37,7 +37,7 @@ func TestAddClientUser(t *testing.T) {
 			"role":      "User",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			newUserID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
@@ -73,7 +73,7 @@ func TestAddClientUser(t *testing.T) {
 			"role":      "User",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "user with that email already exist", errorValue)
@@ -93,7 +93,7 @@ func TestAddClientUser(t *testing.T) {
 			"role":      "User",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "email is not valid", errorValue)
@@ -187,7 +187,7 @@ func TestDeleteClientUsers(t *testing.T) {
 			"role":      "User",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			userID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
@@ -227,7 +227,7 @@ func TestDeleteClientUsers(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "can't delete yourself", errorValue)
@@ -259,7 +259,7 @@ func TestUpdateClientUser(t *testing.T) {
 			"role":      "User",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			userID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
@@ -287,7 +287,7 @@ func TestUpdateClientUser(t *testing.T) {
 			"email": "newwwCoolNamedas",
 		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := []byte(r.Body.String())
+			data := (r.Body.Bytes())
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "email is not valid", errorValue)

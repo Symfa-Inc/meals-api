@@ -276,6 +276,6 @@ func (cu *CateringUser) Update(c *gin.Context) { //nolint:dupl
 		return
 	}
 
-	updatedUser, err := userRepo.GetByID(path.UserID)
+	updatedUser, _ := userRepo.GetByID(path.UserID)
 	c.JSON(http.StatusOK, updatedUser)
 }
