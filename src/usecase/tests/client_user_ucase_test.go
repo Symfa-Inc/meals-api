@@ -167,8 +167,8 @@ func TestDeleteClientUsers(t *testing.T) {
 	admin1, _ := userRepo.GetByKey("email", "marianafox@comcubine.com")
 	admin2, _ := userRepo.GetByKey("email", "maggietodd@comcubine.com")
 	clientAdmin, _ := userRepo.GetByKey("email", "melodybond@comcubine.com")
-	adminJWT, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{clientAdmin.ID.String()})
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
+	adminJWT, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: clientAdmin.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: result.ID.String()})
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()
 	var userID string
@@ -240,7 +240,7 @@ func TestUpdateClientUser(t *testing.T) {
 	var clientRepo = repository.NewClientRepo()
 	var userRepo = repository.NewUserRepo()
 	result, _ := userRepo.GetByKey("email", "admin@meals.com")
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{result.ID.String()})
+	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: result.ID.String()})
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()
 	var userID string
