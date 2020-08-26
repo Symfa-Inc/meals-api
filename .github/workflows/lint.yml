@@ -1,5 +1,5 @@
 on: [push, pull_request]
-name: Run linter
+name: lint
 jobs:
   golangci:
     name: lint

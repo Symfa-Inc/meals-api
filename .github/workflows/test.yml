@@ -1,5 +1,5 @@
 on: [push, pull_request]
-name: Run tests
+name: test
 jobs:
   test:
     env:
@@ -20,7 +20,7 @@ jobs:
       postgres:
         image: postgres
         env:
-#          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: meals
         options: >-
           --health-cmd pg_isready
