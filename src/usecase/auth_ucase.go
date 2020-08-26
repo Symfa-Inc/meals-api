@@ -66,6 +66,7 @@ func (a Auth) IsAuthenticated(c *gin.Context) {
 // @Success 200 {object} response.UserResponse
 // @Failure 401 {object} types.Error "Error"
 // @Router /login [post]
+// nolint:deadcode, unused
 func login() {}
 
 // @Summary Removes cookie if set
@@ -75,4 +76,5 @@ func login() {}
 // @Success 200 {object} types.Error "Success"
 // @Failure 401 {object} types.Error "Error"
 // @Router /logout [get]
+// nolint:deadcode, unused
 func logout() {}
