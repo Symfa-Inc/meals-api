@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 
+	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/db/seeds/dev"
-	"github.com/Aiscom-LLC/meals-api/src/config"
-	"github.com/Aiscom-LLC/meals-api/src/domain"
-	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/types"
 )
 
 func main() {

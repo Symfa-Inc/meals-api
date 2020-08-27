@@ -3,10 +3,10 @@ package dev
 import (
 	"fmt"
 
-	"github.com/Aiscom-LLC/meals-api/src/config"
-	"github.com/Aiscom-LLC/meals-api/src/domain"
-	"github.com/Aiscom-LLC/meals-api/src/types"
-	"github.com/Aiscom-LLC/meals-api/src/utils"
+	"github.com/Aiscom-LLC/meals-api/config"
+	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/utils"
 )
 
 // CreateUsers will populate users table with random users
