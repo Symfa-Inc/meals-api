@@ -122,25 +122,29 @@ func addDbConstraints() {
 }
 
 func createTypes() {
-	userTypesQuery := fmt.Sprintf("CREATE TYPE user_roles AS ENUM ('%s', '%s', '%s', '%s')",
+	userTypesQuery := fmt.Sprintf("DROP TYPE IF EXISTS user_roles CASCADE;" +
+		"CREATE TYPE user_roles AS ENUM ('%s', '%s', '%s', '%s')",
 		types.UserRoleEnum.SuperAdmin,
 		types.UserRoleEnum.CateringAdmin,
 		types.UserRoleEnum.ClientAdmin,
 		types.UserRoleEnum.User,
 	)
 
-	companyTypesQuery := fmt.Sprintf("CREATE TYPE company_types AS ENUM ('%s', '%s')",
+	companyTypesQuery := fmt.Sprintf("DROP TYPE IF EXISTS company_types CASCADE;" +
+		"CREATE TYPE company_types AS ENUM ('%s', '%s')",
 		types.CompanyTypesEnum.Catering,
 		types.CompanyTypesEnum.Client,
 	)
 
-	statusTypesQuery := fmt.Sprintf("CREATE TYPE status_types AS ENUM ('%s', '%s', '%s')",
+	statusTypesQuery := fmt.Sprintf("DROP TYPE IF EXISTS status_types CASCADE;" +
+		"CREATE TYPE status_types AS ENUM ('%s', '%s', '%s')",
 		types.StatusTypesEnum.Deleted,
 		types.StatusTypesEnum.Invited,
 		types.StatusTypesEnum.Active,
 	)
 
-	orderStatusTypesQuery := fmt.Sprintf("CREATE TYPE order_status_types AS ENUM ('%s', '%s', '%s')",
+	orderStatusTypesQuery := fmt.Sprintf("DROP TYPE IF EXISTS order_status_types CASCADE;" +
+		"CREATE TYPE order_status_types AS ENUM ('%s', '%s', '%s')",
 		types.OrderStatusTypesEnum.Approved,
 		types.OrderStatusTypesEnum.Canceled,
 		types.OrderStatusTypesEnum.Pending,
