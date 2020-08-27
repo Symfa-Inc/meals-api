@@ -20,7 +20,7 @@ func main() {
 	addDbConstraints()
 	fmt.Println("=== ADD DB CONSTRAINTS ===")
 
-	dev.CreateCaterings()
+	//dev.CreateCaterings()
 	dev.CreateCateringSchedules()
 	dev.CreateClients()
 	dev.CreateClientSchedules()
