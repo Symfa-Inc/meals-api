@@ -1,12 +1,16 @@
 package usecase
 
 import (
+	"fmt"
+	"net/http"
+	"os"
+	"time"
+
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
-	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -293,4 +297,71 @@ func (o Order) GetOrderStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": status,
 	})
+}
+
+// GetClientOrdersExcel returns excel file of provided client
+// @Summary returns excel file of orders of provided client
+// @Tags clients orders
+// @Produce json
+// @Param id path string true "Client ID"
+// @Param date query string true "Date query in YYYY-MM-DDT00:00:00Z format"
+// @Success 200 {object} response.SummaryOrdersResponse false "Orders for clients"
+// @Failure 400 {object} types.Error "Error"
+// @Failure 404 {object} types.Error "Not Found"
+// @Router /clients/{id}/orders-file [get]
+func (o Order) GetClientOrdersExcel(c *gin.Context) {
+	var path types.PathID
+	var query types.DateQuery
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderQuery(&query, c); err != nil {
+		return
+	}
+
+	_, err := time.Parse(time.RFC3339, query.Date)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	client := types.CompanyTypesEnum.Client
+	result, code, err := orderRepo.GetOrders("", path.ID, query.Date, client)
+
+	if err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
+	}
+
+	f := excelize.NewFile()
+
+	dir, _ := os.Getwd()
+	headers := map[string]string{"A1": "Имя", "B1": "Этаж", "C1": "Заказ", "D1": "Комментарий", "E1": "Сумма"}
+	for k, v := range headers {
+		f.SetCellValue("Sheet1", k, v)
+	}
+
+	f.SetColWidth("Sheet1", "A", "A", 20)
+	f.SetColWidth("Sheet1", "D", "D", 20)
+	f.SetColWidth("Sheet1", "B", "C", 15)
+	f.SetColWidth("Sheet1", "E", "E", 15)
+	var total int
+	for index, order := range result.UserOrders {
+		total += len(result.UserOrders[index-1].Items)
+		fmt.Println(index)
+		for idx, _ := range order.Items {
+			fmt.Println(idx)
+			// f.SetCellValue("Sheet1", "C"+strconv.Itoa(total+idx), dish)
+		}
+	}
+
+	if err := f.SaveAs(dir + "\\src\\static\\files\\Book1.xlsx"); err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
+	}
+
+	c.FileAttachment(dir+"\\src\\static\\files\\Book1.xlsx", "Orders")
 }

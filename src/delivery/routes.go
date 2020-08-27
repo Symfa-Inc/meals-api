@@ -45,7 +45,7 @@ func SetupRouter() *gin.Engine {
 	validator := middleware.NewValidator()
 
 	configCors := cors.DefaultConfig()
-	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL"), os.Getenv("CLIENT_MOBILE_URL")}
+	configCors.AllowOrigins = []string{os.Getenv("CLIENT_URL"), os.Getenv("CLIENT_MOBILE_URL"), "http://localhost:3001"}
 
 	configCors.AllowCredentials = true
 	r.Use(cors.New(configCors))
@@ -144,6 +144,8 @@ func SetupRouter() *gin.Engine {
 			clAdminSuAdmin.PUT("/clients/:id/orders", order.ApproveOrders)
 
 			clAdminSuAdmin.PUT("/clients/:id/auto-approve", client.UpdateAutoApprove)
+			clAdminSuAdmin.GET("/clients/:id/orders-file", order.GetClientOrdersExcel)
+
 		}
 
 		clAdminUser := authRequired.Group("/")
