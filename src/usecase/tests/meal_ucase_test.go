@@ -89,24 +89,6 @@ func TestAddMeal(t *testing.T) {
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNotFound, r.Code)
 		})
-
-	// Trying to create meal with two same dish
-	// Should return an error
-	dishIDs = append(dishIDs, dishResult.ID.String())
-	r.POST("/caterings/"+cateringID+"/clients/"+categoryID+"/meals").
-		SetCookie(gofight.H{
-			"jwt": jwt,
-		}).
-		SetJSON(gofight.D{
-			"date":   "2120-06-20T00:00:00Z",
-			"dishes": dishIDs,
-		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := r.Body.Bytes()
-			errorValue, _ := jsonparser.GetString(data, "error")
-			assert.Equal(t, http.StatusBadRequest, r.Code)
-			assert.Equal(t, "can't add 2 same dishes", errorValue)
-		})
 }
 
 func TestGetMeal(t *testing.T) {
