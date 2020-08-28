@@ -1,18 +1,16 @@
-package delivery
+package api
 
 import (
-	"net/http"
-	"os"
-
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/usecase"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"net/http"
+	"os"
 )
 
 // RedirectFunc wrapper for a Gin Redirect function
@@ -31,7 +29,7 @@ func SetupRouter() *gin.Engine {
 	auth := usecase.NewAuth()
 	cateringUser := usecase.NewCateringUser()
 	clientUser := usecase.NewClientUser()
-	catering := usecase.NewCatering()
+	catering := NewCatering()
 	cateringSchedule := usecase.NewCateringSchedule()
 	clientSchedule := usecase.NewClientSchedule()
 	client := usecase.NewClient()

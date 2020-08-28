@@ -1,16 +1,14 @@
-package usecase
+package api
 
 import (
-	"net/http"
-
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/src/delivery/services"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
-	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"github.com/gin-gonic/gin"
-	uuid "github.com/satori/go.uuid"
+	"net/http"
 )
 
 // Catering struct
@@ -22,8 +20,8 @@ func NewCatering() *Catering {
 	return &Catering{}
 }
 
-var cateringRepo = repository.NewCateringRepo()
-var cateringUserRepo = repository.NewCateringUserRepo()
+var cateringRepository = repository.NewCateringRepo()
+var cateringUserRepository = repository.NewCateringUserRepo()
 
 // Add creates catering
 // @Summary Returns error or 201 status code if success
@@ -40,15 +38,12 @@ func (ca Catering) Add(c *gin.Context) {
 	if err := utils.RequestBinderBody(&catering, c); err != nil {
 		return
 	}
-
-	err := cateringRepo.Add(&catering)
-
+	err := cateringRepository.Add(&catering)
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}
-
-	c.JSON(http.StatusCreated, catering)
+	services.NewCatering().AddService(catering, c)
 }
 
 // Delete soft delete of catering
@@ -66,12 +61,11 @@ func (ca Catering) Delete(c *gin.Context) {
 		return
 	}
 
-	if err := cateringRepo.Delete(path.ID); err != nil {
+	if err := cateringRepository.Delete(path.ID); err != nil {
 		utils.CreateError(http.StatusNotFound, err.Error(), c)
 		return
 	}
-
-	c.Status(http.StatusNoContent)
+	services.NewCatering().DeleteService(path, c)
 }
 
 // GetByID returns catering
@@ -90,14 +84,13 @@ func (ca Catering) GetByID(c *gin.Context) {
 		return
 	}
 
-	result, err := cateringRepo.GetByKey("id", path.ID)
+	result, err := cateringRepository.GetByKey("id", path.ID)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
 	}
-
-	c.JSON(http.StatusOK, result)
+	services.NewCatering().GetByIdService(result, c)
 }
 
 // Get return list of caterings
@@ -111,7 +104,6 @@ func (ca Catering) GetByID(c *gin.Context) {
 // @Router /caterings [get]
 func (ca Catering) Get(c *gin.Context) {
 	var query types.PaginationQuery
-	var cateringID string
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return
@@ -126,30 +118,9 @@ func (ca Catering) Get(c *gin.Context) {
 
 	id := claims["id"].(string)
 
-	user, _ := cateringUserRepo.GetByKey("id", id)
+	user, _ := cateringUserRepository.GetByKey("id", id)
 
-	if user.CateringID == uuid.Nil {
-		cateringID = ""
-	} else {
-		cateringID = user.CateringID.String()
-	}
-
-	result, total, err := cateringRepo.Get(cateringID, query)
-
-	if err != nil {
-		utils.CreateError(http.StatusBadRequest, err.Error(), c)
-		return
-	}
-
-	if query.Page == 0 {
-		query.Page = 1
-	}
-
-	c.JSON(http.StatusOK, response.GetCaterings{
-		Items: result,
-		Page:  query.Page,
-		Total: total,
-	})
+	services.NewCatering().GetService(user, query, c)
 }
 
 // Update updates catering
@@ -174,11 +145,5 @@ func (ca Catering) Update(c *gin.Context) {
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
-
-	if code, err := cateringRepo.Update(path.ID, cateringModel); err != nil {
-		utils.CreateError(code, err.Error(), c)
-		return
-	}
-
-	c.Status(http.StatusNoContent)
+	services.NewCatering().Update(path, c, cateringModel)
 }

@@ -52,7 +52,6 @@ func (i Image) Add(c *gin.Context) {
 			utils.CreateError(http.StatusBadRequest, err.Error(), c)
 			return
 		}
-
 		image, code, err := imageRepo.AddDefault(path.CateringID, path.DishID, parsedID)
 
 		if err != nil {

@@ -11,7 +11,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// Address sturct
+// Address struct
 type Address struct{}
 
 // NewAddress returns pointer to Address struct

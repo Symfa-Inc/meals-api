@@ -2,7 +2,7 @@ package tests
 
 import (
 	"encoding/json"
-	"github.com/Aiscom-LLC/meals-api/src/delivery"
+	"github.com/Aiscom-LLC/meals-api/src/delivery/api"
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/response"
@@ -30,7 +30,7 @@ func TestAddCatering(t *testing.T) {
 		SetJSON(gofight.D{
 			"name": cateringName,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
 
@@ -42,7 +42,7 @@ func TestAddCatering(t *testing.T) {
 		SetJSON(gofight.D{
 			"name": cateringName,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
@@ -64,7 +64,7 @@ func TestDeleteCatering(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 
@@ -73,7 +73,7 @@ func TestDeleteCatering(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
@@ -93,7 +93,7 @@ func TestGetCaterings(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			var result response.GetCaterings
 			_ = json.Unmarshal(data, &result)
@@ -107,7 +107,7 @@ func TestGetCaterings(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			var result response.GetCaterings
 			_ = json.Unmarshal(data, &result)
@@ -135,7 +135,7 @@ func TestUpdateCatering(t *testing.T) {
 		SetJSON(gofight.D{
 			"name": "newcateringname",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 
@@ -148,7 +148,7 @@ func TestUpdateCatering(t *testing.T) {
 		SetJSON(gofight.D{
 			"name": "Twiist",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 
@@ -161,7 +161,7 @@ func TestUpdateCatering(t *testing.T) {
 		SetJSON(gofight.D{
 			"name": "newcateringname",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 
@@ -175,7 +175,7 @@ func TestUpdateCatering(t *testing.T) {
 		SetJSON(gofight.D{
 			"name": "testcatering",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNotFound, r.Code)
 		})
 }

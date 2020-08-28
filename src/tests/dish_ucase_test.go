@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"github.com/Aiscom-LLC/meals-api/src/delivery"
+	"github.com/Aiscom-LLC/meals-api/src/delivery/api"
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"net/http"
@@ -45,7 +45,7 @@ func TestAddDish(t *testing.T) {
 			"price":  120,
 			"weight": 250,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 
@@ -61,7 +61,7 @@ func TestAddDish(t *testing.T) {
 			"price":  120,
 			"weight": 250,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 
@@ -78,7 +78,7 @@ func TestAddDish(t *testing.T) {
 			"price":      120,
 			"weight":     250,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
@@ -95,7 +95,7 @@ func TestAddDish(t *testing.T) {
 			"price":      120,
 			"weight":     250,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
@@ -126,7 +126,7 @@ func TestGetDishes(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
@@ -139,7 +139,7 @@ func TestGetDishes(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
@@ -152,7 +152,7 @@ func TestGetDishes(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 }
@@ -191,7 +191,7 @@ func TestUpdateDish(t *testing.T) {
 			"price":      120,
 			"weight":     250,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
@@ -211,7 +211,7 @@ func TestUpdateDish(t *testing.T) {
 			"price":      120,
 			"weight":     250,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
@@ -231,7 +231,7 @@ func TestUpdateDish(t *testing.T) {
 			"price":      120,
 			"weight":     250,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
@@ -251,7 +251,7 @@ func TestUpdateDish(t *testing.T) {
 			"price":      120,
 			"weight":     250,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 }
@@ -282,7 +282,7 @@ func TestDeleteDish(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
@@ -295,7 +295,7 @@ func TestDeleteDish(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 
@@ -305,7 +305,7 @@ func TestDeleteDish(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)

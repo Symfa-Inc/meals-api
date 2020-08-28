@@ -1,11 +1,9 @@
 package usecase
 
 import (
-	"net/http"
-	"time"
-
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/mailer"
+	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
@@ -13,6 +11,8 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
+	"net/http"
+	"time"
 )
 
 // CateringUser struct
@@ -38,6 +38,7 @@ func (cu *CateringUser) Add(c *gin.Context) {
 	var path types.PathID
 	var body request.CateringUser
 	var user domain.User
+	var cateringUserRepo repository.CateringUserRepo
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -155,6 +156,7 @@ func (cu *CateringUser) Get(c *gin.Context) { //nolint:dupl
 	var path types.PathID
 	var paginationQuery types.PaginationQuery
 	var filterQuery types.UserFilterQuery
+	var cateringUserRepo repository.CateringUserRepo
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -200,6 +202,7 @@ func (cu *CateringUser) Get(c *gin.Context) { //nolint:dupl
 func (cu *CateringUser) Delete(c *gin.Context) {
 	var path types.PathUser
 	var user domain.User
+	var cateringUserRepo repository.CateringUserRepo
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -245,6 +248,7 @@ func (cu *CateringUser) Update(c *gin.Context) { //nolint:dupl
 	var path types.PathUser
 	var body request.CateringUserUpdate
 	var user domain.User
+	var cateringUserRepo repository.CateringUserRepo
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

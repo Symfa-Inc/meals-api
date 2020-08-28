@@ -1,18 +1,16 @@
 package usecase
 
 import (
-	"net/http"
-	"time"
-
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
-
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
+	"net/http"
+	"time"
 )
 
 // Client struct
@@ -144,6 +142,7 @@ func (cl Client) GetByID(c *gin.Context) {
 func (cl Client) Get(c *gin.Context) {
 	var query types.PaginationQuery
 	var cateringID string
+	var cateringUserRepo = repository.NewCateringUserRepo()
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return

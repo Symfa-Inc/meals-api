@@ -1,9 +1,9 @@
 package usecase
 
 import (
+	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"net/http"
 
-	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"

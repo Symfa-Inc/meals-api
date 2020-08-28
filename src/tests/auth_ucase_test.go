@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"github.com/Aiscom-LLC/meals-api/src/delivery"
+	"github.com/Aiscom-LLC/meals-api/src/delivery/api"
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/appleboy/gofight/v2"
@@ -20,7 +20,7 @@ func TestIsAuthenticated(t *testing.T) {
 
 	// Trying to login without jwt cookie
 	r.GET("/is-authenticated").
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusUnauthorized, r.Code)
@@ -31,7 +31,7 @@ func TestIsAuthenticated(t *testing.T) {
 	r.GET("/is-authenticated").
 		SetCookie(gofight.H{
 			"jwt": jwt,
-		}).Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		}).Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 		data := r.Body.Bytes()
 		email, _ := jsonparser.GetString(data, "email")
 		name, _ := jsonparser.GetString(data, "firstName")
@@ -54,7 +54,7 @@ func TestValidator(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusForbidden, r.Code)
 		})
 
@@ -67,7 +67,7 @@ func TestValidator(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt2,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 }

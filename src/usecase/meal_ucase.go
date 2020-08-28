@@ -129,7 +129,7 @@ func (m Meal) Add(c *gin.Context) {
 func (m Meal) Get(c *gin.Context) {
 	var query types.DateQuery
 	var path types.PathClient
-
+	var cateringRepo = repository.NewCateringRepo()
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}

@@ -2,7 +2,7 @@ package tests
 
 import (
 	"encoding/json"
-	"github.com/Aiscom-LLC/meals-api/src/delivery"
+	"github.com/Aiscom-LLC/meals-api/src/delivery/api"
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/repository"
@@ -30,7 +30,7 @@ func TestGetCateringSchedules(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
@@ -40,7 +40,7 @@ func TestGetCateringSchedules(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 
@@ -51,7 +51,7 @@ func TestGetCateringSchedules(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNotFound, r.Code)
 		})
 }
@@ -74,7 +74,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			list, _, _, _ := jsonparser.Get(data, "list")
 			_ = json.Unmarshal(list, &result)
@@ -93,7 +93,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 			"start":     "12:00",
 			"end":       "14:00",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
@@ -106,7 +106,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 		SetJSON(gofight.D{
 			"start": "16:00",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
@@ -122,7 +122,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 		SetJSON(gofight.D{
 			"end": "11:00",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
@@ -138,7 +138,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 		SetJSON(gofight.D{
 			"end": "12:00",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 
@@ -152,7 +152,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 		SetJSON(gofight.D{
 			"end": "12:00",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
@@ -168,7 +168,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 		SetJSON(gofight.D{
 			"end": "12:00",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
@@ -184,7 +184,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 		SetJSON(gofight.D{
 			"end": "12:00",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 }
