@@ -1,11 +1,11 @@
 package tests
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api"
 	"net/http"
 	"testing"
 
-	"github.com/Aiscom-LLC/meals-api/delivery"
-	"github.com/Aiscom-LLC/meals-api/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
@@ -34,7 +34,7 @@ func TestAddAddress(t *testing.T) {
 			"house":  "31",
 			"floor":  2,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
@@ -47,7 +47,7 @@ func TestAddAddress(t *testing.T) {
 		SetJSON(gofight.D{
 			"city": "Sochi",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 
@@ -63,7 +63,7 @@ func TestAddAddress(t *testing.T) {
 			"house":  "31",
 			"floor":  2,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 }
@@ -84,7 +84,7 @@ func TestGetAddress(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
@@ -94,7 +94,7 @@ func TestGetAddress(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
@@ -128,7 +128,7 @@ func TestDeleteAddress(t *testing.T) {
 			"house":  "31",
 			"floor":  2,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			addressID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusOK, r.Code)
@@ -144,7 +144,7 @@ func TestDeleteAddress(t *testing.T) {
 			"house":  "31",
 			"floor":  2,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			addressID2, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusOK, r.Code)
@@ -156,7 +156,7 @@ func TestDeleteAddress(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 
@@ -166,7 +166,7 @@ func TestDeleteAddress(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusNotFound, r.Code)
@@ -179,7 +179,7 @@ func TestDeleteAddress(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": userJWT,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusForbidden, r.Code)
@@ -212,7 +212,7 @@ func TestUpdateAddress(t *testing.T) {
 			"house":  "31",
 			"floor":  2,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			addressID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusOK, r.Code)
@@ -230,7 +230,7 @@ func TestUpdateAddress(t *testing.T) {
 			"house":  "sdsring",
 			"street": "stridasng",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
@@ -246,7 +246,7 @@ func TestUpdateAddress(t *testing.T) {
 			"houdse":  "sdsring",
 			"stdreet": "stridasng",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 
@@ -262,7 +262,7 @@ func TestUpdateAddress(t *testing.T) {
 			"houdse":  "sdsring",
 			"stdreet": "stridasng",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusForbidden, r.Code)
@@ -281,7 +281,7 @@ func TestUpdateAddress(t *testing.T) {
 			"house":  "sdsring",
 			"street": "stridasng",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 }

@@ -1,12 +1,9 @@
-package usecase
+package api
 
 import (
-	"errors"
+	"github.com/Aiscom-LLC/meals-api/services"
 	"net/http"
 
-	"github.com/Aiscom-LLC/meals-api/delivery/middleware"
-	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -20,6 +17,8 @@ func NewAuth() *Auth {
 	return &Auth{}
 }
 
+var authService = services.NewAuthService()
+
 // IsAuthenticated check if user is authorized and
 // if user exists
 // @Summary Returns user info if authorized
@@ -31,32 +30,14 @@ func NewAuth() *Auth {
 // @Failure 404 {object} types.Error
 // @Router /is-authenticated [get]
 func (a Auth) IsAuthenticated(c *gin.Context) {
-	userRepo := repository.NewUserRepo()
-	claims, err := middleware.Passport().CheckIfTokenExpire(c)
+	user, code, err := authService.IsAuthenticated(c)
 
 	if err != nil {
-		utils.CreateError(http.StatusUnauthorized, err, c)
+		utils.CreateError(code, err, c)
 		return
 	}
 
-	if int64(claims["exp"].(float64)) < middleware.Passport().TimeFunc().Unix() {
-		_, _, _ = middleware.Passport().RefreshToken(c)
-	}
-
-	id := claims[middleware.IdentityKeyID]
-	result, err := userRepo.GetByID(id.(string))
-
-	if err != nil {
-		utils.CreateError(http.StatusUnauthorized, errors.New("token is expired"), c)
-		return
-	}
-
-	if result.Status == &types.StatusTypesEnum.Deleted {
-		utils.CreateError(http.StatusForbidden, errors.New("user was deleted"), c)
-		return
-	}
-
-	c.JSON(http.StatusOK, result)
+	c.JSON(http.StatusOK, user)
 }
 
 // @Summary Returns info about user

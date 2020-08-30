@@ -1,8 +1,8 @@
 package tests
 
 import (
-	"github.com/Aiscom-LLC/meals-api/delivery"
-	"github.com/Aiscom-LLC/meals-api/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/api"
+	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
@@ -36,7 +36,7 @@ func TestAddClientUser(t *testing.T) {
 			"lastName":  "NewLastName",
 			"role":      "User",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			newUserID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusCreated, r.Code)
@@ -55,7 +55,7 @@ func TestAddClientUser(t *testing.T) {
 			"lastName":  "NewLastName",
 			"role":      "User",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
 
@@ -72,7 +72,7 @@ func TestAddClientUser(t *testing.T) {
 			"lastName":  "NewLast_Name",
 			"role":      "User",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
@@ -92,7 +92,7 @@ func TestAddClientUser(t *testing.T) {
 			"lastName":  "NewLast_Name",
 			"role":      "User",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
@@ -105,7 +105,7 @@ func TestAddClientUser(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 
@@ -122,7 +122,7 @@ func TestAddClientUser(t *testing.T) {
 			"lastName":  "NewLast_Name",
 			"role":      "User",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusCreated, r.Code)
 		})
 }
@@ -143,7 +143,7 @@ func TestGetClientUsers(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
@@ -153,7 +153,7 @@ func TestGetClientUsers(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		})
 }
@@ -186,7 +186,7 @@ func TestDeleteClientUsers(t *testing.T) {
 			"lastName":  "NewLastName",
 			"role":      "User",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			userID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusCreated, r.Code)
@@ -198,7 +198,7 @@ func TestDeleteClientUsers(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 
@@ -208,7 +208,7 @@ func TestDeleteClientUsers(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 
@@ -216,7 +216,7 @@ func TestDeleteClientUsers(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": adminJWT,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusNoContent, r.Code)
 		})
 
@@ -226,7 +226,7 @@ func TestDeleteClientUsers(t *testing.T) {
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
@@ -258,7 +258,7 @@ func TestUpdateClientUser(t *testing.T) {
 			"lastName":  "NewLastName",
 			"role":      "User",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			userID, _ = jsonparser.GetString(data, "id")
 			assert.Equal(t, http.StatusCreated, r.Code)
@@ -273,7 +273,7 @@ func TestUpdateClientUser(t *testing.T) {
 		SetJSON(gofight.D{
 			"lastName": "testName",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
@@ -286,7 +286,7 @@ func TestUpdateClientUser(t *testing.T) {
 		SetJSON(gofight.D{
 			"email": "newwwCoolNamedas",
 		}).
-		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)

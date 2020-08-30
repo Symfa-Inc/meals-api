@@ -1,10 +1,9 @@
-package delivery
+package api
 
 import (
-	"net/http"
 	"os"
 
-	"github.com/Aiscom-LLC/meals-api/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/usecase"
 
@@ -15,20 +14,11 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// RedirectFunc wrapper for a Gin Redirect function
-// which takes a route as a string and returns original Gin Redirect func
-func RedirectFunc(route string) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, route)
-		c.Abort()
-	}
-}
-
 //SetupRouter setting up gin router and config
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
-	auth := usecase.NewAuth()
+	auth := NewAuth()
 	cateringUser := usecase.NewCateringUser()
 	clientUser := usecase.NewClientUser()
 	catering := usecase.NewCatering()

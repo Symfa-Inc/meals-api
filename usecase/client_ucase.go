@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Aiscom-LLC/meals-api/delivery/middleware"
+	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/schemes/request"
