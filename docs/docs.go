@@ -3066,6 +3066,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "client": {
+                    "type": "object",
                     "$ref": "#/definitions/response.ClientInfo"
                 },
                 "ordersDishes": {
@@ -3187,12 +3188,14 @@ var doc = `{
                     "type": "string"
                 },
                 "summary": {
+                    "type": "object",
                     "$ref": "#/definitions/response.SummaryOrder"
                 },
                 "summaryTotal": {
                     "type": "integer"
                 },
                 "userOrders": {
+                    "type": "object",
                     "$ref": "#/definitions/response.SummaryUserOrder"
                 }
             }

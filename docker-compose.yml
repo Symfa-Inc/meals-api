@@ -18,6 +18,7 @@ services:
       DB_NAME: meals
       JWTSECRET: jwtsecret
       CLIENT_URL: http://localhost:3000
+      CLIENT_MOBILE_URL: http://meals-m.d1.aisnovations.com
       PORT: 8080
     command: bash -c "./wait-for-it.sh db:5432 -- go run db/migrate.go && go run main.go"
     volumes:
