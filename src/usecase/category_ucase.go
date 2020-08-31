@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/src/domain"
@@ -53,7 +52,7 @@ func (dc Category) Add(c *gin.Context) {
 	clientID, _ := uuid.FromString(path.ClientID)
 	category := domain.Category{
 		Date:       body.Date,
-		Name:       strings.ToLower(body.Name),
+		Name:       body.Name,
 		CateringID: cateringID,
 		ClientID:   clientID,
 	}
