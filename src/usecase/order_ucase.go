@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"strconv"
@@ -373,7 +372,6 @@ func (o Order) GetClientOrdersExcel(c *gin.Context) {
 				f.SetCellValue("Sheet1", "C"+strconv.Itoa(start+idx), dish.Name+" "+strconv.Itoa(dish.Amount))
 				f.SetCellStyle("Sheet1", "C"+strconv.Itoa(start+idx), "C"+strconv.Itoa(start+idx), style)
 			}
-			fmt.Println(order)
 			st := strconv.Itoa(start)
 			end := strconv.Itoa(start + len(order.Items) - 1)
 			f.SetCellValue("Sheet1", "A"+st, order.Name)
@@ -457,5 +455,5 @@ func (o Order) GetClientOrdersExcel(c *gin.Context) {
 		return
 	}
 
-	c.FileAttachment(dir+"\\src\\static\\files\\Book1.xlsx", "Orders")
+	c.File(dir + "\\src\\static\\files\\Book1.xlsx")
 }

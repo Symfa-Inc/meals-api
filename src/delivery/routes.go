@@ -144,8 +144,6 @@ func SetupRouter() *gin.Engine {
 			clAdminSuAdmin.PUT("/clients/:id/orders", order.ApproveOrders)
 
 			clAdminSuAdmin.PUT("/clients/:id/auto-approve", client.UpdateAutoApprove)
-			clAdminSuAdmin.GET("/clients/:id/orders-file", order.GetClientOrdersExcel)
-
 		}
 
 		clAdminUser := authRequired.Group("/")
@@ -209,6 +207,9 @@ func SetupRouter() *gin.Engine {
 
 			// client addresses
 			allAdmins.GET("/clients/:id/addresses", address.Get)
+
+			// orders
+			allAdmins.GET("/clients/:id/orders-file", order.GetClientOrdersExcel)
 		}
 	}
 	return r
