@@ -106,7 +106,7 @@ func TestGetMeal(t *testing.T) {
 
 	// Trying to get list of meal
 	// Should be success
-	r.GET("/caterings/"+cateringID+"/clients/"+categoryID+"/meals?date=2120-06-20T00%3A00%3A00Z").
+	r.GET("/caterings/"+cateringID+"/clients/"+categoryID+"/meals?startDate=1020-09-02T00%3A00%3A00Z&endDate=3020-09-06T00%3A00%3A00Z").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -117,7 +117,7 @@ func TestGetMeal(t *testing.T) {
 	// Trying to get list of meal with non-valid catering
 	// Should return an error
 	fakeID := uuid.NewV4()
-	r.GET("/caterings/"+fakeID.String()+"/clients/"+categoryID+"/meals?date=2120-06-20T00%3A00%3A00Z").
+	r.GET("/caterings/"+fakeID.String()+"/clients/"+categoryID+"/meals?startDate=1020-09-02T00%3A00%3A00Z&endDate=3020-09-06T00%3A00%3A00Z").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -127,4 +127,17 @@ func TestGetMeal(t *testing.T) {
 			assert.Equal(t, http.StatusNotFound, r.Code)
 			assert.Equal(t, "record not found", errorValue)
 		})
+
+	// Trying to get list of meal with non-valid datetime
+	// Should return an error
+	r.GET("/caterings/"+cateringID+"/clients/"+categoryID+"/meals?startDate=3020-09-02T00%3A00%3A00Z&endDate=2020-09-06T00%3A00%3A00Z").
+		SetCookie(gofight.H{
+			"jwt": jwt,
+	}).
+		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+			data := r.Body.Bytes()
+			errorValue, _ := jsonparser.GetString(data, "error")
+			assert.Equal(t, http.StatusBadRequest, r.Code)
+			assert.Equal(t, "end date can't be earlier than start date", errorValue)
+	})
 }
