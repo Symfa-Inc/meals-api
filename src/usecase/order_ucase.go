@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
@@ -305,7 +306,6 @@ func (o Order) GetOrderStatus(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Client ID"
 // @Param date query string true "Date query in YYYY-MM-DDT00:00:00Z format"
-// @Success 200 {object} response.SummaryOrdersResponse false "Orders for clients"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /clients/{id}/orders-file [get]
@@ -339,22 +339,116 @@ func (o Order) GetClientOrdersExcel(c *gin.Context) {
 	f := excelize.NewFile()
 
 	dir, _ := os.Getwd()
+	style, _ := f.NewStyle(`{"alignment":{"horizontal": "center", "vertical": "center"}}`)
+	commentStyle, _ := f.NewStyle(`{"alignment":{"horizontal": "left", "vertical": "top", "wrap_text": true}}`)
 	headers := map[string]string{"A1": "Имя", "B1": "Этаж", "C1": "Заказ", "D1": "Комментарий", "E1": "Сумма"}
 	for k, v := range headers {
 		f.SetCellValue("Sheet1", k, v)
+		f.SetCellStyle("Sheet1", k, k, style)
 	}
 
-	f.SetColWidth("Sheet1", "A", "A", 20)
-	f.SetColWidth("Sheet1", "D", "D", 20)
-	f.SetColWidth("Sheet1", "B", "C", 15)
+	f.SetColWidth("Sheet1", "A", "A", 25)
+	f.SetColWidth("Sheet1", "D", "D", 25)
+	f.SetColWidth("Sheet1", "B", "B", 10)
+	f.SetColWidth("Sheet1", "C", "C", 25)
 	f.SetColWidth("Sheet1", "E", "E", 15)
-	var total int
+	f.SetColWidth("Sheet1", "G", "G", 15)
+	f.SetColWidth("Sheet1", "H", "H", 25)
+	f.SetColWidth("Sheet1", "I", "I", 10)
+	f.SetColWidth("Sheet1", "K", "K", 30)
+	f.SetCellValue("Sheet1", "K1", "Общая сумма заказов")
+	f.SetCellValue("Sheet1", "K2", result.Total)
+	f.SetCellStyle("Sheet1", "K1", "K2", style)
+
 	for index, order := range result.UserOrders {
-		total += len(result.UserOrders[index-1].Items)
-		fmt.Println(index)
-		for idx, _ := range order.Items {
-			fmt.Println(idx)
-			// f.SetCellValue("Sheet1", "C"+strconv.Itoa(total+idx), dish)
+		var startLine int
+		for i, ord := range result.UserOrders {
+			if i < index {
+				startLine += len(ord.Items)
+			}
+		}
+		if index > 0 {
+			start := startLine + 2
+			for idx, dish := range order.Items {
+				f.SetCellValue("Sheet1", "C"+strconv.Itoa(start+idx), dish.Name+" "+strconv.Itoa(dish.Amount))
+				f.SetCellStyle("Sheet1", "C"+strconv.Itoa(start+idx), "C"+strconv.Itoa(start+idx), style)
+			}
+			fmt.Println(order)
+			st := strconv.Itoa(start)
+			end := strconv.Itoa(start + len(order.Items) - 1)
+			f.SetCellValue("Sheet1", "A"+st, order.Name)
+			f.SetCellValue("Sheet1", "B"+st, order.Floor)
+
+			f.SetCellValue("Sheet1", "E"+st, order.Total)
+			if order.Comment != "" {
+				f.SetCellValue("Sheet1", "D"+st, order.Comment)
+			} else {
+				f.SetCellValue("Sheet1", "D"+st, "Нет комментария к заказу")
+			}
+			f.MergeCell("Sheet1", "A"+st, "A"+end)
+			f.MergeCell("Sheet1", "B"+st, "B"+end)
+			f.MergeCell("Sheet1", "D"+st, "D"+end)
+			f.MergeCell("Sheet1", "E"+st, "E"+end)
+			f.SetCellStyle("Sheet1", "A"+st, "A"+end, style)
+			f.SetCellStyle("Sheet1", "B"+st, "B"+end, style)
+			f.SetCellStyle("Sheet1", "D"+st, "D"+end, commentStyle)
+			f.SetCellStyle("Sheet1", "E"+st, "E"+end, style)
+		} else {
+			for idx, dish := range order.Items {
+				f.SetCellValue("Sheet1", "C"+strconv.Itoa(2+idx), dish.Name+" "+strconv.Itoa(dish.Amount))
+				f.SetCellStyle("Sheet1", "C"+strconv.Itoa(2+idx), "C"+strconv.Itoa(2+idx), style)
+			}
+			f.SetCellValue("Sheet1", "A2", order.Name)
+			f.SetCellValue("Sheet1", "B2", order.Floor)
+			f.SetCellValue("Sheet1", "E2", order.Total)
+			if order.Comment != "" {
+				f.SetCellValue("Sheet1", "D2", order.Comment)
+			} else {
+				f.SetCellValue("Sheet1", "D2", "Нет комментария к заказу")
+			}
+			end := strconv.Itoa(1 + len(order.Items))
+			f.MergeCell("Sheet1", "A2", "A"+end)
+			f.MergeCell("Sheet1", "B2", "B"+end)
+			f.MergeCell("Sheet1", "D2", "D"+end)
+			f.MergeCell("Sheet1", "E2", "E"+end)
+			f.SetCellStyle("Sheet1", "A2", "A"+end, style)
+			f.SetCellStyle("Sheet1", "B2", "B"+end, style)
+			f.SetCellStyle("Sheet1", "D2", "D"+end, commentStyle)
+			f.SetCellStyle("Sheet1", "E2", "E"+end, style)
+		}
+	}
+
+	for index, order := range result.SummaryOrders {
+		var startLine int
+		for i, ord := range result.SummaryOrders {
+			if i < index {
+				startLine += len(ord.Items)
+			}
+		}
+		if index > 0 {
+			start := startLine + 1
+			for idx, dish := range order.Items {
+				f.SetCellValue("Sheet1", "H"+strconv.Itoa(start+idx), dish.Name)
+				f.SetCellValue("Sheet1", "I"+strconv.Itoa(start+idx), dish.Amount)
+				f.SetCellStyle("Sheet1", "H"+strconv.Itoa(start+idx), "H"+strconv.Itoa(start+idx), style)
+				f.SetCellStyle("Sheet1", "I"+strconv.Itoa(start+idx), "I"+strconv.Itoa(start+idx), style)
+			}
+			st := strconv.Itoa(start)
+			end := strconv.Itoa(start + len(order.Items) - 1)
+			f.SetCellValue("Sheet1", "G"+st, order.CategorySummaryOrder.Name)
+			f.MergeCell("Sheet1", "G"+st, "G"+end)
+			f.SetCellStyle("Sheet1", "G"+st, "G"+end, style)
+		} else {
+			for idx, dish := range order.Items {
+				f.SetCellValue("Sheet1", "H"+strconv.Itoa(1+idx), dish.Name)
+				f.SetCellValue("Sheet1", "I"+strconv.Itoa(1+idx), dish.Amount)
+				f.SetCellStyle("Sheet1", "H"+strconv.Itoa(1+idx), "H"+strconv.Itoa(1+idx), style)
+				f.SetCellStyle("Sheet1", "I"+strconv.Itoa(1+idx), "I"+strconv.Itoa(1+idx), style)
+			}
+			end := strconv.Itoa(len(order.Items))
+			f.SetCellValue("Sheet1", "G1", order.CategorySummaryOrder.Name)
+			f.MergeCell("Sheet1", "G1", "G"+end)
+			f.SetCellStyle("Sheet1", "G1", "G"+end, style)
 		}
 	}
 
