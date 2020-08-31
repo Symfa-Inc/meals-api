@@ -29,7 +29,8 @@ func SetupRouter() *gin.Engine {
 	category := usecase.NewCategory()
 	dish := usecase.NewDish()
 	image := usecase.NewImage()
-	order := usecase.NewOrder()
+	order :=  NewOrder()
+	//order := usecase.NewOrder()
 	address := usecase.NewAddress()
 
 	validator := middleware.NewValidator()
@@ -94,7 +95,7 @@ func SetupRouter() *gin.Engine {
 			caAdminSuAdmin.DELETE("/clients/:id", client.Delete)
 
 			// catering client orders
-			caAdminSuAdmin.GET("/caterings/:id/clients/:clientId/orders", order.GetCateringClientOrders)
+			//caAdminSuAdmin.GET("/caterings/:id/clients/:clientId/orders", order.GetCateringClientOrders)
 
 			// catering dishes
 			caAdminSuAdmin.POST("/caterings/:id/dishes", dish.Add)
@@ -130,8 +131,8 @@ func SetupRouter() *gin.Engine {
 			clAdminSuAdmin.PUT("/clients/:id/addresses/:addressId", address.Update)
 
 			// client orders
-			clAdminSuAdmin.GET("/clients/:id/orders", order.GetClientOrders)
-			clAdminSuAdmin.PUT("/clients/:id/orders", order.ApproveOrders)
+			//clAdminSuAdmin.GET("/clients/:id/orders", order.GetClientOrders)
+			//clAdminSuAdmin.PUT("/clients/:id/orders", order.ApproveOrders)
 
 			clAdminSuAdmin.PUT("/clients/:id/auto-approve", client.UpdateAutoApprove)
 		}
@@ -145,10 +146,10 @@ func SetupRouter() *gin.Engine {
 		{
 			// client orders
 			clAdminUser.POST("/users/:id/orders", order.Add)
-			clAdminUser.DELETE("/users/:id/orders/:orderId", order.CancelOrder)
-			clAdminUser.GET("/users/:id/orders", order.GetUserOrder)
+			//clAdminUser.DELETE("/users/:id/orders/:orderId", order.CancelOrder)
+			//clAdminUser.GET("/users/:id/orders", order.GetUserOrder)
 
-			clAdminUser.GET("/clients/:id/order-status", order.GetOrderStatus)
+			//clAdminUser.GET("/clients/:id/order-status", order.GetOrderStatus)
 		}
 
 		allUsers := authRequired.Group("/")

@@ -10,10 +10,10 @@ import (
 	"net/http"
 )
 
-// AuthService struct
+// CateringService struct
 type CateringService struct{}
 
-// NewAuthService returns pointer to Auth struct
+// NewCateringService returns pointer to Auth struct
 // with all methods
 func NewCateringService() *CateringService {
 	return &CateringService{}
