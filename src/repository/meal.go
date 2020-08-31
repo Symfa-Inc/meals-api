@@ -42,12 +42,12 @@ func (m MealRepo) Add(meal *domain.Meal) error {
 }
 
 // Get returns list of meals, total items if and error
-func (m MealRepo) Get(Date time.Time, id, clientID string) ([]response.GetMeal, int, error) {
+func (m MealRepo) Get(mealDate time.Time, id, clientID string) ([]response.GetMeal, int, error) {
 	var meals []domain.Meal
 	var mealsResponse []response.GetMeal
 
 	if err := config.DB.
-		Where("catering_id = ? AND client_id = ? AND date > ?", id, clientID, Date).
+		Where("catering_id = ? AND client_id = ? AND date > ?", id, clientID, mealDate).
 		Order("created_at").
 		Find(&meals).
 		Error; err != nil {
@@ -67,7 +67,7 @@ func (m MealRepo) Get(Date time.Time, id, clientID string) ([]response.GetMeal, 
 			Joins("left join dishes d on d.category_id = categories.id").
 			Joins("left join meal_dishes md on md.dish_id = d.id").
 			Joins("left join meals m on m.id = md.meal_id").
-			Where("m.id = ? AND md.deleted_at IS NULL AND (categories.deleted_at > ? OR categories.deleted_at IS NULL)", meal.ID, Date).
+			Where("m.id = ? AND md.deleted_at IS NULL AND (categories.deleted_at > ? OR categories.deleted_at IS NULL)", meal.ID, mealDate).
 			Order("d.created_at").
 			Scan(&result).
 			Error; err != nil {
