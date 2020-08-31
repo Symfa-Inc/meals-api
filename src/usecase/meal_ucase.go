@@ -115,11 +115,12 @@ func (m Meal) Add(c *gin.Context) {
 	c.JSON(http.StatusCreated, result)
 }
 
-// Get returns array of meals
-// @Summary Get list of categories with dishes for passed meal ID
+// GetByRange returns array of meals
+// @Summary GetByRange list of categories with dishes for passed meal ID
 // @Tags catering meals
 // @Produce json
-// @Param date query string false "Meal Date in 2020-01-01T00:00:00Z format"
+// @Param startDate query string false "Meal Start Date in 2020-01-01T00:00:00Z format"
+// @Param endDate query string false "Meal End Date in 2020-01-01T00:00:00Z format"
 // @Param id path string false "Catering ID"
 // @Param clientId path string false "Client ID"
 // @Success 200 {array} response.GetMeal "dishes for passed day"
@@ -127,7 +128,7 @@ func (m Meal) Add(c *gin.Context) {
 // @Failure 404 {object} types.Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/meals [get]
 func (m Meal) Get(c *gin.Context) {
-	var query types.DateQuery
+	var query types.DateRangeQuery
 	var path types.PathClient
 	var cateringRepo = repository.NewCateringRepo()
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -149,13 +150,24 @@ func (m Meal) Get(c *gin.Context) {
 		return
 	}
 
-	date, err := time.Parse(time.RFC3339, query.Date)
+	startDate, err := time.Parse(time.RFC3339, query.StartDate)
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, "can't parse the date", c)
 		return
 	}
 
-	result, code, err := mealRepo.Get(date, path.ID, path.ClientID)
+	endDate, err := time.Parse(time.RFC3339, query.EndDate)
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, "can't parse the date", c)
+		return
+	}
+
+	if startDate.After(endDate) {
+		utils.CreateError(http.StatusBadRequest, "end date can't be earlier than start date", c)
+		return
+	}
+
+	result, code, err := mealRepo.GetByRange(startDate, endDate, path.ID, path.ClientID)
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
