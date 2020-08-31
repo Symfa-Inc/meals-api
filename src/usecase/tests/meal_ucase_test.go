@@ -133,11 +133,11 @@ func TestGetMeal(t *testing.T) {
 	r.GET("/caterings/"+cateringID+"/clients/"+categoryID+"/meals?startDate=3020-09-02T00%3A00%3A00Z&endDate=2020-09-06T00%3A00%3A00Z").
 		SetCookie(gofight.H{
 			"jwt": jwt,
-	}).
+		}).
 		Run(delivery.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
 			errorValue, _ := jsonparser.GetString(data, "error")
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 			assert.Equal(t, "end date can't be earlier than start date", errorValue)
-	})
+		})
 }
