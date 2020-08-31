@@ -21,7 +21,7 @@ type DateQuery struct {
 // DateRangeQuery
 type DateRangeQuery struct {
 	StartDate string `form:"startDate" binding:"required"`
-	EndDate string `form:"endDate" binding:"required"`
+	EndDate   string `form:"endDate" binding:"required"`
 }
 
 // DishIDQuery struct used for binding dish
