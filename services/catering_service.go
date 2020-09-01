@@ -1,11 +1,10 @@
 package services
 
 import (
-	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/types"
-	"github.com/gin-gonic/gin"
+	"github.com/dgrijalva/jwt-go"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 )
@@ -19,16 +18,10 @@ func NewCateringService() *CateringService {
 	return &CateringService{}
 }
 
-func (cs *CateringService) Get(c *gin.Context, query *types.PaginationQuery) ([]domain.Catering, int, int, error) {
+func (cs *CateringService) Get(claims jwt.MapClaims, query *types.PaginationQuery) ([]domain.Catering, int, int, error) {
 	cateringUserRepo := repository.NewCateringUserRepo()
 	cateringRepo := repository.NewCateringRepo()
 	var cateringID string
-
-	claims, err := middleware.Passport().GetClaimsFromJWT(c)
-
-	if err != nil {
-		return nil, 0, http.StatusUnauthorized, err
-	}
 
 	id := claims["id"].(string)
 

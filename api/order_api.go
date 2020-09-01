@@ -1,11 +1,15 @@
 package api
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/schemes/request"
+	"github.com/Aiscom-LLC/meals-api/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/services"
 	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // Order struct
@@ -33,6 +37,12 @@ func (o Order) Add(c *gin.Context) {
 	var order request.OrderRequest
 	var path types.PathID
 
+	claims, err := middleware.Passport().GetClaimsFromJWT(c)
+
+	if err != nil {
+		return
+	}
+
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return
 	}
@@ -45,5 +55,17 @@ func (o Order) Add(c *gin.Context) {
 		return
 	}
 
-	services.NewOrderService().Add(c, order, path)
+	userOrder, code, err := services.NewOrderService().Add(query.Date, order, jwt.MapClaims(claims))
+
+	if err != nil {
+		utils.CreateError(code, err, c)
+		return
+	}
+
+	c.JSON(http.StatusCreated, response.UserOrder{
+		Items:   userOrder.Items,
+		Status:  userOrder.Status,
+		Total:   userOrder.Total,
+		OrderID: userOrder.OrderID,
+	})
 }

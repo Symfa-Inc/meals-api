@@ -2,12 +2,12 @@ package services
 
 import (
 	"errors"
-	"github.com/Aiscom-LLC/meals-api/api/middleware"
+	"fmt"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/schemes/request"
-	"github.com/Aiscom-LLC/meals-api/types"
-	"github.com/Aiscom-LLC/meals-api/utils"
-	"github.com/gin-gonic/gin"
+	"github.com/Aiscom-LLC/meals-api/schemes/response"
+	"github.com/dgrijalva/jwt-go"
+	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"time"
 )
@@ -23,23 +23,26 @@ func NewOrderService() *OrderService {
 
 var orderRepo = repository.NewOrderRepo()
 
-func (o *OrderService) Add(c *gin.Context, order request.OrderRequest, path types.PathID) {
-	var query = c.Query("date")
+func (o *OrderService) Add(query string, order request.OrderRequest, claims jwt.MapClaims) (response.UserOrder, int, error) {
+	userRepo := repository.NewUserRepo()
+	var userID string
 
-	_, err := middleware.Passport().GetClaimsFromJWT(c)
-	if err != nil {
-		return
+	id := claims["id"].(string)
+
+	user, _ := userRepo.GetByKey("id", id)
+
+	if user.ID == uuid.Nil {
+		userID = ""
+	} else {
+		userID = user.ID.String()
 	}
-
 	for i, dish := range order.Items {
 		if dish.Amount == 0 {
-			utils.CreateError(http.StatusBadRequest, errors.New("can't add dish with 0 amount"), c)
-			return
+			return response.UserOrder{}, http.StatusBadRequest, errors.New("can't add dish with 0 amount")
 		}
 		for j := i + 1; j < len(order.Items); j++ {
 			if dish.DishID == order.Items[j].DishID {
-				utils.CreateError(http.StatusBadRequest, errors.New("can't add 2 same dishes, please increment amount field instead"), c)
-				return
+				return response.UserOrder{}, http.StatusBadRequest, errors.New("can't add 2 same dishes, please increment amount field instead")
 			}
 		}
 	}
@@ -47,23 +50,23 @@ func (o *OrderService) Add(c *gin.Context, order request.OrderRequest, path type
 	date, err := time.Parse(time.RFC3339, query)
 
 	if err != nil {
-		utils.CreateError(http.StatusBadRequest, err, c)
-		return
+		return response.UserOrder{}, http.StatusBadRequest, err
 	}
 
 	difference := date.Sub(time.Now().Truncate(time.Hour * 24)).Hours()
 
 	if difference < 0 {
-		utils.CreateError(http.StatusBadRequest, errors.New("can't add order to previous date"), c)
-		return
+		return response.UserOrder{}, http.StatusBadRequest, errors.New("can't add order to previous date")
 	}
 
-	userOrder, err := orderRepo.Add(path.ID, date, order)
+	fmt.Println(userID, date, order)
 
+	userOrder, err := orderRepo.Add(userID, date, order)
+
+	fmt.Println(err)
 	if err != nil {
-		utils.CreateError(http.StatusBadRequest, err, c)
-		return
+		return response.UserOrder{}, http.StatusBadRequest, err
 	}
 
-	c.JSON(http.StatusCreated, userOrder)
+	return userOrder, 0, nil
 }

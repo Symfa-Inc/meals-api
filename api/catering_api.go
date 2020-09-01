@@ -1,10 +1,12 @@
 package api
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/services"
 	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -35,7 +37,13 @@ func (ca Catering) Get(c *gin.Context) {
 		return
 	}
 
-	caterings, total, code, err := cateringService.Get(c, &query)
+	claims, err := middleware.Passport().GetClaimsFromJWT(c)
+
+	if err != nil {
+		return
+	}
+
+	caterings, total, code, err := cateringService.Get(jwt.MapClaims(claims), &query)
 
 	if err != nil {
 		utils.CreateError(code, err, c)

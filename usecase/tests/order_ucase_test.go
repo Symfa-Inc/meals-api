@@ -42,10 +42,11 @@ func TestAddOrder(t *testing.T) {
 	dish.ID = dishID
 	order.Comment = "cool comment"
 	order.Items = append(order.Items, dish)
+	var date = "2121-06-20T00%3A00%3A00Z"
 
 	// Trying to create new order
 	// Should be success
-	r.POST("/users/"+userID+"/orders?date=2120-06-20T00%3A00%3A00Z").
+	r.POST("/users/"+userID+"/orders?date="+date).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -56,7 +57,7 @@ func TestAddOrder(t *testing.T) {
 
 	// Trying to create new order with same data
 	// Should return an error
-	r.POST("/users/"+userID+"/orders?date=2120-06-20T00%3A00%3A00Z").
+	r.POST("/users/"+userID+"/orders?date="+date).
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
