@@ -25,6 +25,7 @@ type ClientUser struct{}
 func NewClientUser() *ClientUser {
 	return &ClientUser{}
 }
+
 var userRepo = repository.NewUserRepo()
 var clientUserRepo = repository.NewClientUserRepo()
 

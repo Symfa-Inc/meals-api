@@ -24,7 +24,7 @@ func (as *AuthService) IsAuthenticated(c *gin.Context) (domain.UserClientCaterin
 	claims, err := middleware.Passport().CheckIfTokenExpire(c)
 
 	if err != nil {
-		return domain.UserClientCatering{}, http.StatusUnauthorized,  err
+		return domain.UserClientCatering{}, http.StatusUnauthorized, err
 	}
 
 	if int64(claims["exp"].(float64)) < middleware.Passport().TimeFunc().Unix() {
@@ -35,7 +35,7 @@ func (as *AuthService) IsAuthenticated(c *gin.Context) (domain.UserClientCaterin
 	result, err := userRepo.GetByID(id.(string))
 
 	if err != nil {
-		return domain.UserClientCatering{}, http.StatusUnauthorized,  errors.New("token is expired")
+		return domain.UserClientCatering{}, http.StatusUnauthorized, errors.New("token is expired")
 	}
 
 	if result.Status == &types.StatusTypesEnum.Deleted {

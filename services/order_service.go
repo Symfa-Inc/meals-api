@@ -26,7 +26,6 @@ var orderRepo = repository.NewOrderRepo()
 func (o *OrderService) Add(c *gin.Context, order request.OrderRequest, path types.PathID) {
 	var query = c.Query("date")
 
-
 	_, err := middleware.Passport().GetClaimsFromJWT(c)
 	if err != nil {
 		return

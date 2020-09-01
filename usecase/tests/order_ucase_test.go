@@ -73,7 +73,7 @@ func TestAddOrder(t *testing.T) {
 	dish.Amount = 1
 	order.Items = append(order.Items, dish)
 
-	r.POST("/users/"+userID+"/orders?date=2220-06-20T00%3A00%3A00Z\n").
+	r.POST("/users/"+userID+"/orders?date=2220-06-20T00%3A00%3A00Z").
 		SetCookie(gofight.H{
 			"jwt": jwt,
 		}).
@@ -86,34 +86,34 @@ func TestAddOrder(t *testing.T) {
 		})
 }
 
-func TestGetOrder(t *testing.T) {
-	r := gofight.New()
-
-	userRepo := repository.NewUserRepo()
-	userResult, _ := userRepo.GetByKey("email", "user1@meals.com")
-	userID := userResult.ID.String()
-	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userID})
-
-	// Trying to get list of order
-	// Should be success
-	r.GET("/users/"+userID+"/orders?date=2120-06-20T00%3A00%3A00Z").
-		SetCookie(gofight.H{
-			"jwt": jwt,
-		}).
-		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			assert.Equal(t, http.StatusOK, r.Code)
-		})
-
-	// Trying to get list of order with non-existing date
-	// Should return an error
-	r.GET("/users/"+userID+"/orders?date=2121-06-20T00%3A00%3A00Z").
-		SetCookie(gofight.H{
-			"jwt": jwt,
-		}).
-		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := r.Body.Bytes()
-			errorValue, _ := jsonparser.GetString(data, "error")
-			assert.Equal(t, http.StatusNotFound, r.Code)
-			assert.Equal(t, "record not found", errorValue)
-		})
-}
+//func TestGetOrder(t *testing.T) {
+//	r := gofight.New()
+//
+//	userRepo := repository.NewUserRepo()
+//	userResult, _ := userRepo.GetByKey("email", "user1@meals.com")
+//	userID := userResult.ID.String()
+//	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userID})
+//
+//	// Trying to get list of order
+//	// Should be success
+//	r.GET("/users/"+userID+"/order?date=date=2120-06-20T00%3A00%3A00Z").
+//		SetCookie(gofight.H{
+//			"jwt": jwt,
+//		}).
+//		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+//				assert.Equal(t, http.StatusOK, r.Code)
+//		})
+//
+//	// Trying to get list of order with non-existing date
+//	// Should return an error
+//	r.GET("/users/"+userID+"/orders?date=2121-06-20T00%3A00%3A00Z").
+//		SetCookie(gofight.H{
+//			"jwt": jwt,
+//		}).
+//		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+//			data := r.Body.Bytes()
+//			errorValue, _ := jsonparser.GetString(data, "error")
+//			assert.Equal(t, http.StatusNotFound, r.Code)
+//			assert.Equal(t, "record not found", errorValue)
+//		})
+//}

@@ -17,8 +17,6 @@ func NewOrder() *Order {
 	return &Order{}
 }
 
-var orderService = services.NewOrderService()
-
 // Add creates order for client user
 // @Summary Returns error or 201 status code if success
 // @Produce json
@@ -34,7 +32,6 @@ func (o Order) Add(c *gin.Context) {
 	var query types.DateQuery
 	var order request.OrderRequest
 	var path types.PathID
-
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return

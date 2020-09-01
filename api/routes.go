@@ -29,7 +29,7 @@ func SetupRouter() *gin.Engine {
 	category := usecase.NewCategory()
 	dish := usecase.NewDish()
 	image := usecase.NewImage()
-	order :=  NewOrder()
+	order := NewOrder()
 	//order := usecase.NewOrder()
 	address := usecase.NewAddress()
 
