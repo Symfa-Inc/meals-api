@@ -6,6 +6,7 @@ import (
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/schemes/response"
+	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/dgrijalva/jwt-go"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
@@ -69,4 +70,64 @@ func (o *OrderService) Add(query string, order request.OrderRequest, claims jwt.
 	}
 
 	return userOrder, 0, nil
+}
+
+func (o *OrderService) CancelOrderService(path types.PathOrder) (int, error) {
+	code, err := orderRepo.CancelOrder(path.ID, path.OrderID)
+
+	return code, err
+}
+
+func (o *OrderService) GetUserOrderService(path types.PathID, query types.DateQuery) (response.UserOrder, int, error) {
+	_, err := time.Parse(time.RFC3339, query.Date)
+
+	if err != nil {
+		return response.UserOrder{}, http.StatusBadRequest, err
+	}
+
+	userOrder, code, err := orderRepo.GetUserOrder(path.ID, query.Date)
+
+	return userOrder, code, nil
+
+}
+
+func (o *OrderService) GetClientOrderService(path types.PathID, query types.DateQuery, client string) (response.SummaryOrderResult, int, error) {
+
+	_, err := time.Parse(time.RFC3339, query.Date)
+
+	if err != nil {
+		return response.SummaryOrderResult{}, http.StatusBadRequest, err
+	}
+
+	result, code, err := orderRepo.GetOrders("", path.ID, query.Date, client)
+
+	return result, code, err
+}
+
+func (o *OrderService) GetCateringOrderService(path types.PathClient, query types.DateQuery, client string) (response.SummaryOrderResult, int, error) {
+
+	_, err := time.Parse(time.RFC3339, query.Date)
+
+	if err != nil {
+		return response.SummaryOrderResult{}, http.StatusBadRequest, err
+	}
+
+	result, code, err := orderRepo.GetOrders(path.ID, path.ClientID, query.Date, client)
+
+	return result, code, err
+}
+
+func (o *OrderService) ApproveOrdersService(path types.PathID, query types.DateQuery) (int, error) {
+	var code int
+	err := orderRepo.ApproveOrders(path.ID, query.Date)
+	if err != nil {
+		code = http.StatusBadRequest
+	}
+	return code, err
+}
+
+func (o *OrderService) GetOrderStatus(path types.PathID, query types.DateQuery) string {
+	status := orderRepo.GetOrdersStatus(path.ID, query.Date)
+
+	return *status
 }
