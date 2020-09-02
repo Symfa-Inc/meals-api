@@ -116,7 +116,7 @@ func (m Meal) Add(c *gin.Context) {
 	c.JSON(http.StatusCreated, result)
 }
 
-// GetByRange returns array of meals
+// Get returns array of meals
 // @Summary GetByRange list of categories with dishes for passed meal ID
 // @Tags catering meals
 // @Produce json
@@ -159,12 +159,12 @@ func (m Meal) Get(c *gin.Context) {
 
 	endDate, err := time.Parse(time.RFC3339, query.EndDate)
 	if err != nil {
-		utils.CreateError(http.StatusBadRequest, "can't parse the date", c)
+		utils.CreateError(http.StatusBadRequest, errors.New("can't parse the date"), c)
 		return
 	}
 
 	if startDate.After(endDate) {
-		utils.CreateError(http.StatusBadRequest, "end date can't be earlier than start date", c)
+		utils.CreateError(http.StatusBadRequest, errors.New("end date can't be earlier than start date"), c)
 		return
 	}
 

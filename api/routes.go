@@ -25,7 +25,7 @@ func SetupRouter() *gin.Engine {
 	cateringSchedule := usecase.NewCateringSchedule()
 	clientSchedule := usecase.NewClientSchedule()
 	client := usecase.NewClient()
-	meal  := NewMeal()
+	meal := NewMeal()
 	//meal := usecase.NewMeal()
 	category := usecase.NewCategory()
 	dish := usecase.NewDish()
@@ -164,7 +164,7 @@ func SetupRouter() *gin.Engine {
 			allUsers.GET("/caterings/:id/clients/:clientId/categories", category.Get)
 
 			// catering meals
-			//allUsers.GET("/caterings/:id/clients/:clientId/meals", meal.Get)
+			allUsers.GET("/caterings/:id/clients/:clientId/meals", meal.Get)
 
 			// schedules
 			allUsers.GET("/caterings/:id/schedules", cateringSchedule.Get)
