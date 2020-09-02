@@ -47,7 +47,7 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder request.OrderRequ
 	config.DB.Create(&order)
 
 	for _, dish := range newOrder.Items {
-		var price []int
+		var price []float32
 
 		orderDish := domain.OrderDishes{
 			OrderID: order.ID,
@@ -64,7 +64,8 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder request.OrderRequ
 			Where("id = ?", dish.DishID).
 			Pluck("price", &price)
 
-		total += price[0] * dish.Amount
+
+		total += int(price[0]) * dish.Amount
 
 		order.Total = &total
 		order.Date = date
