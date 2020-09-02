@@ -1,14 +1,9 @@
 package types
 
-import "fmt"
-
 // PathID struct for path binding
 type PathID struct {
 	ID string `uri:"id" json:"id" binding:"required"`
 } //@name IDResponse
-func (pi *PathID) URI(model interface{}) {
-	fmt.Print(model)
-}
 
 // PathMeal struct for path binding
 type PathMeal struct {

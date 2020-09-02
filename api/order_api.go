@@ -11,6 +11,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 // Order struct
@@ -124,7 +125,14 @@ func (o Order) GetUserOrder(c *gin.Context) {
 		return
 	}
 
-	userOrder, code, err := orderService.GetUserOrderService(path, query)
+	_, err := time.Parse(time.RFC3339, query.Date)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err, c)
+		return
+	}
+
+	userOrder, code, err := orderRepo.GetUserOrder(path.ID, query.Date)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
@@ -156,9 +164,16 @@ func (o Order) GetClientOrders(c *gin.Context) {
 		return
 	}
 
-	client := types.CompanyTypesEnum.Client
+	_, err := time.Parse(time.RFC3339, query.Date)
 
-	result, code, err := orderService.GetClientOrderService(path, query, client)
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err, c)
+		return
+	}
+
+	company := types.CompanyTypesEnum.Client
+
+	result, code, err := orderRepo.GetOrders("", path.ID, query.Date, company)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
@@ -191,9 +206,16 @@ func (o Order) GetCateringClientOrders(c *gin.Context) {
 		return
 	}
 
-	client := types.CompanyTypesEnum.Catering
+	_, err := time.Parse(time.RFC3339, query.Date)
 
-	result, code, err := orderService.GetCateringOrderService(path, query, client)
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err, c)
+		return
+	}
+
+	company := types.CompanyTypesEnum.Catering
+
+	result, code, err := orderRepo.GetOrders(path.ID, path.ClientID, query.Date, company)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
@@ -226,8 +248,7 @@ func (o Order) ApproveOrders(c *gin.Context) {
 		return
 	}
 
-	err := orderRepo.ApproveOrders(path.ID, query.Date)
-	if err != nil {
+	if err := orderRepo.ApproveOrders(path.ID, query.Date); err != nil {
 		utils.CreateError(http.StatusBadRequest, err, c)
 		return
 	}

@@ -5,7 +5,6 @@ import (
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/schemes/response"
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/dgrijalva/jwt-go"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
@@ -66,43 +65,4 @@ func (o *OrderService) Add(query string, order request.OrderRequest, claims jwt.
 	}
 
 	return userOrder, 0, nil
-}
-
-func (o *OrderService) GetUserOrderService(path types.PathID, query types.DateQuery) (response.UserOrder, int, error) {
-	_, err := time.Parse(time.RFC3339, query.Date)
-
-	if err != nil {
-		return response.UserOrder{}, http.StatusBadRequest, err
-	}
-
-	userOrder, code, err := orderRepo.GetUserOrder(path.ID, query.Date)
-
-	return userOrder, code, err
-
-}
-
-func (o *OrderService) GetClientOrderService(path types.PathID, query types.DateQuery, client string) (response.SummaryOrderResult, int, error) {
-
-	_, err := time.Parse(time.RFC3339, query.Date)
-
-	if err != nil {
-		return response.SummaryOrderResult{}, http.StatusBadRequest, err
-	}
-
-	result, code, err := orderRepo.GetOrders("", path.ID, query.Date, client)
-
-	return result, code, err
-}
-
-func (o *OrderService) GetCateringOrderService(path types.PathClient, query types.DateQuery, client string) (response.SummaryOrderResult, int, error) {
-
-	_, err := time.Parse(time.RFC3339, query.Date)
-
-	if err != nil {
-		return response.SummaryOrderResult{}, http.StatusBadRequest, err
-	}
-
-	result, code, err := orderRepo.GetOrders(path.ID, path.ClientID, query.Date, client)
-
-	return result, code, err
 }
