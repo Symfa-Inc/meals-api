@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
+	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/services"
@@ -20,6 +21,9 @@ type Order struct{}
 func NewOrder() *Order {
 	return &Order{}
 }
+
+var orderService = services.NewOrderService()
+var orderRepo = repository.NewOrderRepo()
 
 // Add creates order for client user
 // @Summary Returns error or 201 status code if success
@@ -55,7 +59,7 @@ func (o Order) Add(c *gin.Context) {
 		return
 	}
 
-	userOrder, code, err := services.NewOrderService().Add(query.Date, order, jwt.MapClaims(claims))
+	userOrder, code, err := orderService.Add(query.Date, order, jwt.MapClaims(claims))
 
 	if err != nil {
 		utils.CreateError(code, err, c)
@@ -88,7 +92,7 @@ func (o Order) CancelOrder(c *gin.Context) {
 		return
 	}
 
-	code, err := services.NewOrderService().CancelOrderService(path)
+	code, err := orderRepo.CancelOrder(path.ID, path.OrderID)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
@@ -120,7 +124,7 @@ func (o Order) GetUserOrder(c *gin.Context) {
 		return
 	}
 
-	userOrder, code, err := services.NewOrderService().GetUserOrderService(path, query)
+	userOrder, code, err := orderService.GetUserOrderService(path, query)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
@@ -154,7 +158,7 @@ func (o Order) GetClientOrders(c *gin.Context) {
 
 	client := types.CompanyTypesEnum.Client
 
-	result, code, err := services.NewOrderService().GetClientOrderService(path, query, client)
+	result, code, err := orderService.GetClientOrderService(path, query, client)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
@@ -189,7 +193,7 @@ func (o Order) GetCateringClientOrders(c *gin.Context) {
 
 	client := types.CompanyTypesEnum.Catering
 
-	result, code, err := services.NewOrderService().GetCateringOrderService(path, query, client)
+	result, code, err := orderService.GetCateringOrderService(path, query, client)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
@@ -222,9 +226,9 @@ func (o Order) ApproveOrders(c *gin.Context) {
 		return
 	}
 
-	code, err := services.NewOrderService().ApproveOrdersService(path, query)
+	err := orderRepo.ApproveOrders(path.ID, query.Date)
 	if err != nil {
-		utils.CreateError(code, err, c)
+		utils.CreateError(http.StatusBadRequest, err, c)
 		return
 	}
 
@@ -253,7 +257,7 @@ func (o Order) GetOrderStatus(c *gin.Context) {
 		return
 	}
 
-	status := services.NewOrderService().GetOrderStatus(path, query)
+	status := orderRepo.GetOrdersStatus(path.ID, query.Date)
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": status,
