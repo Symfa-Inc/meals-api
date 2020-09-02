@@ -27,7 +27,6 @@ var userRepo = repository.NewUserRepo()
 var clientUserRepo = repository.NewClientUserRepo()
 
 func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domain.User) (domain.UserClientCatering, int, error, error, string) {
-
 	parsedID, _ := uuid.FromString(path.ID)
 	user.CompanyType = &types.CompanyTypesEnum.Client
 	user.Status = &types.StatusTypesEnum.Invited
@@ -46,7 +45,6 @@ func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domai
 		}
 
 		if err := clientUserRepo.Add(clientUser); err != nil {
-
 			return domain.UserClientCatering{}, http.StatusBadRequest, err, nil, password
 		}
 
@@ -56,12 +54,11 @@ func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domai
 	}
 
 	for i := range existingUser {
-
 		if *existingUser[i].Status != types.StatusTypesEnum.Deleted {
-
 			return domain.UserClientCatering{}, http.StatusBadRequest, errors.New("user with that email already exist"), nil, password
 		}
 	}
+
 	user, userErr := userRepo.Add(user)
 
 	clientUser := domain.ClientUser{
@@ -71,7 +68,6 @@ func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domai
 	}
 
 	if err := clientUserRepo.Add(clientUser); err != nil {
-
 		return domain.UserClientCatering{}, http.StatusBadRequest, err, userErr, password
 	}
 
@@ -88,7 +84,6 @@ func (cu *ClientUser) Delete(path types.PathUser, user domain.User, userRole str
 	user.DeletedAt = &deleteAt
 
 	if user.ID.String() == userID {
-
 		return http.StatusBadRequest, errors.New("can't delete yourself")
 	}
 
@@ -102,15 +97,12 @@ func (cu *ClientUser) Update(path types.PathUser, body request.ClientUserUpdate,
 	if body.Email != "" {
 
 		if ok := utils.IsEmailValid(body.Email); !ok {
-
 			return http.StatusBadRequest, errors.New("email is not valid")
 		}
 	}
 
 	if err := copier.Copy(&user, &body); err != nil {
-
 		return http.StatusBadRequest, err
-
 	}
 
 	parsedID, _ := uuid.FromString(path.UserID)
