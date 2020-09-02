@@ -46,6 +46,7 @@ func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domai
 		}
 
 		if err := clientUserRepo.Add(clientUser); err != nil {
+
 			return domain.UserClientCatering{}, http.StatusBadRequest, err, nil, password
 		}
 
@@ -55,7 +56,9 @@ func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domai
 	}
 
 	for i := range existingUser {
+
 		if *existingUser[i].Status != types.StatusTypesEnum.Deleted {
+
 			return domain.UserClientCatering{}, http.StatusBadRequest, errors.New("user with that email already exist"), nil, password
 		}
 	}
@@ -68,6 +71,7 @@ func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domai
 	}
 
 	if err := clientUserRepo.Add(clientUser); err != nil {
+
 		return domain.UserClientCatering{}, http.StatusBadRequest, err, userErr, password
 	}
 
@@ -76,15 +80,15 @@ func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domai
 	return userClientCatering, 0, err, userErr, password
 }
 
-func (cu *ClientUser) Delete(path types.PathUser, user domain.User, delUser interface{}) (int, error) {
+func (cu *ClientUser) Delete(path types.PathUser, user domain.User, userRole string, userID string) (int, error) {
 	parsedUserID, _ := uuid.FromString(path.UserID)
 	user.ID = parsedUserID
 	user.Status = &types.StatusTypesEnum.Deleted
 	deleteAt := time.Now().AddDate(0, 0, 21).Truncate(time.Hour * 24)
 	user.DeletedAt = &deleteAt
 
-	userRole := delUser.(domain.User).Role
-	if user.ID == delUser.(domain.User).ID {
+	if user.ID.String() == userID {
+
 		return http.StatusBadRequest, errors.New("can't delete yourself")
 	}
 
@@ -96,12 +100,15 @@ func (cu *ClientUser) Delete(path types.PathUser, user domain.User, delUser inte
 func (cu *ClientUser) Update(path types.PathUser, body request.ClientUserUpdate, user domain.User) (int, error) {
 
 	if body.Email != "" {
+
 		if ok := utils.IsEmailValid(body.Email); !ok {
+
 			return http.StatusBadRequest, errors.New("email is not valid")
 		}
 	}
 
 	if err := copier.Copy(&user, &body); err != nil {
+
 		return http.StatusBadRequest, err
 
 	}

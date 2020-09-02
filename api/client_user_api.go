@@ -43,19 +43,23 @@ func (cu ClientUser) Add(c *gin.Context) {
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
+
 		return
 	}
 
 	if err := utils.RequestBinderBody(&body, c); err != nil {
+
 		return
 	}
 
 	if err := copier.Copy(&user, &body); err != nil {
+
 		utils.CreateError(http.StatusBadRequest, err, c)
 		return
 	}
 
 	if ok := utils.IsEmailValid(user.Email); !ok {
+
 		utils.CreateError(http.StatusBadRequest, errors.New("email is not valid"), c)
 		return
 	}
@@ -63,10 +67,12 @@ func (cu ClientUser) Add(c *gin.Context) {
 	userClientCatering, code, err, userErr, password := clientUserService.Add(path, body, user)
 
 	if err != nil {
+
 		utils.CreateError(code, err, c)
 		return
 	}
 	if userErr != nil {
+
 		utils.CreateError(code, userErr, c)
 		return
 	}
@@ -96,14 +102,17 @@ func (cu ClientUser) Get(c *gin.Context) { //nolint:dupl
 	var filterQuery types.UserFilterQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
+
 		return
 	}
 
 	if err := utils.RequestBinderQuery(&paginationQuery, c); err != nil {
+
 		return
 	}
 
 	if err := utils.RequestBinderQuery(&filterQuery, c); err != nil {
+
 		return
 	}
 
@@ -113,6 +122,7 @@ func (cu ClientUser) Get(c *gin.Context) { //nolint:dupl
 	users, total, code, err := clientUserRepo.Get(path.ID, ctxUserRole, paginationQuery, filterQuery)
 
 	if err != nil {
+
 		utils.CreateError(code, err, c)
 		return
 	}
@@ -144,13 +154,17 @@ func (cu ClientUser) Delete(c *gin.Context) {
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
+
 		return
 	}
 
 	delUser, _ := c.Get("user")
-	code, err := clientUserService.Delete(path, user, delUser)
+	userRole := delUser.(domain.User).Role
+	userID := delUser.(domain.User).ID.String()
+	code, err := clientUserService.Delete(path, user, userRole, userID)
 
 	if err != nil {
+
 		utils.CreateError(code, err, c)
 		return
 	}
@@ -176,16 +190,19 @@ func (cu ClientUser) Update(c *gin.Context) {
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
+
 		return
 	}
 
 	if err := utils.RequestBinderBody(&body, c); err != nil {
+
 		return
 	}
 
 	code, err := clientUserService.Update(path, body, user)
 
 	if err != nil {
+
 		utils.CreateError(code, err, c)
 		return
 	}
