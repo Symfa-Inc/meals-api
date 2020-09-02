@@ -102,7 +102,7 @@ func TestGetOrder(t *testing.T) {
 			"jwt": jwt,
 		}).
 		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-				assert.Equal(t, http.StatusOK, r.Code)
+			assert.Equal(t, http.StatusOK, r.Code)
 		})
 
 	// Trying to get list of order with non-existing date
