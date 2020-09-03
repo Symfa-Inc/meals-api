@@ -40,6 +40,7 @@ func (a Address) Get(c *gin.Context) {
 	}
 
 	addressResult, code, err := addressRepo.Get(path.ID)
+
 	if err != nil {
 		utils.CreateError(code, err, c)
 		return
@@ -71,6 +72,7 @@ func (a Address) Add(c *gin.Context) {
 
 	body.ClientID, _ = uuid.FromString(path.ID)
 	address, err := addressRepo.Add(body)
+
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err, c)
 		return
@@ -90,6 +92,7 @@ func (a Address) Add(c *gin.Context) {
 // @Router /clients/{id}/addresses/{addressId} [delete]
 func (a Address) Delete(c *gin.Context) {
 	var path types.PathAddress
+
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
@@ -127,6 +130,7 @@ func (a Address) Update(c *gin.Context) {
 	}
 
 	address, err := addressRepo.Update(path, body)
+
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err, c)
 		return
