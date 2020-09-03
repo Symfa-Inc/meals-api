@@ -21,7 +21,7 @@ func SetupRouter() *gin.Engine {
 	auth := NewAuth()
 	cateringUser := usecase.NewCateringUser()
 	clientUser := NewClientUser()
-	catering := usecase.NewCatering()
+	catering := NewCatering()
 	cateringSchedule := usecase.NewCateringSchedule()
 	clientSchedule := usecase.NewClientSchedule()
 	client := NewClient()
