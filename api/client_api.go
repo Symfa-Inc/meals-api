@@ -143,7 +143,6 @@ func (cl Client) GetByID(c *gin.Context) {
 // @Router /clients [get]
 func (cl Client) Get(c *gin.Context) {
 	var query types.PaginationQuery
-	var cateringID string
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return
@@ -156,7 +155,7 @@ func (cl Client) Get(c *gin.Context) {
 		return
 	}
 
-	result, total, query, code, err := services.NewClient().Get(query, cateringID, jwt.MapClaims(claims))
+	result, total, query, code, err := services.NewClient().Get(query, jwt.MapClaims(claims))
 
 	if err != nil {
 		utils.CreateError(code, err, c)

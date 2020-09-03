@@ -21,7 +21,8 @@ func NewClient() *Client {
 var cateringUserRepo = repository.NewCateringUserRepo()
 var clientRepo = repository.NewClientRepo()
 
-func (cl *Client) Get(query types.PaginationQuery, cateringID string, claims jwt.MapClaims) ([]response.Client, int, types.PaginationQuery, int, error) {
+func (cl *Client) Get(query types.PaginationQuery, claims jwt.MapClaims) ([]response.Client, int, types.PaginationQuery, int, error) {
+	var cateringID string
 
 	id := claims["id"].(string)
 
