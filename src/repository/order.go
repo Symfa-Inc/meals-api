@@ -347,7 +347,7 @@ func (o OrderRepo) getDishesForOrder(orderID uuid.UUID, dishes *[]response.Order
 		Joins("left join dishes d on order_dishes.dish_id = d.id").
 		Joins("left join image_dishes id on d.id = id.dish_id").
 		Joins("left join images i on id.image_id = i.id").
-		Where("order_dishes.order_id = ?", orderID).
+		Where("order_dishes.order_id = ? AND id.deleted_at IS NULL", orderID).
 		Scan(dishes).
 		Error; err != nil {
 		return err
