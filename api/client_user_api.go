@@ -60,7 +60,7 @@ func (cu ClientUser) Add(c *gin.Context) {
 		return
 	}
 
-	userClientCatering, code, err, userErr, password := clientUserService.Add(path, body, user)
+	userClientCatering, code, password, err, userErr := clientUserService.Add(path, body, user)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
@@ -97,17 +97,14 @@ func (cu ClientUser) Get(c *gin.Context) { //nolint:dupl
 	var filterQuery types.UserFilterQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
-
 		return
 	}
 
 	if err := utils.RequestBinderQuery(&paginationQuery, c); err != nil {
-
 		return
 	}
 
 	if err := utils.RequestBinderQuery(&filterQuery, c); err != nil {
-
 		return
 	}
 
@@ -117,7 +114,6 @@ func (cu ClientUser) Get(c *gin.Context) { //nolint:dupl
 	users, total, code, err := clientUserRepo.Get(path.ID, ctxUserRole, paginationQuery, filterQuery)
 
 	if err != nil {
-
 		utils.CreateError(code, err, c)
 		return
 	}

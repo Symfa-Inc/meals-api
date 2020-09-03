@@ -75,6 +75,7 @@ func (d Dish) Delete(c *gin.Context) {
 
 	if err := dishRepo.Delete(path); err != nil {
 		utils.CreateError(http.StatusNotFound, err, c)
+		return
 	}
 
 	c.Status(http.StatusNoContent)

@@ -26,7 +26,7 @@ func NewClientUser() *ClientUser {
 var userRepo = repository.NewUserRepo()
 var clientUserRepo = repository.NewClientUserRepo()
 
-func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domain.User) (domain.UserClientCatering, int, error, error, string) {
+func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domain.User) (domain.UserClientCatering, int, string, error, error) {
 	parsedID, _ := uuid.FromString(path.ID)
 	user.CompanyType = &types.CompanyTypesEnum.Client
 	user.Status = &types.StatusTypesEnum.Invited
@@ -45,17 +45,17 @@ func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domai
 		}
 
 		if err := clientUserRepo.Add(clientUser); err != nil {
-			return domain.UserClientCatering{}, http.StatusBadRequest, err, nil, password
+			return domain.UserClientCatering{}, http.StatusBadRequest, password, err, nil
 		}
 
 		userClientCatering, err := userRepo.GetByID(user.ID.String())
 
-		return userClientCatering, 0, err, userErr, password
+		return userClientCatering, 0, password, err, userErr
 	}
 
 	for i := range existingUser {
 		if *existingUser[i].Status != types.StatusTypesEnum.Deleted {
-			return domain.UserClientCatering{}, http.StatusBadRequest, errors.New("user with that email already exist"), nil, password
+			return domain.UserClientCatering{}, http.StatusBadRequest, password, errors.New("user with that email already exist"), nil
 		}
 	}
 
@@ -68,12 +68,12 @@ func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domai
 	}
 
 	if err := clientUserRepo.Add(clientUser); err != nil {
-		return domain.UserClientCatering{}, http.StatusBadRequest, err, userErr, password
+		return domain.UserClientCatering{}, http.StatusBadRequest, password, err, userErr
 	}
 
 	userClientCatering, err := userRepo.GetByID(user.ID.String())
 
-	return userClientCatering, 0, err, userErr, password
+	return userClientCatering, 0, password, err, userErr
 }
 
 func (cu *ClientUser) Delete(path types.PathUser, user domain.User, userRole string, userID string) (int, error) {
@@ -93,9 +93,7 @@ func (cu *ClientUser) Delete(path types.PathUser, user domain.User, userRole str
 }
 
 func (cu *ClientUser) Update(path types.PathUser, body request.ClientUserUpdate, user domain.User) (int, error) {
-
 	if body.Email != "" {
-
 		if ok := utils.IsEmailValid(body.Email); !ok {
 			return http.StatusBadRequest, errors.New("email is not valid")
 		}
