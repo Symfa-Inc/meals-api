@@ -284,7 +284,7 @@ func TestUpdateClientUser(t *testing.T) {
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"email": "newwwCoolNamedas",
+			"email": "newwwCoolNameddsaas",
 		}).
 		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
