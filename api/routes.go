@@ -30,7 +30,7 @@ func SetupRouter() *gin.Engine {
 	dish := NewDish()
 	image := usecase.NewImage()
 	order := NewOrder()
-	address := usecase.NewAddress()
+	address := NewAddress()
 
 	validator := middleware.NewValidator()
 
