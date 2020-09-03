@@ -25,6 +25,7 @@ func NewClient() *Client {
 }
 
 var clientRepo = repository.NewClientRepo()
+var clientService = services.NewClient()
 
 // Add creates client
 // @Summary Returns error or 201 status code if success
@@ -47,8 +48,7 @@ func (cl Client) Add(c *gin.Context) {
 		return
 	}
 
-	parsedCateringI, _ := uuid.FromString(path.ID)
-	client.CateringID = parsedCateringI
+	client.CateringID, _ = uuid.FromString(path.ID)
 
 	if err := clientRepo.Add(path.ID, &client); err != nil {
 		utils.CreateError(http.StatusBadRequest, err, c)
@@ -155,7 +155,7 @@ func (cl Client) Get(c *gin.Context) {
 		return
 	}
 
-	result, total, query, code, err := services.NewClient().Get(query, jwt.MapClaims(claims))
+	result, total, query, code, err := clientService.Get(query, jwt.MapClaims(claims))
 
 	if err != nil {
 		utils.CreateError(code, err, c)
