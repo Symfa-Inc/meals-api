@@ -24,7 +24,7 @@ func SetupRouter() *gin.Engine {
 	catering := usecase.NewCatering()
 	cateringSchedule := usecase.NewCateringSchedule()
 	clientSchedule := usecase.NewClientSchedule()
-	client := usecase.NewClient()
+	client := NewClient()
 	meal := NewMeal()
 	category := usecase.NewCategory()
 	dish := NewDish()
