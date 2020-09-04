@@ -85,7 +85,7 @@ func (cs ClientSchedule) Update(c *gin.Context) {
 		utils.CreateError(code, err, c)
 		return
 	}
-	
+
 	clientRepo.UpdateAutoApproveSchedules(path.ID)
 	c.JSON(http.StatusOK, updatedSchedule)
 }
