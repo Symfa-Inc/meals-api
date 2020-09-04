@@ -64,7 +64,6 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder request.OrderRequ
 			Where("id = ?", dish.DishID).
 			Pluck("price", &price)
 
-
 		total += price[0] * float32(dish.Amount)
 
 		order.Total = &total
