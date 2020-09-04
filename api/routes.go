@@ -5,8 +5,6 @@ import (
 
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/types"
-	"github.com/Aiscom-LLC/meals-api/usecase"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
@@ -19,7 +17,7 @@ func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
 	auth := NewAuth()
-	cateringUser := usecase.NewCateringUser()
+	cateringUser := NewCateringUser()
 	clientUser := NewClientUser()
 	catering := NewCatering()
 	cateringSchedule := NewCateringSchedule()
