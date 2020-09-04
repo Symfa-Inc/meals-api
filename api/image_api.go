@@ -91,7 +91,7 @@ func (i Image) Get(c *gin.Context) {
 		utils.CreateError(http.StatusBadRequest, err, c)
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, images)
 }
 
