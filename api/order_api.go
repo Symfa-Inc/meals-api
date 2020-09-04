@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	types2 "github.com/Aiscom-LLC/meals-api/api/types"
+	types2 "github.com/Aiscom-LLC/meals-api/api/api_types"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/services"
 	"github.com/Aiscom-LLC/meals-api/types"

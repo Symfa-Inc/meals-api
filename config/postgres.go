@@ -5,7 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 
-	// gorm postgres type
+	// gorm postgres api_types
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 

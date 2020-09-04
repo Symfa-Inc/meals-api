@@ -3,7 +3,7 @@ package api
 import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	"github.com/Aiscom-LLC/meals-api/api/types"
+	"github.com/Aiscom-LLC/meals-api/api/api_types"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/mailer"
 	"github.com/Aiscom-LLC/meals-api/repository"
@@ -38,7 +38,7 @@ var clientUserService = services.NewClientUser()
 // @Failure 400 {object} Error "Error"
 // @Router /clients/{id}/users [post]
 func (cu ClientUser) Add(c *gin.Context) {
-	var path types.PathID
+	var path api_types.PathID
 	var body swagger.ClientUser
 	var user domain.User
 
@@ -92,9 +92,9 @@ func (cu ClientUser) Add(c *gin.Context) {
 // @Failure 404 {object} Error "Error"
 // @Router /clients/{id}/users [get]
 func (cu ClientUser) Get(c *gin.Context) { //nolint:dupl
-	var path types.PathID
-	var paginationQuery types.PaginationQuery
-	var filterQuery types.UserFilterQuery
+	var path api_types.PathID
+	var paginationQuery api_types.PaginationQuery
+	var filterQuery api_types.UserFilterQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -141,7 +141,7 @@ func (cu ClientUser) Get(c *gin.Context) { //nolint:dupl
 // @Failure 404 {object} Error "Error"
 // @Router /clients/{id}/users/{userId} [delete]
 func (cu ClientUser) Delete(c *gin.Context) {
-	var path types.PathUser
+	var path api_types.PathUser
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -174,7 +174,7 @@ func (cu ClientUser) Delete(c *gin.Context) {
 // @Failure 404 {object} Error "Error"
 // @Router /clients/{id}/users/{userId} [put]
 func (cu ClientUser) Update(c *gin.Context) {
-	var path types.PathUser
+	var path api_types.PathUser
 	var body swagger.ClientUserUpdate
 	var user domain.User
 

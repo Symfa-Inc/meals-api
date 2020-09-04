@@ -1,4 +1,4 @@
-package types
+package api_types
 
 // PathID struct for path binding
 type PathID struct {

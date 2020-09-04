@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	"github.com/Aiscom-LLC/meals-api/api/types"
+	"github.com/Aiscom-LLC/meals-api/api/api_types"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/services"
@@ -39,7 +39,7 @@ var clientService = services.NewClient()
 // @Router /caterings/{id}/clients [post]
 func (cl Client) Add(c *gin.Context) {
 	var client domain.Client
-	var path types.PathID
+	var path api_types.PathID
 	if err := utils.RequestBinderBody(&client, c); err != nil {
 		return
 	}
@@ -70,8 +70,8 @@ func (cl Client) Add(c *gin.Context) {
 // @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/clients-orders [get]
 func (cl Client) GetCateringClientsOrders(c *gin.Context) {
-	var query types.PaginationWithDateQuery
-	var path types.PathID
+	var query api_types.PaginationWithDateQuery
+	var path api_types.PathID
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return
@@ -116,7 +116,7 @@ func (cl Client) GetCateringClientsOrders(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id} [get]
 func (cl Client) GetByID(c *gin.Context) {
-	var path types.PathID
+	var path api_types.PathID
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -142,7 +142,7 @@ func (cl Client) GetByID(c *gin.Context) {
 // @Failure 400 {object} Error "Error"
 // @Router /clients [get]
 func (cl Client) Get(c *gin.Context) {
-	var query types.PaginationQuery
+	var query api_types.PaginationQuery
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return
@@ -180,8 +180,8 @@ func (cl Client) Get(c *gin.Context) {
 // @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/clients [get]
 func (cl Client) GetByCateringID(c *gin.Context) {
-	var path types.PathID
-	var query types.PaginationQuery
+	var path api_types.PathID
+	var query api_types.PaginationQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -219,7 +219,7 @@ func (cl Client) GetByCateringID(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id} [delete]
 func (cl Client) Delete(c *gin.Context) {
-	var path types.PathID
+	var path api_types.PathID
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
@@ -244,7 +244,7 @@ func (cl Client) Delete(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id} [put]
 func (cl Client) Update(c *gin.Context) {
-	var path types.PathID
+	var path api_types.PathID
 	var clientModal domain.Client
 
 	if err := utils.RequestBinderBody(&clientModal, c); err != nil {
@@ -275,7 +275,7 @@ func (cl Client) Update(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/auto-approve [put]
 func (cl Client) UpdateAutoApprove(c *gin.Context) {
-	var path types.PathID
+	var path api_types.PathID
 	var body swagger.UpdateAutoApprove
 
 	if err := utils.RequestBinderBody(&body, c); err != nil {

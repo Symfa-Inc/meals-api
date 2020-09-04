@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	"github.com/Aiscom-LLC/meals-api/api/types"
+	"github.com/Aiscom-LLC/meals-api/api/api_types"
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"net/http"
@@ -50,7 +50,7 @@ func (a AddressRepo) Get(id string) ([]domain.Address, int, error) {
 }
 
 // Delete soft deletes address, returns err or nil
-func (a AddressRepo) Delete(path types.PathAddress) error {
+func (a AddressRepo) Delete(path api_types.PathAddress) error {
 	if isAddressExist := config.DB.
 		Where("client_id = ? AND id = ?", path.ID, path.AddressID).
 		Delete(&domain.Address{}).
@@ -63,7 +63,7 @@ func (a AddressRepo) Delete(path types.PathAddress) error {
 
 // Update updates entity
 // returns error or nil and status code
-func (a AddressRepo) Update(path types.PathAddress, address domain.Address) (domain.Address, error) {
+func (a AddressRepo) Update(path api_types.PathAddress, address domain.Address) (domain.Address, error) {
 	if err := config.DB.Model(&address).
 		Where("id = ? AND client_id = ?", path.AddressID, path.ID).
 		Update(&address).

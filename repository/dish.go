@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	"github.com/Aiscom-LLC/meals-api/api/types"
+	"github.com/Aiscom-LLC/meals-api/api/api_types"
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/jinzhu/gorm"
@@ -38,7 +38,7 @@ func (d DishRepo) Add(cateringID string, dish *domain.Dish) error {
 
 // Delete soft delete of entity
 // returns error or nil
-func (d DishRepo) Delete(path types.PathDish) error {
+func (d DishRepo) Delete(path api_types.PathDish) error {
 	if cateringNotExist := config.DB.Where("id = ?", path.CateringID).
 		Find(&domain.Catering{}).RecordNotFound(); cateringNotExist {
 		return errors.New("catering with that ID doesn't exist")
@@ -143,7 +143,7 @@ func (d DishRepo) Get(cateringID, categoryID string) ([]domain.Dish, int, error)
 
 // Update updates entity
 // returns error or nil and status code
-func (d DishRepo) Update(path types.PathDish, dish domain.Dish) (int, error) {
+func (d DishRepo) Update(path api_types.PathDish, dish domain.Dish) (int, error) {
 	if cateringNotExist := config.DB.
 		Where("id = ?", path.CateringID).
 		Find(&domain.Catering{}).

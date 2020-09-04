@@ -3,7 +3,7 @@ package services
 import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	types2 "github.com/Aiscom-LLC/meals-api/api/types"
+	types2 "github.com/Aiscom-LLC/meals-api/api/api_types"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/types"

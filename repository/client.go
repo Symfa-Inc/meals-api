@@ -3,7 +3,7 @@ package repository
 import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	types2 "github.com/Aiscom-LLC/meals-api/api/types"
+	types2 "github.com/Aiscom-LLC/meals-api/api/api_types"
 	"net/http"
 	"time"
 

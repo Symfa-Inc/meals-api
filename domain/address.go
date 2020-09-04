@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"github.com/Aiscom-LLC/meals-api/api/types"
+	"github.com/Aiscom-LLC/meals-api/api/api_types"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 )
@@ -28,6 +28,6 @@ type AddressUsecase interface {
 type AddressRepository interface {
 	Add(address Address) (Address, error)
 	Get(id string) ([]Address, int, error)
-	Delete(path types.PathAddress) error
-	Update(path types.PathAddress, address Address) (Address, error)
+	Delete(path api_types.PathAddress) error
+	Update(path api_types.PathAddress, address Address) (Address, error)
 }

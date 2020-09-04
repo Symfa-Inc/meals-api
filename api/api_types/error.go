@@ -1,4 +1,4 @@
-package types
+package api_types
 
 // Error struct
 type Error struct {

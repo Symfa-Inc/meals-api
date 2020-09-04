@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	"github.com/Aiscom-LLC/meals-api/api/types"
+	"github.com/Aiscom-LLC/meals-api/api/api_types"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/utils"
@@ -31,7 +31,7 @@ var cateringScheduleRepo = repository.NewCateringScheduleRepo()
 // @Failure 404 {object} Error "Error"
 // @Router /caterings/{id}/schedules [get]
 func (s CateringSchedule) Get(c *gin.Context) {
-	var path types.PathID
+	var path api_types.PathID
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -62,7 +62,7 @@ func (s CateringSchedule) Get(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/schedules/{scheduleId} [put]
 func (s CateringSchedule) Update(c *gin.Context) {
-	var path types.PathSchedule
+	var path api_types.PathSchedule
 	var body swagger.UpdateSchedule
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {

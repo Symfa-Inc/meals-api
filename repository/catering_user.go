@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	types2 "github.com/Aiscom-LLC/meals-api/api/types"
+	types2 "github.com/Aiscom-LLC/meals-api/api/api_types"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"time"

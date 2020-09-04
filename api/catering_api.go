@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	"github.com/Aiscom-LLC/meals-api/api/types"
+	"github.com/Aiscom-LLC/meals-api/api/api_types"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/services"
@@ -35,7 +35,7 @@ var cateringRepo = repository.NewCateringRepo()
 // @Failure 400 {object} Error "Error"
 // @Router /caterings [get]
 func (ca Catering) Get(c *gin.Context) {
-	var query types.PaginationQuery
+	var query api_types.PaginationQuery
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return
@@ -97,7 +97,7 @@ func (ca Catering) Add(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id} [delete]
 func (ca Catering) Delete(c *gin.Context) {
-	var path types.PathID
+	var path api_types.PathID
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -121,7 +121,7 @@ func (ca Catering) Delete(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id} [get]
 func (ca Catering) GetByID(c *gin.Context) {
-	var path types.PathID
+	var path api_types.PathID
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -149,7 +149,7 @@ func (ca Catering) GetByID(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id} [put]
 func (ca Catering) Update(c *gin.Context) {
-	var path types.PathID
+	var path api_types.PathID
 	var cateringModel domain.Catering
 
 	if err := utils.RequestBinderBody(&cateringModel, c); err != nil {
