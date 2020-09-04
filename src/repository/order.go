@@ -223,7 +223,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 				Error; err != nil {
 				return response.SummaryOrderResult{}, http.StatusBadRequest, err
 			}
-			result.Total += result.UserOrders[i].Total
+			result.Total += float32(result.UserOrders[i].Total)
 		}
 
 		return result, 0, nil
@@ -301,7 +301,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 			Error; err != nil {
 			return response.SummaryOrderResult{}, http.StatusBadRequest, err
 		}
-		result.Total += result.UserOrders[i].Total
+		result.Total += float32(result.UserOrders[i].Total)
 	}
 
 	if len(result.SummaryOrders) != 0 {

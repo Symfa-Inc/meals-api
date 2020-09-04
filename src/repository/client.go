@@ -65,9 +65,9 @@ func (c ClientRepo) Add(cateringID string, client *domain.Client) error {
 }
 
 // GetCateringClientsOrders returns list of catering Clients
-func (c ClientRepo) GetCateringClientsOrders(cateringID string, query types.PaginationWithDateQuery) ([]response.ClientOrder, int, error) {
+func (c ClientRepo) GetCateringClientsOrders(cateringID string, query types.PaginationWithDateQuery) ([]response.ClientOrder, float32, error) {
 	var cateringClients []response.ClientOrder
-	var total int
+	var total float32
 
 	page := query.Page
 	limit := query.Limit
@@ -96,7 +96,7 @@ func (c ClientRepo) GetCateringClientsOrders(cateringID string, query types.Pagi
 		Error
 
 	for i := range cateringClients {
-		var total []int
+		var total []float32
 		config.DB.
 			Limit(limit).
 			Offset((page-1)*limit).
