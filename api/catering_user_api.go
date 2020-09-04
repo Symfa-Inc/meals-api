@@ -1,29 +1,32 @@
-package usecase
+package api
 
 import (
 	"errors"
-	"net/http"
-	"time"
-
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/mailer"
+	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/schemes/request"
+	"github.com/Aiscom-LLC/meals-api/services"
 	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
+	"net/http"
+	"time"
 )
 
 // CateringUser struct
 type CateringUser struct{}
 
-// NewCateringUser returns pointer to caterign
+// NewCateringUser returns pointer to catering
 // user struct with all methods
 func NewCateringUser() *CateringUser {
 	return &CateringUser{}
 }
+
+var cateringUserService = services.NewCateringUserService()
+var cateringUserRepo = repository.NewCateringUserRepo()
 
 // Add creates user for catering
 // @Summary Returns error or 201 status code if success
@@ -58,71 +61,7 @@ func (cu *CateringUser) Add(c *gin.Context) {
 		return
 	}
 
-	parsedID, err := uuid.FromString(path.ID)
-	if err != nil {
-		utils.CreateError(http.StatusBadRequest, err, c)
-		return
-	}
-
-	user.Role = types.UserRoleEnum.CateringAdmin
-	user.Status = &types.StatusTypesEnum.Invited
-	user.CompanyType = &types.CompanyTypesEnum.Catering
-
-	password := utils.GenerateString(10)
-	user.Password = utils.HashString(password)
-
-	existingUsers, err := userRepo.GetAllByKey("email", user.Email)
-
-	if gorm.IsRecordNotFoundError(err) {
-		userResult, userErr := userRepo.Add(user)
-
-		cateringUser := domain.CateringUser{
-			UserID:     userResult.ID,
-			CateringID: parsedID,
-		}
-
-		if err := cateringUserRepo.Add(cateringUser); err != nil {
-			utils.CreateError(http.StatusBadRequest, err, c)
-			return
-		}
-
-		userClientCatering, err := userRepo.GetByID(userResult.ID.String())
-
-		if err != nil {
-			utils.CreateError(http.StatusBadRequest, err, c)
-			return
-		}
-
-		if userErr != nil {
-			utils.CreateError(http.StatusBadRequest, userErr, c)
-			return
-		}
-
-		// nolint:errcheck
-		go mailer.SendEmail(user, password)
-		c.JSON(http.StatusCreated, userClientCatering)
-		return
-	}
-
-	for i := range existingUsers {
-		if *existingUsers[i].Status != types.StatusTypesEnum.Deleted {
-			utils.CreateError(http.StatusBadRequest, errors.New("user with that email already exist"), c)
-			return
-		}
-	}
-	user, userErr := userRepo.Add(user)
-
-	cateringUser := domain.CateringUser{
-		UserID:     user.ID,
-		CateringID: parsedID,
-	}
-
-	if err := cateringUserRepo.Add(cateringUser); err != nil {
-		utils.CreateError(http.StatusBadRequest, err, c)
-		return
-	}
-
-	userClientCatering, err := userRepo.GetByID(user.ID.String())
+	userClientCatering, userCreated, password, err, userErr := cateringUserService.Add(path, body, user)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err, c)
@@ -130,12 +69,12 @@ func (cu *CateringUser) Add(c *gin.Context) {
 	}
 
 	if userErr != nil {
-		utils.CreateError(http.StatusBadRequest, userErr, c)
+		utils.CreateError(http.StatusBadRequest, err, c)
 		return
 	}
 
 	// nolint:errcheck
-	go mailer.SendEmail(user, password)
+	go mailer.SendEmail(userCreated, password)
 	c.JSON(http.StatusCreated, userClientCatering)
 }
 
