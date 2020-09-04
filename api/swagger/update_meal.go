@@ -1,4 +1,4 @@
-package request
+package swagger
 
 // UpdateMeal request scheme
 type UpdateMeal struct {

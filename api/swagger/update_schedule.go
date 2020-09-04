@@ -1,4 +1,4 @@
-package request
+package swagger
 
 // UpdateSchedule request scheme
 type UpdateSchedule struct {

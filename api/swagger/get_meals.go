@@ -1,4 +1,4 @@
-package response
+package swagger
 
 import (
 	"github.com/Aiscom-LLC/meals-api/domain"

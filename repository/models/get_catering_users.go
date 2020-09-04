@@ -1,4 +1,4 @@
-package response
+package models
 
 import (
 	"github.com/Aiscom-LLC/meals-api/domain"

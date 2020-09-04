@@ -1,4 +1,4 @@
-package request
+package swagger
 
 // AddName request scheme
 type AddName struct {

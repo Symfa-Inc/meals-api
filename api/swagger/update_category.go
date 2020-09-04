@@ -1,4 +1,4 @@
-package request
+package swagger
 
 // UpdateCategory request scheme
 type UpdateCategory struct {

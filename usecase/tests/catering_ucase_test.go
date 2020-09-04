@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"github.com/Aiscom-LLC/meals-api/api"
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
+	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/schemes/response"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	uuid "github.com/satori/go.uuid"
@@ -95,7 +95,7 @@ func TestGetCaterings(t *testing.T) {
 		}).
 		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
-			var result response.GetCaterings
+			var result swagger.GetCaterings
 			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, http.StatusOK, r.Code)
 			assert.Equal(t, 10, len(result.Items))
@@ -109,7 +109,7 @@ func TestGetCaterings(t *testing.T) {
 		}).
 		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			data := r.Body.Bytes()
-			var result response.GetCaterings
+			var result swagger.GetCaterings
 			_ = json.Unmarshal(data, &result)
 			assert.Equal(t, http.StatusOK, r.Code)
 			assert.Equal(t, 15, len(result.Items))

@@ -1,4 +1,4 @@
-package request
+package swagger
 
 // AddAddress response scheme
 type AddAddress struct {

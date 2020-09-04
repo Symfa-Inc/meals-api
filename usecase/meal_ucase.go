@@ -8,7 +8,7 @@ package usecase
 //
 //	"github.com/Aiscom-LLC/meals-api/domain"
 //	"github.com/Aiscom-LLC/meals-api/repository"
-//	"github.com/Aiscom-LLC/meals-api/schemes/request"
+//	"github.com/Aiscom-LLC/meals-api/swagger/request"
 //	"github.com/Aiscom-LLC/meals-api/types"
 //	"github.com/Aiscom-LLC/meals-api/utils"
 //

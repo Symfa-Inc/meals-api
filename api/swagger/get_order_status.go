@@ -1,4 +1,4 @@
-package response
+package swagger
 
 // OrderStatus struct
 type OrderStatus struct {

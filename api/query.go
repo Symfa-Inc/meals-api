@@ -1,4 +1,4 @@
-package types
+package api
 
 // PaginationQuery struct used for pagination binding
 type PaginationQuery struct {

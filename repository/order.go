@@ -2,13 +2,12 @@ package repository
 
 import (
 	"errors"
+	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"net/http"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/schemes/request"
-	"github.com/Aiscom-LLC/meals-api/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/types"
 
 	"github.com/jinzhu/gorm"
@@ -25,12 +24,12 @@ func NewOrderRepo() *OrderRepo {
 }
 
 // Add adds order for provided user id
-func (o OrderRepo) Add(userID string, date time.Time, newOrder request.OrderRequest) (response.UserOrder, error) {
+func (o OrderRepo) Add(userID string, date time.Time, newOrder swagger.OrderRequest) (swagger.UserOrder, error) {
 	var orderExist int
 	var order domain.Order
 	var userOrder domain.UserOrders
 	var total int
-	var userOrderResponse response.UserOrder
+	var userOrderResponse swagger.UserOrder
 
 	config.DB.
 		Model(&domain.UserOrders{}).
@@ -41,7 +40,7 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder request.OrderRequ
 		Count(&orderExist)
 
 	if orderExist != 0 {
-		return response.UserOrder{}, errors.New("order for current day already created")
+		return swagger.UserOrder{}, errors.New("order for current day already created")
 	}
 
 	config.DB.Create(&order)
@@ -56,7 +55,7 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder request.OrderRequ
 		}
 
 		if err := config.DB.Create(&orderDish).Error; err != nil {
-			return response.UserOrder{}, err
+			return swagger.UserOrder{}, err
 		}
 
 		config.DB.
@@ -85,11 +84,11 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder request.OrderRequ
 	if err := config.DB.
 		Create(&userOrder).
 		Error; err != nil {
-		return response.UserOrder{}, err
+		return swagger.UserOrder{}, err
 	}
 
 	if err := o.getDishesForOrder(userOrder.OrderID, &userOrderResponse.Items); err != nil {
-		return response.UserOrder{}, err
+		return swagger.UserOrder{}, err
 	}
 
 	userOrderResponse.OrderID = userOrder.OrderID
@@ -128,8 +127,8 @@ func (o OrderRepo) CancelOrder(userID, orderID string) (int, error) {
 }
 
 // GetUserOrder returns order for provided date for certain user
-func (o OrderRepo) GetUserOrder(userID, date string) (response.UserOrder, int, error) {
-	var userOrder response.UserOrder
+func (o OrderRepo) GetUserOrder(userID, date string) (swagger.UserOrder, int, error) {
+	var userOrder swagger.UserOrder
 
 	if err := config.DB.
 		Model(&domain.UserOrders{}).
@@ -139,21 +138,21 @@ func (o OrderRepo) GetUserOrder(userID, date string) (response.UserOrder, int, e
 		Scan(&userOrder).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return response.UserOrder{}, http.StatusNotFound, err
+			return swagger.UserOrder{}, http.StatusNotFound, err
 		}
-		return response.UserOrder{}, http.StatusBadRequest, err
+		return swagger.UserOrder{}, http.StatusBadRequest, err
 	}
 
 	if err := o.getDishesForOrder(userOrder.OrderID, &userOrder.Items); err != nil {
-		return response.UserOrder{}, http.StatusBadRequest, err
+		return swagger.UserOrder{}, http.StatusBadRequest, err
 	}
 
 	return userOrder, 0, nil
 }
 
 // GetOrders return list of orders for catering or client
-func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (response.SummaryOrderResult, int, error) {
-	var result response.SummaryOrderResult
+func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (swagger.SummaryOrderResult, int, error) {
+	var result swagger.SummaryOrderResult
 
 	if companyType == types.CompanyTypesEnum.Client {
 		result.Status = o.GetOrdersStatus(clientID, date)
@@ -171,7 +170,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 				" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
 			Scan(&result.SummaryOrders).
 			Error; err != nil {
-			return response.SummaryOrderResult{}, http.StatusBadRequest, err
+			return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
 		}
 
 		for i := range result.SummaryOrders {
@@ -190,7 +189,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 				Group("d.name").
 				Scan(&result.SummaryOrders[i].Items).
 				Error; err != nil {
-				return response.SummaryOrderResult{}, http.StatusBadRequest, err
+				return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
 			}
 		}
 		if err := config.DB.
@@ -204,7 +203,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 				" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
 			Scan(&result.UserOrders).
 			Error; err != nil {
-			return response.SummaryOrderResult{}, http.StatusBadRequest, err
+			return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
 		}
 
 		for i := range result.UserOrders {
@@ -221,7 +220,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 					clientID, types.CompanyTypesEnum.Client, date, result.UserOrders[i].ID, types.OrderStatusTypesEnum.Canceled).
 				Scan(&result.UserOrders[i].Items).
 				Error; err != nil {
-				return response.SummaryOrderResult{}, http.StatusBadRequest, err
+				return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
 			}
 			result.Total += result.UserOrders[i].Total
 		}
@@ -233,7 +232,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 		Where("id = ?", cateringID).
 		Find(&domain.Catering{}).
 		RowsAffected; cateringExist == 0 {
-		return response.SummaryOrderResult{}, http.StatusNotFound, errors.New("catering not found")
+		return swagger.SummaryOrderResult{}, http.StatusNotFound, errors.New("catering not found")
 	}
 
 	if err := config.DB.
@@ -249,7 +248,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 			clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Approved).
 		Scan(&result.SummaryOrders).
 		Error; err != nil {
-		return response.SummaryOrderResult{}, http.StatusBadRequest, err
+		return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
 	}
 
 	for i := range result.SummaryOrders {
@@ -268,7 +267,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 			Group("d.name").
 			Scan(&result.SummaryOrders[i].Items).
 			Error; err != nil {
-			return response.SummaryOrderResult{}, http.StatusBadRequest, err
+			return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
 		}
 	}
 
@@ -283,7 +282,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 			" AND o.status = ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Approved).
 		Scan(&result.UserOrders).
 		Error; err != nil {
-		return response.SummaryOrderResult{}, http.StatusBadRequest, err
+		return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
 	}
 
 	for i := range result.UserOrders {
@@ -299,7 +298,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 				" AND uo.user_id = ? AND o.status = ?", clientID, types.CompanyTypesEnum.Client, date, result.UserOrders[i].ID, types.OrderStatusTypesEnum.Approved).
 			Scan(&result.UserOrders[i].Items).
 			Error; err != nil {
-			return response.SummaryOrderResult{}, http.StatusBadRequest, err
+			return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
 		}
 		result.Total += result.UserOrders[i].Total
 	}
@@ -340,7 +339,7 @@ func (o OrderRepo) ApproveOrders(clientID, date string) error {
 	return nil
 }
 
-func (o OrderRepo) getDishesForOrder(orderID uuid.UUID, dishes *[]response.OrderItem) error {
+func (o OrderRepo) getDishesForOrder(orderID uuid.UUID, dishes *[]swagger.OrderItem) error {
 	if err := config.DB.
 		Model(&domain.OrderDishes{}).
 		Select("distinct on (d.id) d.name, d.price, d.id as dish_id, i.path as path, order_dishes.amount").

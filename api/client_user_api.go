@@ -2,12 +2,12 @@ package api
 
 import (
 	"errors"
+	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/mailer"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/schemes/request"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
@@ -33,13 +33,13 @@ var clientUserService = services.NewClientUser()
 // @Accept json
 // @Tags clients users
 // @Param id path string false "Client ID"
-// @Param body body request.ClientUser false "Client user"
-// @Success 201 {object} response.UserResponse false "Client user"
-// @Failure 400 {object} types.Error "Error"
+// @Param body body swagger.ClientUser false "Client user"
+// @Success 201 {object} swagger.UserResponse false "Client user"
+// @Failure 400 {object} Error "Error"
 // @Router /clients/{id}/users [post]
 func (cu ClientUser) Add(c *gin.Context) {
-	var path types.PathID
-	var body request.ClientUser
+	var path PathID
+	var body models.ClientUser
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -87,14 +87,14 @@ func (cu ClientUser) Add(c *gin.Context) {
 // @Param q query string false "used query search"
 // @Param role query string false "used for role sort"
 // @Param status query string false "used for status sort"
-// @Success 200 {array} response.UserResponse "List of client users"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Error"
+// @Success 200 {array} swagger.UserResponse "List of client users"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Error"
 // @Router /clients/{id}/users [get]
 func (cu ClientUser) Get(c *gin.Context) { //nolint:dupl
-	var path types.PathID
-	var paginationQuery types.PaginationQuery
-	var filterQuery types.UserFilterQuery
+	var path PathID
+	var paginationQuery PaginationQuery
+	var filterQuery UserFilterQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -137,11 +137,11 @@ func (cu ClientUser) Get(c *gin.Context) { //nolint:dupl
 // @Param id path string false "Client ID"
 // @Param userId path string false "User ID"
 // @Success 204 "Successfully deleted"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Error"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Error"
 // @Router /clients/{id}/users/{userId} [delete]
 func (cu ClientUser) Delete(c *gin.Context) {
-	var path types.PathUser
+	var path PathUser
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -168,14 +168,14 @@ func (cu ClientUser) Delete(c *gin.Context) {
 // @Tags clients users
 // @Param id path string false "Client ID"
 // @Param userId path string false "User ID"
-// @Param body body request.ClientUserUpdate false "Client user"
-// @Success 200 {object} response.UserResponse false "Client user"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Error"
+// @Param body body swagger.ClientUserUpdate false "Client user"
+// @Success 200 {object} swagger.UserResponse false "Client user"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Error"
 // @Router /clients/{id}/users/{userId} [put]
 func (cu ClientUser) Update(c *gin.Context) {
-	var path types.PathUser
-	var body request.ClientUserUpdate
+	var path PathUser
+	var body swagger.ClientUserUpdate
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {

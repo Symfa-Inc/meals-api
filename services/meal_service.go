@@ -2,11 +2,10 @@ package services
 
 import (
 	"errors"
+	"github.com/Aiscom-LLC/meals-api/api"
+	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/schemes/request"
-	"github.com/Aiscom-LLC/meals-api/schemes/response"
-	"github.com/Aiscom-LLC/meals-api/types"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"strconv"
@@ -26,7 +25,7 @@ var mealRepo = repository.NewMealRepo()
 var dishRepo = repository.NewDishRepo()
 var mealDishRepo = repository.NewMealDishesRepo()
 
-func (m *MealService) Add(path types.PathClient, body request.AddMeal, user interface{}) ([]response.GetMeal, int, error) {
+func (m *MealService) Add(path api.PathClient, body swagger.AddMeal, user interface{}) ([]swagger.GetMeal, int, error) {
 
 	userName := user.(domain.User).FirstName + " " + user.(domain.User).LastName
 
@@ -43,13 +42,13 @@ func (m *MealService) Add(path types.PathClient, body request.AddMeal, user inte
 	difference := body.Date.Sub(time.Now().Truncate(t)).Hours()
 
 	if difference < 0 {
-		return []response.GetMeal{}, http.StatusBadRequest, errors.New("item has wrong date (can't use previous dates)")
+		return []swagger.GetMeal{}, http.StatusBadRequest, errors.New("item has wrong date (can't use previous dates)")
 	}
 
 	meals, code, err := mealRepo.Get(body.Date, path.ID, path.ClientID)
 
 	if err != nil {
-		return []response.GetMeal{}, code, err
+		return []swagger.GetMeal{}, code, err
 	}
 
 	if len(meals) != 0 {
@@ -64,12 +63,12 @@ func (m *MealService) Add(path types.PathClient, body request.AddMeal, user inte
 	for _, dishID := range body.Dishes {
 		_, code, err := dishRepo.FindByID(path.ID, dishID)
 		if err != nil {
-			return []response.GetMeal{}, code, err
+			return []swagger.GetMeal{}, code, err
 		}
 	}
 
 	if err := mealRepo.Add(meal); err != nil {
-		return []response.GetMeal{}, code, err
+		return []swagger.GetMeal{}, code, err
 	}
 
 	for _, dishID := range body.Dishes {
@@ -79,7 +78,7 @@ func (m *MealService) Add(path types.PathClient, body request.AddMeal, user inte
 			DishID: dishIDParsed,
 		}
 		if err := mealDishRepo.Add(mealDish); err != nil {
-			return []response.GetMeal{}, http.StatusBadRequest, err
+			return []swagger.GetMeal{}, http.StatusBadRequest, err
 		}
 	}
 
@@ -90,28 +89,28 @@ func (m *MealService) Add(path types.PathClient, body request.AddMeal, user inte
 
 var cateringRepo = repository.NewCateringRepo()
 
-func (m *MealService) Get(query types.DateRangeQuery, path types.PathClient) ([]response.GetMeal, int, error) {
+func (m *MealService) Get(query api.DateRangeQuery, path api.PathClient) ([]swagger.GetMeal, int, error) {
 	_, err := cateringRepo.GetByKey("id", path.ID)
 
 	if err != nil {
 		if err.Error() == "record not found" {
-			return []response.GetMeal{}, http.StatusNotFound, err
+			return []swagger.GetMeal{}, http.StatusNotFound, err
 		}
-		return []response.GetMeal{}, http.StatusBadRequest, err
+		return []swagger.GetMeal{}, http.StatusBadRequest, err
 	}
 
 	startDate, err := time.Parse(time.RFC3339, query.StartDate)
 	if err != nil {
-		return []response.GetMeal{}, http.StatusBadRequest, errors.New("can't parse the date")
+		return []swagger.GetMeal{}, http.StatusBadRequest, errors.New("can't parse the date")
 	}
 
 	endDate, err := time.Parse(time.RFC3339, query.EndDate)
 	if err != nil {
-		return []response.GetMeal{}, http.StatusBadRequest, errors.New("can't parse the date")
+		return []swagger.GetMeal{}, http.StatusBadRequest, errors.New("can't parse the date")
 	}
 
 	if startDate.After(endDate) {
-		return []response.GetMeal{}, http.StatusBadRequest, errors.New("end date can't be earlier than start date")
+		return []swagger.GetMeal{}, http.StatusBadRequest, errors.New("end date can't be earlier than start date")
 	}
 
 	result, code, err := mealRepo.GetByRange(startDate, endDate, path.ID, path.ClientID)

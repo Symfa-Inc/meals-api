@@ -1,4 +1,4 @@
-package response
+package swagger
 
 import (
 	uuid "github.com/satori/go.uuid"

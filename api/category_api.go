@@ -1,10 +1,9 @@
 package api
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/schemes/request"
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
@@ -31,13 +30,13 @@ var categoryRepo = repository.NewCategoryRepo()
 // @Tags catering categories
 // @Param id path string true "Catering ID"
 // @Param clientId path string true "Client ID"
-// @Param body body request.AddCategory false "Category Name"
-// @Success 200 {object} domain.Category false "category object"
-// @Failure 400 {object} types.Error "Error"
+// @Param body body swagger.AddCategory false "Category Name"
+// @Success 200 {object} Category false "category object"
+// @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/clients/{clientId}/categories [post]
 func (dc Category) Add(c *gin.Context) {
-	var body request.AddCategory
-	var path types.PathClient
+	var body swagger.AddCategory
+	var path PathClient
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -74,10 +73,10 @@ func (dc Category) Add(c *gin.Context) {
 // @Param clientId path string false "Client ID"
 // @Param categoryID path string true "Category ID"
 // @Success 204 "Successfully deleted"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/categories/{categoryID} [delete]
 func (dc Category) Delete(c *gin.Context) {
-	var path types.PathCategory
+	var path PathCategory
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -99,12 +98,12 @@ func (dc Category) Delete(c *gin.Context) {
 // @Param clientId path string false "Client ID"
 // @Param date query string false "in format YYYY-MM-DDT00:00:00Z"
 // @Success 200 {array} domain.Category "array of category readings"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/categories [get]
 func (dc Category) Get(c *gin.Context) {
-	var path types.PathClient
-	var query types.DateQuery
+	var path PathClient
+	var query DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -135,13 +134,13 @@ func (dc Category) Get(c *gin.Context) {
 // @Tags catering categories
 // @Param id path string true "Catering ID"
 // @Param categoryID path string true "Category ID"
-// @Param body body request.UpdateCategory false "new category name"
+// @Param body body swagger.UpdateCategory false "new category name"
 // @Success 204 "Successfully updated"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/categories/{categoryID} [put]
 func (dc Category) Update(c *gin.Context) {
-	var path types.PathCategory
+	var path PathCategory
 	var category domain.Category
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {

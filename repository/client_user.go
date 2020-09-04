@@ -2,12 +2,13 @@ package repository
 
 import (
 	"errors"
+	"github.com/Aiscom-LLC/meals-api/api"
+	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"net/http"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/jinzhu/gorm"
 )
@@ -28,8 +29,8 @@ func (cur *ClientUserRepo) Add(clientUser domain.ClientUser) error {
 	return err
 }
 
-func (cur *ClientUserRepo) Get(clientID, userRole string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]response.GetClientUser, int, int, error) {
-	var users []response.GetClientUser
+func (cur *ClientUserRepo) Get(clientID, userRole string, pagination api.PaginationQuery, filters api.UserFilterQuery) ([]swagger.GetClientUser, int, int, error) {
+	var users []swagger.GetClientUser
 	var total int
 	page := pagination.Page
 	limit := pagination.Limit

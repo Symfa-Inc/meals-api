@@ -2,11 +2,10 @@ package api
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
+	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/schemes/response"
 	"github.com/Aiscom-LLC/meals-api/services"
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -31,11 +30,11 @@ var cateringRepo = repository.NewCateringRepo()
 // @Produce json
 // @Param limit query int false "used for pagination"
 // @Param page query int false "used for pagination"
-// @Success 200 {object} response.GetCaterings "List of caterings"
-// @Failure 400 {object} types.Error "Error"
+// @Success 200 {object} swagger.GetCaterings "List of caterings"
+// @Failure 400 {object} Error "Error"
 // @Router /caterings [get]
 func (ca Catering) Get(c *gin.Context) {
-	var query types.PaginationQuery
+	var query PaginationQuery
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return
@@ -54,7 +53,7 @@ func (ca Catering) Get(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response.GetCaterings{
+	c.JSON(http.StatusOK, swagger.GetCaterings{
 		Items: caterings,
 		Page:  query.Page,
 		Total: total,
@@ -66,9 +65,9 @@ func (ca Catering) Get(c *gin.Context) {
 // @Produce json
 // @Accept json
 // @Tags catering
-// @Param body body request.AddName false "Catering Name"
+// @Param body body swagger.AddName false "Catering Name"
 // @Success 201 {object} domain.Catering false "catering object"
-// @Failure 400 {object} types.Error "Error"
+// @Failure 400 {object} Error "Error"
 // @Router /caterings [post]
 func (ca Catering) Add(c *gin.Context) {
 	var catering domain.Catering
@@ -93,11 +92,11 @@ func (ca Catering) Add(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Catering ID"
 // @Success 204 "Successfully deleted"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id} [delete]
 func (ca Catering) Delete(c *gin.Context) {
-	var path types.PathID
+	var path PathID
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -117,11 +116,11 @@ func (ca Catering) Delete(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Catering ID"
 // @Success 200 {object} domain.Catering "catering model"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id} [get]
 func (ca Catering) GetByID(c *gin.Context) {
-	var path types.PathID
+	var path PathID
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -143,13 +142,13 @@ func (ca Catering) GetByID(c *gin.Context) {
 // @Accept json
 // @Tags catering
 // @Param id path string true "Catering ID"
-// @Param body body request.AddName false "Catering Name"
+// @Param body body swagger.AddName false "Catering Name"
 // @Success 204 "Successfully updated"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id} [put]
 func (ca Catering) Update(c *gin.Context) {
-	var path types.PathID
+	var path PathID
 	var cateringModel domain.Catering
 
 	if err := utils.RequestBinderBody(&cateringModel, c); err != nil {

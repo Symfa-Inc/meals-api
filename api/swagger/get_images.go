@@ -1,4 +1,4 @@
-package response
+package swagger
 
 // GetImages response scheme
 type GetImages struct {

@@ -1,4 +1,4 @@
-package request
+package swagger
 
 // UpdateAutoApprove request scheme
 type UpdateAutoApprove struct {

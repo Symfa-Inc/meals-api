@@ -1,9 +1,9 @@
 package domain
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api"
 	"time"
 
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 )
@@ -30,6 +30,6 @@ type CategoryRepository interface {
 	Add(category *Category) error
 	Get(cateringID, clientID, date string) ([]Category, int, error)
 	GetByKey(id, value, cateringID string) (Category, error)
-	Delete(path types.PathCategory) (int, error)
-	Update(path types.PathCategory, category *Category) (int, error)
+	Delete(path api.PathCategory) (int, error)
+	Update(path api.PathCategory, category *Category) (int, error)
 }
