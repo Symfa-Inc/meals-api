@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/Aiscom-LLC/meals-api/api/api_types"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/utils"
@@ -32,7 +32,7 @@ var dishRepo = repository.NewDishRepo()
 // @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/dishes [post]
 func (d Dish) Add(c *gin.Context) {
-	var path api_types.PathID
+	var path url.PathID
 	var dish domain.Dish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -67,7 +67,7 @@ func (d Dish) Add(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/dishes/{dishId} [delete]
 func (d Dish) Delete(c *gin.Context) {
-	var path api_types.PathDish
+	var path url.PathDish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -91,8 +91,8 @@ func (d Dish) Delete(c *gin.Context) {
 // @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/dishes [get]
 func (d Dish) Get(c *gin.Context) {
-	var path api_types.PathID
-	var query api_types.CategoryIDQuery
+	var path url.PathID
+	var query url.CategoryIDQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -126,7 +126,7 @@ func (d Dish) Get(c *gin.Context) {
 // @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/dishes/{dishId} [get]
 func (d Dish) GetByID(c *gin.Context) {
-	var path api_types.PathDishID
+	var path url.PathDishID
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -155,7 +155,7 @@ func (d Dish) GetByID(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/dishes/{dishId} [put]
 func (d Dish) Update(c *gin.Context) {
-	var path api_types.PathDish
+	var path url.PathDish
 	var dish domain.Dish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {

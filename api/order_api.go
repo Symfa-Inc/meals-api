@@ -3,10 +3,10 @@ package api
 import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	types2 "github.com/Aiscom-LLC/meals-api/api/api_types"
+	types2 "github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/repository"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/Aiscom-LLC/meals-api/services"
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -171,7 +171,7 @@ func (o Order) GetClientOrders(c *gin.Context) {
 		return
 	}
 
-	company := types.CompanyTypesEnum.Client
+	company := enums.CompanyTypesEnum.Client
 
 	result, code, err := orderRepo.GetOrders("", path.ID, query.Date, company)
 
@@ -213,7 +213,7 @@ func (o Order) GetCateringClientOrders(c *gin.Context) {
 		return
 	}
 
-	company := types.CompanyTypesEnum.Catering
+	company := enums.CompanyTypesEnum.Catering
 
 	result, code, err := orderRepo.GetOrders(path.ID, path.ClientID, query.Date, company)
 

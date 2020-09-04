@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	"github.com/Aiscom-LLC/meals-api/api/api_types"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/utils"
@@ -37,7 +37,7 @@ var categoryRepo = repository.NewCategoryRepo()
 // @Router /caterings/{id}/clients/{clientId}/categories [post]
 func (dc Category) Add(c *gin.Context) {
 	var body swagger.AddCategory
-	var path api_types.PathClient
+	var path url.PathClient
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -77,7 +77,7 @@ func (dc Category) Add(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/categories/{categoryID} [delete]
 func (dc Category) Delete(c *gin.Context) {
-	var path api_types.PathCategory
+	var path url.PathCategory
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -103,8 +103,8 @@ func (dc Category) Delete(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/categories [get]
 func (dc Category) Get(c *gin.Context) {
-	var path api_types.PathClient
-	var query api_types.DateQuery
+	var path url.PathClient
+	var query url.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -141,7 +141,7 @@ func (dc Category) Get(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/categories/{categoryID} [put]
 func (dc Category) Update(c *gin.Context) {
-	var path api_types.PathCategory
+	var path url.PathCategory
 	var category domain.Category
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {

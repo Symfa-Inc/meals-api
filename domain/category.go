@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"github.com/Aiscom-LLC/meals-api/api/api_types"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +12,7 @@ import (
 type Category struct {
 	Base
 	Date       *time.Time `json:"date"`
-	Name       string     `gorm:"api_types:varchar(30);not null" json:"name" binding:"required"`
+	Name       string     `gorm:"url:varchar(30);not null" json:"name" binding:"required"`
 	CateringID uuid.UUID  `json:"-"`
 	ClientID   uuid.UUID  `json:"clientId"`
 } //@name CategoryResponse
@@ -30,6 +30,6 @@ type CategoryRepository interface {
 	Add(category *Category) error
 	Get(cateringID, clientID, date string) ([]Category, int, error)
 	GetByKey(id, value, cateringID string) (Category, error)
-	Delete(path api_types.PathCategory) (int, error)
-	Update(path api_types.PathCategory, category *Category) (int, error)
+	Delete(path url.PathCategory) (int, error)
+	Update(path url.PathCategory, category *Category) (int, error)
 }

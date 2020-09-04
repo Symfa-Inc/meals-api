@@ -3,7 +3,7 @@ package services
 import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	"github.com/Aiscom-LLC/meals-api/api/api_types"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	uuid "github.com/satori/go.uuid"
@@ -25,7 +25,7 @@ var mealRepo = repository.NewMealRepo()
 var dishRepo = repository.NewDishRepo()
 var mealDishRepo = repository.NewMealDishesRepo()
 
-func (m *MealService) Add(path api_types.PathClient, body swagger.AddMeal, user interface{}) ([]swagger.GetMeal, int, error) {
+func (m *MealService) Add(path url.PathClient, body swagger.AddMeal, user interface{}) ([]swagger.GetMeal, int, error) {
 
 	userName := user.(domain.User).FirstName + " " + user.(domain.User).LastName
 
@@ -89,7 +89,7 @@ func (m *MealService) Add(path api_types.PathClient, body swagger.AddMeal, user 
 
 var cateringRepo = repository.NewCateringRepo()
 
-func (m *MealService) Get(query api_types.DateRangeQuery, path api_types.PathClient) ([]swagger.GetMeal, int, error) {
+func (m *MealService) Get(query url.DateRangeQuery, path url.PathClient) ([]swagger.GetMeal, int, error) {
 	_, err := cateringRepo.GetByKey("id", path.ID)
 
 	if err != nil {

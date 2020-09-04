@@ -3,13 +3,13 @@ package repository
 import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	types2 "github.com/Aiscom-LLC/meals-api/api/api_types"
+	types2 "github.com/Aiscom-LLC/meals-api/api/url"
 	"net/http"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/jinzhu/gorm"
 )
 
@@ -46,8 +46,8 @@ func (cur *ClientUserRepo) Get(clientID, userRole string, pagination types2.Pagi
 		limit = 10
 	}
 
-	if userRole == types.UserRoleEnum.CateringAdmin {
-		userConditional = " AND u.role = " + "'" + types.UserRoleEnum.ClientAdmin + "'"
+	if userRole == enums.UserRoleEnum.CateringAdmin {
+		userConditional = " AND u.role = " + "'" + enums.UserRoleEnum.ClientAdmin + "'"
 	}
 
 	if err := config.DB.
@@ -91,14 +91,14 @@ func (cur *ClientUserRepo) Get(clientID, userRole string, pagination types2.Pagi
 
 func (cur *ClientUserRepo) Delete(clientID, ctxUserRole string, user domain.User) (int, error) {
 	var totalUsers int
-	if ctxUserRole == types.UserRoleEnum.CateringAdmin || ctxUserRole == types.UserRoleEnum.ClientAdmin {
+	if ctxUserRole == enums.UserRoleEnum.CateringAdmin || ctxUserRole == enums.UserRoleEnum.ClientAdmin {
 		config.DB.
 			Table("users as u").
 			Select("u.*, cu.floor").
 			Joins("left join client_users cu on cu.user_id = u.id").
 			Joins("left join clients c on c.id = cu.client_id").
 			Where("cu.client_id = ? AND u.company_type = ? AND u.status != ? AND u.role = ?",
-				clientID, types.CompanyTypesEnum.Client, types.StatusTypesEnum.Deleted, types.UserRoleEnum.ClientAdmin).
+				clientID, enums.CompanyTypesEnum.Client, enums.StatusTypesEnum.Deleted, enums.UserRoleEnum.ClientAdmin).
 			Count(&totalUsers)
 
 		if totalUsers == 1 {

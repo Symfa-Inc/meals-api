@@ -36,13 +36,13 @@ var doc = `{
                 "summary": "Returns list of caterings",
                 "parameters": [
                     {
-                        "api_types": "integer",
+                        "url": "integer",
                         "description": "used for pagination",
                         "name": "limit",
                         "in": "query"
                     },
                     {
-                        "api_types": "integer",
+                        "url": "integer",
                         "description": "used for pagination",
                         "name": "page",
                         "in": "query"
@@ -111,7 +111,7 @@ var doc = `{
                 "summary": "Returns info about catering",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
@@ -152,7 +152,7 @@ var doc = `{
                 "summary": "Returns 204 if success and 4xx error if failed",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
@@ -195,7 +195,7 @@ var doc = `{
                 "summary": "Soft delete",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
@@ -232,19 +232,19 @@ var doc = `{
                 "summary": "Returns list of clients",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path"
                     },
                     {
-                        "api_types": "integer",
+                        "url": "integer",
                         "description": "used for pagination",
                         "name": "limit",
                         "in": "query"
                     },
                     {
-                        "api_types": "integer",
+                        "url": "integer",
                         "description": "used for pagination",
                         "name": "page",
                         "in": "query"
@@ -278,7 +278,7 @@ var doc = `{
                 "summary": "Returns error or 201 status code if success",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
@@ -320,27 +320,27 @@ var doc = `{
                 "summary": "Returns list of clients orders",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Date query in YYYY-MM-DDT00:00:00Z format",
                         "name": "date",
                         "in": "query",
                         "required": true
                     },
                     {
-                        "api_types": "integer",
+                        "url": "integer",
                         "description": "used for pagination",
                         "name": "limit",
                         "in": "query"
                     },
                     {
-                        "api_types": "integer",
+                        "url": "integer",
                         "description": "used for pagination",
                         "name": "page",
                         "in": "query"
@@ -373,19 +373,19 @@ var doc = `{
                 "summary": "Get list of categories",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "clientId",
                         "in": "path"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "in format YYYY-MM-DDT00:00:00Z",
                         "name": "date",
                         "in": "query"
@@ -395,7 +395,7 @@ var doc = `{
                     "200": {
                         "description": "array of category readings",
                         "schema": {
-                            "api_types": "array",
+                            "url": "array",
                             "items": {
                                 "$ref": "#/definitions/CategoryResponse"
                             }
@@ -428,14 +428,14 @@ var doc = `{
                 "summary": "Returns error if exists and 200 if success",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "clientId",
                         "in": "path",
@@ -480,14 +480,14 @@ var doc = `{
                 "summary": "Returns 204 if success and 4xx error if failed",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Category ID",
                         "name": "categoryID",
                         "in": "path",
@@ -530,20 +530,20 @@ var doc = `{
                 "summary": "Soft delete",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "clientId",
                         "in": "path"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Category ID",
                         "name": "categoryID",
                         "in": "path",
@@ -574,25 +574,25 @@ var doc = `{
                 "summary": "GetByRange list of categories with dishes for passed meal ID",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Meal Start Date in 2020-01-01T00:00:00Z format",
                         "name": "startDate",
                         "in": "query"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Meal End Date in 2020-01-01T00:00:00Z format",
                         "name": "endDate",
                         "in": "query"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "clientId",
                         "in": "path"
@@ -602,7 +602,7 @@ var doc = `{
                     "200": {
                         "description": "dishes for passed day",
                         "schema": {
-                            "api_types": "array",
+                            "url": "array",
                             "items": {
                                 "$ref": "#/definitions/GetMealsResponse"
                             }
@@ -632,13 +632,13 @@ var doc = `{
                 "summary": "Creates meal for certain client",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "clientId",
                         "in": "path"
@@ -679,21 +679,21 @@ var doc = `{
                 "summary": "returns orders of provided client",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "clientId",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Date query in YYYY-MM-DDT00:00:00Z format",
                         "name": "date",
                         "in": "query",
@@ -733,14 +733,14 @@ var doc = `{
                 "summary": "Returns list of dishes",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Category ID",
                         "name": "categoryID",
                         "in": "query",
@@ -751,7 +751,7 @@ var doc = `{
                     "200": {
                         "description": "List of dishes",
                         "schema": {
-                            "api_types": "array",
+                            "url": "array",
                             "items": {
                                 "$ref": "#/definitions/DishRequest"
                             }
@@ -775,7 +775,7 @@ var doc = `{
                 "summary": "Add dish for certain category",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
@@ -817,14 +817,14 @@ var doc = `{
                 "summary": "Returns dishes",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Dish ID",
                         "name": "dishId",
                         "in": "path",
@@ -835,7 +835,7 @@ var doc = `{
                     "200": {
                         "description": "List of dishes",
                         "schema": {
-                            "api_types": "array",
+                            "url": "array",
                             "items": {
                                 "$ref": "#/definitions/DishRequest"
                             }
@@ -862,14 +862,14 @@ var doc = `{
                 "summary": "Returns 204 if success and 4xx error if failed",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Dish ID",
                         "name": "dishId",
                         "in": "path",
@@ -912,14 +912,14 @@ var doc = `{
                 "summary": "Soft delete",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Dish ID",
                         "name": "dishId",
                         "in": "path",
@@ -950,25 +950,25 @@ var doc = `{
                 "summary": "Add image for certain dish",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Dish ID",
                         "name": "dishId",
                         "in": "query"
                     },
                     {
-                        "api_types": "file",
+                        "url": "file",
                         "description": "Image File",
                         "name": "image",
                         "in": "formData"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "id of default image",
                         "name": "id",
                         "in": "formData"
@@ -1013,25 +1013,25 @@ var doc = `{
                 "summary": "Updates image for certain dish",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Image ID",
                         "name": "imageId",
                         "in": "path"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Dish ID",
                         "name": "dishId",
                         "in": "path"
                     },
                     {
-                        "api_types": "file",
+                        "url": "file",
                         "description": "Image File",
                         "name": "image",
                         "in": "formData"
@@ -1074,21 +1074,21 @@ var doc = `{
                 "summary": "Soft delete",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Image ID",
                         "name": "imageId",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Dish ID",
                         "name": "dishId",
                         "in": "path",
@@ -1125,7 +1125,7 @@ var doc = `{
                 "summary": "Returns list of schedules",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path"
@@ -1135,7 +1135,7 @@ var doc = `{
                     "200": {
                         "description": "List of schedules",
                         "schema": {
-                            "api_types": "array",
+                            "url": "array",
                             "items": {
                                 "$ref": "#/definitions/CateringSchedule"
                             }
@@ -1170,14 +1170,14 @@ var doc = `{
                 "summary": "Returns 200 and updated model if success and 4xx error if failed",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Catering ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "CateringSchedule ID",
                         "name": "scheduleId",
                         "in": "path",
@@ -1225,13 +1225,13 @@ var doc = `{
                 "summary": "Returns list of clients",
                 "parameters": [
                     {
-                        "api_types": "integer",
+                        "url": "integer",
                         "description": "used for pagination",
                         "name": "limit",
                         "in": "query"
                     },
                     {
-                        "api_types": "integer",
+                        "url": "integer",
                         "description": "used for pagination",
                         "name": "page",
                         "in": "query"
@@ -1264,7 +1264,7 @@ var doc = `{
                 "summary": "Returns info about client",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path",
@@ -1305,7 +1305,7 @@ var doc = `{
                 "summary": "Returns 204 if success and 4xx error if failed",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path",
@@ -1348,7 +1348,7 @@ var doc = `{
                 "summary": "Soft delete",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path",
@@ -1385,7 +1385,7 @@ var doc = `{
                 "summary": "Get list of addresses",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path"
@@ -1395,7 +1395,7 @@ var doc = `{
                     "200": {
                         "description": "array of address readings",
                         "schema": {
-                            "api_types": "array",
+                            "url": "array",
                             "items": {
                                 "$ref": "#/definitions/AddressResponse"
                             }
@@ -1425,7 +1425,7 @@ var doc = `{
                 "summary": "Add address for certain client",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path",
@@ -1470,14 +1470,14 @@ var doc = `{
                 "summary": "Returns 204 if success and 4xx error if failed",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Address ID",
                         "name": "addressId",
                         "in": "path",
@@ -1520,14 +1520,14 @@ var doc = `{
                 "summary": "Soft delete",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Address ID",
                         "name": "addressId",
                         "in": "path",
@@ -1561,7 +1561,7 @@ var doc = `{
                 "summary": "Returns 204 if success and 4xx error if failed",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path",
@@ -1606,14 +1606,14 @@ var doc = `{
                 "summary": "returns status of order",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Date query in YYYY-MM-DDT00:00:00Z format",
                         "name": "date",
                         "in": "query",
@@ -1653,14 +1653,14 @@ var doc = `{
                 "summary": "returns orders of provided client",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Date query in YYYY-MM-DDT00:00:00Z format",
                         "name": "date",
                         "in": "query",
@@ -1698,14 +1698,14 @@ var doc = `{
                 "summary": "approve user orders",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Date query in YYYY-MM-DDT00:00:00Z format",
                         "name": "date",
                         "in": "query",
@@ -1742,37 +1742,37 @@ var doc = `{
                 "summary": "Returns list of client users",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path"
                     },
                     {
-                        "api_types": "integer",
+                        "url": "integer",
                         "description": "used for pagination",
                         "name": "limit",
                         "in": "query"
                     },
                     {
-                        "api_types": "integer",
+                        "url": "integer",
                         "description": "used for pagination",
                         "name": "page",
                         "in": "query"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "used query search",
                         "name": "q",
                         "in": "query"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "used for role sort",
                         "name": "role",
                         "in": "query"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "used for status sort",
                         "name": "status",
                         "in": "query"
@@ -1782,7 +1782,7 @@ var doc = `{
                     "200": {
                         "description": "List of client users",
                         "schema": {
-                            "api_types": "array",
+                            "url": "array",
                             "items": {
                                 "$ref": "#/definitions/swagger.UserResponse"
                             }
@@ -1815,7 +1815,7 @@ var doc = `{
                 "summary": "Returns error or 201 status code if success",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path"
@@ -1859,13 +1859,13 @@ var doc = `{
                 "summary": "Returns error or 200 status code if success",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "User ID",
                         "name": "userId",
                         "in": "path"
@@ -1913,13 +1913,13 @@ var doc = `{
                 "summary": "Returns error or 204 status code if success",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Client ID",
                         "name": "id",
                         "in": "path"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "User ID",
                         "name": "userId",
                         "in": "path"
@@ -1957,7 +1957,7 @@ var doc = `{
                     "200": {
                         "description": "List of images",
                         "schema": {
-                            "api_types": "array",
+                            "url": "array",
                             "items": {
                                 "$ref": "#/definitions/GetImagesResponse"
                             }
@@ -2083,14 +2083,14 @@ var doc = `{
                 "summary": "returns orders of provided user",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "User ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Date query in YYYY-MM-DDT00:00:00Z format",
                         "name": "date",
                         "in": "query",
@@ -2101,7 +2101,7 @@ var doc = `{
                     "200": {
                         "description": "Orders for user",
                         "schema": {
-                            "api_types": "array",
+                            "url": "array",
                             "items": {
                                 "$ref": "#/definitions/swagger.UserOrder"
                             }
@@ -2134,13 +2134,13 @@ var doc = `{
                 "summary": "Returns error or 201 status code if success",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "User ID",
                         "name": "id",
                         "in": "path"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Date query in YYYY-MM-DDT00:00:00Z format",
                         "name": "date",
                         "in": "query",
@@ -2185,13 +2185,13 @@ var doc = `{
                 "summary": "Returns error or 204 status code if success",
                 "parameters": [
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "User ID",
                         "name": "id",
                         "in": "path"
                     },
                     {
-                        "api_types": "string",
+                        "url": "string",
                         "description": "Order ID",
                         "name": "orderId",
                         "in": "path"
@@ -2219,7 +2219,7 @@ var doc = `{
     },
     "definitions": {
         "AddAddressRequest": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "city",
                 "floor",
@@ -2228,37 +2228,37 @@ var doc = `{
             ],
             "properties": {
                 "city": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "floor": {
-                    "api_types": "integer"
+                    "url": "integer"
                 },
                 "house": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "street": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "AddCategoryRequest": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "name"
             ],
             "properties": {
                 "date": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "2020-06-29T00:00:00Z"
                 },
                 "name": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "закуски"
                 }
             }
         },
         "AddDishRequest": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "categoryId",
                 "name",
@@ -2267,59 +2267,59 @@ var doc = `{
             ],
             "properties": {
                 "categoryId": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "desc": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "Очень вкусный"
                 },
                 "name": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "грибной суп"
                 },
                 "price": {
-                    "api_types": "number",
+                    "url": "number",
                     "example": 120
                 },
                 "weight": {
-                    "api_types": "number",
+                    "url": "number",
                     "example": 250
                 }
             }
         },
         "AddMealRequest": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "date",
                 "dishes"
             ],
             "properties": {
                 "date": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "2020-06-20T00:00:00Z"
                 },
                 "dishes": {
-                    "api_types": "array",
+                    "url": "array",
                     "items": {
-                        "api_types": "string"
+                        "url": "string"
                     }
                 }
             }
         },
         "AddNameRequest": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "name"
             ],
             "properties": {
                 "name": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "aisnovations"
                 }
             }
         },
         "AddressResponse": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "city",
                 "floor",
@@ -2328,92 +2328,92 @@ var doc = `{
             ],
             "properties": {
                 "city": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "floor": {
-                    "api_types": "integer"
+                    "url": "integer"
                 },
                 "house": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "id": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "street": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "CategoryResponse": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "name"
             ],
             "properties": {
                 "clientId": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "date": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "id": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "name": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "CateringSchedule": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "day": {
-                    "api_types": "integer"
+                    "url": "integer"
                 },
                 "end": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "id": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "isWorking": {
-                    "api_types": "boolean"
+                    "url": "boolean"
                 },
                 "start": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "CateringsResponse": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "name"
             ],
             "properties": {
                 "id": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "name": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "ClientsResponse": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "name"
             ],
             "properties": {
                 "id": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "name": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "DishRequest": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "name",
                 "price",
@@ -2421,377 +2421,377 @@ var doc = `{
             ],
             "properties": {
                 "categoryId": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "desc": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "id": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "images": {
-                    "api_types": "array",
+                    "url": "array",
                     "items": {
                         "$ref": "#/definitions/Image"
                     }
                 },
                 "name": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "price": {
-                    "api_types": "number"
+                    "url": "number"
                 },
                 "weight": {
-                    "api_types": "number"
+                    "url": "number"
                 }
             }
         },
         "ErrorResponse": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "code": {
-                    "api_types": "integer"
+                    "url": "integer"
                 },
                 "error": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "GetCateringsResponse": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "items": {
-                    "api_types": "array",
+                    "url": "array",
                     "items": {
                         "$ref": "#/definitions/CateringsResponse"
                     }
                 },
                 "page": {
-                    "api_types": "integer"
+                    "url": "integer"
                 },
                 "total": {
-                    "api_types": "integer"
+                    "url": "integer"
                 }
             }
         },
         "GetClients": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "items": {
-                    "api_types": "array",
+                    "url": "array",
                     "items": {
                         "$ref": "#/definitions/swagger.Client"
                     }
                 },
                 "page": {
-                    "api_types": "integer"
+                    "url": "integer"
                 },
                 "total": {
-                    "api_types": "integer"
+                    "url": "integer"
                 }
             }
         },
         "GetImagesResponse": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "category": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "id": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "path": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "GetMealsResponse": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "date": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "dishes": {
-                    "api_types": "array",
+                    "url": "array",
                     "items": {
                         "$ref": "#/definitions/DishRequest"
                     }
                 },
                 "mealId": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "person": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "version": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "Image": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "id": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "path": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "ImageResponse": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "path"
             ],
             "properties": {
                 "id": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "path": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "LoginRequest": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "email",
                 "password"
             ],
             "properties": {
                 "email": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "admin@meals.com"
                 },
                 "password": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "Password12!"
                 }
             }
         },
         "UpdateAutoApprove": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "status"
             ],
             "properties": {
                 "status": {
-                    "api_types": "boolean",
+                    "url": "boolean",
                     "example": true
                 }
             }
         },
         "UpdateCategoryRequest": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "name"
             ],
             "properties": {
                 "name": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "веган"
                 }
             }
         },
         "UpdateClientRequest": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "name"
             ],
             "properties": {
                 "cateringId": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "name": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "aisnovations"
                 }
             }
         },
         "UpdateScheduleRequest": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "end": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "isWorking": {
-                    "api_types": "boolean"
+                    "url": "boolean"
                 },
                 "start": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "api.Category": {
-            "api_types": "object"
+            "url": "object"
         },
         "swagger.CateringClientSwagger": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "client": {
-                    "api_types": "object",
+                    "url": "object",
                     "$ref": "#/definitions/swagger.ClientInfo"
                 },
                 "ordersDishes": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "total": {
-                    "api_types": "integer"
+                    "url": "integer"
                 }
             }
         },
         "swagger.Client": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "autoApproveOrders": {
-                    "api_types": "boolean"
+                    "url": "boolean"
                 },
                 "cateringId": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "cateringName": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "id": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "name": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "swagger.ClientInfo": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "id": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "name": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "swagger.ClientUser": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "email": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "d.novikov@wellyes.ru"
                 },
                 "firstName": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "Dmitry"
                 },
                 "floor": {
-                    "api_types": "integer",
+                    "url": "integer",
                     "example": 5
                 },
                 "lastName": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "Novikov"
                 },
                 "role": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "User"
                 }
             }
         },
         "swagger.ClientUserUpdate": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "email": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "d.novikov@wellyes.ru"
                 },
                 "firstName": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "Dmitry"
                 },
                 "floor": {
-                    "api_types": "integer",
+                    "url": "integer",
                     "example": 5
                 },
                 "lastName": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "Novikov"
                 },
                 "role": {
-                    "api_types": "string",
+                    "url": "string",
                     "example": "User"
                 }
             }
         },
         "swagger.GetCateringClientsSwagger": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "items": {
-                    "api_types": "array",
+                    "url": "array",
                     "items": {
                         "$ref": "#/definitions/swagger.CateringClientSwagger"
                     }
                 },
                 "page": {
-                    "api_types": "integer"
+                    "url": "integer"
                 },
                 "total": {
-                    "api_types": "integer"
+                    "url": "integer"
                 }
             }
         },
         "swagger.ItemsSummaryOrder": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "amount": {
-                    "api_types": "integer"
+                    "url": "integer"
                 },
                 "name": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "swagger.Order": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "amount": {
-                    "api_types": "integer"
+                    "url": "integer"
                 },
                 "dishId": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "swagger.OrderItem": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "amount": {
-                    "api_types": "integer"
+                    "url": "integer"
                 },
                 "id": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "image": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "name": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "price": {
-                    "api_types": "integer"
+                    "url": "integer"
                 }
             }
         },
         "swagger.OrderRequest": {
-            "api_types": "object",
+            "url": "object",
             "required": [
                 "items"
             ],
             "properties": {
                 "comment": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "items": {
-                    "api_types": "array",
+                    "url": "array",
                     "items": {
                         "$ref": "#/definitions/swagger.Order"
                     }
@@ -2799,24 +2799,24 @@ var doc = `{
             }
         },
         "swagger.OrderStatus": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "status": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         },
         "swagger.SummaryOrder": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "categoryId": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "categoryName": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "items": {
-                    "api_types": "array",
+                    "url": "array",
                     "items": {
                         "$ref": "#/definitions/swagger.ItemsSummaryOrder"
                     }
@@ -2824,99 +2824,99 @@ var doc = `{
             }
         },
         "swagger.SummaryOrdersResponse": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "status": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "summary": {
-                    "api_types": "object",
+                    "url": "object",
                     "$ref": "#/definitions/swagger.SummaryOrder"
                 },
                 "summaryTotal": {
-                    "api_types": "integer"
+                    "url": "integer"
                 },
                 "userOrders": {
-                    "api_types": "object",
+                    "url": "object",
                     "$ref": "#/definitions/swagger.SummaryUserOrder"
                 }
             }
         },
         "swagger.SummaryUserOrder": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "comment": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "floor": {
-                    "api_types": "integer"
+                    "url": "integer"
                 },
                 "items": {
-                    "api_types": "array",
+                    "url": "array",
                     "items": {
                         "$ref": "#/definitions/swagger.ItemsSummaryOrder"
                     }
                 },
                 "name": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "total": {
-                    "api_types": "integer"
+                    "url": "integer"
                 }
             }
         },
         "swagger.UserOrder": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "items": {
-                    "api_types": "array",
+                    "url": "array",
                     "items": {
                         "$ref": "#/definitions/swagger.OrderItem"
                     }
                 },
                 "orderId": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "status": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "total": {
-                    "api_types": "integer"
+                    "url": "integer"
                 }
             }
         },
         "swagger.UserResponse": {
-            "api_types": "object",
+            "url": "object",
             "properties": {
                 "cateringId": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "clientId": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "companyType": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "email": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "firstName": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "floor": {
-                    "api_types": "integer"
+                    "url": "integer"
                 },
                 "id": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "lastName": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "role": {
-                    "api_types": "string"
+                    "url": "string"
                 },
                 "status": {
-                    "api_types": "string"
+                    "url": "string"
                 }
             }
         }

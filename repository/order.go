@@ -8,7 +8,7 @@ import (
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
@@ -36,7 +36,7 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder swagger.OrderRequ
 		Select("user_orders.*").
 		Joins("left join orders o on user_orders.order_id = o.id").
 		Where("user_orders.user_id = ? AND o.date = ? AND o.status != ?",
-			userID, date, types.OrderStatusTypesEnum.Canceled).
+			userID, date, enums.OrderStatusTypesEnum.Canceled).
 		Count(&orderExist)
 
 	if orderExist != 0 {
@@ -67,7 +67,7 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder swagger.OrderRequ
 
 		order.Total = &total
 		order.Date = date
-		order.Status = &types.OrderStatusTypesEnum.Pending
+		order.Status = &enums.OrderStatusTypesEnum.Pending
 		order.Comment = &newOrder.Comment
 
 		parsedUserID, _ := uuid.FromString(userID)
@@ -113,9 +113,9 @@ func (o OrderRepo) CancelOrder(userID, orderID string) (int, error) {
 
 	if err := config.DB.
 		Model(&domain.Order{}).
-		Where("id = ? AND status = ?", orderID, types.OrderStatusTypesEnum.Pending).
+		Where("id = ? AND status = ?", orderID, enums.OrderStatusTypesEnum.Pending).
 		Find(&domain.Order{}).
-		Update("status", types.OrderStatusTypesEnum.Canceled).
+		Update("status", enums.OrderStatusTypesEnum.Canceled).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return http.StatusNotFound, errors.New("order not found or already canceled/approved")
@@ -134,7 +134,7 @@ func (o OrderRepo) GetUserOrder(userID, date string) (swagger.UserOrder, int, er
 		Model(&domain.UserOrders{}).
 		Select("distinct on (o.id) o.id as order_id, o.total, o.status").
 		Joins("left join orders o on user_orders.order_id = o.id").
-		Where("user_orders.user_id = ? AND o.date = ? AND o.status != ?", userID, date, types.OrderStatusTypesEnum.Canceled).
+		Where("user_orders.user_id = ? AND o.date = ? AND o.status != ?", userID, date, enums.OrderStatusTypesEnum.Canceled).
 		Scan(&userOrder).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
@@ -154,7 +154,7 @@ func (o OrderRepo) GetUserOrder(userID, date string) (swagger.UserOrder, int, er
 func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (swagger.SummaryOrderResult, int, error) {
 	var result swagger.SummaryOrderResult
 
-	if companyType == types.CompanyTypesEnum.Client {
+	if companyType == enums.CompanyTypesEnum.Client {
 		result.Status = o.GetOrdersStatus(clientID, date)
 
 		if err := config.DB.
@@ -167,7 +167,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (sw
 			Joins("left join dishes d on od.dish_id = d.id").
 			Joins("left join categories c on c.id = d.category_id").
 			Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
-				" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
+				" AND o.status != ?", clientID, enums.CompanyTypesEnum.Client, date, enums.OrderStatusTypesEnum.Canceled).
 			Scan(&result.SummaryOrders).
 			Error; err != nil {
 			return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
@@ -185,7 +185,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (sw
 				Joins("left join categories c on c.id = d.category_id").
 				Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
 					" AND c.id = ? and o.status != ?",
-					clientID, types.CompanyTypesEnum.Client, date, result.SummaryOrders[i].ID, types.OrderStatusTypesEnum.Canceled).
+					clientID, enums.CompanyTypesEnum.Client, date, result.SummaryOrders[i].ID, enums.OrderStatusTypesEnum.Canceled).
 				Group("d.name").
 				Scan(&result.SummaryOrders[i].Items).
 				Error; err != nil {
@@ -200,7 +200,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (sw
 			Joins("left join user_orders uo on uo.user_id = users.id").
 			Joins("left join orders o on uo.order_id = o.id").
 			Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
-				" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
+				" AND o.status != ?", clientID, enums.CompanyTypesEnum.Client, date, enums.OrderStatusTypesEnum.Canceled).
 			Scan(&result.UserOrders).
 			Error; err != nil {
 			return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
@@ -217,7 +217,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (sw
 				Joins("left join dishes d on od.dish_id = d.id").
 				Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
 					" AND uo.user_id = ? AND o.status != ?",
-					clientID, types.CompanyTypesEnum.Client, date, result.UserOrders[i].ID, types.OrderStatusTypesEnum.Canceled).
+					clientID, enums.CompanyTypesEnum.Client, date, result.UserOrders[i].ID, enums.OrderStatusTypesEnum.Canceled).
 				Scan(&result.UserOrders[i].Items).
 				Error; err != nil {
 				return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
@@ -245,7 +245,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (sw
 		Joins("left join dishes d on od.dish_id = d.id").
 		Joins("left join categories c on c.id = d.category_id").
 		Where("cu.client_id = ? AND users.company_type = ? AND o.date = ? AND o.status = ?",
-			clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Approved).
+			clientID, enums.CompanyTypesEnum.Client, date, enums.OrderStatusTypesEnum.Approved).
 		Scan(&result.SummaryOrders).
 		Error; err != nil {
 		return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
@@ -263,7 +263,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (sw
 			Joins("left join categories c on c.id = d.category_id").
 			Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
 				" AND c.id = ? AND o.status = ?",
-				clientID, types.CompanyTypesEnum.Client, date, result.SummaryOrders[i].ID, types.OrderStatusTypesEnum.Approved).
+				clientID, enums.CompanyTypesEnum.Client, date, result.SummaryOrders[i].ID, enums.OrderStatusTypesEnum.Approved).
 			Group("d.name").
 			Scan(&result.SummaryOrders[i].Items).
 			Error; err != nil {
@@ -279,7 +279,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (sw
 		Joins("left join user_orders uo on uo.user_id = users.id").
 		Joins("left join orders o on uo.order_id = o.id").
 		Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
-			" AND o.status = ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Approved).
+			" AND o.status = ?", clientID, enums.CompanyTypesEnum.Client, date, enums.OrderStatusTypesEnum.Approved).
 		Scan(&result.UserOrders).
 		Error; err != nil {
 		return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
@@ -295,7 +295,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (sw
 			Joins("left join order_dishes od on od.order_id = o.id").
 			Joins("left join dishes d on od.dish_id = d.id").
 			Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
-				" AND uo.user_id = ? AND o.status = ?", clientID, types.CompanyTypesEnum.Client, date, result.UserOrders[i].ID, types.OrderStatusTypesEnum.Approved).
+				" AND uo.user_id = ? AND o.status = ?", clientID, enums.CompanyTypesEnum.Client, date, result.UserOrders[i].ID, enums.OrderStatusTypesEnum.Approved).
 			Scan(&result.UserOrders[i].Items).
 			Error; err != nil {
 			return swagger.SummaryOrderResult{}, http.StatusBadRequest, err
@@ -304,7 +304,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (sw
 	}
 
 	if len(result.SummaryOrders) != 0 {
-		result.Status = &types.OrderStatusTypesEnum.Approved
+		result.Status = &enums.OrderStatusTypesEnum.Approved
 	}
 
 	return result, 0, nil
@@ -323,7 +323,7 @@ func (o OrderRepo) ApproveOrders(clientID, date string) error {
 		Joins("left join users u on uo.user_id = u.id").
 		Joins("left join client_users cu on uo.user_id = cu.user_id").
 		Where("cu.client_id = ? AND u.company_type = ? AND o.date = ?"+
-			" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
+			" AND o.status != ?", clientID, enums.CompanyTypesEnum.Client, date, enums.OrderStatusTypesEnum.Canceled).
 		Scan(&orderIDs).
 		RowsAffected; areOrdersExist == 0 {
 		return errors.New("client id is not found or no orders to approve for provided day")
@@ -332,8 +332,8 @@ func (o OrderRepo) ApproveOrders(clientID, date string) error {
 	for _, order := range orderIDs {
 		config.DB.
 			Model(&domain.Order{}).
-			Where("id = ? and status != ?", order.ID, types.OrderStatusTypesEnum.Canceled).
-			Update("status", types.OrderStatusTypesEnum.Approved)
+			Where("id = ? and status != ?", order.ID, enums.OrderStatusTypesEnum.Canceled).
+			Update("status", enums.OrderStatusTypesEnum.Approved)
 	}
 
 	return nil
@@ -365,7 +365,7 @@ func (o OrderRepo) GetOrdersStatus(clientID, date string) *string {
 		Joins("left join user_orders uo on uo.user_id = users.id").
 		Joins("left join orders o on uo.order_id = o.id").
 		Where("cu.client_id = ? AND users.company_type = ? AND o.date = ?"+
-			" AND o.status != ?", clientID, types.CompanyTypesEnum.Client, date, types.OrderStatusTypesEnum.Canceled).
+			" AND o.status != ?", clientID, enums.CompanyTypesEnum.Client, date, enums.OrderStatusTypesEnum.Canceled).
 		Pluck("o.status", &ordersStatus)
 
 	if len(ordersStatus) == 0 {

@@ -1,4 +1,4 @@
-package types
+package enums
 
 type orderStatusEnum struct {
 	Approved string

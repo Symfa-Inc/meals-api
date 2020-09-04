@@ -8,7 +8,7 @@ import (
 // Client model
 type Client struct {
 	Base
-	Name              string    `gorm:"api_types:varchar(30);not null" json:"name,omitempty" binding:"required"`
+	Name              string    `gorm:"url:varchar(30);not null" json:"name,omitempty" binding:"required"`
 	CateringID        uuid.UUID `json:"cateringId" swaggerignore:"true"`
 	AutoApproveOrders bool      `json:"autoApproveOrders" swaggerignore:"true"`
 } //@name ClientsResponse
@@ -26,8 +26,8 @@ type ClientRepository interface {
 	Add(cateringID string, client *Client, user UserClientCatering) error
 	Update(id string, client Client) (int, error)
 	/* TODO fix cycle imports
-	GetCateringClientsOrders(cateringID string, query api_types.PaginationWithDateQuery) ([]response.ClientOrder, int, error)
-	Get(query api_types.PaginationQuery, cateringID, role string) ([]response.Client, int, error)
+	GetCateringClientsOrders(cateringID string, query url.PaginationWithDateQuery) ([]response.ClientOrder, int, error)
+	Get(query url.PaginationQuery, cateringID, role string) ([]response.Client, int, error)
 	*/
 	UpdateAutoApproveOrders(id string, status bool) (int, error)
 	InitAutoApprove(id string) (int, error)

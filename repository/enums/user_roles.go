@@ -1,4 +1,4 @@
-package types
+package enums
 
 type enum struct {
 	SuperAdmin    string

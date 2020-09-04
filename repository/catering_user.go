@@ -2,14 +2,14 @@ package repository
 
 import (
 	"errors"
-	types2 "github.com/Aiscom-LLC/meals-api/api/api_types"
+	types2 "github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/jinzhu/gorm"
 )
 
@@ -95,12 +95,12 @@ func (cur *CateringUserRepo) Get(cateringID string, pagination types2.Pagination
 
 func (cur *CateringUserRepo) Delete(cateringID, ctxUserRole string, user domain.User) (int, error) {
 	var totalUsers int
-	if ctxUserRole != types.UserRoleEnum.SuperAdmin {
+	if ctxUserRole != enums.UserRoleEnum.SuperAdmin {
 		config.DB.
 			Table("users as u").
 			Joins("left join catering_users cu on cu.user_id = u.id").
 			Where("cu.catering_id = ? AND u.status != ?",
-				cateringID, types.StatusTypesEnum.Deleted).
+				cateringID, enums.StatusTypesEnum.Deleted).
 			Count(&totalUsers)
 
 		if totalUsers == 1 {

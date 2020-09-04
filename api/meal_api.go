@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	"github.com/Aiscom-LLC/meals-api/api/api_types"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/services"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
@@ -31,7 +31,7 @@ var mealService = services.NewMealService
 // @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/clients/{clientId}/meals [post]
 func (m Meal) Add(c *gin.Context) {
-	var path api_types.PathClient
+	var path url.PathClient
 	var body swagger.AddMeal
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -67,8 +67,8 @@ func (m Meal) Add(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/meals [get]
 func (m Meal) Get(c *gin.Context) {
-	var query api_types.DateRangeQuery
-	var path api_types.PathClient
+	var query url.DateRangeQuery
+	var path url.PathClient
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		utils.CreateError(http.StatusBadRequest, err, c)

@@ -1,14 +1,14 @@
 package domain
 
 import (
-	"github.com/Aiscom-LLC/meals-api/api/api_types"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/gin-gonic/gin"
 )
 
 // Catering model
 type Catering struct {
 	Base
-	Name string `gorm:"api_types:varchar(30);not null" json:"name,omitempty" binding:"required"`
+	Name string `gorm:"url:varchar(30);not null" json:"name,omitempty" binding:"required"`
 } //@name CateringsResponse
 
 // CateringUsecase is catering interface for usecase
@@ -21,7 +21,7 @@ type CateringUsecase interface {
 
 // CateringRepository is catering interface for repository
 type CateringRepository interface {
-	Get(cateringID string, query api_types.PaginationQuery) ([]Catering, int, error)
+	Get(cateringID string, query url.PaginationQuery) ([]Catering, int, error)
 	Add(catering *Catering) error
 	Update(id string, catering Catering) (int, error)
 	Delete(id string) error

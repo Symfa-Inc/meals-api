@@ -2,13 +2,13 @@ package repository
 
 import (
 	"errors"
-	types2 "github.com/Aiscom-LLC/meals-api/api/api_types"
+	types2 "github.com/Aiscom-LLC/meals-api/api/url"
 	"net/http"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/Aiscom-LLC/meals-api/utils"
 )
 
@@ -115,7 +115,7 @@ func (c CateringRepo) Delete(id string) error {
 			Model(&domain.User{}).
 			Where("id = ?", cateringUsers[i].UserID).
 			Update(map[string]interface{}{
-				"status":     types.StatusTypesEnum.Deleted,
+				"status":     enums.StatusTypesEnum.Deleted,
 				"deleted_at": time.Now(),
 			})
 	}

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/Aiscom-LLC/meals-api/api/api_types"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
@@ -27,11 +27,11 @@ var clientScheduleRepo = repository.NewClientScheduleRepo()
 // @Produce json
 // @Param id path string false "Client ID"
 // @Success 200 {array} domain.ClientSchedulesCatering "List of schedules"
-// @Failure 400 {object} api_types.Error "Error"
-// @Failure 404 {object} api_types.Error "Error"
+// @Failure 400 {object} url.Error "Error"
+// @Failure 404 {object} url.Error "Error"
 // @Router /clients/{id}/schedules [get]
 func (cs ClientSchedule) Get(c *gin.Context) {
-	var path api_types.PathID
+	var path url.PathID
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -60,11 +60,11 @@ func (cs ClientSchedule) Get(c *gin.Context) {
 // @Param scheduleId path string true "Client Schedule ID"
 // @Param body body request.UpdateSchedule false "Client Schedule model"
 // @Success 200 {object} domain.ClientSchedulesCatering "Client Schedule model"
-// @Failure 400 {object} api_types.Error "Error"
-// @Failure 404 {object} api_types.Error "Not Found"
+// @Failure 400 {object} url.Error "Error"
+// @Failure 404 {object} url.Error "Not Found"
 // @Router /clients/{id}/schedules/{scheduleId} [put]
 func (cs ClientSchedule) Update(c *gin.Context) {
-	var path api_types.PathSchedule
+	var path url.PathSchedule
 	var body swagger.UpdateSchedule
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
