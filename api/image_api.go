@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api/types"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/services"
 	"github.com/Aiscom-LLC/meals-api/utils"
@@ -34,7 +35,7 @@ var imageRepo = repository.NewImageRepo()
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/dishes/{dishId}/images [post]
 func (i Image) Add(c *gin.Context) {
-	var path PathDish
+	var path types.PathDish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -62,7 +63,7 @@ func (i Image) Add(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/dishes/{dishId}/images/{imageId} [delete]
 func (i Image) Delete(c *gin.Context) {
-	var path PathImageDish
+	var path types.PathImageDish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -106,7 +107,7 @@ func (i Image) Get(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/dishes/{dishId}/images/{imageId} [put]
 func (i Image) Update(c *gin.Context) {
-	var path PathImageDish
+	var path types.PathImageDish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

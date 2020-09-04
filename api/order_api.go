@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
+	types2 "github.com/Aiscom-LLC/meals-api/api/types"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/services"
 	"github.com/Aiscom-LLC/meals-api/types"
@@ -37,9 +38,9 @@ var orderRepo = repository.NewOrderRepo()
 // @Failure 400 {object} Error "Error"
 // @Router /users/{id}/orders [post]
 func (o Order) Add(c *gin.Context) {
-	var query DateQuery
+	var query types2.DateQuery
 	var order swagger.OrderRequest
-	var path PathID
+	var path types2.PathID
 
 	claims, err := middleware.Passport().GetClaimsFromJWT(c)
 
@@ -86,7 +87,7 @@ func (o Order) Add(c *gin.Context) {
 // @Failure 404 {object} Error "Error"
 // @Router /users/{id}/orders/{orderId} [delete]
 func (o Order) CancelOrder(c *gin.Context) {
-	var path PathOrder
+	var path types2.PathOrder
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -113,8 +114,8 @@ func (o Order) CancelOrder(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /users/{id}/orders [get]
 func (o Order) GetUserOrder(c *gin.Context) {
-	var path PathID
-	var query DateQuery
+	var path types2.PathID
+	var query types2.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -152,8 +153,8 @@ func (o Order) GetUserOrder(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/orders [get]
 func (o Order) GetClientOrders(c *gin.Context) {
-	var path PathID
-	var query DateQuery
+	var path types2.PathID
+	var query types2.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -194,8 +195,8 @@ func (o Order) GetClientOrders(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/orders [get]
 func (o Order) GetCateringClientOrders(c *gin.Context) {
-	var path PathClient
-	var query DateQuery
+	var path types2.PathClient
+	var query types2.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -236,8 +237,8 @@ func (o Order) GetCateringClientOrders(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/orders [put]
 func (o Order) ApproveOrders(c *gin.Context) {
-	var path PathID
-	var query DateQuery
+	var path types2.PathID
+	var query types2.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -266,8 +267,8 @@ func (o Order) ApproveOrders(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/order-status [get]
 func (o Order) GetOrderStatus(c *gin.Context) {
-	var path PathID
-	var query DateQuery
+	var path types2.PathID
+	var query types2.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

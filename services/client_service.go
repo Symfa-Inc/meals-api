@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/Aiscom-LLC/meals-api/api"
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
+	"github.com/Aiscom-LLC/meals-api/api/types"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/dgrijalva/jwt-go"
 	uuid "github.com/satori/go.uuid"
@@ -21,7 +21,7 @@ func NewClient() *Client {
 var cateringUserRepo = repository.NewCateringUserRepo()
 var clientRepo = repository.NewClientRepo()
 
-func (cl *Client) Get(query api.PaginationQuery, claims jwt.MapClaims) ([]swagger.Client, int, api.PaginationQuery, int, error) {
+func (cl *Client) Get(query types.PaginationQuery, claims jwt.MapClaims) ([]swagger.Client, int, types.PaginationQuery, int, error) {
 	var cateringID string
 
 	id := claims["id"].(string)

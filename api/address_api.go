@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api/types"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/utils"
@@ -32,7 +33,7 @@ var addressRepo = repository.NewAddressRepo()
 // Get returns list of addresses of passed client ID
 // returns list of addresses and error
 func (a Address) Get(c *gin.Context) {
-	var path PathID
+	var path types.PathID
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -58,7 +59,7 @@ func (a Address) Get(c *gin.Context) {
 // @Failure 400 {object} Error "Error"
 // @Router /clients/{id}/addresses [post]
 func (a Address) Add(c *gin.Context) {
-	var path PathID
+	var path types.PathID
 	var body domain.Address
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -90,7 +91,7 @@ func (a Address) Add(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/addresses/{addressId} [delete]
 func (a Address) Delete(c *gin.Context) {
-	var path PathAddress
+	var path types.PathAddress
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -117,7 +118,7 @@ func (a Address) Delete(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/addresses/{addressId} [put]
 func (a Address) Update(c *gin.Context) {
-	var path PathAddress
+	var path types.PathAddress
 	var body domain.Address
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {

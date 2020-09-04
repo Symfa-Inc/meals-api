@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"github.com/Aiscom-LLC/meals-api/api"
+	"github.com/Aiscom-LLC/meals-api/api/types"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -46,7 +46,7 @@ type UserClient struct {
 type UserRepository interface {
 	GetByKey(key, value string) (UserClientCatering, error)
 	Add(user User) (UserClientCatering, error)
-	Get(companyID, companyType, userRole string, pagination api.PaginationQuery, filters api.UserFilterQuery) ([]UserClientCatering, int, int, error)
+	Get(companyID, companyType, userRole string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]UserClientCatering, int, int, error)
 	Delete(companyID, ctxUserRole string, user User) (int, error)
 	Update(companyID string, user User) (UserClientCatering, int, error)
 }

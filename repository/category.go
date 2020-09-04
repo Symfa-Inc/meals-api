@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	"github.com/Aiscom-LLC/meals-api/api"
+	"github.com/Aiscom-LLC/meals-api/api/types"
 	"net/http"
 	"time"
 
@@ -73,7 +73,7 @@ func (dc CategoryRepo) GetByKey(key, value, cateringID string) (domain.Category,
 
 // Delete soft deletes reading from DB
 // returns gorm.DB struct with methods
-func (dc CategoryRepo) Delete(path api.PathCategory) (int, error) {
+func (dc CategoryRepo) Delete(path types.PathCategory) (int, error) {
 	result := config.DB.
 		Unscoped().
 		Model(&domain.Category{}).
@@ -93,7 +93,7 @@ func (dc CategoryRepo) Delete(path api.PathCategory) (int, error) {
 
 // Update checks if that name already exists in provided catering
 // if its exists throws and error, if not updates the reading
-func (dc CategoryRepo) Update(path api.PathCategory, category *domain.Category) (int, error) {
+func (dc CategoryRepo) Update(path types.PathCategory, category *domain.Category) (int, error) {
 	if categoryExist := config.DB.
 		Where("catering_id = ? AND name = ? AND id = ? AND (deleted_at > ? OR deleted_at IS NULL)",
 			path.ID, category.Name, path.CategoryID, time.Now()).
