@@ -28,7 +28,7 @@ func SetupRouter() *gin.Engine {
 	meal := NewMeal()
 	category := NewCategory()
 	dish := NewDish()
-	image := usecase.NewImage()
+	image := NewImage()
 	order := NewOrder()
 	address := NewAddress()
 
