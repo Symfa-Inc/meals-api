@@ -36,9 +36,9 @@ var cateringUserRepo = repository.NewCateringUserRepo()
 // @Accept json
 // @Tags caterings users
 // @Param id path string false "Catering ID"
-// @Param body body request.CateringUser false "Catering user"
-// @Success 201 {object} response.UserResponse false "Catering user"
-// @Failure 400 {object} url.Error "Error"
+// @Param body body swagger.CateringUser false "Catering user"
+// @Success 201 {object} swagger.UserResponse false "Catering user"
+// @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/users [post]
 func (cu *CateringUser) Add(c *gin.Context) {
 	var path url.PathID
@@ -89,9 +89,9 @@ func (cu *CateringUser) Add(c *gin.Context) {
 // @Param page query int false "used for pagination"
 // @Param q query string false "used query search"
 // @Param role query string false "used for role sort"
-// @Success 200 {array} response.UserResponse false "Catering user"
-// @Failure 400 {object} url.Error "Error"
-// @Failure 404 {object} url.Error "Error"
+// @Success 200 {array} swagger.UserResponse false "Catering user"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Error"
 // @Router /caterings/{id}/users [get]
 func (cu *CateringUser) Get(c *gin.Context) { //nolint:dupl
 	var path url.PathID
@@ -136,8 +136,8 @@ func (cu *CateringUser) Get(c *gin.Context) { //nolint:dupl
 // @Param id path string false "Catering ID"
 // @Param userId path string false "User ID"
 // @Success 204 "Successfully deleted"
-// @Failure 400 {object} url.Error "Error"
-// @Failure 404 {object} url.Error "Error"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Error"
 // @Router /caterings/{id}/users/{userId} [delete]
 func (cu *CateringUser) Delete(c *gin.Context) {
 	var path url.PathUser
@@ -178,10 +178,10 @@ func (cu *CateringUser) Delete(c *gin.Context) {
 // @Tags caterings users
 // @Param id path string false "Catering ID"
 // @Param userId path string false "User ID"
-// @Param body body request.CateringUserUpdate false "Catering user"
-// @Success 200 {object} response.UserResponse false "Catering user"
-// @Failure 400 {object} url.Error "Error"
-// @Failure 404 {object} url.Error "Error"
+// @Param body body swagger.CateringUserUpdate false "Catering user"
+// @Success 200 {object} swagger.UserResponse false "Catering user"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Error"
 // @Router /caterings/{id}/users/{userId} [put]
 func (cu *CateringUser) Update(c *gin.Context) { //nolint:dupl
 	var path url.PathUser

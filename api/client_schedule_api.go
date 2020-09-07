@@ -27,8 +27,8 @@ var clientScheduleRepo = repository.NewClientScheduleRepo()
 // @Produce json
 // @Param id path string false "Client ID"
 // @Success 200 {array} domain.ClientSchedulesCatering "List of schedules"
-// @Failure 400 {object} url.Error "Error"
-// @Failure 404 {object} url.Error "Error"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Error"
 // @Router /clients/{id}/schedules [get]
 func (cs ClientSchedule) Get(c *gin.Context) {
 	var path url.PathID
@@ -58,10 +58,10 @@ func (cs ClientSchedule) Get(c *gin.Context) {
 // @Tags clients schedules
 // @Param id path string true "Client ID"
 // @Param scheduleId path string true "Client Schedule ID"
-// @Param body body request.UpdateSchedule false "Client Schedule model"
+// @Param body body swagger.UpdateSchedule false "Client Schedule model"
 // @Success 200 {object} domain.ClientSchedulesCatering "Client Schedule model"
-// @Failure 400 {object} url.Error "Error"
-// @Failure 404 {object} url.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/schedules/{scheduleId} [put]
 func (cs ClientSchedule) Update(c *gin.Context) {
 	var path url.PathSchedule

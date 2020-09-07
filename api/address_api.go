@@ -26,7 +26,7 @@ var addressRepo = repository.NewAddressRepo()
 // @Tags clients addresses
 // @Produce json
 // @Param id path string false "Client ID"
-// @Success 200 {array} domain.Address "array of address readings"
+// @Success 200 {array} swagger.Address "array of address readings"
 // @Failure 400 {object} Error "Error"
 // @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/addresses [get]
@@ -55,7 +55,7 @@ func (a Address) Get(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Client ID"
 // @Param payload body swagger.AddAddress false "address object"
-// @Success 200 {object} domain.Address false "address object"
+// @Success 200 {object} swagger.Address false "address object"
 // @Failure 400 {object} Error "Error"
 // @Router /clients/{id}/addresses [post]
 func (a Address) Add(c *gin.Context) {
