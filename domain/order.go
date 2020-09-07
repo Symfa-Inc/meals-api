@@ -6,7 +6,7 @@ import "time"
 type Order struct {
 	Base
 	Total   *int
-	Status  *string `sql:"type:order_status_types"`
+	Status  *string `sql:"url:order_status_types"`
 	Comment *string
 	Date    time.Time
 }

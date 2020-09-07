@@ -6,7 +6,7 @@ import (
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/db/seeds/dev"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 )
 
 func main() {
@@ -124,30 +124,30 @@ func addDbConstraints() {
 func createTypes() {
 	userTypesQuery := fmt.Sprintf("DROP TYPE IF EXISTS user_roles CASCADE;"+
 		"CREATE TYPE user_roles AS ENUM ('%s', '%s', '%s', '%s')",
-		types.UserRoleEnum.SuperAdmin,
-		types.UserRoleEnum.CateringAdmin,
-		types.UserRoleEnum.ClientAdmin,
-		types.UserRoleEnum.User,
+		enums.UserRoleEnum.SuperAdmin,
+		enums.UserRoleEnum.CateringAdmin,
+		enums.UserRoleEnum.ClientAdmin,
+		enums.UserRoleEnum.User,
 	)
 
 	companyTypesQuery := fmt.Sprintf("DROP TYPE IF EXISTS company_types CASCADE;"+
 		"CREATE TYPE company_types AS ENUM ('%s', '%s')",
-		types.CompanyTypesEnum.Catering,
-		types.CompanyTypesEnum.Client,
+		enums.CompanyTypesEnum.Catering,
+		enums.CompanyTypesEnum.Client,
 	)
 
 	statusTypesQuery := fmt.Sprintf("DROP TYPE IF EXISTS status_types CASCADE;"+
 		"CREATE TYPE status_types AS ENUM ('%s', '%s', '%s')",
-		types.StatusTypesEnum.Deleted,
-		types.StatusTypesEnum.Invited,
-		types.StatusTypesEnum.Active,
+		enums.StatusTypesEnum.Deleted,
+		enums.StatusTypesEnum.Invited,
+		enums.StatusTypesEnum.Active,
 	)
 
 	orderStatusTypesQuery := fmt.Sprintf("DROP TYPE IF EXISTS order_status_types CASCADE;"+
 		"CREATE TYPE order_status_types AS ENUM ('%s', '%s', '%s')",
-		types.OrderStatusTypesEnum.Approved,
-		types.OrderStatusTypesEnum.Canceled,
-		types.OrderStatusTypesEnum.Pending,
+		enums.OrderStatusTypesEnum.Approved,
+		enums.OrderStatusTypesEnum.Canceled,
+		enums.OrderStatusTypesEnum.Pending,
 	)
 
 	config.DB.Exec(userTypesQuery)

@@ -1,20 +1,20 @@
 package domain
 
 import (
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	uuid "github.com/satori/go.uuid"
 )
 
 // User model
 type User struct {
 	Base
-	FirstName   string  `gorm:"type:varchar(20)" json:"firstName"`
-	LastName    string  `gorm:"type:varchar(20)" json:"lastName"`
-	Email       string  `gorm:"type:varchar(30);not null" json:"email"`
-	Password    string  `gorm:"type:varchar(100);not null" json:"-"`
-	Role        string  `sql:"type:user_roles" json:"role"`
-	CompanyType *string `sql:"type:company_types" gorm:"type:varchar(20);null" json:"companyType"`
-	Status      *string `sql:"type:status_types" gorm:"type:varchar(10);null" json:"status"`
+	FirstName   string  `gorm:"url:varchar(20)" json:"firstName"`
+	LastName    string  `gorm:"url:varchar(20)" json:"lastName"`
+	Email       string  `gorm:"url:varchar(30);not null" json:"email"`
+	Password    string  `gorm:"url:varchar(100);not null" json:"-"`
+	Role        string  `sql:"url:user_roles" json:"role"`
+	CompanyType *string `sql:"url:company_types" gorm:"url:varchar(20);null" json:"companyType"`
+	Status      *string `sql:"url:status_types" gorm:"url:varchar(10);null" json:"status"`
 }
 
 // UserClientCatering struct for joined catering and clients table
@@ -46,7 +46,7 @@ type UserClient struct {
 type UserRepository interface {
 	GetByKey(key, value string) (UserClientCatering, error)
 	Add(user User) (UserClientCatering, error)
-	Get(companyID, companyType, userRole string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]UserClientCatering, int, int, error)
+	Get(companyID, companyType, userRole string, pagination url.PaginationQuery, filters url.UserFilterQuery) ([]UserClientCatering, int, int, error)
 	Delete(companyID, ctxUserRole string, user User) (int, error)
 	Update(companyID string, user User) (UserClientCatering, int, error)
 }

@@ -2,12 +2,13 @@ package repository
 
 import (
 	"errors"
+	types2 "github.com/Aiscom-LLC/meals-api/api/url"
 	"net/http"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/Aiscom-LLC/meals-api/utils"
 )
 
@@ -42,7 +43,7 @@ func (c CateringRepo) Add(catering *domain.Catering) error {
 
 // Get returns list of caterings with pagination args
 // and error if exists
-func (c CateringRepo) Get(cateringID string, query types.PaginationQuery) ([]domain.Catering, int, error) {
+func (c CateringRepo) Get(cateringID string, query types2.PaginationQuery) ([]domain.Catering, int, error) {
 	var caterings []domain.Catering
 	var total int
 
@@ -114,7 +115,7 @@ func (c CateringRepo) Delete(id string) error {
 			Model(&domain.User{}).
 			Where("id = ?", cateringUsers[i].UserID).
 			Update(map[string]interface{}{
-				"status":     types.StatusTypesEnum.Deleted,
+				"status":     enums.StatusTypesEnum.Deleted,
 				"deleted_at": time.Now(),
 			})
 	}
