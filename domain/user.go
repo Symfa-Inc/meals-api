@@ -8,13 +8,13 @@ import (
 // User model
 type User struct {
 	Base
-	FirstName   string  `gorm:"varchar(20)" json:"firstName"`
-	LastName    string  `gorm:"varchar(20)" json:"lastName"`
-	Email       string  `gorm:"varchar(30);not null" json:"email"`
-	Password    string  `gorm:"varchar(100);not null" json:"-"`
+	FirstName   string  `gorm:"type:varchar(20)" json:"firstName"`
+	LastName    string  `gorm:"type:varchar(20)" json:"lastName"`
+	Email       string  `gorm:"type:varchar(30);not null" json:"email"`
+	Password    string  `gorm:"type:varchar(100);not null" json:"-"`
 	Role        string  `sql:"user_roles" json:"role"`
-	CompanyType *string `sql:"company_types" gorm:"varchar(20);null" json:"companyType"`
-	Status      *string `sql:"status_types" gorm:"varchar(10);null" json:"status"`
+	CompanyType *string `sql:"company_types" gorm:"type:varchar(20);null" json:"companyType"`
+	Status      *string `sql:"status_types" gorm:"type:varchar(10);null" json:"status"`
 }
 
 // UserClientCatering struct for joined catering and clients table
@@ -33,13 +33,13 @@ type UserClientCatering struct {
 } //@name UsersResponse
 
 type UserCatering struct {
-	CateringName *string `json:"cateringName" gorm:"column:catering_name"`
-	CateringID   *string `json:"cateringId" gorm:"column:catering_id"`
+	CateringName *string `json:"cateringName" gorm:"type:column:catering_name"`
+	CateringID   *string `json:"cateringId" gorm:"type:column:catering_id"`
 }
 
 type UserClient struct {
-	ClientName *string `json:"clientName" gorm:"column:client_name"`
-	ClientID   *string `json:"clientId" gorm:"column:client_id"`
+	ClientName *string `json:"clientName" gorm:"type:column:client_name"`
+	ClientID   *string `json:"clientId" gorm:"type:column:client_id"`
 }
 
 // UserRepository is user interface for repository
