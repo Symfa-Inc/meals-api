@@ -18,7 +18,7 @@ func NewImage() *Image {
 	return &Image{}
 }
 
-var imageService = services.NewImageService
+var imageService = services.NewImageService()
 var imageRepo = repository.NewImageRepo()
 
 // Add adds image for dish with provided ID
@@ -41,7 +41,7 @@ func (i Image) Add(c *gin.Context) {
 		return
 	}
 
-	image, code, err := imageService().Add(c, path)
+	image, code, err := imageService.Add(c, path)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
@@ -86,10 +86,12 @@ func (i Image) Delete(c *gin.Context) {
 // @Router /images [get]
 func (i Image) Get(c *gin.Context) {
 	images, err := imageRepo.Get()
+
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err, c)
 		return
 	}
+
 	c.JSON(http.StatusOK, images)
 }
 
@@ -113,7 +115,7 @@ func (i Image) Update(c *gin.Context) {
 		return
 	}
 
-	image, code, err := imageService().Update(c, path)
+	image, code, err := imageService.Update(c, path)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
