@@ -2,12 +2,12 @@ package repository
 
 import (
 	"errors"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/schemes/response"
 
 	"github.com/jinzhu/gorm"
 )
@@ -42,9 +42,9 @@ func (m MealRepo) Add(meal *domain.Meal) error {
 }
 
 // Get returns list of meals, total items if and error
-func (m MealRepo) Get(mealDate time.Time, id, clientID string) ([]response.GetMeal, int, error) {
+func (m MealRepo) Get(mealDate time.Time, id, clientID string) ([]models.GetMeal, int, error) {
 	var meals []domain.Meal
-	var mealsResponse []response.GetMeal
+	var mealsResponse []models.GetMeal
 
 	if err := config.DB.
 		Where("catering_id = ? AND client_id = ? AND date > ?", id, clientID, mealDate).
@@ -52,9 +52,9 @@ func (m MealRepo) Get(mealDate time.Time, id, clientID string) ([]response.GetMe
 		Find(&meals).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return []response.GetMeal{}, http.StatusNotFound, err
+			return []models.GetMeal{}, http.StatusNotFound, err
 		}
-		return []response.GetMeal{}, http.StatusNotFound, err
+		return []models.GetMeal{}, http.StatusNotFound, err
 	}
 
 	for _, meal := range meals {
@@ -71,7 +71,7 @@ func (m MealRepo) Get(mealDate time.Time, id, clientID string) ([]response.GetMe
 			Order("d.created_at").
 			Scan(&result).
 			Error; err != nil {
-			return []response.GetMeal{}, http.StatusNotFound, err
+			return []models.GetMeal{}, http.StatusNotFound, err
 		}
 
 		for i := range result {
@@ -86,7 +86,7 @@ func (m MealRepo) Get(mealDate time.Time, id, clientID string) ([]response.GetMe
 			result[i].Images = imagesArray
 		}
 
-		mealDishes := response.GetMeal{
+		mealDishes := models.GetMeal{
 			MealID:  meal.MealID,
 			Version: meal.Version,
 			Person:  meal.Person,
@@ -94,12 +94,12 @@ func (m MealRepo) Get(mealDate time.Time, id, clientID string) ([]response.GetMe
 			Result:  result,
 		}
 
-		mealsResponse = append([]response.GetMeal{mealDishes}, mealsResponse...)
+		mealsResponse = append([]models.GetMeal{mealDishes}, mealsResponse...)
 	}
 
 	if mealsResponse == nil {
 		//return nil, http.StatusNotFound, errors.New("meal for current day not found")
-		mealsResponse = make([]response.GetMeal, 0)
+		mealsResponse = make([]models.GetMeal, 0)
 	}
 
 	return mealsResponse, 0, nil
@@ -123,9 +123,9 @@ func (m MealRepo) GetByKey(key, value string) (domain.Meal, int, error) {
 }
 
 // Get returns list of meals, total items if and error
-func (m MealRepo) GetByRange(startDate time.Time, endDate time.Time, id, clientID string) ([]response.GetMeal, int, error) {
+func (m MealRepo) GetByRange(startDate time.Time, endDate time.Time, id, clientID string) ([]models.GetMeal, int, error) {
 	var meals []domain.Meal
-	var mealsResponse []response.GetMeal
+	var mealsResponse []models.GetMeal
 
 	if err := config.DB.
 		Where("catering_id = ? AND client_id = ? AND date >= ? AND date <= ?", id, clientID, startDate.UTC(), endDate.UTC()).
@@ -133,9 +133,9 @@ func (m MealRepo) GetByRange(startDate time.Time, endDate time.Time, id, clientI
 		Find(&meals).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return []response.GetMeal{}, http.StatusNotFound, err
+			return []models.GetMeal{}, http.StatusNotFound, err
 		}
-		return []response.GetMeal{}, http.StatusNotFound, err
+		return []models.GetMeal{}, http.StatusNotFound, err
 	}
 
 	for _, meal := range meals {
@@ -152,7 +152,7 @@ func (m MealRepo) GetByRange(startDate time.Time, endDate time.Time, id, clientI
 			Order("d.created_at").
 			Scan(&result).
 			Error; err != nil {
-			return []response.GetMeal{}, http.StatusNotFound, err
+			return []models.GetMeal{}, http.StatusNotFound, err
 		}
 
 		for i := range result {
@@ -167,7 +167,7 @@ func (m MealRepo) GetByRange(startDate time.Time, endDate time.Time, id, clientI
 			result[i].Images = imagesArray
 		}
 
-		mealDishes := response.GetMeal{
+		mealDishes := models.GetMeal{
 			MealID:  meal.MealID,
 			Version: meal.Version,
 			Person:  meal.Person,
@@ -175,12 +175,12 @@ func (m MealRepo) GetByRange(startDate time.Time, endDate time.Time, id, clientI
 			Result:  result,
 		}
 
-		mealsResponse = append([]response.GetMeal{mealDishes}, mealsResponse...)
+		mealsResponse = append([]models.GetMeal{mealDishes}, mealsResponse...)
 	}
 
 	if mealsResponse == nil {
 		//return nil, http.StatusNotFound, errors.New("meal for current day not found")
-		mealsResponse = make([]response.GetMeal, 0)
+		mealsResponse = make([]models.GetMeal, 0)
 	}
 
 	return mealsResponse, 0, nil

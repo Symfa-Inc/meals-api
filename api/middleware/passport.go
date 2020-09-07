@@ -2,13 +2,13 @@ package middleware
 
 import (
 	"errors"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/schemes/request"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
@@ -50,13 +50,13 @@ func Passport() *jwt.GinJWTMiddleware {
 
 			status := utils.DerefString(result.Status)
 
-			if status == types.StatusTypesEnum.Deleted {
+			if status == enums.StatusTypesEnum.Deleted {
 				utils.CreateError(http.StatusForbidden, errors.New("user was deleted"), c)
 				return
 			}
 
-			if status == types.StatusTypesEnum.Invited {
-				code, err := userRepo.UpdateStatus(result.ID, types.StatusTypesEnum.Active)
+			if status == enums.StatusTypesEnum.Invited {
+				code, err := userRepo.UpdateStatus(result.ID, enums.StatusTypesEnum.Active)
 				if err != nil {
 					utils.CreateError(code, err, c)
 					return
@@ -80,7 +80,7 @@ func Passport() *jwt.GinJWTMiddleware {
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
-			var body request.LoginUserRequest
+			var body models.LoginUserRequest
 			if err := c.ShouldBind(&body); err != nil {
 				return "", errors.New("missing email or password")
 			}
@@ -88,7 +88,7 @@ func Passport() *jwt.GinJWTMiddleware {
 			result, err := userRepo.GetByKey("email", body.Email)
 			if err == nil {
 				status := utils.DerefString(result.Status)
-				if status == types.StatusTypesEnum.Deleted {
+				if status == enums.StatusTypesEnum.Deleted {
 					return nil, errors.New("user was deleted")
 				}
 

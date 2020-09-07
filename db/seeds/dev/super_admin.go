@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/Aiscom-LLC/meals-api/utils"
 )
 
@@ -23,8 +23,8 @@ func CreateAdmin() {
 			LastName:  "admin",
 			Email:     "admin@meals.com",
 			Password:  utils.HashString("Password12!"),
-			Status:    &types.StatusTypesEnum.Active,
-			Role:      types.UserRoleEnum.SuperAdmin,
+			Status:    &enums.StatusTypesEnum.Active,
+			Role:      enums.UserRoleEnum.SuperAdmin,
 		}
 
 		config.DB.Create(&superAdmin)

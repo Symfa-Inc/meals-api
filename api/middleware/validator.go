@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -37,7 +37,7 @@ func (v *Validator) ValidateRoles(roles ...string) gin.HandlerFunc {
 		user, _ := userRepo.GetByKey("id", fmt.Sprintf("%v", userID))
 		status := utils.DerefString(user.Status)
 
-		if status == types.StatusTypesEnum.Deleted {
+		if status == enums.StatusTypesEnum.Deleted {
 			utils.CreateError(http.StatusForbidden, errors.New("user was deleted"), c)
 			c.Abort()
 			return

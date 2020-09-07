@@ -2,13 +2,14 @@ package repository
 
 import (
 	"errors"
+	"github.com/Aiscom-LLC/meals-api/api/url"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/schemes/response"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 
 	"github.com/jinzhu/gorm"
 )
@@ -65,8 +66,8 @@ func (c ClientRepo) Add(cateringID string, client *domain.Client) error {
 }
 
 // GetCateringClientsOrders returns list of catering Clients
-func (c ClientRepo) GetCateringClientsOrders(cateringID string, query types.PaginationWithDateQuery) ([]response.ClientOrder, int, error) {
-	var cateringClients []response.ClientOrder
+func (c ClientRepo) GetCateringClientsOrders(cateringID string, query url.PaginationWithDateQuery) ([]models.ClientOrder, int, error) {
+	var cateringClients []models.ClientOrder
 	var total int
 
 	page := query.Page
@@ -89,7 +90,7 @@ func (c ClientRepo) GetCateringClientsOrders(cateringID string, query types.Pagi
 		Joins("left join user_orders uo on cu.user_id = uo.user_id").
 		Joins("left join orders o on uo.order_id = o.id").
 		Joins("left join order_dishes od on od.order_id = o.id").
-		Where("clients.catering_id = ? AND o.status = ? AND o.date = ?", cateringID, types.OrderStatusTypesEnum.Approved, query.Date).
+		Where("clients.catering_id = ? AND o.status = ? AND o.date = ?", cateringID, enums.OrderStatusTypesEnum.Approved, query.Date).
 		Group("clients.name, clients.id").
 		Scan(&cateringClients).
 		Count(&total).
@@ -105,7 +106,7 @@ func (c ClientRepo) GetCateringClientsOrders(cateringID string, query types.Pagi
 			Joins("left join client_users cu on cu.client_id = clients.id").
 			Joins("left join user_orders uo on cu.user_id = uo.user_id").
 			Joins("left join orders o on uo.order_id = o.id").
-			Where("clients.catering_id = ? AND o.status = ? AND o.date = ?", cateringID, types.OrderStatusTypesEnum.Approved, query.Date).
+			Where("clients.catering_id = ? AND o.status = ? AND o.date = ?", cateringID, enums.OrderStatusTypesEnum.Approved, query.Date).
 			Group("clients.name, clients.id").
 			Pluck("sum(o.total)", &total)
 
@@ -116,8 +117,8 @@ func (c ClientRepo) GetCateringClientsOrders(cateringID string, query types.Pagi
 }
 
 // Get returns list of clients
-func (c ClientRepo) Get(query types.PaginationQuery, cateringID, role string) ([]response.Client, int, error) {
-	var clients []response.Client
+func (c ClientRepo) Get(query url.PaginationQuery, cateringID, role string) ([]models.Client, int, error) {
+	var clients []models.Client
 	var total int
 	var err error
 
@@ -132,7 +133,7 @@ func (c ClientRepo) Get(query types.PaginationQuery, cateringID, role string) ([
 		limit = 10
 	}
 
-	if role == types.UserRoleEnum.SuperAdmin {
+	if role == enums.UserRoleEnum.SuperAdmin {
 		config.DB.
 			Model(&domain.Client{}).
 			Count(&total)
@@ -187,7 +188,7 @@ func (c ClientRepo) Delete(id string) error {
 			Model(&domain.User{}).
 			Where("id = ?", clientUsers[i].UserID).
 			Update(map[string]interface{}{
-				"status":     types.StatusTypesEnum.Deleted,
+				"status":     enums.StatusTypesEnum.Deleted,
 				"deleted_at": time.Now(),
 			})
 	}

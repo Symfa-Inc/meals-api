@@ -26,8 +26,8 @@ type ClientRepository interface {
 	Add(cateringID string, client *Client, user UserClientCatering) error
 	Update(id string, client Client) (int, error)
 	/* TODO fix cycle imports
-	GetCateringClientsOrders(cateringID string, query types.PaginationWithDateQuery) ([]response.ClientOrder, int, error)
-	Get(query types.PaginationQuery, cateringID, role string) ([]response.Client, int, error)
+	GetCateringClientsOrders(cateringID string, query url.PaginationWithDateQuery) ([]response.ClientOrder, int, error)
+	Get(query url.PaginationQuery, cateringID, role string) ([]response.Client, int, error)
 	*/
 	UpdateAutoApproveOrders(id string, status bool) (int, error)
 	InitAutoApprove(id string) (int, error)

@@ -1,9 +1,9 @@
 package api
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
@@ -26,14 +26,14 @@ var addressRepo = repository.NewAddressRepo()
 // @Tags clients addresses
 // @Produce json
 // @Param id path string false "Client ID"
-// @Success 200 {array} domain.Address "array of address readings"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Success 200 {array} swagger.Address "array of address readings"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/addresses [get]
 // Get returns list of addresses of passed client ID
 // returns list of addresses and error
 func (a Address) Get(c *gin.Context) {
-	var path types.PathID
+	var path url.PathID
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -54,12 +54,12 @@ func (a Address) Get(c *gin.Context) {
 // @Tags clients addresses
 // @Produce json
 // @Param id path string true "Client ID"
-// @Param payload body request.AddAddress false "address object"
-// @Success 200 {object} domain.Address false "address object"
-// @Failure 400 {object} types.Error "Error"
+// @Param payload body swagger.AddAddress false "address object"
+// @Success 200 {object} swagger.Address false "address object"
+// @Failure 400 {object} Error "Error"
 // @Router /clients/{id}/addresses [post]
 func (a Address) Add(c *gin.Context) {
-	var path types.PathID
+	var path url.PathID
 	var body domain.Address
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -88,10 +88,10 @@ func (a Address) Add(c *gin.Context) {
 // @Param id path string true "Client ID"
 // @Param addressId path string true "Address ID"
 // @Success 204 "Successfully deleted"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/addresses/{addressId} [delete]
 func (a Address) Delete(c *gin.Context) {
-	var path types.PathAddress
+	var path url.PathAddress
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -112,13 +112,13 @@ func (a Address) Delete(c *gin.Context) {
 // @Tags clients addresses
 // @Param id path string true "Client ID"
 // @Param addressId path string true "Address ID"
-// @Param payload body request.AddAddress false "address object"
+// @Param payload body swagger.AddAddress false "address object"
 // @Success 204 "Successfully updated"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/addresses/{addressId} [put]
 func (a Address) Update(c *gin.Context) {
-	var path types.PathAddress
+	var path url.PathAddress
 	var body domain.Address
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {

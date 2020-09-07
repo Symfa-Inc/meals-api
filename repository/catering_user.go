@@ -2,13 +2,14 @@ package repository
 
 import (
 	"errors"
+	"github.com/Aiscom-LLC/meals-api/api/url"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/schemes/response"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/jinzhu/gorm"
 )
 
@@ -37,8 +38,8 @@ func (cur *CateringUserRepo) Add(cateringUser domain.CateringUser) error {
 	return err
 }
 
-func (cur *CateringUserRepo) Get(cateringID string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]response.GetCateringUser, int, int, error) {
-	var users []response.GetCateringUser
+func (cur *CateringUserRepo) Get(cateringID string, pagination url.PaginationQuery, filters url.UserFilterQuery) ([]models.GetCateringUser, int, int, error) {
+	var users []models.GetCateringUser
 	var total int
 	page := pagination.Page
 	limit := pagination.Limit
@@ -94,12 +95,12 @@ func (cur *CateringUserRepo) Get(cateringID string, pagination types.PaginationQ
 
 func (cur *CateringUserRepo) Delete(cateringID, ctxUserRole string, user domain.User) (int, error) {
 	var totalUsers int
-	if ctxUserRole != types.UserRoleEnum.SuperAdmin {
+	if ctxUserRole != enums.UserRoleEnum.SuperAdmin {
 		config.DB.
 			Table("users as u").
 			Joins("left join catering_users cu on cu.user_id = u.id").
 			Where("cu.catering_id = ? AND u.status != ?",
-				cateringID, types.StatusTypesEnum.Deleted).
+				cateringID, enums.StatusTypesEnum.Deleted).
 			Count(&totalUsers)
 
 		if totalUsers == 1 {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
@@ -55,7 +55,7 @@ func (ur UserRepo) GetByID(id string) (domain.UserClientCatering, error) {
 
 	company := utils.DerefString(user.CompanyType)
 
-	if company == types.CompanyTypesEnum.Catering {
+	if company == enums.CompanyTypesEnum.Catering {
 		config.DB.
 			Table("users as u").
 			Select("c.id as catering_id, c.name as catering_name").
@@ -63,7 +63,7 @@ func (ur UserRepo) GetByID(id string) (domain.UserClientCatering, error) {
 			Joins("left join caterings c on c.id = cu.catering_id").
 			Where("u.id = ?", id).
 			Scan(&user)
-	} else if company == types.CompanyTypesEnum.Client {
+	} else if company == enums.CompanyTypesEnum.Client {
 		config.DB.
 			Table("users as u").
 			Select("cl.id as client_id, cl.name as client_name, c.name as catering_name, c.id as catering_id, clu.floor").

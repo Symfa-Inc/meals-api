@@ -1,9 +1,9 @@
 package services
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
@@ -23,7 +23,7 @@ func NewImageService() *ImageService {
 
 var imageRepo = repository.NewImageRepo()
 
-func (i *ImageService) Add(c *gin.Context, path types.PathDish) (domain.Image, int, error) {
+func (i *ImageService) Add(c *gin.Context, path url.PathDish) (domain.Image, int, error) {
 	id := c.PostForm("id")
 
 	if id != "" {
@@ -63,7 +63,7 @@ func (i *ImageService) Add(c *gin.Context, path types.PathDish) (domain.Image, i
 	return *image, code, err
 }
 
-func (i *ImageService) Update(c *gin.Context, path types.PathImageDish) (domain.Image, int, error) {
+func (i *ImageService) Update(c *gin.Context, path url.PathImageDish) (domain.Image, int, error) {
 	file, err := c.FormFile("image")
 
 	if err != nil {

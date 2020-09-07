@@ -2,11 +2,11 @@ package api
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/schemes/request"
-	"github.com/Aiscom-LLC/meals-api/schemes/response"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -33,14 +33,14 @@ var orderRepo = repository.NewOrderRepo()
 // @Tags users orders
 // @Param id path string false "User ID"
 // @Param date query string true "Date query in YYYY-MM-DDT00:00:00Z format"
-// @Param body body request.OrderRequest false "User order"
-// @Success 201 {object} response.UserOrder false "Order for user"
-// @Failure 400 {object} types.Error "Error"
+// @Param body body swagger.OrderRequest false "User order"
+// @Success 201 {object} swagger.UserOrder false "Order for user"
+// @Failure 400 {object} Error "Error"
 // @Router /users/{id}/orders [post]
 func (o Order) Add(c *gin.Context) {
-	var query types.DateQuery
-	var order request.OrderRequest
-	var path types.PathID
+	var query url.DateQuery
+	var order models.OrderRequest
+	var path url.PathID
 
 	claims, err := middleware.Passport().GetClaimsFromJWT(c)
 
@@ -67,7 +67,7 @@ func (o Order) Add(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, response.UserOrder{
+	c.JSON(http.StatusCreated, models.UserOrder{
 		Items:   userOrder.Items,
 		Status:  userOrder.Status,
 		Total:   userOrder.Total,
@@ -83,11 +83,11 @@ func (o Order) Add(c *gin.Context) {
 // @Param id path string false "User ID"
 // @Param orderId path string false "Order ID"
 // @Success 204 "Successfully canceled"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Error"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Error"
 // @Router /users/{id}/orders/{orderId} [delete]
 func (o Order) CancelOrder(c *gin.Context) {
-	var path types.PathOrder
+	var path url.PathOrder
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -109,13 +109,13 @@ func (o Order) CancelOrder(c *gin.Context) {
 // @Produce json
 // @Param id path string true "User ID"
 // @Param date query string true "Date query in YYYY-MM-DDT00:00:00Z format"
-// @Success 200 {array} response.UserOrder false "Orders for user"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Success 200 {array} swagger.UserOrder false "Orders for user"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /users/{id}/orders [get]
 func (o Order) GetUserOrder(c *gin.Context) {
-	var path types.PathID
-	var query types.DateQuery
+	var path url.PathID
+	var query url.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -148,13 +148,13 @@ func (o Order) GetUserOrder(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Client ID"
 // @Param date query string true "Date query in YYYY-MM-DDT00:00:00Z format"
-// @Success 200 {object} response.SummaryOrdersResponse false "Orders for clients"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Success 200 {object} swagger.SummaryOrdersResponse false "Orders for clients"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/orders [get]
 func (o Order) GetClientOrders(c *gin.Context) {
-	var path types.PathID
-	var query types.DateQuery
+	var path url.PathID
+	var query url.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -171,7 +171,7 @@ func (o Order) GetClientOrders(c *gin.Context) {
 		return
 	}
 
-	company := types.CompanyTypesEnum.Client
+	company := enums.CompanyTypesEnum.Client
 
 	result, code, err := orderRepo.GetOrders("", path.ID, query.Date, company)
 
@@ -190,13 +190,13 @@ func (o Order) GetClientOrders(c *gin.Context) {
 // @Param id path string true "Catering ID"
 // @Param clientId path string true "Client ID"
 // @Param date query string true "Date query in YYYY-MM-DDT00:00:00Z format"
-// @Success 200 {object} response.SummaryOrdersResponse false "Orders for clients"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Success 200 {object} swagger.SummaryOrdersResponse false "Orders for clients"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/orders [get]
 func (o Order) GetCateringClientOrders(c *gin.Context) {
-	var path types.PathClient
-	var query types.DateQuery
+	var path url.PathClient
+	var query url.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -213,7 +213,7 @@ func (o Order) GetCateringClientOrders(c *gin.Context) {
 		return
 	}
 
-	company := types.CompanyTypesEnum.Catering
+	company := enums.CompanyTypesEnum.Catering
 
 	result, code, err := orderRepo.GetOrders(path.ID, path.ClientID, query.Date, company)
 
@@ -233,12 +233,12 @@ func (o Order) GetCateringClientOrders(c *gin.Context) {
 // @Param id path string true "Client ID"
 // @Param date query string true "Date query in YYYY-MM-DDT00:00:00Z format"
 // @Success 200 "Successfully Approved orders"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/orders [put]
 func (o Order) ApproveOrders(c *gin.Context) {
-	var path types.PathID
-	var query types.DateQuery
+	var path url.PathID
+	var query url.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -262,13 +262,13 @@ func (o Order) ApproveOrders(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Client ID"
 // @Param date query string true "Date query in YYYY-MM-DDT00:00:00Z format"
-// @Success 200 {object} response.OrderStatus "order status"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Success 200 {object} swagger.OrderStatus "order status"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/order-status [get]
 func (o Order) GetOrderStatus(c *gin.Context) {
-	var path types.PathID
-	var query types.DateQuery
+	var path url.PathID
+	var query url.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

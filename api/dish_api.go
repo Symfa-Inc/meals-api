@@ -1,9 +1,9 @@
 package api
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
@@ -27,12 +27,12 @@ var dishRepo = repository.NewDishRepo()
 // @Tags catering dishes
 // @Produce json
 // @Param id path string true "Catering ID"
-// @Param payload body request.AddDish false "dish object"
+// @Param payload body swagger.AddDish false "dish object"
 // @Success 200 {object} domain.Dish false "dish object"
-// @Failure 400 {object} types.Error "Error"
+// @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/dishes [post]
 func (d Dish) Add(c *gin.Context) {
-	var path types.PathID
+	var path url.PathID
 	var dish domain.Dish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -64,10 +64,10 @@ func (d Dish) Add(c *gin.Context) {
 // @Param id path string true "Catering ID"
 // @Param dishId path string true "Dish ID"
 // @Success 204 "Successfully deleted"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/dishes/{dishId} [delete]
 func (d Dish) Delete(c *gin.Context) {
-	var path types.PathDish
+	var path url.PathDish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -88,11 +88,11 @@ func (d Dish) Delete(c *gin.Context) {
 // @Param id path string true "Catering ID"
 // @Param categoryID query string true "Category ID"
 // @Success 200 {array} domain.Dish "List of dishes"
-// @Failure 400 {object} types.Error "Error"
+// @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/dishes [get]
 func (d Dish) Get(c *gin.Context) {
-	var path types.PathID
-	var query types.CategoryIDQuery
+	var path url.PathID
+	var query url.CategoryIDQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -123,10 +123,10 @@ func (d Dish) Get(c *gin.Context) {
 // @Param id path string true "Catering ID"
 // @Param dishId path string true "Dish ID"
 // @Success 200 {array} domain.Dish "List of dishes"
-// @Failure 400 {object} types.Error "Error"
+// @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/dishes/{dishId} [get]
 func (d Dish) GetByID(c *gin.Context) {
-	var path types.PathDishID
+	var path url.PathDishID
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -149,13 +149,13 @@ func (d Dish) GetByID(c *gin.Context) {
 // @Tags catering dishes
 // @Param id path string true "Catering ID"
 // @Param dishId path string true "Dish ID"
-// @Param body body request.AddDish false "Dish object"
+// @Param body body swagger.AddDish false "Dish object"
 // @Success 204 "Successfully updated"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/dishes/{dishId} [put]
 func (d Dish) Update(c *gin.Context) {
-	var path types.PathDish
+	var path url.PathDish
 	var dish domain.Dish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {

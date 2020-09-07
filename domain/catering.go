@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,7 +21,7 @@ type CateringUsecase interface {
 
 // CateringRepository is catering interface for repository
 type CateringRepository interface {
-	Get(cateringID string, query types.PaginationQuery) ([]Catering, int, error)
+	Get(cateringID string, query url.PaginationQuery) ([]Catering, int, error)
 	Add(catering *Catering) error
 	Update(id string, catering Catering) (int, error)
 	Delete(id string) error

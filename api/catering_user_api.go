@@ -2,12 +2,13 @@ package api
 
 import (
 	"errors"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/mailer"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/schemes/request"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
@@ -34,13 +35,13 @@ var cateringUserRepo = repository.NewCateringUserRepo()
 // @Accept json
 // @Tags caterings users
 // @Param id path string false "Catering ID"
-// @Param body body request.CateringUser false "Catering user"
-// @Success 201 {object} response.UserResponse false "Catering user"
-// @Failure 400 {object} types.Error "Error"
+// @Param body body swagger.CateringUser false "Catering user"
+// @Success 201 {object} swagger.UserResponse false "Catering user"
+// @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/users [post]
 func (cu *CateringUser) Add(c *gin.Context) {
-	var path types.PathID
-	var body request.CateringUser
+	var path url.PathID
+	var body models.CateringUser
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -61,7 +62,7 @@ func (cu *CateringUser) Add(c *gin.Context) {
 		return
 	}
 
-	userClientCatering, userCreated, password, err, userErr := cateringUserService.Add(path, body, user)
+	userClientCatering, userCreated, password, err, userErr := cateringUserService.Add(path, user)
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err, c)
@@ -87,14 +88,14 @@ func (cu *CateringUser) Add(c *gin.Context) {
 // @Param page query int false "used for pagination"
 // @Param q query string false "used query search"
 // @Param role query string false "used for role sort"
-// @Success 200 {array} response.UserResponse false "Catering user"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Error"
+// @Success 200 {array} swagger.UserResponse false "Catering user"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Error"
 // @Router /caterings/{id}/users [get]
 func (cu *CateringUser) Get(c *gin.Context) { //nolint:dupl
-	var path types.PathID
-	var paginationQuery types.PaginationQuery
-	var filterQuery types.UserFilterQuery
+	var path url.PathID
+	var paginationQuery url.PaginationQuery
+	var filterQuery url.UserFilterQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -134,11 +135,11 @@ func (cu *CateringUser) Get(c *gin.Context) { //nolint:dupl
 // @Param id path string false "Catering ID"
 // @Param userId path string false "User ID"
 // @Success 204 "Successfully deleted"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Error"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Error"
 // @Router /caterings/{id}/users/{userId} [delete]
 func (cu *CateringUser) Delete(c *gin.Context) {
-	var path types.PathUser
+	var path url.PathUser
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -147,7 +148,7 @@ func (cu *CateringUser) Delete(c *gin.Context) {
 
 	parsedUserID, _ := uuid.FromString(path.UserID)
 	user.ID = parsedUserID
-	user.Status = &types.StatusTypesEnum.Deleted
+	user.Status = &enums.StatusTypesEnum.Deleted
 	deletedAt := time.Now().AddDate(0, 0, 21).Truncate(time.Hour * 24)
 	user.DeletedAt = &deletedAt
 
@@ -176,14 +177,14 @@ func (cu *CateringUser) Delete(c *gin.Context) {
 // @Tags caterings users
 // @Param id path string false "Catering ID"
 // @Param userId path string false "User ID"
-// @Param body body request.CateringUserUpdate false "Catering user"
-// @Success 200 {object} response.UserResponse false "Catering user"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Error"
+// @Param body body swagger.CateringUserUpdate false "Catering user"
+// @Success 200 {object} swagger.UserResponse false "Catering user"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Error"
 // @Router /caterings/{id}/users/{userId} [put]
 func (cu *CateringUser) Update(c *gin.Context) { //nolint:dupl
-	var path types.PathUser
-	var body request.CateringUserUpdate
+	var path url.PathUser
+	var body models.CateringUserUpdate
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -207,7 +208,7 @@ func (cu *CateringUser) Update(c *gin.Context) { //nolint:dupl
 	}
 
 	parsedUserID, _ := uuid.FromString(path.UserID)
-	user.CompanyType = &types.CompanyTypesEnum.Catering
+	user.CompanyType = &enums.CompanyTypesEnum.Catering
 	user.ID = parsedUserID
 
 	code, err := cateringUserRepo.Update(&user)

@@ -1,9 +1,9 @@
 package api
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/services"
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -31,11 +31,11 @@ var imageRepo = repository.NewImageRepo()
 // @Param id formData string false  "id of default image"
 // @Success 201 {object} domain.Image "Image model"
 // @Success 200 {object} domain.Image "default image"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/dishes/{dishId}/images [post]
 func (i Image) Add(c *gin.Context) {
-	var path types.PathDish
+	var path url.PathDish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -59,11 +59,11 @@ func (i Image) Add(c *gin.Context) {
 // @Param imageId path string true "Image ID"
 // @Param dishId path string true "Dish ID"
 // @Success 204 "Successfully deleted"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/dishes/{dishId}/images/{imageId} [delete]
 func (i Image) Delete(c *gin.Context) {
-	var path types.PathImageDish
+	var path url.PathImageDish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -81,8 +81,8 @@ func (i Image) Delete(c *gin.Context) {
 // @Summary Returns list of images
 // @Tags catering images
 // @Produce json
-// @Success 200 {array} response.GetImages "List of images"
-// @Failure 400 {object} types.Error "Error"
+// @Success 200 {array} swagger.GetImages "List of images"
+// @Failure 400 {object} Error "Error"
 // @Router /images [get]
 func (i Image) Get(c *gin.Context) {
 	images, err := imageRepo.Get()
@@ -105,11 +105,11 @@ func (i Image) Get(c *gin.Context) {
 // @Param image formData file false  "Image File"
 // @Success 201 {object} domain.Image "Image model"
 // @Success 200 {object} domain.Image "default image"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/dishes/{dishId}/images/{imageId} [put]
 func (i Image) Update(c *gin.Context) {
-	var path types.PathImageDish
+	var path url.PathImageDish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

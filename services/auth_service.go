@@ -5,7 +5,7 @@ import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -38,7 +38,7 @@ func (as *AuthService) IsAuthenticated(c *gin.Context) (domain.UserClientCaterin
 		return domain.UserClientCatering{}, http.StatusUnauthorized, errors.New("token is expired")
 	}
 
-	if result.Status == &types.StatusTypesEnum.Deleted {
+	if result.Status == &enums.StatusTypesEnum.Deleted {
 		return domain.UserClientCatering{}, http.StatusForbidden, errors.New("user was deleted")
 	}
 	return result, 0, nil

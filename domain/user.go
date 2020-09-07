@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -33,7 +33,7 @@ type UserClientCatering struct {
 } //@name UsersResponse
 
 type UserCatering struct {
-	CateringName *string `json:"cateringName" gorm:"column:catering_name"`
+	CateringName *string `json:"cateringName" gorm:"type:column:catering_name"`
 	CateringID   *string `json:"cateringId" gorm:"column:catering_id"`
 }
 
@@ -46,7 +46,7 @@ type UserClient struct {
 type UserRepository interface {
 	GetByKey(key, value string) (UserClientCatering, error)
 	Add(user User) (UserClientCatering, error)
-	Get(companyID, companyType, userRole string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]UserClientCatering, int, int, error)
+	Get(companyID, companyType, userRole string, pagination url.PaginationQuery, filters url.UserFilterQuery) ([]UserClientCatering, int, int, error)
 	Delete(companyID, ctxUserRole string, user User) (int, error)
 	Update(companyID string, user User) (UserClientCatering, int, error)
 }

@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
@@ -54,7 +54,7 @@ func SetupRouter() *gin.Engine {
 
 		suAdmin := authRequired.Group("/")
 		suAdmin.Use(validator.ValidateRoles(
-			types.UserRoleEnum.SuperAdmin,
+			enums.UserRoleEnum.SuperAdmin,
 		))
 		{
 			// caterings
@@ -64,8 +64,8 @@ func SetupRouter() *gin.Engine {
 
 		caAdminSuAdmin := authRequired.Group("/")
 		caAdminSuAdmin.Use(validator.ValidateRoles(
-			types.UserRoleEnum.SuperAdmin,
-			types.UserRoleEnum.CateringAdmin,
+			enums.UserRoleEnum.SuperAdmin,
+			enums.UserRoleEnum.CateringAdmin,
 		))
 		{
 			// catering info
@@ -115,8 +115,8 @@ func SetupRouter() *gin.Engine {
 
 		clAdminSuAdmin := authRequired.Group("/")
 		clAdminSuAdmin.Use(validator.ValidateRoles(
-			types.UserRoleEnum.ClientAdmin,
-			types.UserRoleEnum.SuperAdmin,
+			enums.UserRoleEnum.ClientAdmin,
+			enums.UserRoleEnum.SuperAdmin,
 		))
 		{
 			// client schedules
@@ -136,9 +136,9 @@ func SetupRouter() *gin.Engine {
 
 		clAdminUser := authRequired.Group("/")
 		clAdminUser.Use(validator.ValidateRoles(
-			types.UserRoleEnum.SuperAdmin,
-			types.UserRoleEnum.ClientAdmin,
-			types.UserRoleEnum.User,
+			enums.UserRoleEnum.SuperAdmin,
+			enums.UserRoleEnum.ClientAdmin,
+			enums.UserRoleEnum.User,
 		))
 		{
 			// client orders
@@ -151,10 +151,10 @@ func SetupRouter() *gin.Engine {
 
 		allUsers := authRequired.Group("/")
 		allUsers.Use(validator.ValidateRoles(
-			types.UserRoleEnum.SuperAdmin,
-			types.UserRoleEnum.CateringAdmin,
-			types.UserRoleEnum.ClientAdmin,
-			types.UserRoleEnum.User,
+			enums.UserRoleEnum.SuperAdmin,
+			enums.UserRoleEnum.CateringAdmin,
+			enums.UserRoleEnum.ClientAdmin,
+			enums.UserRoleEnum.User,
 		))
 		{
 			// categories
@@ -174,9 +174,9 @@ func SetupRouter() *gin.Engine {
 
 		allAdmins := authRequired.Group("/")
 		allAdmins.Use(validator.ValidateRoles(
-			types.UserRoleEnum.SuperAdmin,
-			types.UserRoleEnum.CateringAdmin,
-			types.UserRoleEnum.ClientAdmin,
+			enums.UserRoleEnum.SuperAdmin,
+			enums.UserRoleEnum.CateringAdmin,
+			enums.UserRoleEnum.ClientAdmin,
 		))
 		{
 			// clients

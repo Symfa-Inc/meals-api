@@ -350,7 +350,7 @@ var doc = `{
                     "200": {
                         "description": "List of clients orders",
                         "schema": {
-                            "$ref": "#/definitions/response.GetCateringClientsSwagger"
+                            "$ref": "#/definitions/swagger.GetCateringClientsSwagger"
                         }
                     },
                     "400": {
@@ -454,7 +454,7 @@ var doc = `{
                     "200": {
                         "description": "category object",
                         "schema": {
-                            "$ref": "#/definitions/CategoryResponse"
+                            "$ref": "#/definitions/api.Category"
                         }
                     },
                     "400": {
@@ -571,12 +571,18 @@ var doc = `{
                 "tags": [
                     "catering meals"
                 ],
-                "summary": "Get list of categories with dishes for passed meal ID",
+                "summary": "GetByRange list of categories with dishes for passed meal ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Meal Date in 2020-01-01T00:00:00Z format",
-                        "name": "date",
+                        "description": "Meal Start Date in 2020-01-01T00:00:00Z format",
+                        "name": "startDate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Meal End Date in 2020-01-01T00:00:00Z format",
+                        "name": "endDate",
                         "in": "query"
                     },
                     {
@@ -698,7 +704,7 @@ var doc = `{
                     "200": {
                         "description": "Orders for clients",
                         "schema": {
-                            "$ref": "#/definitions/response.SummaryOrdersResponse"
+                            "$ref": "#/definitions/swagger.SummaryOrdersResponse"
                         }
                     },
                     "400": {
@@ -1255,7 +1261,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/response.UserResponse"
+                                "$ref": "#/definitions/swagger.UserResponse"
                             }
                         }
                     },
@@ -1296,7 +1302,7 @@ var doc = `{
                         "name": "body",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/request.CateringUser"
+                            "$ref": "#/definitions/swagger.CateringUser"
                         }
                     }
                 ],
@@ -1304,7 +1310,7 @@ var doc = `{
                     "201": {
                         "description": "Catering user",
                         "schema": {
-                            "$ref": "#/definitions/response.UserResponse"
+                            "$ref": "#/definitions/swagger.UserResponse"
                         }
                     },
                     "400": {
@@ -1346,7 +1352,7 @@ var doc = `{
                         "name": "body",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/request.CateringUserUpdate"
+                            "$ref": "#/definitions/swagger.CateringUserUpdate"
                         }
                     }
                 ],
@@ -1354,7 +1360,7 @@ var doc = `{
                     "200": {
                         "description": "Catering user",
                         "schema": {
-                            "$ref": "#/definitions/response.UserResponse"
+                            "$ref": "#/definitions/swagger.UserResponse"
                         }
                     },
                     "400": {
@@ -1825,7 +1831,7 @@ var doc = `{
                     "200": {
                         "description": "order status",
                         "schema": {
-                            "$ref": "#/definitions/response.OrderStatus"
+                            "$ref": "#/definitions/swagger.OrderStatus"
                         }
                     },
                     "400": {
@@ -1872,7 +1878,7 @@ var doc = `{
                     "200": {
                         "description": "Orders for clients",
                         "schema": {
-                            "$ref": "#/definitions/response.SummaryOrdersResponse"
+                            "$ref": "#/definitions/swagger.SummaryOrdersResponse"
                         }
                     },
                     "400": {
@@ -2085,7 +2091,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/response.UserResponse"
+                                "$ref": "#/definitions/swagger.UserResponse"
                             }
                         }
                     },
@@ -2126,7 +2132,7 @@ var doc = `{
                         "name": "body",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/request.ClientUser"
+                            "$ref": "#/definitions/swagger.ClientUser"
                         }
                     }
                 ],
@@ -2134,7 +2140,7 @@ var doc = `{
                     "201": {
                         "description": "Client user",
                         "schema": {
-                            "$ref": "#/definitions/response.UserResponse"
+                            "$ref": "#/definitions/swagger.UserResponse"
                         }
                     },
                     "400": {
@@ -2176,7 +2182,7 @@ var doc = `{
                         "name": "body",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/request.ClientUserUpdate"
+                            "$ref": "#/definitions/swagger.ClientUserUpdate"
                         }
                     }
                 ],
@@ -2184,7 +2190,7 @@ var doc = `{
                     "200": {
                         "description": "Client user",
                         "schema": {
-                            "$ref": "#/definitions/response.UserResponse"
+                            "$ref": "#/definitions/swagger.UserResponse"
                         }
                     },
                     "400": {
@@ -2289,7 +2295,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.UserResponse"
+                            "$ref": "#/definitions/swagger.UserResponse"
                         }
                     },
                     "401": {
@@ -2333,7 +2339,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.UserResponse"
+                            "$ref": "#/definitions/swagger.UserResponse"
                         }
                     },
                     "401": {
@@ -2404,7 +2410,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/response.UserOrder"
+                                "$ref": "#/definitions/swagger.UserOrder"
                             }
                         }
                     },
@@ -2452,7 +2458,7 @@ var doc = `{
                         "name": "body",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/request.OrderRequest"
+                            "$ref": "#/definitions/swagger.OrderRequest"
                         }
                     }
                 ],
@@ -2460,7 +2466,7 @@ var doc = `{
                     "201": {
                         "description": "Order for user",
                         "schema": {
-                            "$ref": "#/definitions/response.UserOrder"
+                            "$ref": "#/definitions/swagger.UserOrder"
                         }
                     },
                     "400": {
@@ -2807,7 +2813,7 @@ var doc = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/response.Client"
+                        "$ref": "#/definitions/swagger.Client"
                     }
                 },
                 "page": {
@@ -2950,124 +2956,15 @@ var doc = `{
                 }
             }
         },
-        "request.CateringUser": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "d.novikov@wellyes.ru"
-                },
-                "firstName": {
-                    "type": "string",
-                    "example": "Dmitry"
-                },
-                "lastName": {
-                    "type": "string",
-                    "example": "Novikov"
-                }
-            }
+        "api.Category": {
+            "type": "object"
         },
-        "request.CateringUserUpdate": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "d.novikov@wellyes.ru"
-                },
-                "firstName": {
-                    "type": "string",
-                    "example": "Dmitry"
-                },
-                "lastName": {
-                    "type": "string",
-                    "example": "Novikov"
-                }
-            }
-        },
-        "request.ClientUser": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "d.novikov@wellyes.ru"
-                },
-                "firstName": {
-                    "type": "string",
-                    "example": "Dmitry"
-                },
-                "floor": {
-                    "type": "integer",
-                    "example": 5
-                },
-                "lastName": {
-                    "type": "string",
-                    "example": "Novikov"
-                },
-                "role": {
-                    "type": "string",
-                    "example": "User"
-                }
-            }
-        },
-        "request.ClientUserUpdate": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "d.novikov@wellyes.ru"
-                },
-                "firstName": {
-                    "type": "string",
-                    "example": "Dmitry"
-                },
-                "floor": {
-                    "type": "integer",
-                    "example": 5
-                },
-                "lastName": {
-                    "type": "string",
-                    "example": "Novikov"
-                },
-                "role": {
-                    "type": "string",
-                    "example": "User"
-                }
-            }
-        },
-        "request.Order": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "integer"
-                },
-                "dishId": {
-                    "type": "string"
-                }
-            }
-        },
-        "request.OrderRequest": {
-            "type": "object",
-            "required": [
-                "items"
-            ],
-            "properties": {
-                "comment": {
-                    "type": "string"
-                },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/request.Order"
-                    }
-                }
-            }
-        },
-        "response.CateringClientSwagger": {
+        "swagger.CateringClientSwagger": {
             "type": "object",
             "properties": {
                 "client": {
                     "type": "object",
-                    "$ref": "#/definitions/response.ClientInfo"
+                    "$ref": "#/definitions/swagger.ClientInfo"
                 },
                 "ordersDishes": {
                     "type": "string"
@@ -3077,7 +2974,41 @@ var doc = `{
                 }
             }
         },
-        "response.Client": {
+        "swagger.CateringUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "d.novikov@wellyes.ru"
+                },
+                "firstName": {
+                    "type": "string",
+                    "example": "Dmitry"
+                },
+                "lastName": {
+                    "type": "string",
+                    "example": "Novikov"
+                }
+            }
+        },
+        "swagger.CateringUserUpdate": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "d.novikov@wellyes.ru"
+                },
+                "firstName": {
+                    "type": "string",
+                    "example": "Dmitry"
+                },
+                "lastName": {
+                    "type": "string",
+                    "example": "Novikov"
+                }
+            }
+        },
+        "swagger.Client": {
             "type": "object",
             "properties": {
                 "autoApproveOrders": {
@@ -3097,7 +3028,7 @@ var doc = `{
                 }
             }
         },
-        "response.ClientInfo": {
+        "swagger.ClientInfo": {
             "type": "object",
             "properties": {
                 "id": {
@@ -3108,13 +3039,63 @@ var doc = `{
                 }
             }
         },
-        "response.GetCateringClientsSwagger": {
+        "swagger.ClientUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "d.novikov@wellyes.ru"
+                },
+                "firstName": {
+                    "type": "string",
+                    "example": "Dmitry"
+                },
+                "floor": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "lastName": {
+                    "type": "string",
+                    "example": "Novikov"
+                },
+                "role": {
+                    "type": "string",
+                    "example": "User"
+                }
+            }
+        },
+        "swagger.ClientUserUpdate": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "d.novikov@wellyes.ru"
+                },
+                "firstName": {
+                    "type": "string",
+                    "example": "Dmitry"
+                },
+                "floor": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "lastName": {
+                    "type": "string",
+                    "example": "Novikov"
+                },
+                "role": {
+                    "type": "string",
+                    "example": "User"
+                }
+            }
+        },
+        "swagger.GetCateringClientsSwagger": {
             "type": "object",
             "properties": {
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/response.CateringClientSwagger"
+                        "$ref": "#/definitions/swagger.CateringClientSwagger"
                     }
                 },
                 "page": {
@@ -3125,7 +3106,7 @@ var doc = `{
                 }
             }
         },
-        "response.ItemsSummaryOrder": {
+        "swagger.ItemsSummaryOrder": {
             "type": "object",
             "properties": {
                 "amount": {
@@ -3136,7 +3117,18 @@ var doc = `{
                 }
             }
         },
-        "response.OrderItem": {
+        "swagger.Order": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "dishId": {
+                    "type": "string"
+                }
+            }
+        },
+        "swagger.OrderItem": {
             "type": "object",
             "properties": {
                 "amount": {
@@ -3156,7 +3148,24 @@ var doc = `{
                 }
             }
         },
-        "response.OrderStatus": {
+        "swagger.OrderRequest": {
+            "type": "object",
+            "required": [
+                "items"
+            ],
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/swagger.Order"
+                    }
+                }
+            }
+        },
+        "swagger.OrderStatus": {
             "type": "object",
             "properties": {
                 "status": {
@@ -3164,7 +3173,7 @@ var doc = `{
                 }
             }
         },
-        "response.SummaryOrder": {
+        "swagger.SummaryOrder": {
             "type": "object",
             "properties": {
                 "categoryId": {
@@ -3176,12 +3185,12 @@ var doc = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/response.ItemsSummaryOrder"
+                        "$ref": "#/definitions/swagger.ItemsSummaryOrder"
                     }
                 }
             }
         },
-        "response.SummaryOrdersResponse": {
+        "swagger.SummaryOrdersResponse": {
             "type": "object",
             "properties": {
                 "status": {
@@ -3189,18 +3198,18 @@ var doc = `{
                 },
                 "summary": {
                     "type": "object",
-                    "$ref": "#/definitions/response.SummaryOrder"
+                    "$ref": "#/definitions/swagger.SummaryOrder"
                 },
                 "summaryTotal": {
                     "type": "integer"
                 },
                 "userOrders": {
                     "type": "object",
-                    "$ref": "#/definitions/response.SummaryUserOrder"
+                    "$ref": "#/definitions/swagger.SummaryUserOrder"
                 }
             }
         },
-        "response.SummaryUserOrder": {
+        "swagger.SummaryUserOrder": {
             "type": "object",
             "properties": {
                 "comment": {
@@ -3212,7 +3221,7 @@ var doc = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/response.ItemsSummaryOrder"
+                        "$ref": "#/definitions/swagger.ItemsSummaryOrder"
                     }
                 },
                 "name": {
@@ -3223,13 +3232,13 @@ var doc = `{
                 }
             }
         },
-        "response.UserOrder": {
+        "swagger.UserOrder": {
             "type": "object",
             "properties": {
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/response.OrderItem"
+                        "$ref": "#/definitions/swagger.OrderItem"
                     }
                 },
                 "orderId": {
@@ -3243,7 +3252,7 @@ var doc = `{
                 }
             }
         },
-        "response.UserResponse": {
+        "swagger.UserResponse": {
             "type": "object",
             "properties": {
                 "cateringId": {

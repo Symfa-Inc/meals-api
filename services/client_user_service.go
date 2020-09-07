@@ -2,10 +2,11 @@ package services
 
 import (
 	"errors"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/schemes/request"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/jinzhu/copier"
 	"github.com/jinzhu/gorm"
@@ -26,10 +27,10 @@ func NewClientUser() *ClientUser {
 var userRepo = repository.NewUserRepo()
 var clientUserRepo = repository.NewClientUserRepo()
 
-func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domain.User) (domain.UserClientCatering, int, string, error, error) {
+func (cu *ClientUser) Add(path url.PathID, body models.ClientUser, user domain.User) (domain.UserClientCatering, int, string, error, error) {
 	parsedID, _ := uuid.FromString(path.ID)
-	user.CompanyType = &types.CompanyTypesEnum.Client
-	user.Status = &types.StatusTypesEnum.Invited
+	user.CompanyType = &enums.CompanyTypesEnum.Client
+	user.Status = &enums.StatusTypesEnum.Invited
 
 	password := utils.GenerateString(10)
 	user.Password = utils.HashString(password)
@@ -54,7 +55,7 @@ func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domai
 	}
 
 	for i := range existingUser {
-		if *existingUser[i].Status != types.StatusTypesEnum.Deleted {
+		if *existingUser[i].Status != enums.StatusTypesEnum.Deleted {
 			return domain.UserClientCatering{}, http.StatusBadRequest, password, errors.New("user with that email already exist"), nil
 		}
 	}
@@ -76,10 +77,10 @@ func (cu *ClientUser) Add(path types.PathID, body request.ClientUser, user domai
 	return userClientCatering, 0, password, err, userErr
 }
 
-func (cu *ClientUser) Delete(path types.PathUser, user domain.User, userRole string, userID string) (int, error) {
+func (cu *ClientUser) Delete(path url.PathUser, user domain.User, userRole string, userID string) (int, error) {
 	parsedUserID, _ := uuid.FromString(path.UserID)
 	user.ID = parsedUserID
-	user.Status = &types.StatusTypesEnum.Deleted
+	user.Status = &enums.StatusTypesEnum.Deleted
 	deleteAt := time.Now().AddDate(0, 0, 21).Truncate(time.Hour * 24)
 	user.DeletedAt = &deleteAt
 
@@ -92,7 +93,7 @@ func (cu *ClientUser) Delete(path types.PathUser, user domain.User, userRole str
 	return code, err
 }
 
-func (cu *ClientUser) Update(path types.PathUser, body request.ClientUserUpdate, user domain.User) (int, error) {
+func (cu *ClientUser) Update(path url.PathUser, body models.ClientUserUpdate, user domain.User) (int, error) {
 	if body.Email != "" {
 		if ok := utils.IsEmailValid(body.Email); !ok {
 			return http.StatusBadRequest, errors.New("email is not valid")
@@ -104,7 +105,7 @@ func (cu *ClientUser) Update(path types.PathUser, body request.ClientUserUpdate,
 	}
 
 	parsedID, _ := uuid.FromString(path.UserID)
-	user.CompanyType = &types.CompanyTypesEnum.Client
+	user.CompanyType = &enums.CompanyTypesEnum.Client
 	user.ID = parsedID
 
 	code, err := clientUserRepo.Update(&user, body.Floor)

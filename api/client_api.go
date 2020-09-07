@@ -2,11 +2,11 @@ package api
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/schemes/request"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
-	"github.com/Aiscom-LLC/meals-api/types"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -33,13 +33,13 @@ var clientService = services.NewClient()
 // @Accept json
 // @Tags caterings clients
 // @Param id path string true "Catering ID"
-// @Param body body request.AddName false "Client Name"
+// @Param body body swagger.AddName false "Client Name"
 // @Success 201 {object} domain.Client false "client object"
-// @Failure 400 {object} types.Error "Error"
+// @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/clients [post]
 func (cl Client) Add(c *gin.Context) {
 	var client domain.Client
-	var path types.PathID
+	var path url.PathID
 	if err := utils.RequestBinderBody(&client, c); err != nil {
 		return
 	}
@@ -66,12 +66,12 @@ func (cl Client) Add(c *gin.Context) {
 // @Param date query string true "Date query in YYYY-MM-DDT00:00:00Z format"
 // @Param limit query int false "used for pagination"
 // @Param page query int false "used for pagination"
-// @Success 200 {object} response.GetCateringClientsSwagger "List of clients orders"
-// @Failure 400 {object} types.Error "Error"
+// @Success 200 {object} swagger.GetCateringClientsSwagger "List of clients orders"
+// @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/clients-orders [get]
 func (cl Client) GetCateringClientsOrders(c *gin.Context) {
-	var query types.PaginationWithDateQuery
-	var path types.PathID
+	var query url.PaginationWithDateQuery
+	var path url.PathID
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return
@@ -112,11 +112,11 @@ func (cl Client) GetCateringClientsOrders(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Client ID"
 // @Success 200 {object} domain.Client "client model"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id} [get]
 func (cl Client) GetByID(c *gin.Context) {
-	var path types.PathID
+	var path url.PathID
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -138,11 +138,11 @@ func (cl Client) GetByID(c *gin.Context) {
 // @Produce json
 // @Param limit query int false "used for pagination"
 // @Param page query int false "used for pagination"
-// @Success 200 {object} response.GetClients "List of clients"
-// @Failure 400 {object} types.Error "Error"
+// @Success 200 {object} swagger.GetClients "List of clients"
+// @Failure 400 {object} Error "Error"
 // @Router /clients [get]
 func (cl Client) Get(c *gin.Context) {
-	var query types.PaginationQuery
+	var query url.PaginationQuery
 
 	if err := utils.RequestBinderQuery(&query, c); err != nil {
 		return
@@ -176,12 +176,12 @@ func (cl Client) Get(c *gin.Context) {
 // @Param id path string false "Catering ID"
 // @Param limit query int false "used for pagination"
 // @Param page query int false "used for pagination"
-// @Success 200 {object} response.GetClients "List of clients"
-// @Failure 400 {object} types.Error "Error"
+// @Success 200 {object} swagger.GetClients "List of clients"
+// @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/clients [get]
 func (cl Client) GetByCateringID(c *gin.Context) {
-	var path types.PathID
-	var query types.PaginationQuery
+	var path url.PathID
+	var query url.PaginationQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -215,11 +215,11 @@ func (cl Client) GetByCateringID(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Client ID"
 // @Success 204 "Successfully deleted"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id} [delete]
 func (cl Client) Delete(c *gin.Context) {
-	var path types.PathID
+	var path url.PathID
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
@@ -238,13 +238,13 @@ func (cl Client) Delete(c *gin.Context) {
 // @Accept json
 // @Tags clients
 // @Param id path string true "Client ID"
-// @Param body body request.UpdateClient false "update client model"
+// @Param body body swagger.UpdateClient false "update client model"
 // @Success 204 "Successfully updated"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id} [put]
 func (cl Client) Update(c *gin.Context) {
-	var path types.PathID
+	var path url.PathID
 	var clientModal domain.Client
 
 	if err := utils.RequestBinderBody(&clientModal, c); err != nil {
@@ -269,14 +269,14 @@ func (cl Client) Update(c *gin.Context) {
 // @Accept json
 // @Tags clients
 // @Param id path string true "Client ID"
-// @Param body body request.UpdateAutoApprove false "update auto approve"
+// @Param body body swagger.UpdateAutoApprove false "update auto approve"
 // @Success 204 "Successfully updated"
-// @Failure 400 {object} types.Error "Error"
-// @Failure 404 {object} types.Error "Not Found"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
 // @Router /clients/{id}/auto-approve [put]
 func (cl Client) UpdateAutoApprove(c *gin.Context) {
-	var path types.PathID
-	var body request.UpdateAutoApprove
+	var path url.PathID
+	var body models.UpdateAutoApprove
 
 	if err := utils.RequestBinderBody(&body, c); err != nil {
 		return

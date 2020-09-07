@@ -2,13 +2,14 @@ package repository
 
 import (
 	"errors"
+	"github.com/Aiscom-LLC/meals-api/api/url"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/schemes/response"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/jinzhu/gorm"
 )
 
@@ -28,8 +29,8 @@ func (cur *ClientUserRepo) Add(clientUser domain.ClientUser) error {
 	return err
 }
 
-func (cur *ClientUserRepo) Get(clientID, userRole string, pagination types.PaginationQuery, filters types.UserFilterQuery) ([]response.GetClientUser, int, int, error) {
-	var users []response.GetClientUser
+func (cur *ClientUserRepo) Get(clientID, userRole string, pagination url.PaginationQuery, filters url.UserFilterQuery) ([]models.GetClientUser, int, int, error) {
+	var users []models.GetClientUser
 	var total int
 	page := pagination.Page
 	limit := pagination.Limit
@@ -45,8 +46,8 @@ func (cur *ClientUserRepo) Get(clientID, userRole string, pagination types.Pagin
 		limit = 10
 	}
 
-	if userRole == types.UserRoleEnum.CateringAdmin {
-		userConditional = " AND u.role = " + "'" + types.UserRoleEnum.ClientAdmin + "'"
+	if userRole == enums.UserRoleEnum.CateringAdmin {
+		userConditional = " AND u.role = " + "'" + enums.UserRoleEnum.ClientAdmin + "'"
 	}
 
 	if err := config.DB.
@@ -90,14 +91,14 @@ func (cur *ClientUserRepo) Get(clientID, userRole string, pagination types.Pagin
 
 func (cur *ClientUserRepo) Delete(clientID, ctxUserRole string, user domain.User) (int, error) {
 	var totalUsers int
-	if ctxUserRole == types.UserRoleEnum.CateringAdmin || ctxUserRole == types.UserRoleEnum.ClientAdmin {
+	if ctxUserRole == enums.UserRoleEnum.CateringAdmin || ctxUserRole == enums.UserRoleEnum.ClientAdmin {
 		config.DB.
 			Table("users as u").
 			Select("u.*, cu.floor").
 			Joins("left join client_users cu on cu.user_id = u.id").
 			Joins("left join clients c on c.id = cu.client_id").
 			Where("cu.client_id = ? AND u.company_type = ? AND u.status != ? AND u.role = ?",
-				clientID, types.CompanyTypesEnum.Client, types.StatusTypesEnum.Deleted, types.UserRoleEnum.ClientAdmin).
+				clientID, enums.CompanyTypesEnum.Client, enums.StatusTypesEnum.Deleted, enums.UserRoleEnum.ClientAdmin).
 			Count(&totalUsers)
 
 		if totalUsers == 1 {

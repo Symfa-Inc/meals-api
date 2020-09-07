@@ -1,9 +1,9 @@
 package services
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/repository"
-	"github.com/Aiscom-LLC/meals-api/schemes/response"
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/dgrijalva/jwt-go"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
@@ -21,7 +21,7 @@ func NewClient() *Client {
 var cateringUserRepo = repository.NewCateringUserRepo()
 var clientRepo = repository.NewClientRepo()
 
-func (cl *Client) Get(query types.PaginationQuery, claims jwt.MapClaims) ([]response.Client, int, types.PaginationQuery, int, error) {
+func (cl *Client) Get(query url.PaginationQuery, claims jwt.MapClaims) ([]models.Client, int, url.PaginationQuery, int, error) {
 	var cateringID string
 
 	id := claims["id"].(string)
@@ -30,7 +30,7 @@ func (cl *Client) Get(query types.PaginationQuery, claims jwt.MapClaims) ([]resp
 	user, err := userRepo.GetByID(id)
 
 	if err != nil {
-		return []response.Client{}, 0, query, http.StatusBadRequest, err
+		return []models.Client{}, 0, query, http.StatusBadRequest, err
 	}
 
 	if cateringUser.CateringID == uuid.Nil {

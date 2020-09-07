@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"github.com/Aiscom-LLC/meals-api/types"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 )
@@ -29,8 +29,8 @@ type DishUsecase interface {
 // DishRepository is dish interface for repository
 type DishRepository interface {
 	Add(cateringID string, dish *Dish) error
-	Delete(path types.PathDish) error
+	Delete(path url.PathDish) error
 	Get(cateringID, categoryID string) ([]Dish, int, error)
 	GetByKey(key, value, cateringID, categoryID string) (Dish, int, error)
-	Update(path types.PathDish, dish Dish) (int, error)
+	Update(path url.PathDish, dish Dish) (int, error)
 }
