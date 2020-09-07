@@ -9,8 +9,8 @@ type ClientInfo struct {
 // ClientOrder response struct
 type ClientOrder struct {
 	ClientInfo   `json:"client"`
-	OrdersDishes string `json:"ordersDishes" gorm:"type:column:orders_dishes"`
-	Total        int    `json:"total" gorm:"type:column:total"`
+	OrdersDishes string `json:"ordersDishes" gorm:"column:orders_dishes"`
+	Total        int    `json:"total" gorm:"column:total"`
 }
 
 // GetClients response scheme

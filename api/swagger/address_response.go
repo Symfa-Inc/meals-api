@@ -10,10 +10,10 @@ import (
 // Address struct
 type Address struct {
 	domain.Base
-	City     string    `json:"city" gorm:"type:not null" binding:"required"`
-	Street   string    `json:"street" gorm:"type:not null" binding:"required"`
-	House    string    `json:"house" gorm:"type:not null" binding:"required"`
-	Floor    int       `json:"floor" gorm:"type:not null" binding:"required"`
+	City     string    `json:"city" gorm:"not null" binding:"required"`
+	Street   string    `json:"street" gorm:"not null" binding:"required"`
+	House    string    `json:"house" gorm:"not null" binding:"required"`
+	Floor    int       `json:"floor" gorm:"not null" binding:"required"`
 	ClientID uuid.UUID `json:"-"`
 } //@name AddressResponse
 

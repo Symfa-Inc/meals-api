@@ -14,8 +14,8 @@ type Image struct {
 
 // ImageArray struct
 type ImageArray struct {
-	ID   string `json:"id" gorm:"type:column:id"`
-	Path string `json:"path" gorm:"type:column:path"`
+	ID   string `json:"id" gorm:"column:id"`
+	Path string `json:"path" gorm:"column:path"`
 } //@name Image
 
 // ImageRepository is image interface for repository

@@ -5,7 +5,7 @@ import uuid "github.com/satori/go.uuid"
 // SummaryUserOrder struct
 type SummaryUserOrder struct {
 	ID      uuid.UUID           `json:"-"`
-	Name    string              `json:"name" gorm:"type:column:full_name"`
+	Name    string              `json:"name" gorm:"column:full_name"`
 	Floor   int                 `json:"floor"`
 	Items   []ItemsSummaryOrder `json:"items"`
 	Comment string              `json:"comment"`
@@ -20,8 +20,8 @@ type SummaryOrder struct {
 
 // CategorySummaryOrder struct
 type CategorySummaryOrder struct {
-	ID   uuid.UUID `json:"categoryId" gorm:"type:column:category_id"`
-	Name string    `json:"categoryName" gorm:"type:column:category_name"`
+	ID   uuid.UUID `json:"categoryId" gorm:"column:category_id"`
+	Name string    `json:"categoryName" gorm:"column:category_name"`
 }
 
 // ItemsSummaryOrder struct

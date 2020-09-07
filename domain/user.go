@@ -34,12 +34,12 @@ type UserClientCatering struct {
 
 type UserCatering struct {
 	CateringName *string `json:"cateringName" gorm:"type:column:catering_name"`
-	CateringID   *string `json:"cateringId" gorm:"type:column:catering_id"`
+	CateringID   *string `json:"cateringId" gorm:"column:catering_id"`
 }
 
 type UserClient struct {
-	ClientName *string `json:"clientName" gorm:"type:column:client_name"`
-	ClientID   *string `json:"clientId" gorm:"type:column:client_id"`
+	ClientName *string `json:"clientName" gorm:"column:client_name"`
+	ClientID   *string `json:"clientId" gorm:"column:client_id"`
 }
 
 // UserRepository is user interface for repository
