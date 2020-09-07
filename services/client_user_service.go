@@ -3,7 +3,7 @@ package services
 import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	types2 "github.com/Aiscom-LLC/meals-api/api/url"
+	types "github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/repository/enums"
@@ -27,7 +27,7 @@ func NewClientUser() *ClientUser {
 var userRepo = repository.NewUserRepo()
 var clientUserRepo = repository.NewClientUserRepo()
 
-func (cu *ClientUser) Add(path types2.PathID, body swagger.ClientUser, user domain.User) (domain.UserClientCatering, int, string, error, error) {
+func (cu *ClientUser) Add(path types.PathID, body swagger.ClientUser, user domain.User) (domain.UserClientCatering, int, string, error, error) {
 	parsedID, _ := uuid.FromString(path.ID)
 	user.CompanyType = &enums.CompanyTypesEnum.Client
 	user.Status = &enums.StatusTypesEnum.Invited
@@ -77,7 +77,7 @@ func (cu *ClientUser) Add(path types2.PathID, body swagger.ClientUser, user doma
 	return userClientCatering, 0, password, err, userErr
 }
 
-func (cu *ClientUser) Delete(path types2.PathUser, user domain.User, userRole string, userID string) (int, error) {
+func (cu *ClientUser) Delete(path types.PathUser, user domain.User, userRole string, userID string) (int, error) {
 	parsedUserID, _ := uuid.FromString(path.UserID)
 	user.ID = parsedUserID
 	user.Status = &enums.StatusTypesEnum.Deleted
@@ -93,7 +93,7 @@ func (cu *ClientUser) Delete(path types2.PathUser, user domain.User, userRole st
 	return code, err
 }
 
-func (cu *ClientUser) Update(path types2.PathUser, body swagger.ClientUserUpdate, user domain.User) (int, error) {
+func (cu *ClientUser) Update(path types.PathUser, body swagger.ClientUserUpdate, user domain.User) (int, error) {
 	if body.Email != "" {
 		if ok := utils.IsEmailValid(body.Email); !ok {
 			return http.StatusBadRequest, errors.New("email is not valid")

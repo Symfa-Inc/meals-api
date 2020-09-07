@@ -8,13 +8,13 @@ import (
 // User model
 type User struct {
 	Base
-	FirstName   string  `gorm:"url:varchar(20)" json:"firstName"`
-	LastName    string  `gorm:"url:varchar(20)" json:"lastName"`
-	Email       string  `gorm:"url:varchar(30);not null" json:"email"`
-	Password    string  `gorm:"url:varchar(100);not null" json:"-"`
-	Role        string  `sql:"url:user_roles" json:"role"`
-	CompanyType *string `sql:"url:company_types" gorm:"url:varchar(20);null" json:"companyType"`
-	Status      *string `sql:"url:status_types" gorm:"url:varchar(10);null" json:"status"`
+	FirstName   string  `gorm:"varchar(20)" json:"firstName"`
+	LastName    string  `gorm:"varchar(20)" json:"lastName"`
+	Email       string  `gorm:"varchar(30);not null" json:"email"`
+	Password    string  `gorm:"varchar(100);not null" json:"-"`
+	Role        string  `sql:"user_roles" json:"role"`
+	CompanyType *string `sql:"company_types" gorm:"varchar(20);null" json:"companyType"`
+	Status      *string `sql:"status_types" gorm:"varchar(10);null" json:"status"`
 }
 
 // UserClientCatering struct for joined catering and clients table

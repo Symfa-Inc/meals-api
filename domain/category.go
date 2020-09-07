@@ -12,7 +12,7 @@ import (
 type Category struct {
 	Base
 	Date       *time.Time `json:"date"`
-	Name       string     `gorm:"url:varchar(30);not null" json:"name" binding:"required"`
+	Name       string     `gorm:"varchar(30);not null" json:"name" binding:"required"`
 	CateringID uuid.UUID  `json:"-"`
 	ClientID   uuid.UUID  `json:"clientId"`
 } //@name CategoryResponse
