@@ -2,8 +2,8 @@ package repository
 
 import (
 	"errors"
-	"github.com/Aiscom-LLC/meals-api/api/swagger"
-	types "github.com/Aiscom-LLC/meals-api/api/url"
+	"github.com/Aiscom-LLC/meals-api/api/url"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"time"
 
@@ -66,8 +66,8 @@ func (c ClientRepo) Add(cateringID string, client *domain.Client) error {
 }
 
 // GetCateringClientsOrders returns list of catering Clients
-func (c ClientRepo) GetCateringClientsOrders(cateringID string, query types.PaginationWithDateQuery) ([]swagger.ClientOrder, int, error) {
-	var cateringClients []swagger.ClientOrder
+func (c ClientRepo) GetCateringClientsOrders(cateringID string, query url.PaginationWithDateQuery) ([]models.ClientOrder, int, error) {
+	var cateringClients []models.ClientOrder
 	var total int
 
 	page := query.Page
@@ -117,8 +117,8 @@ func (c ClientRepo) GetCateringClientsOrders(cateringID string, query types.Pagi
 }
 
 // Get returns list of clients
-func (c ClientRepo) Get(query types.PaginationQuery, cateringID, role string) ([]swagger.Client, int, error) {
-	var clients []swagger.Client
+func (c ClientRepo) Get(query url.PaginationQuery, cateringID, role string) ([]models.Client, int, error) {
+	var clients []models.Client
 	var total int
 	var err error
 

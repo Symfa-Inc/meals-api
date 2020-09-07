@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	types "github.com/Aiscom-LLC/meals-api/api/url"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"net/http"
 	"time"
 
@@ -43,7 +43,7 @@ func (c CateringRepo) Add(catering *domain.Catering) error {
 
 // Get returns list of caterings with pagination args
 // and error if exists
-func (c CateringRepo) Get(cateringID string, query types.PaginationQuery) ([]domain.Catering, int, error) {
+func (c CateringRepo) Get(cateringID string, query url.PaginationQuery) ([]domain.Catering, int, error) {
 	var caterings []domain.Catering
 	var total int
 

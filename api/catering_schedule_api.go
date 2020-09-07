@@ -1,10 +1,10 @@
 package api
 
 import (
-	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -63,7 +63,7 @@ func (s CateringSchedule) Get(c *gin.Context) {
 // @Router /caterings/{id}/schedules/{scheduleId} [put]
 func (s CateringSchedule) Update(c *gin.Context) {
 	var path url.PathSchedule
-	var body swagger.UpdateSchedule
+	var body models.UpdateSchedule
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

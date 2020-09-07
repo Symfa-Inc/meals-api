@@ -2,7 +2,6 @@ package api
 
 import (
 	"errors"
-	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/mailer"
@@ -185,7 +184,7 @@ func (cu *CateringUser) Delete(c *gin.Context) {
 // @Router /caterings/{id}/users/{userId} [put]
 func (cu *CateringUser) Update(c *gin.Context) { //nolint:dupl
 	var path url.PathUser
-	var body swagger.CateringUserUpdate
+	var body models.CateringUserUpdate
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {

@@ -2,10 +2,10 @@ package api
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
-	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/dgrijalva/jwt-go"
@@ -276,7 +276,7 @@ func (cl Client) Update(c *gin.Context) {
 // @Router /clients/{id}/auto-approve [put]
 func (cl Client) UpdateAutoApprove(c *gin.Context) {
 	var path url.PathID
-	var body swagger.UpdateAutoApprove
+	var body models.UpdateAutoApprove
 
 	if err := utils.RequestBinderBody(&body, c); err != nil {
 		return
