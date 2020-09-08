@@ -17,8 +17,8 @@ type Category struct {
 	ClientID   uuid.UUID  `json:"clientId"`
 } //@name CategoryResponse
 
-// CategoryUsecase is category interface for usecase
-type CategoryUsecase interface {
+// CategoryAPI is category interface for API
+type CategoryAPI interface {
 	Get(c *gin.Context)
 	Add(c *gin.Context)
 	Update(c *gin.Context)
