@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api/url"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -33,19 +35,22 @@ type Meal struct {
 	Person     string    `json:"person"`
 } // @name MealsResponse
 
-// MealUsecase is meal interface for usecase
-type MealUsecase interface {
+// MealAPI is meal interface for API
+type MealAPI interface {
 	Add(c *gin.Context)
 	Get(c *gin.Context)
-	Update(c *gin.Context)
 }
 
 // MealRepository is meal interface for repository
 type MealRepository interface {
 	Find(meal *Meal) error
 	Add(meal *Meal) error
-	/* TODO fix cycle imports
-	Get(mealDate time.Time, id, clientID string) ([]response.GetMeal, int, error)
-	*/
+	Get(mealDate time.Time, id, clientID string) ([]models.GetMeal, int, error)
 	GetByKey(key, value string) (Meal, int, error)
+	GetByRange(startDate time.Time, endDate time.Time, id, clientID string) ([]models.GetMeal, int, error)
+}
+
+// MealService is meal interface for service
+type MealService interface {
+	Add(path url.PathClient, body models.AddMeal, user interface{}) ([]models.GetMeal, int, error)
 }

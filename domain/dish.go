@@ -18,8 +18,8 @@ type Dish struct {
 	CategoryID uuid.UUID    `json:"categoryId,omitempty"`
 } //@name DishRequest
 
-// DishUsecase is dish interface for usecase
-type DishUsecase interface {
+// DishAPI is dish interface for API
+type DishAPI interface {
 	Add(c *gin.Context)
 	Delete(c *gin.Context)
 	Get(c *gin.Context)
@@ -31,6 +31,7 @@ type DishRepository interface {
 	Add(cateringID string, dish *Dish) error
 	Delete(path url.PathDish) error
 	Get(cateringID, categoryID string) ([]Dish, int, error)
+	FindByID(cateringID, id string) (Dish, int, error)
 	GetByKey(key, value, cateringID, categoryID string) (Dish, int, error)
 	Update(path url.PathDish, dish Dish) (int, error)
 }

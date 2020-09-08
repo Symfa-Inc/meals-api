@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 )
@@ -28,9 +29,17 @@ type ImageRepository interface {
 	Get() ([]Image, error)
 }
 
-// ImageUsecase is image interface for usecase
-type ImageUsecase interface {
+// ImageAPI is image interface for API
+type ImageAPI interface {
 	Delete(c *gin.Context)
 	Add(c *gin.Context)
 	Get(c *gin.Context)
+	Update(c *gin.Context)
+}
+
+// ImageService is image interface for API
+type ImageService interface {
+	Add(c *gin.Context, path url.PathDish) (Image, int, error)
+	Update(c *gin.Context, path url.PathImageDish) (Image, int, error)
+
 }

@@ -22,8 +22,11 @@ type CateringScheduleRepository interface {
 	Update(cateringID, scheduleID string, isWorking *bool, newSchedule *CateringSchedule) (int, error)
 }
 
-// CateringScheduleUsecase is usecase interface
+// CateringScheduleAPI is API interface
 // for catering schedule
-type CateringScheduleUsecase interface {
+type CateringScheduleAPI interface {
 	Get(c *gin.Context)
+	Update(c *gin.Context)
 }
+
+

@@ -31,10 +31,12 @@ type ClientSchedulesCatering struct {
 // for client schedule
 type ClientScheduleRepository interface {
 	Get(clientID string) ([]ClientSchedulesCatering, int, error)
+	Update(clientID, scheduleID string, isWorking *bool, newSchedule ClientSchedule) (ClientSchedulesCatering, int, error)
 }
 
-// ClientScheduleUsecase is usecase interface
+// ClientScheduleAPI is API interface
 // for client schedule
-type ClientScheduleUsecase interface {
+type ClientScheduleAPI interface {
 	Get(c *gin.Context)
+	Update(c *gin.Context)
 }
