@@ -19,7 +19,7 @@ func NewCateringUserService() *CateringUserService {
 	return &CateringUserService{}
 }
 
-func (cu *CateringUserService) Add(path url.PathID,  user domain.User) (domain.UserClientCatering, domain.User, string, error, error) {
+func (cu *CateringUserService) Add(path url.PathID, user domain.User) (domain.UserClientCatering, domain.User, string, error, error) {
 	parsedID, err := uuid.FromString(path.ID)
 	if err != nil {
 		return domain.UserClientCatering{}, user, "", err, nil
