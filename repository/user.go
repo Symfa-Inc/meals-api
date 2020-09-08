@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"net/http"
 
 	"github.com/Aiscom-LLC/meals-api/config"
@@ -45,8 +44,8 @@ func (ur UserRepo) GetAllByKey(key, value string) ([]domain.User, error) {
 	return user, err
 }
 
-func (ur UserRepo) GetByID(id string) (interfaces.UserClientCatering, error) {
-	var user interfaces.UserClientCatering
+func (ur UserRepo) GetByID(id string) (domain.UserClientCatering, error) {
+	var user domain.UserClientCatering
 	err := config.DB.
 		Table("users as u").
 		Select("u.*").
@@ -79,11 +78,11 @@ func (ur UserRepo) GetByID(id string) (interfaces.UserClientCatering, error) {
 
 // Add adds new user for certain company passed in user struct
 // returns user and error
-func (ur UserRepo) Add(user interfaces.User) (interfaces.User, error) {
+func (ur UserRepo) Add(user domain.User) (domain.User, error) {
 	if err := config.DB.
 		Create(&user).
 		Error; err != nil {
-		return interfaces.User{}, err
+		return domain.User{}, err
 	}
 	return user, nil
 }

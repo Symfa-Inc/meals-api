@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"github.com/Aiscom-LLC/meals-api/api/url"
+	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -11,27 +13,24 @@ type CateringUser struct {
 	UserID     uuid.UUID `json:"userId"`
 }
 
-// UserClientCatering struct for joined catering and clients table
-type UserClientCatering struct {
-	ID           uuid.UUID `json:"id"`
-	FirstName    string    `json:"firstName"`
-	LastName     string    `json:"lastName"`
-	Email        string    `json:"email"`
-	Password     string    `json:"-"`
-	CompanyType  *string   `json:"companyType"`
-	UserCatering `json:"catering"`
-	UserClient   `json:"client"`
-	Role         string  `json:"role"`
-	Floor        *int    `json:"floor"`
-	Status       *string `json:"status"`
-} //@name UsersResponse
-
-type UserCatering struct {
-	CateringName *string `json:"cateringName" gorm:"type:column:catering_name"`
-	CateringID   *string `json:"cateringId" gorm:"column:catering_id"`
+// CateringUserAPI is CateringUser interface for API
+type CateringUserAPI interface {
+	Add(c *gin.Context)
+	Get(c *gin.Context)
+	Delete(c *gin.Context)
+	Update(c *gin.Context)
 }
 
-type UserClient struct {
-	ClientName *string `json:"clientName" gorm:"column:client_name"`
-	ClientID   *string `json:"clientId" gorm:"column:client_id"`
+// CateringUserRepository is CateringUser interface for repository
+type CateringUserRepository interface {
+	GetByKey(key, value string) (CateringUser, error)
+	Add(cateringUser CateringUser) error
+	//Get(cateringID string, pagination url.PaginationQuery, filters url.UserFilterQuery) ([]models.GetCateringUser, int, int, error)
+	Delete(cateringID, ctxUserRole string, user User) (int, error)
+	Update(user *User) (int, error)
+}
+
+// CateringUserService is CateringUser interface for service
+type CateringUserService interface {
+	Add(path url.PathID, user User) (UserClientCatering, User, string, error, error)
 }

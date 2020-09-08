@@ -3,7 +3,6 @@ package repository
 import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"net/http"
 	"time"
 
@@ -22,7 +21,7 @@ func NewCategoryRepo() *CategoryRepo {
 
 // Add creates dish category
 // returns dish category and error
-func (dc CategoryRepo) Add(category *interfaces.Category) error {
+func (dc CategoryRepo) Add(category *domain.Category) error {
 	if exist := config.DB.
 		Unscoped().
 		Where("catering_id = ? AND client_id = ? AND name = ? AND (deleted_at >  ? OR deleted_at IS NULL)",
@@ -38,8 +37,8 @@ func (dc CategoryRepo) Add(category *interfaces.Category) error {
 
 // Get returns list of categories of passed catering ID
 // returns list of categories and error
-func (dc CategoryRepo) Get(cateringID, clientID, date string) ([]interfaces.Category, int, error) {
-	var categories []interfaces.Category
+func (dc CategoryRepo) Get(cateringID, clientID, date string) ([]domain.Category, int, error) {
+	var categories []domain.Category
 
 	if cateringRows := config.DB.
 		Where("id = ?", cateringID).
@@ -64,8 +63,8 @@ func (dc CategoryRepo) Get(cateringID, clientID, date string) ([]interfaces.Cate
 
 // GetByKey returns single category item found by key
 // and error if exists
-func (dc CategoryRepo) GetByKey(key, value, cateringID string) (interfaces.Category, error) {
-	var category interfaces.Category
+func (dc CategoryRepo) GetByKey(key, value, cateringID string) (domain.Category, error) {
+	var category domain.Category
 	err := config.DB.
 		Where("catering_id = ? AND "+key+" = ?", cateringID, value).
 		First(&category).Error
@@ -94,7 +93,7 @@ func (dc CategoryRepo) Delete(path url.PathCategory) (int, error) {
 
 // Update checks if that name already exists in provided catering
 // if its exists throws and error, if not updates the reading
-func (dc CategoryRepo) Update(path url.PathCategory, category *interfaces.Category) (int, error) {
+func (dc CategoryRepo) Update(path url.PathCategory, category *domain.Category) (int, error) {
 	if categoryExist := config.DB.
 		Where("catering_id = ? AND name = ? AND id = ? AND (deleted_at > ? OR deleted_at IS NULL)",
 			path.ID, category.Name, path.CategoryID, time.Now()).

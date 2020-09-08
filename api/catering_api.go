@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/interfaces"
+	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
@@ -71,7 +71,7 @@ func (ca Catering) Get(c *gin.Context) {
 // @Failure 400 {object} Error "Error"
 // @Router /caterings [post]
 func (ca Catering) Add(c *gin.Context) {
-	var catering interfaces.Catering
+	var catering domain.Catering
 
 	if err := utils.RequestBinderBody(&catering, c); err != nil {
 		return
@@ -150,7 +150,7 @@ func (ca Catering) GetByID(c *gin.Context) {
 // @Router /caterings/{id} [put]
 func (ca Catering) Update(c *gin.Context) {
 	var path url.PathID
-	var cateringModel interfaces.Catering
+	var cateringModel domain.Catering
 
 	if err := utils.RequestBinderBody(&cateringModel, c); err != nil {
 		return

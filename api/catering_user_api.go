@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/Aiscom-LLC/meals-api/mailer"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/repository/enums"
@@ -43,7 +42,7 @@ var cateringUserRepo = repository.NewCateringUserRepo()
 func (cu *CateringUser) Add(c *gin.Context) {
 	var path url.PathID
 	var body models.CateringUser
-	var user interfaces.User
+	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -141,7 +140,7 @@ func (cu *CateringUser) Get(c *gin.Context) { //nolint:dupl
 // @Router /caterings/{id}/users/{userId} [delete]
 func (cu *CateringUser) Delete(c *gin.Context) {
 	var path url.PathUser
-	var user interfaces.User
+	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -186,7 +185,7 @@ func (cu *CateringUser) Delete(c *gin.Context) {
 func (cu *CateringUser) Update(c *gin.Context) { //nolint:dupl
 	var path url.PathUser
 	var body models.CateringUserUpdate
-	var user interfaces.User
+	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

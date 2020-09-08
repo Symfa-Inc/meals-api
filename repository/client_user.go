@@ -3,7 +3,6 @@ package repository
 import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"time"
@@ -23,7 +22,7 @@ func NewClientUserRepo() *ClientUserRepo {
 	return &ClientUserRepo{}
 }
 
-func (cur *ClientUserRepo) Add(clientUser interfaces.ClientUser) error {
+func (cur *ClientUserRepo) Add(clientUser domain.ClientUser) error {
 	err := config.DB.
 		Create(&clientUser).
 		Error
@@ -90,7 +89,7 @@ func (cur *ClientUserRepo) Get(clientID, userRole string, pagination url.Paginat
 	return users, total, 0, nil
 }
 
-func (cur *ClientUserRepo) Delete(clientID, ctxUserRole string, user interfaces.User) (int, error) {
+func (cur *ClientUserRepo) Delete(clientID, ctxUserRole string, user domain.User) (int, error) {
 	var totalUsers int
 	if ctxUserRole == enums.UserRoleEnum.CateringAdmin || ctxUserRole == enums.UserRoleEnum.ClientAdmin {
 		config.DB.
@@ -117,7 +116,7 @@ func (cur *ClientUserRepo) Delete(clientID, ctxUserRole string, user interfaces.
 	return 0, nil
 }
 
-func (cur *ClientUserRepo) Update(user *interfaces.User, floor *int) (int, error) {
+func (cur *ClientUserRepo) Update(user *domain.User, floor *int) (int, error) {
 	if userExist := config.DB.
 		Where("id = ? AND email = ?", user.ID, user.Email).
 		Find(&domain.User{}).

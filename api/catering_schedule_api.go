@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/interfaces"
+	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/utils"
@@ -73,7 +73,7 @@ func (s CateringSchedule) Update(c *gin.Context) {
 		return
 	}
 
-	schedule := &interfaces.CateringSchedule{
+	schedule := &domain.CateringSchedule{
 		Start: body.Start,
 		End:   body.End,
 	}

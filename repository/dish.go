@@ -5,7 +5,6 @@ import (
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
-	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/jinzhu/gorm"
 	"net/http"
 	"time"
@@ -22,7 +21,7 @@ func NewDishRepo() *DishRepo {
 
 // Add creates new dish entity
 // returns error or nil
-func (d DishRepo) Add(cateringID string, dish *interfaces.Dish) error {
+func (d DishRepo) Add(cateringID string, dish *domain.Dish) error {
 	if dishExist := config.DB.
 		Where("catering_id = ? AND category_id = ? AND name = ?", cateringID, dish.CategoryID, dish.Name).
 		Find(dish).
@@ -55,16 +54,16 @@ func (d DishRepo) Delete(path url.PathDish) error {
 
 // GetByKey get entity filtered by key and value
 // returns entity and error or nil
-func (d DishRepo) GetByKey(key, value, cateringID, categoryID string) (interfaces.Dish, int, error) {
-	var dish interfaces.Dish
+func (d DishRepo) GetByKey(key, value, cateringID, categoryID string) (domain.Dish, int, error) {
+	var dish domain.Dish
 
 	if err := config.DB.
 		Where("catering_id = ? AND category_id = ? AND "+key+" = ?", cateringID, categoryID, value).
 		First(&dish).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return interfaces.Dish{}, http.StatusNotFound, errors.New("dish with that id not found")
+			return domain.Dish{}, http.StatusNotFound, errors.New("dish with that id not found")
 		}
-		return interfaces.Dish{}, http.StatusBadRequest, err
+		return domain.Dish{}, http.StatusBadRequest, err
 	}
 
 	return dish, 0, nil
@@ -72,17 +71,17 @@ func (d DishRepo) GetByKey(key, value, cateringID, categoryID string) (interface
 
 // FindByID finds dish by ID
 // Returns Dish, err and status code
-func (d DishRepo) FindByID(cateringID, id string) (interfaces.Dish, int, error) {
-	var dish interfaces.Dish
-	var imagesArray []interfaces.ImageArray
+func (d DishRepo) FindByID(cateringID, id string) (domain.Dish, int, error) {
+	var dish domain.Dish
+	var imagesArray []domain.ImageArray
 
 	if err := config.DB.
 		Where("catering_id = ? AND id = ?", cateringID, id).
 		First(&dish).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return interfaces.Dish{}, http.StatusNotFound, errors.New("dish with that id not found")
+			return domain.Dish{}, http.StatusNotFound, errors.New("dish with that id not found")
 		}
-		return interfaces.Dish{}, http.StatusBadRequest, err
+		return domain.Dish{}, http.StatusBadRequest, err
 	}
 
 	config.DB.
@@ -96,7 +95,7 @@ func (d DishRepo) FindByID(cateringID, id string) (interfaces.Dish, int, error) 
 	dish.Images = imagesArray
 
 	if len(dish.Images) == 0 {
-		dish.Images = make([]interfaces.ImageArray, 0)
+		dish.Images = make([]domain.ImageArray, 0)
 	}
 
 	return dish, 0, nil
@@ -104,8 +103,8 @@ func (d DishRepo) FindByID(cateringID, id string) (interfaces.Dish, int, error) 
 
 // Get list of dishes
 // returns array of dishes and error or nil and status code
-func (d DishRepo) Get(cateringID, categoryID string) ([]interfaces.Dish, int, error) {
-	var dishes []interfaces.Dish
+func (d DishRepo) Get(cateringID, categoryID string) ([]domain.Dish, int, error) {
+	var dishes []domain.Dish
 
 	if cateringNotExist := config.DB.
 		Where("id = ?", cateringID).
@@ -128,7 +127,7 @@ func (d DishRepo) Get(cateringID, categoryID string) ([]interfaces.Dish, int, er
 		Error
 
 	for i := range dishes {
-		var imagesArray []interfaces.ImageArray
+		var imagesArray []domain.ImageArray
 		config.DB.
 			Model(&domain.Image{}).
 			Select("images.path, images.id").
@@ -144,7 +143,7 @@ func (d DishRepo) Get(cateringID, categoryID string) ([]interfaces.Dish, int, er
 
 // Update updates entity
 // returns error or nil and status code
-func (d DishRepo) Update(path url.PathDish, dish interfaces.Dish) (int, error) {
+func (d DishRepo) Update(path url.PathDish, dish domain.Dish) (int, error) {
 	if cateringNotExist := config.DB.
 		Where("id = ?", path.CateringID).
 		Find(&domain.Catering{}).

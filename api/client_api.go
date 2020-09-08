@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/interfaces"
+	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
@@ -38,7 +38,7 @@ var clientService = services.NewClient()
 // @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/clients [post]
 func (cl Client) Add(c *gin.Context) {
-	var client interfaces.Client
+	var client domain.Client
 	var path url.PathID
 	if err := utils.RequestBinderBody(&client, c); err != nil {
 		return
@@ -245,7 +245,7 @@ func (cl Client) Delete(c *gin.Context) {
 // @Router /clients/{id} [put]
 func (cl Client) Update(c *gin.Context) {
 	var path url.PathID
-	var clientModal interfaces.Client
+	var clientModal domain.Client
 
 	if err := utils.RequestBinderBody(&clientModal, c); err != nil {
 		return

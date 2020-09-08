@@ -3,7 +3,6 @@ package repository
 import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"net/http"
 	"time"
 
@@ -24,7 +23,7 @@ func NewCateringRepo() *CateringRepo {
 
 // Add creates catering in DB
 // and error if exists
-func (c CateringRepo) Add(catering *interfaces.Catering) error {
+func (c CateringRepo) Add(catering *domain.Catering) error {
 
 	if exist := config.DB.Where("name = ?", catering.Name).
 		Find(catering).RowsAffected; exist != 0 {
@@ -90,8 +89,8 @@ func (c CateringRepo) Get(cateringID string, query url.PaginationQuery) ([]domai
 
 // GetByKey returns single catering item found by key
 // and error if exists
-func (c CateringRepo) GetByKey(key, value string) (interfaces.Catering, error) {
-	var catering interfaces.Catering
+func (c CateringRepo) GetByKey(key, value string) (domain.Catering, error) {
+	var catering domain.Catering
 	err := config.DB.Where(key+" = ?", value).First(&catering).Error
 	return catering, err
 }
@@ -99,7 +98,7 @@ func (c CateringRepo) GetByKey(key, value string) (interfaces.Catering, error) {
 // Delete soft delete of catering with passed id
 // returns error if exists
 func (c CateringRepo) Delete(id string) error {
-	var cateringUsers []interfaces.CateringUser
+	var cateringUsers []domain.CateringUser
 	if cateringExist := config.DB.
 		Where("id = ?", id).
 		Delete(&domain.Catering{}).
@@ -125,7 +124,7 @@ func (c CateringRepo) Delete(id string) error {
 
 // Update updates catering with passed args
 // returns updated catering struct and error if exists
-func (c CateringRepo) Update(id string, catering interfaces.Catering) (int, error) {
+func (c CateringRepo) Update(id string, catering domain.Catering) (int, error) {
 	if cateringExist := config.DB.
 		Where("name = ? AND id = ?", catering.Name, id).
 		Find(&catering).
