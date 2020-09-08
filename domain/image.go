@@ -41,5 +41,4 @@ type ImageAPI interface {
 type ImageService interface {
 	Add(c *gin.Context, path url.PathDish) (Image, int, error)
 	Update(c *gin.Context, path url.PathImageDish) (Image, int, error)
-
 }

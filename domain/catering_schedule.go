@@ -28,5 +28,3 @@ type CateringScheduleAPI interface {
 	Get(c *gin.Context)
 	Update(c *gin.Context)
 }
-
-

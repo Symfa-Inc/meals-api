@@ -24,7 +24,7 @@ type ClientAPI interface {
 // ClientRepository is client interface for repository
 type ClientRepository interface {
 	Add(cateringID string, client *Client) error
-	// TODO cycle GetCateringClientsOrders(cateringID string, query url.PaginationWithDateQuery) ([]models.ClientOrder, int, error)
+	//GetCateringClientsOrders(cateringID string, query url.PaginationWithDateQuery) ([]models.ClientOrder, int, error)
 	// TODO cycle Get(query url.PaginationQuery, cateringID, role string) ([]models.Client, int, error)
 	Delete(id string) error
 	Update(id string, client Client) (int, error)
