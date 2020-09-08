@@ -16,8 +16,8 @@ type Address struct {
 	ClientID uuid.UUID `json:"-"`
 } //@name AddressResponse
 
-// AddressUsecase is Address interface for usecase
-type AddressUsecase interface {
+// AddressAPI is Address interface for API
+type AddressAPI interface {
 	Get(c *gin.Context)
 	Add(c *gin.Context)
 	Update(c *gin.Context)
