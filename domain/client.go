@@ -1,9 +1,6 @@
 package domain
 
 import (
-	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/repository/models"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 )
@@ -27,8 +24,8 @@ type ClientAPI interface {
 // ClientRepository is client interface for repository
 type ClientRepository interface {
 	Add(cateringID string, client *Client) error
-	GetCateringClientsOrders(cateringID string, query url.PaginationWithDateQuery) ([]models.ClientOrder, int, error)
-	Get(query url.PaginationQuery, cateringID, role string) ([]models.Client, int, error)
+	// TODO cycle GetCateringClientsOrders(cateringID string, query url.PaginationWithDateQuery) ([]models.ClientOrder, int, error)
+	// TODO cycle Get(query url.PaginationQuery, cateringID, role string) ([]models.Client, int, error)
 	Delete(id string) error
 	Update(id string, client Client) (int, error)
 	UpdateAutoApproveOrders(id string, status bool) (int, error)
@@ -40,5 +37,5 @@ type ClientRepository interface {
 
 // ClientService is client interface for service
 type ClientService interface {
-	Get(query url.PaginationQuery, claims jwt.MapClaims) ([]models.Client, int, url.PaginationQuery, int, error)
+	// TODO cycle Get(query url.PaginationQuery, claims jwt.MapClaims) ([]models.Client, int, url.PaginationQuery, int, error)
 }

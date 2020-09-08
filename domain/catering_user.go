@@ -2,7 +2,6 @@ package domain
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 )
@@ -26,7 +25,7 @@ type CateringUserAPI interface {
 type CateringUserRepository interface {
 	GetByKey(key, value string) (CateringUser, error)
 	Add(cateringUser CateringUser) error
-	Get(cateringID string, pagination url.PaginationQuery, filters url.UserFilterQuery) ([]models.GetCateringUser, int, int, error)
+	//Get(cateringID string, pagination url.PaginationQuery, filters url.UserFilterQuery) ([]models.GetCateringUser, int, int, error)
 	Delete(cateringID, ctxUserRole string, user User) (int, error)
 	Update(user *User) (int, error)
 }
