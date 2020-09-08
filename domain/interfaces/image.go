@@ -7,12 +7,6 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// ImageArray struct
-type ImageArray struct {
-	ID   string `json:"id" gorm:"column:id"`
-	Path string `json:"path" gorm:"column:path"`
-} //@name Image
-
 // ImageRepository is image interface for repository
 type ImageRepository interface {
 	GetByKey(key, value string) (domain.Image, error)

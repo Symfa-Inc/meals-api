@@ -9,7 +9,7 @@ import (
 // Catering model
 type Catering struct {
 	Base
-	Name string `gorm:"url:varchar(30);not null" json:"name,omitempty" binding:"required"`
+	Name string `gorm:"type:varchar(30);not null" json:"name,omitempty" binding:"required"`
 } //@name CateringsResponse
 
 // CateringAPI is catering interface for API
