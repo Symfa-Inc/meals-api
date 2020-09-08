@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/url"
+	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"time"
@@ -25,10 +26,10 @@ func NewClientRepo() *ClientRepo {
 
 // Add adds client in DB
 // returns error if that client name already exists
-func (c ClientRepo) Add(cateringID string, client *domain.Client) error {
+func (c ClientRepo) Add(cateringID string, client *interfaces.Client) error {
 	if err := config.DB.
 		Where("id = ?", cateringID).
-		Find(&domain.Catering{}).
+		Find(&interfaces.Catering{}).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return err
@@ -45,14 +46,14 @@ func (c ClientRepo) Add(cateringID string, client *domain.Client) error {
 
 	err := config.DB.Create(client).Error
 
-	var cateringSchedules []domain.CateringSchedule
+	var cateringSchedules []interfaces.CateringSchedule
 
 	config.DB.
 		Where("catering_id = ?", client.CateringID).
 		Find(&cateringSchedules)
 
 	for _, schedule := range cateringSchedules {
-		clientSchedule := domain.ClientSchedule{
+		clientSchedule := interfaces.ClientSchedule{
 			Day:       schedule.Day,
 			Start:     schedule.Start,
 			End:       schedule.End,
@@ -171,7 +172,7 @@ func (c ClientRepo) Get(query url.PaginationQuery, cateringID, role string) ([]m
 
 // Delete soft delete of client
 func (c ClientRepo) Delete(id string) error {
-	var clientUsers []domain.ClientUser
+	var clientUsers []interfaces.ClientUser
 	if clientExist := config.DB.
 		Where("id = ?", id).
 		Delete(&domain.Client{}).
@@ -197,7 +198,7 @@ func (c ClientRepo) Delete(id string) error {
 
 // Update updates client with passed args
 // returns error and status code
-func (c ClientRepo) Update(id string, client domain.Client) (int, error) {
+func (c ClientRepo) Update(id string, client interfaces.Client) (int, error) {
 	if clientExist := config.DB.
 		Where("name = ? AND id = ?", client.Name, id).
 		Find(&domain.Client{}).
@@ -298,16 +299,16 @@ func (c ClientRepo) UpdateAutoApproveSchedules(id string) {
 
 // GetByKey client by provided key value arguments
 // Returns client, error
-func (c ClientRepo) GetByKey(key, value string) (domain.Client, error) {
-	var client domain.Client
+func (c ClientRepo) GetByKey(key, value string) (interfaces.Client, error) {
+	var client interfaces.Client
 	err := config.DB.Where(key+" = ?", value).First(&client).Error
 	return client, err
 }
 
 // GetAll returns all undeleted clients
 // Returns clients, error
-func (c ClientRepo) GetAll() ([]domain.Client, error) {
-	var clients []domain.Client
+func (c ClientRepo) GetAll() ([]interfaces.Client, error) {
+	var clients []interfaces.Client
 	err := config.DB.Find(&clients).Error
 	return clients, err
 }

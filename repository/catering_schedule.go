@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/jinzhu/gorm"
 	"github.com/jinzhu/now"
 	"net/http"
@@ -20,8 +21,8 @@ func NewCateringScheduleRepo() *CateringScheduleRepo {
 
 // Get returns array of schedules
 // for provided catering id
-func (cs CateringScheduleRepo) Get(cateringID string) ([]domain.CateringSchedule, int, error) {
-	var schedules []domain.CateringSchedule
+func (cs CateringScheduleRepo) Get(cateringID string) ([]interfaces.CateringSchedule, int, error) {
+	var schedules []interfaces.CateringSchedule
 	if err := config.DB.
 		Where("id = ?", cateringID).
 		Find(&domain.Catering{}).
@@ -45,8 +46,8 @@ func (cs CateringScheduleRepo) Get(cateringID string) ([]domain.CateringSchedule
 }
 
 // Update updates schedule and returns new updated schedule
-func (cs CateringScheduleRepo) Update(cateringID, scheduleID string, isWorking *bool, newSchedule *domain.CateringSchedule) (int, error) {
-	var schedule domain.CateringSchedule
+func (cs CateringScheduleRepo) Update(cateringID, scheduleID string, isWorking *bool, newSchedule *interfaces.CateringSchedule) (int, error) {
+	var schedule interfaces.CateringSchedule
 
 	if err := config.DB.
 		Where("id = ?", cateringID).

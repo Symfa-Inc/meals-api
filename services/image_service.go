@@ -2,7 +2,7 @@ package services
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
@@ -23,14 +23,14 @@ func NewImageService() *ImageService {
 
 var imageRepo = repository.NewImageRepo()
 
-func (i *ImageService) Add(c *gin.Context, path url.PathDish) (domain.Image, int, error) {
+func (i *ImageService) Add(c *gin.Context, path url.PathDish) (interfaces.Image, int, error) {
 	id := c.PostForm("id")
 
 	if id != "" {
 		parsedID, err := uuid.FromString(id)
 
 		if err != nil {
-			return domain.Image{}, http.StatusBadRequest, err
+			return interfaces.Image{}, http.StatusBadRequest, err
 		}
 
 		image, code, err := imageRepo.AddDefault(path.CateringID, path.DishID, parsedID)
@@ -41,7 +41,7 @@ func (i *ImageService) Add(c *gin.Context, path url.PathDish) (domain.Image, int
 	file, err := c.FormFile("image")
 
 	if err != nil {
-		return domain.Image{}, http.StatusBadRequest, err
+		return interfaces.Image{}, http.StatusBadRequest, err
 	}
 
 	dir, _ := os.Getwd()
@@ -51,10 +51,10 @@ func (i *ImageService) Add(c *gin.Context, path url.PathDish) (domain.Image, int
 	imagePath := dir + "/src/static/images/" + randomString + ext
 
 	if err := c.SaveUploadedFile(file, imagePath); err != nil {
-		return domain.Image{}, http.StatusBadRequest, err
+		return interfaces.Image{}, http.StatusBadRequest, err
 	}
 
-	image := &domain.Image{
+	image := &interfaces.Image{
 		Path: "/" + randomString + ext,
 	}
 
@@ -63,11 +63,11 @@ func (i *ImageService) Add(c *gin.Context, path url.PathDish) (domain.Image, int
 	return *image, code, err
 }
 
-func (i *ImageService) Update(c *gin.Context, path url.PathImageDish) (domain.Image, int, error) {
+func (i *ImageService) Update(c *gin.Context, path url.PathImageDish) (interfaces.Image, int, error) {
 	file, err := c.FormFile("image")
 
 	if err != nil {
-		return domain.Image{}, http.StatusBadRequest, err
+		return interfaces.Image{}, http.StatusBadRequest, err
 	}
 
 	dir, _ := os.Getwd()
@@ -77,10 +77,10 @@ func (i *ImageService) Update(c *gin.Context, path url.PathImageDish) (domain.Im
 	imagePath := dir + "/src/static/images/" + randomString + ext
 
 	if err := c.SaveUploadedFile(file, imagePath); err != nil {
-		return domain.Image{}, http.StatusBadRequest, err
+		return interfaces.Image{}, http.StatusBadRequest, err
 	}
 
-	image := &domain.Image{
+	image := &interfaces.Image{
 		Path: "/" + randomString + ext,
 	}
 

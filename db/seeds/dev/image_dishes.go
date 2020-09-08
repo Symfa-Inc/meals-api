@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"strconv"
 )
@@ -17,13 +18,13 @@ func CreateImageDishes() {
 
 	seedExists := config.DB.
 		Where("name = ?", "init image dishes").
-		First(&domain.Seed{}).Error
+		First(&interfaces.Seed{}).Error
 	if seedExists != nil {
-		seed := domain.Seed{
+		seed := interfaces.Seed{
 			Name: "init image dishes",
 		}
 
-		var dishesArray []domain.Dish
+		var dishesArray []interfaces.Dish
 
 		cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 		cateringID := cateringResult.ID.String()

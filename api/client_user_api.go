@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/Aiscom-LLC/meals-api/mailer"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
@@ -40,7 +41,7 @@ var clientUserService = services.NewClientUser()
 func (cu ClientUser) Add(c *gin.Context) {
 	var path url.PathID
 	var body models.ClientUser
-	var user domain.User
+	var user interfaces.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -142,7 +143,7 @@ func (cu ClientUser) Get(c *gin.Context) { //nolint:dupl
 // @Router /clients/{id}/users/{userId} [delete]
 func (cu ClientUser) Delete(c *gin.Context) {
 	var path url.PathUser
-	var user domain.User
+	var user interfaces.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -176,7 +177,7 @@ func (cu ClientUser) Delete(c *gin.Context) {
 func (cu ClientUser) Update(c *gin.Context) {
 	var path url.PathUser
 	var body models.ClientUserUpdate
-	var user domain.User
+	var user interfaces.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

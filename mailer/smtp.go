@@ -2,12 +2,11 @@ package mailer
 
 import (
 	"bytes"
+	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"html/template"
 	"net/smtp"
 	"os"
 	"strings"
-
-	"github.com/Aiscom-LLC/meals-api/domain"
 )
 
 var auth smtp.Auth
@@ -21,7 +20,7 @@ type templateData struct {
 
 // SendEmail sends registration email on provided email
 // returns error
-func SendEmail(user domain.User, password string) error {
+func SendEmail(user interfaces.User, password string) error {
 
 	auth = smtp.PlainAuth("", os.Getenv("SMTP_EMAIL"), os.Getenv("SMTP_PASSWORD"), "smtp.gmail.com")
 	templateData := templateData{

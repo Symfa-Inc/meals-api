@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/config"
-	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"net/http"
 )
 
@@ -19,9 +19,9 @@ func NewAddressRepo() *AddressRepo {
 
 // Add creates new address entity
 // returns error or nil
-func (a AddressRepo) Add(address domain.Address) (domain.Address, error) {
+func (a AddressRepo) Add(address interfaces.Address) (interfaces.Address, error) {
 	if err := config.DB.Create(&address).Error; err != nil {
-		return domain.Address{}, err
+		return interfaces.Address{}, err
 	}
 
 	return address, nil
@@ -29,12 +29,12 @@ func (a AddressRepo) Add(address domain.Address) (domain.Address, error) {
 
 // Get returns list of addresses of passed client ID
 // returns list of addresses and error
-func (a AddressRepo) Get(id string) ([]domain.Address, int, error) {
-	var addresses []domain.Address
+func (a AddressRepo) Get(id string) ([]interfaces.Address, int, error) {
+	var addresses []interfaces.Address
 
 	if isClientExist := config.DB.
 		Where("id = ?", id).
-		Find(&domain.Client{}).RowsAffected; isClientExist == 0 {
+		Find(&interfaces.Client{}).RowsAffected; isClientExist == 0 {
 
 		return nil, http.StatusNotFound, errors.New("client with that ID is not found")
 	}
@@ -53,7 +53,7 @@ func (a AddressRepo) Get(id string) ([]domain.Address, int, error) {
 func (a AddressRepo) Delete(path url.PathAddress) error {
 	if isAddressExist := config.DB.
 		Where("client_id = ? AND id = ?", path.ID, path.AddressID).
-		Delete(&domain.Address{}).
+		Delete(&interfaces.Address{}).
 		RowsAffected; isAddressExist == 0 {
 		return errors.New("address not found")
 	}
@@ -63,7 +63,7 @@ func (a AddressRepo) Delete(path url.PathAddress) error {
 
 // Update updates entity
 // returns error or nil and status code
-func (a AddressRepo) Update(path url.PathAddress, address domain.Address) (domain.Address, error) {
+func (a AddressRepo) Update(path url.PathAddress, address interfaces.Address) (interfaces.Address, error) {
 	if err := config.DB.Model(&address).
 		Where("id = ? AND client_id = ?", path.AddressID, path.ID).
 		Update(&address).

@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
@@ -60,7 +60,7 @@ func (a Address) Get(c *gin.Context) {
 // @Router /clients/{id}/addresses [post]
 func (a Address) Add(c *gin.Context) {
 	var path url.PathID
-	var body domain.Address
+	var body interfaces.Address
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -119,7 +119,7 @@ func (a Address) Delete(c *gin.Context) {
 // @Router /clients/{id}/addresses/{addressId} [put]
 func (a Address) Update(c *gin.Context) {
 	var path url.PathAddress
-	var body domain.Address
+	var body interfaces.Address
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

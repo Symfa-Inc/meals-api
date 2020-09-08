@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/utils"
@@ -49,7 +49,7 @@ func (dc Category) Add(c *gin.Context) {
 
 	cateringID, _ := uuid.FromString(path.ID)
 	clientID, _ := uuid.FromString(path.ClientID)
-	category := domain.Category{
+	category := interfaces.Category{
 		Date:       body.Date,
 		Name:       body.Name,
 		CateringID: cateringID,
@@ -142,7 +142,7 @@ func (dc Category) Get(c *gin.Context) {
 // @Router /caterings/{id}/clients/{clientId}/categories/{categoryID} [put]
 func (dc Category) Update(c *gin.Context) {
 	var path url.PathCategory
-	var category domain.Category
+	var category interfaces.Category
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

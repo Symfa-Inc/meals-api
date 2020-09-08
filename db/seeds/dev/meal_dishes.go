@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"time"
 )
@@ -19,12 +20,12 @@ func CreateMealDishes() {
 		Where("name = ?", "init meals dishes").
 		First(&domain.Seed{}).Error
 	if seedExists != nil {
-		seed := domain.Seed{
+		seed := interfaces.Seed{
 			Name: "init meal dishes",
 		}
 
-		var dishesArray []domain.Dish
-		var dishesArray2 []domain.Dish
+		var dishesArray []interfaces.Dish
+		var dishesArray2 []interfaces.Dish
 
 		cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 		cateringID := cateringResult.ID.String()
@@ -40,7 +41,7 @@ func CreateMealDishes() {
 		dishesArray2, _, _ = dishRepo.Get(cateringID, categoryID2)
 
 		mealResult, _, _ := mealRepo.GetByKey("date", time.Now().AddDate(0, 0, 0).Truncate(t).Format(time.RFC3339))
-		var mealDish domain.MealDish
+		var mealDish interfaces.MealDish
 		for i := range dishesArray {
 			mealDish.DishID = dishesArray[i].ID
 			mealDish.MealID = mealResult.ID

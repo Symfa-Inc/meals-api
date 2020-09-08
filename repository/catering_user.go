@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/url"
+	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"time"
@@ -22,8 +23,8 @@ func NewCateringUserRepo() *CateringUserRepo {
 	return &CateringUserRepo{}
 }
 
-func (cur *CateringUserRepo) GetByKey(key, value string) (domain.CateringUser, error) {
-	var user domain.CateringUser
+func (cur *CateringUserRepo) GetByKey(key, value string) (interfaces.CateringUser, error) {
+	var user interfaces.CateringUser
 	err := config.DB.
 		Unscoped().
 		Where(key+" = ?", value).
@@ -31,7 +32,7 @@ func (cur *CateringUserRepo) GetByKey(key, value string) (domain.CateringUser, e
 	return user, err
 }
 
-func (cur *CateringUserRepo) Add(cateringUser domain.CateringUser) error {
+func (cur *CateringUserRepo) Add(cateringUser interfaces.CateringUser) error {
 	err := config.DB.
 		Create(&cateringUser).
 		Error
@@ -93,7 +94,7 @@ func (cur *CateringUserRepo) Get(cateringID string, pagination url.PaginationQue
 	return users, total, 0, nil
 }
 
-func (cur *CateringUserRepo) Delete(cateringID, ctxUserRole string, user domain.User) (int, error) {
+func (cur *CateringUserRepo) Delete(cateringID, ctxUserRole string, user interfaces.User) (int, error) {
 	var totalUsers int
 	if ctxUserRole != enums.UserRoleEnum.SuperAdmin {
 		config.DB.
@@ -118,7 +119,7 @@ func (cur *CateringUserRepo) Delete(cateringID, ctxUserRole string, user domain.
 	return 0, nil
 }
 
-func (cur *CateringUserRepo) Update(user *domain.User) (int, error) {
+func (cur *CateringUserRepo) Update(user *interfaces.User) (int, error) {
 	if userExist := config.DB.
 		Where("id = ? AND email = ?", user.ID, user.Email).
 		Find(&domain.User{}).

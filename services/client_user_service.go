@@ -3,7 +3,7 @@ package services
 import (
 	"errors"
 	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
@@ -27,7 +27,7 @@ func NewClientUser() *ClientUser {
 var userRepo = repository.NewUserRepo()
 var clientUserRepo = repository.NewClientUserRepo()
 
-func (cu *ClientUser) Add(path url.PathID, body models.ClientUser, user domain.User) (domain.UserClientCatering, int, string, error, error) {
+func (cu *ClientUser) Add(path url.PathID, body models.ClientUser, user interfaces.User) (interfaces.UserClientCatering, int, string, error, error) {
 	parsedID, _ := uuid.FromString(path.ID)
 	user.CompanyType = &enums.CompanyTypesEnum.Client
 	user.Status = &enums.StatusTypesEnum.Invited
@@ -39,14 +39,14 @@ func (cu *ClientUser) Add(path url.PathID, body models.ClientUser, user domain.U
 	if gorm.IsRecordNotFoundError(err) {
 		user, userErr := userRepo.Add(user)
 
-		clientUser := domain.ClientUser{
+		clientUser := interfaces.ClientUser{
 			UserID:   user.ID,
 			ClientID: parsedID,
 			Floor:    body.Floor,
 		}
 
 		if err := clientUserRepo.Add(clientUser); err != nil {
-			return domain.UserClientCatering{}, http.StatusBadRequest, password, err, nil
+			return interfaces.UserClientCatering{}, http.StatusBadRequest, password, err, nil
 		}
 
 		userClientCatering, err := userRepo.GetByID(user.ID.String())
@@ -56,20 +56,20 @@ func (cu *ClientUser) Add(path url.PathID, body models.ClientUser, user domain.U
 
 	for i := range existingUser {
 		if *existingUser[i].Status != enums.StatusTypesEnum.Deleted {
-			return domain.UserClientCatering{}, http.StatusBadRequest, password, errors.New("user with that email already exist"), nil
+			return interfaces.UserClientCatering{}, http.StatusBadRequest, password, errors.New("user with that email already exist"), nil
 		}
 	}
 
 	user, userErr := userRepo.Add(user)
 
-	clientUser := domain.ClientUser{
+	clientUser := interfaces.ClientUser{
 		UserID:   user.ID,
 		ClientID: parsedID,
 		Floor:    body.Floor,
 	}
 
 	if err := clientUserRepo.Add(clientUser); err != nil {
-		return domain.UserClientCatering{}, http.StatusBadRequest, password, err, userErr
+		return interfaces.UserClientCatering{}, http.StatusBadRequest, password, err, userErr
 	}
 
 	userClientCatering, err := userRepo.GetByID(user.ID.String())
@@ -77,7 +77,7 @@ func (cu *ClientUser) Add(path url.PathID, body models.ClientUser, user domain.U
 	return userClientCatering, 0, password, err, userErr
 }
 
-func (cu *ClientUser) Delete(path url.PathUser, user domain.User, userRole string, userID string) (int, error) {
+func (cu *ClientUser) Delete(path url.PathUser, user interfaces.User, userRole string, userID string) (int, error) {
 	parsedUserID, _ := uuid.FromString(path.UserID)
 	user.ID = parsedUserID
 	user.Status = &enums.StatusTypesEnum.Deleted
@@ -93,7 +93,7 @@ func (cu *ClientUser) Delete(path url.PathUser, user domain.User, userRole strin
 	return code, err
 }
 
-func (cu *ClientUser) Update(path url.PathUser, body models.ClientUserUpdate, user domain.User) (int, error) {
+func (cu *ClientUser) Update(path url.PathUser, body models.ClientUserUpdate, user interfaces.User) (int, error) {
 	if body.Email != "" {
 		if ok := utils.IsEmailValid(body.Email); !ok {
 			return http.StatusBadRequest, errors.New("email is not valid")

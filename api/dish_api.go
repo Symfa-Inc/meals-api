@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/interfaces"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
@@ -33,7 +33,7 @@ var dishRepo = repository.NewDishRepo()
 // @Router /caterings/{id}/dishes [post]
 func (d Dish) Add(c *gin.Context) {
 	var path url.PathID
-	var dish domain.Dish
+	var dish interfaces.Dish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -52,7 +52,7 @@ func (d Dish) Add(c *gin.Context) {
 		return
 	}
 
-	dish.Images = make([]domain.ImageArray, 0)
+	dish.Images = make([]interfaces.ImageArray, 0)
 
 	c.JSON(http.StatusOK, dish)
 }
@@ -156,7 +156,7 @@ func (d Dish) GetByID(c *gin.Context) {
 // @Router /caterings/{id}/dishes/{dishId} [put]
 func (d Dish) Update(c *gin.Context) {
 	var path url.PathDish
-	var dish domain.Dish
+	var dish interfaces.Dish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
