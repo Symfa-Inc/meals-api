@@ -10,7 +10,7 @@ import (
 
 // MealBase struct without deletedAt
 type MealBase struct {
-	ID        uuid.UUID  `gorm:"url:uuid;" json:"id"`
+	ID        uuid.UUID  `gorm:"type:uuid;" json:"id"`
 	DeletedAt *time.Time `json:"-"`
 	UpdatedAt time.Time  `json:"-"`
 }

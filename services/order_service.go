@@ -2,8 +2,8 @@ package services
 
 import (
 	"errors"
-	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/repository"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/dgrijalva/jwt-go"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
@@ -21,7 +21,7 @@ func NewOrderService() *OrderService {
 
 var orderRepo = repository.NewOrderRepo()
 
-func (o *OrderService) Add(query string, order swagger.OrderRequest, claims jwt.MapClaims) (swagger.UserOrder, int, error) {
+func (o *OrderService) Add(query string, order models.OrderRequest, claims jwt.MapClaims) (models.UserOrder, int, error) {
 	userRepo := repository.NewUserRepo()
 	var userID string
 
@@ -36,11 +36,11 @@ func (o *OrderService) Add(query string, order swagger.OrderRequest, claims jwt.
 	}
 	for i, dish := range order.Items {
 		if dish.Amount == 0 {
-			return swagger.UserOrder{}, http.StatusBadRequest, errors.New("can't add dish with 0 amount")
+			return models.UserOrder{}, http.StatusBadRequest, errors.New("can't add dish with 0 amount")
 		}
 		for j := i + 1; j < len(order.Items); j++ {
 			if dish.DishID == order.Items[j].DishID {
-				return swagger.UserOrder{}, http.StatusBadRequest, errors.New("can't add 2 same dishes, please increment amount field instead")
+				return models.UserOrder{}, http.StatusBadRequest, errors.New("can't add 2 same dishes, please increment amount field instead")
 			}
 		}
 	}
@@ -48,19 +48,19 @@ func (o *OrderService) Add(query string, order swagger.OrderRequest, claims jwt.
 	date, err := time.Parse(time.RFC3339, query)
 
 	if err != nil {
-		return swagger.UserOrder{}, http.StatusBadRequest, err
+		return models.UserOrder{}, http.StatusBadRequest, err
 	}
 
 	difference := date.Sub(time.Now().Truncate(time.Hour * 24)).Hours()
 
 	if difference < 0 {
-		return swagger.UserOrder{}, http.StatusBadRequest, errors.New("can't add order to previous date")
+		return models.UserOrder{}, http.StatusBadRequest, errors.New("can't add order to previous date")
 	}
 
 	userOrder, err := orderRepo.Add(userID, date, order)
 
 	if err != nil {
-		return swagger.UserOrder{}, http.StatusBadRequest, err
+		return models.UserOrder{}, http.StatusBadRequest, err
 	}
 
 	return userOrder, 0, nil

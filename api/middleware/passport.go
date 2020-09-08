@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"errors"
-	"github.com/Aiscom-LLC/meals-api/api/swagger"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"os"
 	"time"
@@ -80,7 +80,7 @@ func Passport() *jwt.GinJWTMiddleware {
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
-			var body swagger.LoginUserRequest
+			var body models.LoginUserRequest
 			if err := c.ShouldBind(&body); err != nil {
 				return "", errors.New("missing email or password")
 			}

@@ -1196,6 +1196,213 @@
                 }
             }
         },
+        "/caterings/{id}/users": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "caterings users"
+                ],
+                "summary": "Returns list of catering users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Catering ID",
+                        "name": "id",
+                        "in": "path"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "used for pagination",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "used for pagination",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "used query search",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "used for role sort",
+                        "name": "role",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Catering user",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/swagger.UserResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "caterings users"
+                ],
+                "summary": "Returns error or 201 status code if success",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Catering ID",
+                        "name": "id",
+                        "in": "path"
+                    },
+                    {
+                        "description": "Catering user",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.CateringUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Catering user",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/caterings/{id}/users/{userId}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "caterings users"
+                ],
+                "summary": "Returns error or 200 status code if success",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Catering ID",
+                        "name": "id",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path"
+                    },
+                    {
+                        "description": "Catering user",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.CateringUserUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Catering user",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "caterings users"
+                ],
+                "summary": "Returns error or 204 status code if success",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Catering ID",
+                        "name": "id",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successfully deleted"
+                    },
+                    "400": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/clients": {
             "get": {
                 "produces": [
@@ -1697,6 +1904,106 @@
                 "responses": {
                     "200": {
                         "description": "Successfully Approved orders"
+                    },
+                    "400": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/clients/{id}/schedules": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "clients schedules"
+                ],
+                "summary": "Returns list of schedules",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client ID",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of schedules",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GetClientSchedulesResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/clients/{id}/schedules/{scheduleId}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "clients schedules"
+                ],
+                "summary": "Returns 200 and updated model if success and 4xx error if failed",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Client Schedule ID",
+                        "name": "scheduleId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Client Schedule model",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateScheduleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Client Schedule model",
+                        "schema": {
+                            "$ref": "#/definitions/GetClientSchedulesResponse"
+                        }
                     },
                     "400": {
                         "description": "Error",
@@ -2456,6 +2763,32 @@
                 }
             }
         },
+        "GetClientSchedulesResponse": {
+            "type": "object",
+            "properties": {
+                "cateringEnd": {
+                    "type": "string"
+                },
+                "cateringStart": {
+                    "type": "string"
+                },
+                "day": {
+                    "type": "integer"
+                },
+                "end": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isWorking": {
+                    "type": "boolean"
+                },
+                "start": {
+                    "type": "string"
+                }
+            }
+        },
         "GetClients": {
             "type": "object",
             "properties": {
@@ -2620,6 +2953,40 @@
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "swagger.CateringUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "d.novikov@wellyes.ru"
+                },
+                "firstName": {
+                    "type": "string",
+                    "example": "Dmitry"
+                },
+                "lastName": {
+                    "type": "string",
+                    "example": "Novikov"
+                }
+            }
+        },
+        "swagger.CateringUserUpdate": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "d.novikov@wellyes.ru"
+                },
+                "firstName": {
+                    "type": "string",
+                    "example": "Dmitry"
+                },
+                "lastName": {
+                    "type": "string",
+                    "example": "Novikov"
                 }
             }
         },

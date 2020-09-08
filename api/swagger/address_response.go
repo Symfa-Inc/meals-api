@@ -32,4 +32,3 @@ type AddressRepository interface {
 	Delete(path url.PathAddress) error
 	Update(path url.PathAddress, address Address) (Address, error)
 }
-

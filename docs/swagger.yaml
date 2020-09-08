@@ -172,6 +172,23 @@ definitions:
       total:
         type: integer
     type: object
+  GetClientSchedulesResponse:
+    properties:
+      cateringEnd:
+        type: string
+      cateringStart:
+        type: string
+      day:
+        type: integer
+      end:
+        type: string
+      id:
+        type: string
+      isWorking:
+        type: boolean
+      start:
+        type: string
+    type: object
   GetClients:
     properties:
       items:
@@ -281,6 +298,30 @@ definitions:
         type: string
       total:
         type: integer
+    type: object
+  swagger.CateringUser:
+    properties:
+      email:
+        example: d.novikov@wellyes.ru
+        type: string
+      firstName:
+        example: Dmitry
+        type: string
+      lastName:
+        example: Novikov
+        type: string
+    type: object
+  swagger.CateringUserUpdate:
+    properties:
+      email:
+        example: d.novikov@wellyes.ru
+        type: string
+      firstName:
+        example: Dmitry
+        type: string
+      lastName:
+        example: Novikov
+        type: string
     type: object
   swagger.Client:
     properties:
@@ -1251,6 +1292,140 @@ paths:
       summary: Returns 200 and updated model if success and 4xx error if failed
       tags:
       - caterings schedules
+  /caterings/{id}/users:
+    get:
+      parameters:
+      - description: Catering ID
+        in: path
+        name: id
+        type: string
+      - description: used for pagination
+        in: query
+        name: limit
+        type: integer
+      - description: used for pagination
+        in: query
+        name: page
+        type: integer
+      - description: used query search
+        in: query
+        name: q
+        type: string
+      - description: used for role sort
+        in: query
+        name: role
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Catering user
+          schema:
+            items:
+              $ref: '#/definitions/swagger.UserResponse'
+            type: array
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Returns list of catering users
+      tags:
+      - caterings users
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Catering ID
+        in: path
+        name: id
+        type: string
+      - description: Catering user
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/swagger.CateringUser'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Catering user
+          schema:
+            $ref: '#/definitions/swagger.UserResponse'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Returns error or 201 status code if success
+      tags:
+      - caterings users
+  /caterings/{id}/users/{userId}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Catering ID
+        in: path
+        name: id
+        type: string
+      - description: User ID
+        in: path
+        name: userId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Returns error or 204 status code if success
+      tags:
+      - caterings users
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Catering ID
+        in: path
+        name: id
+        type: string
+      - description: User ID
+        in: path
+        name: userId
+        type: string
+      - description: Catering user
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/swagger.CateringUserUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Catering user
+          schema:
+            $ref: '#/definitions/swagger.UserResponse'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Returns error or 200 status code if success
+      tags:
+      - caterings users
   /clients:
     get:
       parameters:
@@ -1589,6 +1764,71 @@ paths:
       summary: approve user orders
       tags:
       - clients orders
+  /clients/{id}/schedules:
+    get:
+      parameters:
+      - description: Client ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of schedules
+          schema:
+            items:
+              $ref: '#/definitions/GetClientSchedulesResponse'
+            type: array
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Returns list of schedules
+      tags:
+      - clients schedules
+  /clients/{id}/schedules/{scheduleId}:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Client ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Client Schedule ID
+        in: path
+        name: scheduleId
+        required: true
+        type: string
+      - description: Client Schedule model
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/UpdateScheduleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Client Schedule model
+          schema:
+            $ref: '#/definitions/GetClientSchedulesResponse'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Returns 200 and updated model if success and 4xx error if failed
+      tags:
+      - clients schedules
   /clients/{id}/users:
     get:
       parameters:

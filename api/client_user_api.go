@@ -2,11 +2,11 @@ package api
 
 import (
 	"errors"
-	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/mailer"
 	"github.com/Aiscom-LLC/meals-api/repository"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
@@ -39,7 +39,7 @@ var clientUserService = services.NewClientUser()
 // @Router /clients/{id}/users [post]
 func (cu ClientUser) Add(c *gin.Context) {
 	var path url.PathID
-	var body swagger.ClientUser
+	var body models.ClientUser
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -175,7 +175,7 @@ func (cu ClientUser) Delete(c *gin.Context) {
 // @Router /clients/{id}/users/{userId} [put]
 func (cu ClientUser) Update(c *gin.Context) {
 	var path url.PathUser
-	var body swagger.ClientUserUpdate
+	var body models.ClientUserUpdate
 	var user domain.User
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {

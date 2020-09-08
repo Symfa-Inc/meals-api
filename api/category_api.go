@@ -1,10 +1,10 @@
 package api
 
 import (
-	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
@@ -36,7 +36,7 @@ var categoryRepo = repository.NewCategoryRepo()
 // @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/clients/{clientId}/categories [post]
 func (dc Category) Add(c *gin.Context) {
-	var body swagger.AddCategory
+	var body models.AddCategory
 	var path url.PathClient
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {

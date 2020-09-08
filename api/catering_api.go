@@ -2,10 +2,10 @@ package api
 
 import (
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
-	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/dgrijalva/jwt-go"
@@ -54,7 +54,7 @@ func (ca Catering) Get(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, swagger.GetCaterings{
+	c.JSON(http.StatusOK, models.GetCaterings{
 		Items: caterings,
 		Page:  query.Page,
 		Total: total,

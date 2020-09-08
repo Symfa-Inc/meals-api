@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	types2 "github.com/Aiscom-LLC/meals-api/api/url"
+	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"time"
@@ -38,7 +38,7 @@ func (cur *CateringUserRepo) Add(cateringUser domain.CateringUser) error {
 	return err
 }
 
-func (cur *CateringUserRepo) Get(cateringID string, pagination types2.PaginationQuery, filters types2.UserFilterQuery) ([]models.GetCateringUser, int, int, error) {
+func (cur *CateringUserRepo) Get(cateringID string, pagination url.PaginationQuery, filters url.UserFilterQuery) ([]models.GetCateringUser, int, int, error) {
 	var users []models.GetCateringUser
 	var total int
 	page := pagination.Page

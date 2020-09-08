@@ -1,8 +1,8 @@
 package api
 
 import (
-	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/api/url"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
@@ -32,7 +32,7 @@ var mealService = services.NewMealService
 // @Router /caterings/{id}/clients/{clientId}/meals [post]
 func (m Meal) Add(c *gin.Context) {
 	var path url.PathClient
-	var body swagger.AddMeal
+	var body models.AddMeal
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

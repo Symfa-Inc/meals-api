@@ -9,7 +9,7 @@ type UserOrder struct {
 	Items   []OrderItem `json:"items"`
 	Status  string      `json:"status"`
 	Total   int         `json:"total"`
-	OrderID uuid.UUID   `json:"orderId" gorm:"column:order_id"`
+	OrderID uuid.UUID   `json:"orderId" gorm:"type:column:order_id"`
 }
 
 // OrderItem struct for response
