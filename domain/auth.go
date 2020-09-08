@@ -5,7 +5,12 @@ import "github.com/gin-gonic/gin"
 // Auth struct
 type Auth struct{}
 
-// AuthUsecase interface for auth usecase
-type AuthUsecase interface {
+// AuthAPI interface for auth API
+type AuthAPI interface {
 	IsAuthenticated(c *gin.Context)
+}
+
+// AuthService interface for auth service
+type AuthService interface {
+	IsAuthenticated(c *gin.Context) (UserClientCatering, int, error)
 }
