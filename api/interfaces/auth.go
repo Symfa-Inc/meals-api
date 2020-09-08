@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,5 +12,5 @@ type AuthAPI interface {
 
 // AuthService interface for auth service
 type AuthService interface {
-	IsAuthenticated(c *gin.Context) (domain.UserClientCatering, int, error)
+	IsAuthenticated(c *gin.Context) (models.UserClientCatering, int, error)
 }

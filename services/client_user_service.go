@@ -27,7 +27,7 @@ func NewClientUser() *ClientUser {
 var userRepo = repository.NewUserRepo()
 var clientUserRepo = repository.NewClientUserRepo()
 
-func (cu *ClientUser) Add(path url.PathID, body models.ClientUser, user domain.User) (domain.UserClientCatering, int, string, error, error) {
+func (cu *ClientUser) Add(path url.PathID, body models.ClientUser, user domain.User) (models.UserClientCatering, int, string, error, error) {
 	parsedID, _ := uuid.FromString(path.ID)
 	user.CompanyType = &enums.CompanyTypesEnum.Client
 	user.Status = &enums.StatusTypesEnum.Invited
@@ -46,7 +46,7 @@ func (cu *ClientUser) Add(path url.PathID, body models.ClientUser, user domain.U
 		}
 
 		if err := clientUserRepo.Add(clientUser); err != nil {
-			return domain.UserClientCatering{}, http.StatusBadRequest, password, err, nil
+			return models.UserClientCatering{}, http.StatusBadRequest, password, err, nil
 		}
 
 		userClientCatering, err := userRepo.GetByID(user.ID.String())
@@ -56,7 +56,7 @@ func (cu *ClientUser) Add(path url.PathID, body models.ClientUser, user domain.U
 
 	for i := range existingUser {
 		if *existingUser[i].Status != enums.StatusTypesEnum.Deleted {
-			return domain.UserClientCatering{}, http.StatusBadRequest, password, errors.New("user with that email already exist"), nil
+			return models.UserClientCatering{}, http.StatusBadRequest, password, errors.New("user with that email already exist"), nil
 		}
 	}
 
@@ -69,7 +69,7 @@ func (cu *ClientUser) Add(path url.PathID, body models.ClientUser, user domain.U
 	}
 
 	if err := clientUserRepo.Add(clientUser); err != nil {
-		return domain.UserClientCatering{}, http.StatusBadRequest, password, err, userErr
+		return models.UserClientCatering{}, http.StatusBadRequest, password, err, userErr
 	}
 
 	userClientCatering, err := userRepo.GetByID(user.ID.String())

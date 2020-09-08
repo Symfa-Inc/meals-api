@@ -26,5 +26,5 @@ type CateringUserRepository interface {
 
 // CateringUserService is CateringUser interface for service
 type CateringUserService interface {
-	Add(path url.PathID, user domain.User) (domain.UserClientCatering, domain.User, string, error, error)
+	Add(path url.PathID, user domain.User) (models.UserClientCatering, domain.User, string, error, error)
 }
