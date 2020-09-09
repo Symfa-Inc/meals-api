@@ -1,6 +1,8 @@
 package domain
 
-import uuid "github.com/satori/go.uuid"
+import (
+	uuid "github.com/satori/go.uuid"
+)
 
 // OrderDishes struct for DB
 type OrderDishes struct {

@@ -1,6 +1,8 @@
 package swagger
 
-import "github.com/Aiscom-LLC/meals-api/domain"
+import (
+	"github.com/Aiscom-LLC/meals-api/repository/models"
+)
 
 // GetClients response scheme
 type GetClients struct {
@@ -21,7 +23,7 @@ type Client struct {
 	ID                  string `json:"id"`
 	Name                string `json:"name"`
 	AutoApproveOrders   bool   `json:"autoApproveOrders"`
-	domain.UserCatering `json:"catering"`
+	models.UserCatering `json:"catering"`
 }
 
 // ClientInfo response struct
@@ -41,7 +43,7 @@ type ClientOrder struct {
 type ClientResponse struct {
 	ID       string              `json:"id"`
 	Name     string              `json:"name"`
-	Catering domain.UserCatering `json:"catering"`
+	Catering models.UserCatering `json:"catering"`
 }
 
 // GetCateringClientsSwagger struct

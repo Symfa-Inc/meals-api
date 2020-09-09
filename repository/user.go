@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 
 	"github.com/Aiscom-LLC/meals-api/config"
@@ -44,8 +45,8 @@ func (ur UserRepo) GetAllByKey(key, value string) ([]domain.User, error) {
 	return user, err
 }
 
-func (ur UserRepo) GetByID(id string) (domain.UserClientCatering, error) {
-	var user domain.UserClientCatering
+func (ur UserRepo) GetByID(id string) (models.UserClientCatering, error) {
+	var user models.UserClientCatering
 	err := config.DB.
 		Table("users as u").
 		Select("u.*").

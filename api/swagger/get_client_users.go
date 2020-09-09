@@ -1,13 +1,13 @@
 package swagger
 
 import (
-	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	uuid "github.com/satori/go.uuid"
 )
 
 type GetClientUser struct {
 	ID                uuid.UUID `json:"id"`
-	domain.UserClient `json:"client"`
+	models.UserClient `json:"client"`
 	FirstName         string  `json:"firstName"`
 	LastName          string  `json:"lastName"`
 	Email             string  `json:"email"`

@@ -5,6 +5,7 @@ import (
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository/enums"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
@@ -19,10 +20,10 @@ func NewCateringUserService() *CateringUserService {
 	return &CateringUserService{}
 }
 
-func (cu *CateringUserService) Add(path url.PathID, user domain.User) (domain.UserClientCatering, domain.User, string, error, error) {
+func (cu *CateringUserService) Add(path url.PathID, user domain.User) (models.UserClientCatering, domain.User, string, error, error) {
 	parsedID, err := uuid.FromString(path.ID)
 	if err != nil {
-		return domain.UserClientCatering{}, user, "", err, nil
+		return models.UserClientCatering{}, user, "", err, nil
 	}
 
 	user.Role = enums.UserRoleEnum.CateringAdmin
@@ -43,7 +44,7 @@ func (cu *CateringUserService) Add(path url.PathID, user domain.User) (domain.Us
 		}
 
 		if err := cateringUserRepo.Add(cateringUser); err != nil {
-			return domain.UserClientCatering{}, user, password, err, nil
+			return models.UserClientCatering{}, user, password, err, nil
 		}
 
 		userClientCatering, err := userRepo.GetByID(userResult.ID.String())
@@ -53,7 +54,7 @@ func (cu *CateringUserService) Add(path url.PathID, user domain.User) (domain.Us
 
 	for i := range existingUsers {
 		if *existingUsers[i].Status != enums.StatusTypesEnum.Deleted {
-			return domain.UserClientCatering{}, user, password, errors.New("user with that email already exist"), nil
+			return models.UserClientCatering{}, user, password, errors.New("user with that email already exist"), nil
 		}
 	}
 
@@ -65,7 +66,7 @@ func (cu *CateringUserService) Add(path url.PathID, user domain.User) (domain.Us
 	}
 
 	if err := cateringUserRepo.Add(cateringUser); err != nil {
-		return domain.UserClientCatering{}, user, password, err, nil
+		return models.UserClientCatering{}, user, password, err, nil
 	}
 
 	userClientCatering, err := userRepo.GetByID(user.ID.String())

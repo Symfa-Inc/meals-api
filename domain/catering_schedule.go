@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -14,16 +13,3 @@ type CateringSchedule struct {
 	IsWorking  bool      `json:"isWorking"`
 	CateringID uuid.UUID `json:"-" swaggerignore:"true"`
 } //@name CateringSchedule
-
-// CateringScheduleRepository is repository interface
-// for catering schedule
-type CateringScheduleRepository interface {
-	Get(cateringID string) ([]CateringSchedule, int, error)
-	Update(cateringID, scheduleID string, isWorking *bool, newSchedule *CateringSchedule) (int, error)
-}
-
-// CateringScheduleUsecase is usecase interface
-// for catering schedule
-type CateringScheduleUsecase interface {
-	Get(c *gin.Context)
-}

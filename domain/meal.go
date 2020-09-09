@@ -3,7 +3,6 @@ package domain
 import (
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 )
@@ -32,20 +31,3 @@ type Meal struct {
 	Version    string    `json:"version"`
 	Person     string    `json:"person"`
 } // @name MealsResponse
-
-// MealUsecase is meal interface for usecase
-type MealUsecase interface {
-	Add(c *gin.Context)
-	Get(c *gin.Context)
-	Update(c *gin.Context)
-}
-
-// MealRepository is meal interface for repository
-type MealRepository interface {
-	Find(meal *Meal) error
-	Add(meal *Meal) error
-	/* TODO fix cycle imports
-	Get(mealDate time.Time, id, clientID string) ([]response.GetMeal, int, error)
-	*/
-	GetByKey(key, value string) (Meal, int, error)
-}
