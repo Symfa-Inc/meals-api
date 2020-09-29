@@ -29,7 +29,7 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder request.OrderRequ
 	var orderExist int
 	var order domain.Order
 	var userOrder domain.UserOrders
-	var total int
+	var total float32
 	var userOrderResponse response.UserOrder
 
 	config.DB.
@@ -47,7 +47,7 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder request.OrderRequ
 	config.DB.Create(&order)
 
 	for _, dish := range newOrder.Items {
-		var price []int
+		var price []float32
 
 		orderDish := domain.OrderDishes{
 			OrderID: order.ID,
@@ -64,7 +64,7 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder request.OrderRequ
 			Where("id = ?", dish.DishID).
 			Pluck("price", &price)
 
-		total += price[0] * dish.Amount
+		total += price[0] * float32(dish.Amount)
 
 		order.Total = &total
 		order.Date = date
@@ -223,7 +223,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 				Error; err != nil {
 				return response.SummaryOrderResult{}, http.StatusBadRequest, err
 			}
-			result.Total += result.UserOrders[i].Total
+			result.Total += float32(result.UserOrders[i].Total)
 		}
 
 		return result, 0, nil
@@ -301,7 +301,7 @@ func (o OrderRepo) GetOrders(cateringID, clientID, date, companyType string) (re
 			Error; err != nil {
 			return response.SummaryOrderResult{}, http.StatusBadRequest, err
 		}
-		result.Total += result.UserOrders[i].Total
+		result.Total += float32(result.UserOrders[i].Total)
 	}
 
 	if len(result.SummaryOrders) != 0 {
@@ -347,7 +347,7 @@ func (o OrderRepo) getDishesForOrder(orderID uuid.UUID, dishes *[]response.Order
 		Joins("left join dishes d on order_dishes.dish_id = d.id").
 		Joins("left join image_dishes id on d.id = id.dish_id").
 		Joins("left join images i on id.image_id = i.id").
-		Where("order_dishes.order_id = ?", orderID).
+		Where("order_dishes.order_id = ? AND id.deleted_at IS NULL", orderID).
 		Scan(dishes).
 		Error; err != nil {
 		return err

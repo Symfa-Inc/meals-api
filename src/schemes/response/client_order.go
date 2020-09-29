@@ -9,7 +9,7 @@ type SummaryUserOrder struct {
 	Floor   int                 `json:"floor"`
 	Items   []ItemsSummaryOrder `json:"items"`
 	Comment string              `json:"comment"`
-	Total   int                 `json:"total"`
+	Total   float32             `json:"total"`
 }
 
 // SummaryOrder struct
@@ -34,14 +34,14 @@ type ItemsSummaryOrder struct {
 type SummaryOrderResult struct {
 	SummaryOrders []SummaryOrder     `json:"summary"`
 	UserOrders    []SummaryUserOrder `json:"userOrders"`
-	Total         int                `json:"summaryTotal"`
+	Total         float32            `json:"summaryTotal"`
 	Status        *string            `json:"status"`
 }
 
 // SummaryOrdersResponse struct
 type SummaryOrdersResponse struct {
 	Summary      SummaryOrder     `json:"summary"`
-	SummaryTotal int              `json:"summaryTotal"`
+	SummaryTotal float32          `json:"summaryTotal"`
 	UserOrders   SummaryUserOrder `json:"userOrders"`
 	Status       string           `json:"status"`
 }
