@@ -10,19 +10,20 @@ import (
 
 var auth smtp.Auth
 
-// SendEmail
+// SendEmail sends registration email on provided email
+// returns error
 func SendEmail(user domain.User, password string) error {
 	auth = smtp.PlainAuth("", os.Getenv("SMTP_EMAIL"), os.Getenv("SMTP_PASSWORD"), "smtp.gmail.com")
 
 	r := NewRequest([]string{user.Email},
-	"Добро пожаловать в TastyOffice",
-	"Здравствуйте,\n" +
-		user.FirstName + "\n" +
-		"Вас приветствует система TastyOffice. Для завершения регистрации нажмите на кнопку войти, что бы подтвердить учетную запись\n" +
-		"Для доступа к приложению используйте ваш логин и пароль:\n" +
-		"Логин: " + user.Email + "\n" +
-		"Пароль: " + password + "\n" +
-		"Войти: https://meals.d1.aisnovations.com/login")
+		"Добро пожаловать в TastyOffice",
+		"Здравствуйте,\n"+
+			user.FirstName+"\n"+
+			"Вас приветствует система TastyOffice. Для завершения регистрации нажмите на кнопку войти, что бы подтвердить учетную запись\n"+
+			"Для доступа к приложению используйте ваш логин и пароль:\n"+
+			"Логин: "+user.Email+"\n"+
+			"Пароль: "+password+"\n"+
+			"Войти: https://meals.d1.aisnovations.com/login")
 
 	if err := r.SendEmail(); err != nil {
 		return err
