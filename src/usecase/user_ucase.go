@@ -1,9 +1,5 @@
 package usecase
 
-import (
-	"github.com/Aiscom-LLC/meals-api/src/repository"
-)
-
 // User struct
 type User struct{}
 
@@ -12,8 +8,6 @@ type User struct{}
 func NewUser() *User {
 	return &User{}
 }
-
-var userRepo = repository.NewUserRepo()
 
 /*// AddCateringUser creates user for catering
 // @Summary Returns error or 201 status code if success

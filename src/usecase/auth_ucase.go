@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"github.com/Aiscom-LLC/meals-api/src/mailer"
+	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
 	"net/http"
 
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
@@ -19,6 +21,8 @@ func NewAuth() *Auth {
 	return &Auth{}
 }
 
+var userRepo = repository.NewUserRepo()
+
 // IsAuthenticated check if user is authorized and
 // if user exists
 // @Summary Returns user info if authorized
@@ -30,7 +34,6 @@ func NewAuth() *Auth {
 // @Failure 404 {object} types.Error
 // @Router /is-authenticated [get]
 func (a Auth) IsAuthenticated(c *gin.Context) {
-	userRepo := repository.NewUserRepo()
 	claims, err := middleware.Passport().CheckIfTokenExpire(c)
 
 	if err != nil {
@@ -58,6 +61,42 @@ func (a Auth) IsAuthenticated(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// ForgotPassword send a mail to user with new pass
+// @Produce json
+// @Accept json
+// @Tags auth
+// @Param body body request.ForgotPassword false "User"
+// @Success 200 {object} types.Error "Success"
+// @Failure 401 {object} types.Error "Error"
+// @Router /forgot-password/{id} [post]
+func (a Auth) ForgotPassword(c *gin.Context) {
+	var body request.ForgotPassword
+
+	if err := utils.RequestBinderBody(&body, c); err != nil {
+		return
+	}
+
+	user, err := userRepo.GetByKey("email", body.Email)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	password := utils.GenerateString(10)
+	hashPassword := utils.HashString(password)
+
+	code, err := userRepo.UpdatePassword(user.ID, hashPassword)
+	if err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
+	}
+
+	// nolint:errcheck
+	go mailer.ForgotPassword(user, password)
+	c.JSON(http.StatusCreated, "Check your email")
+}
+
 // @Summary Returns info about user
 // @Produce json
 // @Accept json
@@ -68,6 +107,8 @@ func (a Auth) IsAuthenticated(c *gin.Context) {
 // @Router /login [post]
 // nolint:deadcode, unused
 func login() {}
+
+
 
 // @Summary Removes cookie if set
 // @Produce json
