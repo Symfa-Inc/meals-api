@@ -22,15 +22,16 @@ func NewUser() *User {
 var userRepo = repository.NewUserRepo()
 
 // UpdateCateringUser updates user of catering
+
 // @Summary Returns error or 200 status code if success
 // @Produce json
 // @Accept json
 // @Tags Users
-// @Param id path string false "User ID"
 // @Param body body request.UserPasswordUpdate false "User"
+// @Param id path string false "User ID"
 // @Success 200 {object} response.UserResponse false "User"
-// @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Error"
+// @Failure 400 {object} types.Error "Error"
 // @Router /users/{id} [put]
 func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
 	var path types.PathID
@@ -46,6 +47,7 @@ func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
 
 	if len(body.NewPassword) < 10 {
 		utils.CreateError(http.StatusBadRequest, "Password must contain at least 10 characters", c)
+		return
 	}
 
 	newPassword := utils.HashString(body.NewPassword)

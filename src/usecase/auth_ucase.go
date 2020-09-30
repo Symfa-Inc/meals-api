@@ -1,13 +1,13 @@
 package usecase
 
 import (
-	"net/http"
-
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
-	"github.com/Aiscom-LLC/meals-api/src/repository"
+	"github.com/Aiscom-LLC/meals-api/src/mailer"
+	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // Auth struct
@@ -30,7 +30,6 @@ func NewAuth() *Auth {
 // @Failure 404 {object} types.Error
 // @Router /is-authenticated [get]
 func (a Auth) IsAuthenticated(c *gin.Context) {
-	userRepo := repository.NewUserRepo()
 	claims, err := middleware.Passport().CheckIfTokenExpire(c)
 
 	if err != nil {
@@ -56,6 +55,44 @@ func (a Auth) IsAuthenticated(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, result)
+}
+
+// ForgotPassword send a mail to user with new pass
+// @Produce json
+// @Accept json
+// @Tags auth
+// @Param body body request.ForgotPassword false "User"
+// @Success 200 {object} types.Error "Success"
+// @Failure 401 {object} types.Error "Error"
+// @Router /forgot-password/{id} [post]
+func (a Auth) ForgotPassword(c *gin.Context) {
+	var body request.ForgotPassword
+
+	if err := utils.RequestBinderBody(&body, c); err != nil {
+		return
+	}
+
+	user, err := userRepo.GetByKey("email", body.Email)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	password := utils.GenerateString(10)
+	hashPassword := utils.HashString(password)
+
+	code, err := userRepo.UpdatePassword(user.ID, hashPassword)
+	if err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
+	}
+
+	url := c.Request.Header.Get("Origin")
+
+	// nolint:errcheck
+	go mailer.ForgotPassword(user, password, url)
+	c.JSON(http.StatusOK, "Check your email")
 }
 
 // @Summary Returns info about user
