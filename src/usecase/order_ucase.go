@@ -3,6 +3,7 @@ package usecase
 import (
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -450,10 +451,12 @@ func (o Order) GetClientOrdersExcel(c *gin.Context) {
 		}
 	}
 
-	if err := f.SaveAs(dir + "\\src\\static\\files\\Book1.xlsx"); err != nil {
+	pathDir := filepath.Join(dir, "src", "static", "Book1.xlsx")
+
+	if err := f.SaveAs(pathDir); err != nil {
 		utils.CreateError(code, err.Error(), c)
 		return
 	}
 
-	c.File(dir + "\\src\\static\\files\\Book1.xlsx")
+	c.File(pathDir)
 }
