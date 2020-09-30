@@ -51,15 +51,15 @@ func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
 	newPassword := utils.HashString(body.NewPassword)
 	parsedUserID, _ := uuid.FromString(path.ID)
 
-	if body.OldPassword == body.NewPassword {
-		utils.CreateError(http.StatusBadRequest, "Passwords are the same", c)
-		return
-	}
-
 	user, err := userRepo.GetByID(parsedUserID.String())
 
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	if newPassword == user.Password {
+		utils.CreateError(http.StatusBadRequest, "Passwords are the same", c)
 		return
 	}
 
