@@ -47,6 +47,7 @@ func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
 	if len(body.NewPassword) < 10 {
 		utils.CreateError(http.StatusBadRequest, "Password must contain at least 10 characters", c)
 	}
+
 	newPassword := utils.HashString(body.NewPassword)
 	parsedUserID, _ := uuid.FromString(path.ID)
 
@@ -54,6 +55,7 @@ func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
 		utils.CreateError(http.StatusBadRequest, "Passwords are the same", c)
 		return
 	}
+
 	user, err := userRepo.GetByID(parsedUserID.String())
 
 	if err != nil {
@@ -75,7 +77,6 @@ func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
 
 	c.JSON(http.StatusOK, "Password updated")
 }
-
 
 /*// AddCateringUser creates user for catering
 // @Summary Returns error or 201 status code if success
