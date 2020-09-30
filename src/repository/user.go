@@ -394,3 +394,19 @@ func (ur UserRepo) UpdateStatus(userID uuid.UUID, status string) (int, error) {
 
 	return 0, nil
 }
+
+// UpdatePassword updates status for provided userID
+func (ur UserRepo) UpdatePassword(userID uuid.UUID, password string) (int, error) {
+	if err := config.DB.
+		Model(&domain.User{}).
+		Where("id = ?", userID).
+		Update("password", password).
+		Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return http.StatusNotFound, err
+		}
+		return http.StatusBadRequest, err
+	}
+
+	return 0, nil
+}
