@@ -12,7 +12,7 @@ var auth smtp.Auth
 
 // SendEmail sends registration email on provided email
 // returns error
-func SendEmail(user domain.User, password string) error {
+func SendEmail(user domain.User, password string, url string) error {
 	auth = smtp.PlainAuth("", os.Getenv("SMTP_EMAIL"), os.Getenv("SMTP_PASSWORD"), "smtp.gmail.com")
 
 	r := NewRequest([]string{user.Email},
@@ -23,7 +23,7 @@ func SendEmail(user domain.User, password string) error {
 			"Для доступа к приложению используйте ваш логин и пароль:\n"+
 			"Логин: "+user.Email+"\n"+
 			"Пароль: "+password+"\n"+
-			"Войти: " + os.Getenv("CLIENT_URL"))
+			"Войти: " + url)
 
 	if err := r.SendEmail(); err != nil {
 		return err
@@ -32,9 +32,9 @@ func SendEmail(user domain.User, password string) error {
 	return nil
 }
 
-// PasswordEmail sends email with new random generate password
+// ForgotPassword sends email with new random generate password
 // return error
-func ForgotPassword(user domain.User, password string) error {
+func ForgotPassword(user domain.User, password string, url string) error {
 	auth = smtp.PlainAuth("", os.Getenv("SMTP_EMAIL"), os.Getenv("SMTP_PASSWORD"), "smtp.gmail.com")
 
 	r := NewRequest([]string{user.Email},
@@ -43,9 +43,9 @@ func ForgotPassword(user domain.User, password string) error {
 			user.FirstName+"\n"+
 			"Вас приветствует система TastyOffice. Ваш пароль был успешно заменен на новый\n"+
 			"Для доступа к приложению используйте ваш логин и новый пароль:\n"+
-			"Логин: "+user.Email+"\n"+
-			"Пароль: "+password+"\n"+
-			"Войти: " + os.Getenv("CLIENT_URL"))
+			"Логин: "+ user.Email+"\n"+
+			"Пароль: "+ password+"\n"+
+			"Войти: " + url)
 
 	if err := r.SendEmail(); err != nil {
 		return err

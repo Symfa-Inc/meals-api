@@ -1,15 +1,13 @@
 package usecase
 
 import (
+	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/mailer"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
-	"net/http"
-
-	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
-	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // Auth struct
@@ -20,8 +18,6 @@ type Auth struct{}
 func NewAuth() *Auth {
 	return &Auth{}
 }
-
-var userRepo = repository.NewUserRepo()
 
 // IsAuthenticated check if user is authorized and
 // if user exists
@@ -92,9 +88,11 @@ func (a Auth) ForgotPassword(c *gin.Context) {
 		return
 	}
 
+	url := c.Request.Header.Get("Origin")
+
 	// nolint:errcheck
-	go mailer.ForgotPassword(user, password)
-	c.JSON(http.StatusCreated, "Check your email")
+	go mailer.ForgotPassword(user, password, url)
+	c.JSON(http.StatusOK, "Check your email")
 }
 
 // @Summary Returns info about user

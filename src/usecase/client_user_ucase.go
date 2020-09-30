@@ -41,6 +41,9 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 	var path types.PathID
 	var body request.ClientUser
 	var user domain.User
+	var url string
+
+	url = c.Request.Header.Get("Origin")
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -95,7 +98,7 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 		}
 
 		// nolint:errcheck
-		go mailer.SendEmail(user, password)
+		go mailer.SendEmail(user, password, url)
 		c.JSON(http.StatusCreated, userClientCatering)
 		return
 	}
@@ -132,7 +135,7 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 	}
 
 	// nolint:errcheck
-	go mailer.SendEmail(user, password)
+	go mailer.SendEmail(user, password, url)
 	c.JSON(http.StatusCreated, userClientCatering)
 }
 
