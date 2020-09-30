@@ -38,8 +38,8 @@ func (cu *CateringUser) Add(c *gin.Context) {
 	var path types.PathID
 	var body request.CateringUser
 	var user domain.User
-	var url string
-	url = c.Request.Header.Get("Origin")
+
+	var url = c.Request.Header.Get("Origin")
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

@@ -23,7 +23,7 @@ func SendEmail(user domain.User, password string, url string) error {
 			"Для доступа к приложению используйте ваш логин и пароль:\n"+
 			"Логин: "+user.Email+"\n"+
 			"Пароль: "+password+"\n"+
-			"Войти: " + url)
+			"Войти: "+url)
 
 	if err := r.SendEmail(); err != nil {
 		return err
@@ -43,9 +43,9 @@ func ForgotPassword(user domain.User, password string, url string) error {
 			user.FirstName+"\n"+
 			"Вас приветствует система TastyOffice. Ваш пароль был успешно заменен на новый\n"+
 			"Для доступа к приложению используйте ваш логин и новый пароль:\n"+
-			"Логин: "+ user.Email+"\n"+
-			"Пароль: "+ password+"\n"+
-			"Войти: " + url)
+			"Логин: "+user.Email+"\n"+
+			"Пароль: "+password+"\n"+
+			"Войти: "+url)
 
 	if err := r.SendEmail(); err != nil {
 		return err

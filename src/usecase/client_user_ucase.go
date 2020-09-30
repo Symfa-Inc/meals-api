@@ -41,9 +41,7 @@ func (cu *ClientUser) Add(c *gin.Context) { //nolint:dupl
 	var path types.PathID
 	var body request.ClientUser
 	var user domain.User
-	var url string
-
-	url = c.Request.Header.Get("Origin")
+	var url = c.Request.Header.Get("Origin")
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

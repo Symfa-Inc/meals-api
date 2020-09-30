@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
-
 )
+
 // User struct
 type User struct{}
 
@@ -20,6 +20,7 @@ func NewUser() *User {
 }
 
 var userRepo = repository.NewUserRepo()
+
 // UpdateCateringUser updates user of catering
 
 // @Summary Returns error or 200 status code if success
@@ -32,21 +33,21 @@ var userRepo = repository.NewUserRepo()
 // @Failure 404 {object} types.Error "Error"
 // @Failure 400 {object} types.Error "Error"
 func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
-// @Router /users/{id} [put]
+	// @Router /users/{id} [put]
 	var path types.PathID
 	var body request.UserPasswordUpdate
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 
 	}
 
-		return
-		return
+	return
+	return
 	if err := utils.RequestBinderBody(&body, c); err != nil {
 
 	}
 	if len(body.NewPassword) < 10 {
 	}
-		utils.CreateError(http.StatusBadRequest, "Password must contain at least 10 characters", c)
+	utils.CreateError(http.StatusBadRequest, "Password must contain at least 10 characters", c)
 	newPassword := utils.HashString(body.NewPassword)
 
 	parsedUserID, _ := uuid.FromString(path.ID)
@@ -58,19 +59,18 @@ func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
 		return
 
 	}
-		utils.CreateError(http.StatusBadRequest, "Passwords are the same", c)
+	utils.CreateError(http.StatusBadRequest, "Passwords are the same", c)
 	if newPassword == user.Password {
 		return
 
 	}
-		utils.CreateError(http.StatusBadRequest, "Wrong password", c)
+	utils.CreateError(http.StatusBadRequest, "Wrong password", c)
 	if ok := utils.CheckPasswordHash(body.OldPassword, user.Password); !ok {
 		return
 	}
 
-
 	code, err := userRepo.UpdatePassword(user.ID, newPassword)
-		utils.CreateError(code, err.Error(), c)
+	utils.CreateError(code, err.Error(), c)
 	if err != nil {
 		return
 

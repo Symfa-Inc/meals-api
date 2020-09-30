@@ -106,8 +106,6 @@ func (a Auth) ForgotPassword(c *gin.Context) {
 // nolint:deadcode, unused
 func login() {}
 
-
-
 // @Summary Removes cookie if set
 // @Produce json
 // @Accept json
