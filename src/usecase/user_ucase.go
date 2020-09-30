@@ -32,8 +32,8 @@ var userRepo = repository.NewUserRepo()
 // @Success 200 {object} response.UserResponse false "User"
 // @Failure 404 {object} types.Error "Error"
 // @Failure 400 {object} types.Error "Error"
+// @Router /users/{id} [put]
 func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
-	// @Router /users/{id} [put]
 	var path types.PathID
 	var body request.UserPasswordUpdate
 
