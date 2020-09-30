@@ -7,6 +7,12 @@ type CateringUserUpdate struct {
 	Email     string `json:"email,omitempty" example:"d.novikov@wellyes.ru"`
 }
 
+// UserPasswordUpdate scheme
+type UserPasswordUpdate struct {
+	OldPassword string `json:"old_password,omitempty" example:"Password12!"`
+	NewPassword string `json:"new_password,omitempty" example:"Password13!"`
+}
+
 // ClientUserUpdate scheme
 type ClientUserUpdate struct {
 	FirstName string `json:"firstName,omitempty" example:"Dmitry"`

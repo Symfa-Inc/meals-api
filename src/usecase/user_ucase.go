@@ -1,5 +1,15 @@
 package usecase
 
+import (
+	"github.com/Aiscom-LLC/meals-api/src/repository"
+	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
+	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/src/utils"
+	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
+	"net/http"
+
+)
 // User struct
 type User struct{}
 
@@ -7,6 +17,65 @@ type User struct{}
 // with all methods
 func NewUser() *User {
 	return &User{}
+}
+
+var userRepo = repository.NewUserRepo()
+// UpdateCateringUser updates user of catering
+
+// @Summary Returns error or 200 status code if success
+// @Produce json
+// @Accept json
+// @Tags Users
+// @Param body body request.UserPasswordUpdate false "User"
+// @Param id path string false "User ID"
+// @Success 200 {object} response.UserResponse false "User"
+// @Failure 404 {object} types.Error "Error"
+// @Failure 400 {object} types.Error "Error"
+func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
+// @Router /users/{id} [put]
+	var path types.PathID
+	var body request.UserPasswordUpdate
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+
+	}
+
+		return
+		return
+	if err := utils.RequestBinderBody(&body, c); err != nil {
+
+	}
+	if len(body.NewPassword) < 10 {
+	}
+		utils.CreateError(http.StatusBadRequest, "Password must contain at least 10 characters", c)
+	newPassword := utils.HashString(body.NewPassword)
+
+	parsedUserID, _ := uuid.FromString(path.ID)
+
+	user, err := userRepo.GetByID(parsedUserID.String())
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err.Error(), c)
+		return
+
+	}
+		utils.CreateError(http.StatusBadRequest, "Passwords are the same", c)
+	if newPassword == user.Password {
+		return
+
+	}
+		utils.CreateError(http.StatusBadRequest, "Wrong password", c)
+	if ok := utils.CheckPasswordHash(body.OldPassword, user.Password); !ok {
+		return
+	}
+
+
+	code, err := userRepo.UpdatePassword(user.ID, newPassword)
+		utils.CreateError(code, err.Error(), c)
+	if err != nil {
+		return
+
+	}
+	c.JSON(http.StatusOK, "Password updated")
 }
 
 /*// AddCateringUser creates user for catering
