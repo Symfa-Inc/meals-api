@@ -36,20 +36,21 @@ func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
 	// @Router /users/{id} [put]
 	var path types.PathID
 	var body request.UserPasswordUpdate
+
 	if err := utils.RequestBinderURI(&path, c); err != nil {
-
+		return
 	}
 
-	return
-	return
 	if err := utils.RequestBinderBody(&body, c); err != nil {
-
+		return
 	}
+
 	if len(body.NewPassword) < 10 {
+		utils.CreateError(http.StatusBadRequest, "Password must contain at least 10 characters", c)
+		return
 	}
-	utils.CreateError(http.StatusBadRequest, "Password must contain at least 10 characters", c)
-	newPassword := utils.HashString(body.NewPassword)
 
+	newPassword := utils.HashString(body.NewPassword)
 	parsedUserID, _ := uuid.FromString(path.ID)
 
 	user, err := userRepo.GetByID(parsedUserID.String())
@@ -57,24 +58,25 @@ func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
 	if err != nil {
 		utils.CreateError(http.StatusBadRequest, err.Error(), c)
 		return
-
 	}
-	utils.CreateError(http.StatusBadRequest, "Passwords are the same", c)
+
 	if newPassword == user.Password {
+		utils.CreateError(http.StatusBadRequest, "Passwords are the same", c)
 		return
-
 	}
-	utils.CreateError(http.StatusBadRequest, "Wrong password", c)
+
 	if ok := utils.CheckPasswordHash(body.OldPassword, user.Password); !ok {
+		utils.CreateError(http.StatusBadRequest, "Wrong password", c)
 		return
 	}
 
 	code, err := userRepo.UpdatePassword(user.ID, newPassword)
-	utils.CreateError(code, err.Error(), c)
-	if err != nil {
-		return
 
+	if err != nil {
+		utils.CreateError(code, err.Error(), c)
+		return
 	}
+
 	c.JSON(http.StatusOK, "Password updated")
 }
 
