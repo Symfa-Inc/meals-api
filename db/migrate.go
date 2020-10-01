@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/Aiscom-LLC/meals-api/db/seeds/dev"
-
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/types"
+	"os"
 )
 
 func main() {
@@ -14,14 +14,20 @@ func main() {
 	createTypes()
 	fmt.Println("=== TYPES ARE CREATED ===")
 
-	migrate()
-	fmt.Println("=== ADD MIGRATIONS ===")
+	cmd := os.Args
 
-	addDbConstraints()
-	fmt.Println("=== ADD DB CONSTRAINTS ===")
-
-	dev.CreateAdmin()
-
+	if len(cmd) == 1{
+		migrate()
+	} else {
+		if cmd[1] == "dropTable" {
+			dropTable()
+		} else if cmd[1] == "seed" {
+			migrate()
+			seed()
+		} else {
+			fmt.Println("Not existing command")
+		}
+	}
 }
 
 func migrate() {
@@ -46,6 +52,59 @@ func migrate() {
 		&domain.UserOrders{},
 	)
 
+	fmt.Println("=== ADD MIGRATIONS ===")
+
+	addDbConstraints()
+	fmt.Println("=== ADD DB CONSTRAINTS ===")
+
+	dev.CreateAdmin()
+
+}
+
+func dropTable()  {
+	config.DB.DropTableIfExists(
+		&domain.UserOrders{},
+		&domain.OrderDishes{},
+		&domain.Order{},
+		&domain.MealDish{},
+		&domain.ImageDish{},
+		&domain.Image{},
+		&domain.Dish{},
+		&domain.Category{},
+		&domain.Meal{},
+		&domain.Address{},
+		&domain.ClientSchedule{},
+		&domain.ClientUser{},
+		&domain.Client{},
+		&domain.CateringSchedule{},
+		&domain.CateringUser{},
+		&domain.Catering{},
+		&domain.User{},
+		&domain.Seed{},
+	)
+
+	fmt.Println("=== Tables deleted ====")
+}
+
+func seed()  {
+
+	dev.CreateCaterings()
+	dev.CreateCateringSchedules()
+	dev.CreateClients()
+	dev.CreateClientSchedules()
+
+	dev.CreateUsers()
+	dev.CreateCateringUsers()
+	dev.CreateClientUsers()
+	dev.CreateMeals()
+	dev.CreateCategories()
+	dev.CreateDishes()
+
+	dev.CreateImages()
+
+	dev.CreateMealDishes()
+	dev.CreateImageDishes()
+	dev.CreateAddresses()
 }
 
 func addDbConstraints() {
