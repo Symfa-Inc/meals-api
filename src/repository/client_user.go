@@ -140,11 +140,12 @@ func (cur *ClientUserRepo) Update(user *domain.User, floor *int) (int, error) {
 	}
 	if floor != nil {
 		config.DB.
+			Debug().
 			Unscoped().
 			Model(&domain.ClientUser{}).
-			Update("floor", *floor).
-			Where("user_id = ? AND (users.deleted_at > ? OR users.deleted_at IS NULL)",
-				user.ID, time.Now())
+			Where("user_id = ? AND (deleted_at > ? OR deleted_at IS NULL)",
+				user.ID, time.Now()).
+			Update("floor", *floor)
 	}
 
 	return 0, nil
