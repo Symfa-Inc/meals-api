@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/Aiscom-LLC/meals-api/db/seeds/dev"
+
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/types"
@@ -20,49 +20,11 @@ func main() {
 	addDbConstraints()
 	fmt.Println("=== ADD DB CONSTRAINTS ===")
 
-	//dev.CreateCaterings()
-	//dev.CreateCateringSchedules()
-	//dev.CreateClients()
-	//dev.CreateClientSchedules()
-
 	dev.CreateAdmin()
 
-	//dev.CreateUsers()
-	//dev.CreateCateringUsers()
-	//dev.CreateClientUsers()
-	//dev.CreateMeals()
-	//dev.CreateCategories()
-	//dev.CreateDishes()
-
-	dev.CreateImages()
-
-	//dev.CreateMealDishes()
-	//dev.CreateImageDishes()
-	//dev.CreateAddresses()
 }
 
 func migrate() {
-	config.DB.DropTableIfExists(
-		&domain.UserOrders{},
-		&domain.OrderDishes{},
-		&domain.Order{},
-		&domain.MealDish{},
-		&domain.ImageDish{},
-		&domain.Image{},
-		&domain.Dish{},
-		&domain.Category{},
-		&domain.Meal{},
-		&domain.Address{},
-		&domain.ClientSchedule{},
-		&domain.ClientUser{},
-		&domain.Client{},
-		&domain.CateringSchedule{},
-		&domain.CateringUser{},
-		&domain.Catering{},
-		&domain.User{},
-		&domain.Seed{},
-	)
-
 	config.DB.AutoMigrate(
 		&domain.Seed{},
 		&domain.User{},
