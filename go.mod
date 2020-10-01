@@ -3,6 +3,8 @@ module github.com/Aiscom-LLC/meals-api
 go 1.14
 
 require (
+	github.com/360EntSecGroup-Skylar/excelize v1.4.1
+	github.com/360EntSecGroup-Skylar/excelize/v2 v2.3.0 // indirect
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/appleboy/gin-jwt/v2 v2.6.4
 	github.com/appleboy/gofight/v2 v2.1.2

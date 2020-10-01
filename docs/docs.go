@@ -1932,6 +1932,53 @@ var doc = `{
                 }
             }
         },
+        "/clients/{id}/orders-file": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "clients orders"
+                ],
+                "summary": "returns excel file of orders of provided client",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date query in YYYY-MM-DDT00:00:00Z format",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Orders for clients",
+                        "schema": {
+                            "$ref": "#/definitions/response.SummaryOrdersResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/clients/{id}/schedules": {
             "get": {
                 "produces": [

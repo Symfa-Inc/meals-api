@@ -212,7 +212,9 @@ func SetupRouter() *gin.Engine {
 
 			// client addresses
 			allAdmins.GET("/clients/:id/addresses", address.Get)
-
+      
+			// orders
+			allAdmins.GET("/clients/:id/orders-file", order.GetClientOrdersExcel)
 		}
 	}
 	return r

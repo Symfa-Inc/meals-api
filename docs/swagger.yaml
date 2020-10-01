@@ -1758,6 +1758,37 @@ paths:
       summary: approve user orders
       tags:
       - clients orders
+  /clients/{id}/orders-file:
+    get:
+      parameters:
+      - description: Client ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Date query in YYYY-MM-DDT00:00:00Z format
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Orders for clients
+          schema:
+            $ref: '#/definitions/response.SummaryOrdersResponse'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: returns excel file of orders of provided client
+      tags:
+      - clients orders
   /clients/{id}/schedules:
     get:
       parameters:
