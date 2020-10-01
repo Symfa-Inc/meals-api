@@ -41,6 +41,7 @@ func SetupRouter() *gin.Engine {
 	image := usecase.NewImage()
 	order := usecase.NewOrder()
 	address := usecase.NewAddress()
+	user := usecase.NewUser()
 
 	validator := middleware.NewValidator()
 
@@ -59,6 +60,7 @@ func SetupRouter() *gin.Engine {
 	r.GET("/is-authenticated", auth.IsAuthenticated)
 	r.POST("/login", middleware.Passport().LoginHandler)
 	r.GET("/logout", middleware.Passport().LogoutHandler)
+	r.POST("/forgot-password/:id", auth.ForgotPassword)
 
 	authRequired := r.Group("/")
 	authRequired.Use(middleware.Passport().MiddlewareFunc())
@@ -182,6 +184,9 @@ func SetupRouter() *gin.Engine {
 			// dishes
 			allUsers.GET("/caterings/:id/dishes", dish.Get)
 			allUsers.GET("/caterings/:id/dishes/:dishId", dish.GetByID)
+
+			// users
+			allUsers.PUT("/users/:id", user.ChangePassword)
 		}
 
 		allAdmins := authRequired.Group("/")
@@ -207,7 +212,7 @@ func SetupRouter() *gin.Engine {
 
 			// client addresses
 			allAdmins.GET("/clients/:id/addresses", address.Get)
-
+      
 			// orders
 			allAdmins.GET("/clients/:id/orders-file", order.GetClientOrdersExcel)
 		}
