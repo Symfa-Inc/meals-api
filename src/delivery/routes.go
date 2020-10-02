@@ -60,7 +60,7 @@ func SetupRouter() *gin.Engine {
 	r.GET("/is-authenticated", auth.IsAuthenticated)
 	r.POST("/login", middleware.Passport().LoginHandler)
 	r.GET("/logout", middleware.Passport().LogoutHandler)
-	r.POST("/forgot-password/:id", auth.ForgotPassword)
+	r.POST("/forgot-password", auth.ForgotPassword)
 
 	authRequired := r.Group("/")
 	authRequired.Use(middleware.Passport().MiddlewareFunc())
@@ -212,7 +212,7 @@ func SetupRouter() *gin.Engine {
 
 			// client addresses
 			allAdmins.GET("/clients/:id/addresses", address.Get)
-      
+
 			// orders
 			allAdmins.GET("/clients/:id/orders-file", order.GetClientOrdersExcel)
 		}
