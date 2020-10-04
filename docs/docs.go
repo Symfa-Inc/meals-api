@@ -19,7 +19,6 @@ var doc = `{
         "description": "{{.Description}}",
         "title": "{{.Title}}",
         "contact": {},
-        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -1958,12 +1957,6 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Orders for clients",
-                        "schema": {
-                            "$ref": "#/definitions/response.SummaryOrdersResponse"
-                        }
-                    },
                     "400": {
                         "description": "Error",
                         "schema": {
@@ -2292,6 +2285,43 @@ var doc = `{
                 }
             }
         },
+        "/forgot-password/{id}": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "parameters": [
+                    {
+                        "description": "User",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/request.ForgotPassword"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/images": {
             "get": {
                 "produces": [
@@ -2412,6 +2442,56 @@ var doc = `{
                         }
                     },
                     "401": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Returns error or 200 status code if success",
+                "parameters": [
+                    {
+                        "description": "User",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/request.UserPasswordUpdate"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User",
+                        "schema": {
+                            "$ref": "#/definitions/response.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
                         "description": "Error",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2936,7 +3016,7 @@ var doc = `{
             "properties": {
                 "email": {
                     "type": "string",
-                    "example": "admin@meals.com"
+                    "example": "meals@aisnovations.com"
                 },
                 "password": {
                     "type": "string",
@@ -3081,6 +3161,15 @@ var doc = `{
                 }
             }
         },
+        "request.ForgotPassword": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "admin@meals.com"
+                }
+            }
+        },
         "request.Order": {
             "type": "object",
             "properties": {
@@ -3109,18 +3198,30 @@ var doc = `{
                 }
             }
         },
+        "request.UserPasswordUpdate": {
+            "type": "object",
+            "properties": {
+                "new_password": {
+                    "type": "string",
+                    "example": "Password13!"
+                },
+                "old_password": {
+                    "type": "string",
+                    "example": "Password12!"
+                }
+            }
+        },
         "response.CateringClientSwagger": {
             "type": "object",
             "properties": {
                 "client": {
-                    "type": "object",
                     "$ref": "#/definitions/response.ClientInfo"
                 },
                 "ordersDishes": {
                     "type": "string"
                 },
                 "total": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
@@ -3199,7 +3300,7 @@ var doc = `{
                     "type": "string"
                 },
                 "price": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
@@ -3235,14 +3336,12 @@ var doc = `{
                     "type": "string"
                 },
                 "summary": {
-                    "type": "object",
                     "$ref": "#/definitions/response.SummaryOrder"
                 },
                 "summaryTotal": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "userOrders": {
-                    "type": "object",
                     "$ref": "#/definitions/response.SummaryUserOrder"
                 }
             }
@@ -3266,7 +3365,7 @@ var doc = `{
                     "type": "string"
                 },
                 "total": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
@@ -3286,7 +3385,7 @@ var doc = `{
                     "type": "string"
                 },
                 "total": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },

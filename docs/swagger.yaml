@@ -243,7 +243,7 @@ definitions:
   LoginRequest:
     properties:
       email:
-        example: admin@meals.com
+        example: meals@aisnovations.com
         type: string
       password:
         example: Password12!
@@ -347,6 +347,12 @@ definitions:
         example: User
         type: string
     type: object
+  request.ForgotPassword:
+    properties:
+      email:
+        example: admin@meals.com
+        type: string
+    type: object
   request.Order:
     properties:
       amount:
@@ -365,15 +371,23 @@ definitions:
     required:
     - items
     type: object
+  request.UserPasswordUpdate:
+    properties:
+      new_password:
+        example: Password13!
+        type: string
+      old_password:
+        example: Password12!
+        type: string
+    type: object
   response.CateringClientSwagger:
     properties:
       client:
         $ref: '#/definitions/response.ClientInfo'
-        type: object
       ordersDishes:
         type: string
       total:
-        type: integer
+        type: number
     type: object
   response.Client:
     properties:
@@ -424,7 +438,7 @@ definitions:
       name:
         type: string
       price:
-        type: integer
+        type: number
     type: object
   response.OrderStatus:
     properties:
@@ -448,12 +462,10 @@ definitions:
         type: string
       summary:
         $ref: '#/definitions/response.SummaryOrder'
-        type: object
       summaryTotal:
-        type: integer
+        type: number
       userOrders:
         $ref: '#/definitions/response.SummaryUserOrder'
-        type: object
     type: object
   response.SummaryUserOrder:
     properties:
@@ -468,7 +480,7 @@ definitions:
       name:
         type: string
       total:
-        type: integer
+        type: number
     type: object
   response.UserOrder:
     properties:
@@ -481,7 +493,7 @@ definitions:
       status:
         type: string
       total:
-        type: integer
+        type: number
     type: object
   response.UserResponse:
     properties:
@@ -508,7 +520,6 @@ definitions:
     type: object
 info:
   contact: {}
-  license: {}
   title: AIS Catering
   version: 1.0.0
 paths:
@@ -1774,10 +1785,6 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: Orders for clients
-          schema:
-            $ref: '#/definitions/response.SummaryOrdersResponse'
         "400":
           description: Error
           schema:
@@ -1992,6 +1999,29 @@ paths:
       summary: Returns error or 200 status code if success
       tags:
       - clients users
+  /forgot-password/{id}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/request.ForgotPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "401":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      tags:
+      - auth
   /images:
     get:
       produces:
@@ -2074,6 +2104,38 @@ paths:
       summary: Removes cookie if set
       tags:
       - auth
+  /users/{id}:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: User
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/request.UserPasswordUpdate'
+      - description: User ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Returns error or 200 status code if success
+      tags:
+      - Users
   /users/{id}/orders:
     get:
       parameters:

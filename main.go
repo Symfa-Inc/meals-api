@@ -1,7 +1,6 @@
 package main
 
 import (
-	_ "github.com/Aiscom-LLC/meals-api/docs"
 	"github.com/Aiscom-LLC/meals-api/src/delivery"
 	_ "github.com/Aiscom-LLC/meals-api/src/init"
 )
