@@ -63,7 +63,7 @@ func SetupRouter() *gin.Engine {
 	r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 
 		// your custom format
-		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
+		return fmt.Sprintf("IP:%s - [Date:%s] Method:\"%s\" Path:%s Request Prototype:%s Status code:%d Latency:%s User agent:\"%s\" Error:%s\"\n",
 			param.ClientIP,
 			param.TimeStamp.Format(time.RFC1123),
 			param.Method,
