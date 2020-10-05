@@ -1,6 +1,10 @@
 package utils
 
-import "github.com/gin-gonic/gin"
+import (
+	"errors"
+
+	"github.com/gin-gonic/gin"
+)
 
 // CreateError creates an error
 func CreateError(code int, err string, c *gin.Context) {
@@ -8,4 +12,5 @@ func CreateError(code int, err string, c *gin.Context) {
 		"code":  code,
 		"error": err,
 	})
+	_ = c.AbortWithError(code, errors.New(err))
 }

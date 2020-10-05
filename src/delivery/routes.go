@@ -1,8 +1,13 @@
 package delivery
 
 import (
+	"fmt"
+	"io"
 	"net/http"
 	"os"
+	"time"
+
+	"github.com/Aiscom-LLC/meals-api/src/domain"
 
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/types"
@@ -30,6 +35,14 @@ func RedirectFunc(route string) func(c *gin.Context) {
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
+	if err := os.Mkdir("logs", 0777); err != nil {
+		fmt.Println(err)
+	}
+	file, _ := os.Create("logs/gin: " + time.Now().UTC().String() + ".log")
+	fileErr, _ := os.Create("logs/err: " + time.Now().UTC().String() + ".log")
+	gin.DefaultWriter = io.MultiWriter(file)
+	gin.DefaultErrorWriter = io.MultiWriter(fileErr)
+
 	auth := usecase.NewAuth()
 	cateringUser := usecase.NewCateringUser()
 	clientUser := usecase.NewClientUser()
@@ -52,11 +65,28 @@ func SetupRouter() *gin.Engine {
 
 	configCors.AllowCredentials = true
 	r.Use(cors.New(configCors))
-	r.Use(gin.Logger())
+
 	r.Use(gin.Recovery())
 
 	dir, _ := os.Getwd()
 	r.Use(static.Serve("/static/", static.LocalFile(dir+"/src/static/images", true)))
+
+	r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+		user := param.Keys["user"]
+
+		return fmt.Sprintf("IP=%s - [Date=%s] Method=\"%s\" Path=%s Request Prototype=%s Status code=%d Latency=%s User agent=\"%s\" user=%s %s\"\n",
+			param.ClientIP,
+			param.TimeStamp.Format(time.RFC1123),
+			param.Method,
+			param.Path,
+			param.Request.Proto,
+			param.StatusCode,
+			param.Latency,
+			param.Request.UserAgent(),
+			user.(domain.User).Email,
+			param.ErrorMessage,
+		)
+	}))
 
 	r.GET("/api-docs/static/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/is-authenticated", auth.IsAuthenticated)

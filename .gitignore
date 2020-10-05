@@ -1,4 +1,6 @@
 .env
 .idea
+/log
+*.log
 /tmp
 /src/static
