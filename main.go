@@ -17,8 +17,10 @@ func main() {
 	if err := os.Mkdir("logs", 0777); err != nil {
 		fmt.Println(err)
 	}
-	f, _ := os.Create("logs/gin.log: " + time.Now().UTC().String())
-	gin.DefaultWriter = io.MultiWriter(f)
+	file, _ := os.Create("logs/gin: " + time.Now().UTC().String() + ".log")
+	fileErr, _ := os.Create("logs/err: " + time.Now().UTC().String() + ".log")
+	gin.DefaultWriter = io.MultiWriter(file)
+	gin.DefaultErrorWriter = io.MultiWriter(fileErr)
 
 	r := delivery.SetupRouter()
 	if err := r.Run(); err != nil {

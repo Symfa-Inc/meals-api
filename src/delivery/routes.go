@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/Aiscom-LLC/meals-api/src/domain"
+
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/usecase"
@@ -55,13 +57,15 @@ func SetupRouter() *gin.Engine {
 	configCors.AllowCredentials = true
 	r.Use(cors.New(configCors))
 
+	r.Use(gin.Recovery())
+
 	dir, _ := os.Getwd()
 	r.Use(static.Serve("/static/", static.LocalFile(dir+"/src/static/images", true)))
 
 	r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+		user := param.Keys["user"]
 
-		// your custom format
-		return fmt.Sprintf("IP:%s - [Date:%s] Method:\"%s\" Path:%s Request Prototype:%s Status code:%d Latency:%s User agent:\"%s\" Error:%s\"\n",
+		return fmt.Sprintf("IP=%s - [Date=%s] Method=\"%s\" Path=%s Request Prototype=%s Status code=%d Latency=%s User agent=\"%s\" user=%s %s\"\n",
 			param.ClientIP,
 			param.TimeStamp.Format(time.RFC1123),
 			param.Method,
@@ -70,6 +74,7 @@ func SetupRouter() *gin.Engine {
 			param.StatusCode,
 			param.Latency,
 			param.Request.UserAgent(),
+			user.(domain.User).Email,
 			param.ErrorMessage,
 		)
 	}))
