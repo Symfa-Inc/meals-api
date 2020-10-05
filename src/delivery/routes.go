@@ -54,8 +54,6 @@ func SetupRouter() *gin.Engine {
 
 	configCors.AllowCredentials = true
 	r.Use(cors.New(configCors))
-	//r.Use(gin.Logger())
-	//r.Use(gin.Recovery())
 
 	dir, _ := os.Getwd()
 	r.Use(static.Serve("/static/", static.LocalFile(dir+"/src/static/images", true)))

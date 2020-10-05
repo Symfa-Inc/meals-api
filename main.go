@@ -13,7 +13,8 @@ import (
 // @title AIS Catering
 // @version 1.0.0
 func main() {
-	os.Mkdir("logs", 0777)
+	if err := os.Mkdir("logs", 0777); err != nil {
+	}
 	f, _ := os.Create("logs/gin.log: " + time.Now().UTC().String())
 	gin.DefaultWriter = io.MultiWriter(f)
 
