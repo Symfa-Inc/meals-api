@@ -1,13 +1,14 @@
 package usecase
 
 import (
+	"net/http"
+
+	"github.com/Aiscom-LLC/meals-api/src/domain"
+
 	"github.com/Aiscom-LLC/meals-api/src/repository"
 	"github.com/Aiscom-LLC/meals-api/src/schemes/request"
-	"github.com/Aiscom-LLC/meals-api/src/types"
 	"github.com/Aiscom-LLC/meals-api/src/utils"
 	"github.com/gin-gonic/gin"
-	uuid "github.com/satori/go.uuid"
-	"net/http"
 )
 
 // User struct
@@ -26,19 +27,15 @@ var userRepo = repository.NewUserRepo()
 // @Produce json
 // @Accept json
 // @Tags Users
-// @Param id path string false "User ID"
 // @Param body body request.UserPasswordUpdate false "User"
 // @Success 200 {object} response.UserResponse false "User"
 // @Failure 400 {object} types.Error "Error"
 // @Failure 404 {object} types.Error "Error"
-// @Router /users/{id} [put]
+// @Router /users/change-password [put]
 func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
-	var path types.PathID
 	var body request.UserPasswordUpdate
 
-	if err := utils.RequestBinderURI(&path, c); err != nil {
-		return
-	}
+	user, _ := c.Get("user")
 
 	if err := utils.RequestBinderBody(&body, c); err != nil {
 		return
@@ -49,26 +46,19 @@ func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
 	}
 
 	newPassword := utils.HashString(body.NewPassword)
-	parsedUserID, _ := uuid.FromString(path.ID)
+	parsedUserID := user.(domain.User).ID
 
-	user, err := userRepo.GetByID(parsedUserID.String())
-
-	if err != nil {
-		utils.CreateError(http.StatusBadRequest, err.Error(), c)
-		return
-	}
-
-	if newPassword == user.Password {
+	if ok := utils.CheckPasswordHash(body.NewPassword, user.(domain.User).Password); ok {
 		utils.CreateError(http.StatusBadRequest, "Passwords are the same", c)
 		return
 	}
 
-	if ok := utils.CheckPasswordHash(body.OldPassword, user.Password); !ok {
+	if ok := utils.CheckPasswordHash(body.OldPassword, user.(domain.User).Password); !ok {
 		utils.CreateError(http.StatusBadRequest, "Wrong password", c)
 		return
 	}
 
-	code, err := userRepo.UpdatePassword(user.ID, newPassword)
+	code, err := userRepo.UpdatePassword(parsedUserID, newPassword)
 
 	if err != nil {
 		utils.CreateError(code, err.Error(), c)
