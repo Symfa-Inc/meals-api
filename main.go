@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"time"
@@ -14,6 +15,7 @@ import (
 // @version 1.0.0
 func main() {
 	if err := os.Mkdir("logs", 0777); err != nil {
+		fmt.Println(err)
 	}
 	f, _ := os.Create("logs/gin.log: " + time.Now().UTC().String())
 	gin.DefaultWriter = io.MultiWriter(f)
