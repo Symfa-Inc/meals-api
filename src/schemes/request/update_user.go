@@ -9,8 +9,8 @@ type CateringUserUpdate struct {
 
 // UserPasswordUpdate scheme
 type UserPasswordUpdate struct {
-	OldPassword string `json:"old_password,omitempty" example:"Password12!"`
-	NewPassword string `json:"new_password,omitempty" example:"Password13!"`
+	OldPassword string `json:"oldPassword,omitempty" example:"Password12!"`
+	NewPassword string `json:"newPassword,omitempty" example:"Password13!"`
 }
 
 // ClientUserUpdate scheme
