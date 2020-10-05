@@ -12,5 +12,5 @@ func CreateError(code int, err string, c *gin.Context) {
 		"code":  code,
 		"error": err,
 	})
-	c.AbortWithError(code, errors.New(err))
+	_ = c.AbortWithError(code, errors.New(err))
 }
