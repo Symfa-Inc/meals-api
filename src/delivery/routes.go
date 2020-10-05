@@ -1,8 +1,10 @@
 package delivery
 
 import (
+	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/types"
@@ -52,11 +54,27 @@ func SetupRouter() *gin.Engine {
 
 	configCors.AllowCredentials = true
 	r.Use(cors.New(configCors))
-	r.Use(gin.Logger())
-	r.Use(gin.Recovery())
+	//r.Use(gin.Logger())
+	//r.Use(gin.Recovery())
 
 	dir, _ := os.Getwd()
 	r.Use(static.Serve("/static/", static.LocalFile(dir+"/src/static/images", true)))
+
+	r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+
+		// your custom format
+		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
+			param.ClientIP,
+			param.TimeStamp.Format(time.RFC1123),
+			param.Method,
+			param.Path,
+			param.Request.Proto,
+			param.StatusCode,
+			param.Latency,
+			param.Request.UserAgent(),
+			param.ErrorMessage,
+		)
+	}))
 
 	r.GET("/api-docs/static/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/is-authenticated", auth.IsAuthenticated)
