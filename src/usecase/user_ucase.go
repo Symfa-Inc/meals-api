@@ -51,7 +51,7 @@ func (u User) ChangePassword(c *gin.Context) { //nolint:dupl
 	newPassword := utils.HashString(body.NewPassword)
 	parsedUserID := user.(domain.User).ID
 
-	if ok := utils.CheckPasswordHash(body.NewPassword, user.(domain.User).Password); ok {
+	if err := utils.CheckPasswordHash(body.NewPassword, user.(domain.User).Password); err {
 		utils.CreateError(http.StatusBadRequest, "Passwords are the same", c)
 		return
 	}
