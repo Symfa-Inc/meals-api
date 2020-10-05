@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"time"
@@ -33,6 +34,14 @@ func RedirectFunc(route string) func(c *gin.Context) {
 //SetupRouter setting up gin router and config
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
+
+	if err := os.Mkdir("logs", 0777); err != nil {
+		fmt.Println(err)
+	}
+	file, _ := os.Create("logs/gin: " + time.Now().UTC().String() + ".log")
+	fileErr, _ := os.Create("logs/err: " + time.Now().UTC().String() + ".log")
+	gin.DefaultWriter = io.MultiWriter(file)
+	gin.DefaultErrorWriter = io.MultiWriter(fileErr)
 
 	auth := usecase.NewAuth()
 	cateringUser := usecase.NewCateringUser()
