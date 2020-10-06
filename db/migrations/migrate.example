@@ -1,0 +1,29 @@
+package main
+
+import (
+	"github.com/Aiscom-LLC/meals-api/src/config"
+	"github.com/Aiscom-LLC/meals-api/src/domain"
+	"github.com/jinzhu/gorm"
+	"gopkg.in/gormigrate.v1"
+)
+
+func main() {
+	m := gormigrate.New(config.DB, gormigrate.DefaultOptions, []*gormigrate.Migration{
+		{
+			ID: "0",
+			Migrate: func(tx *gorm.DB) error {
+
+				// it's a good pratice to copy the struct inside the function,
+				// so side effects are prevented if the original struct changes during the time
+				type UserOrders struct {
+					domain.UserOrders
+				}
+				return tx.AutoMigrate(&UserOrders{}).Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+
+				return tx.DropTable("user_orders").Error
+			},
+		},
+	})
+}

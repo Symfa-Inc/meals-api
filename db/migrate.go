@@ -2,11 +2,15 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+
 	"github.com/Aiscom-LLC/meals-api/db/seeds/dev"
 	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 	"github.com/Aiscom-LLC/meals-api/src/types"
-	"os"
+	"github.com/jinzhu/gorm"
+	"gopkg.in/gormigrate.v1"
 )
 
 func main() {
@@ -16,7 +20,7 @@ func main() {
 
 	cmd := os.Args
 
-	if len(cmd) == 1{
+	if len(cmd) == 1 {
 		migrate()
 	} else {
 		if cmd[1] == "dropTable" {
@@ -31,28 +35,40 @@ func main() {
 }
 
 func migrate() {
-	config.DB.AutoMigrate(
-		&domain.Seed{},
-		&domain.User{},
-		&domain.Catering{},
-		&domain.CateringUser{},
-		&domain.CateringSchedule{},
-		&domain.Client{},
-		&domain.ClientUser{},
-		&domain.Address{},
-		&domain.ClientSchedule{},
-		&domain.Meal{},
-		&domain.Category{},
-		&domain.Dish{},
-		&domain.ImageDish{},
-		&domain.Image{},
-		&domain.MealDish{},
-		&domain.Order{},
-		&domain.OrderDishes{},
-		&domain.UserOrders{},
-	)
+	m := gormigrate.New(config.DB, gormigrate.DefaultOptions, []*gormigrate.Migration{})
 
-	fmt.Println("=== ADD MIGRATIONS ===")
+	m.InitSchema(func(tx *gorm.DB) error {
+		err := tx.AutoMigrate(
+			&domain.Seed{},
+			&domain.User{},
+			&domain.Catering{},
+			&domain.CateringUser{},
+			&domain.CateringSchedule{},
+			&domain.Client{},
+			&domain.ClientUser{},
+			&domain.Address{},
+			&domain.ClientSchedule{},
+			&domain.Meal{},
+			&domain.Category{},
+			&domain.Dish{},
+			&domain.ImageDish{},
+			&domain.Image{},
+			&domain.MealDish{},
+			&domain.Order{},
+			&domain.OrderDishes{},
+			&domain.UserOrders{},
+		)
+		if err != nil {
+			return err.Error
+		}
+
+		return nil
+	})
+
+	if err := m.Migrate(); err != nil {
+		log.Fatalf("Could not migrate: %v\n", err)
+	}
+	log.Println("=== ADD MIGRATIONS ===")
 
 	addDbConstraints()
 	fmt.Println("=== ADD DB CONSTRAINTS ===")
@@ -61,7 +77,7 @@ func migrate() {
 
 }
 
-func dropTable()  {
+func dropTable() {
 	config.DB.DropTableIfExists(
 		&domain.UserOrders{},
 		&domain.OrderDishes{},
@@ -86,7 +102,7 @@ func dropTable()  {
 	fmt.Println("=== Tables deleted ====")
 }
 
-func seed()  {
+func seed() {
 
 	dev.CreateCaterings()
 	dev.CreateCateringSchedules()
