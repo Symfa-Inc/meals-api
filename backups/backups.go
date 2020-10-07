@@ -1,4 +1,4 @@
-package main
+package backups
 
 import (
 	"bytes"
@@ -22,7 +22,7 @@ func CreateBackup() {
 	err := cmd.Run()
 
 	if err == nil {
-		file, err := os.Create("backups/dump-" + time.Now().UTC().String() + ".psql")
+		file, err := os.Create("backups/dumps/dump-" + time.Now().UTC().String() + ".psql")
 
 		if err != nil {
 			log.Println(err)
