@@ -7,11 +7,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/Aiscom-LLC/meals-api/src/config"
 	"github.com/Aiscom-LLC/meals-api/backup"
-	"github.com/Aiscom-LLC/meals-api/src/domain"
-
-
+	"github.com/Aiscom-LLC/meals-api/src/config"
 
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
 	"github.com/Aiscom-LLC/meals-api/src/types"
