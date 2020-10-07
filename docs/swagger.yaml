@@ -373,10 +373,10 @@ definitions:
     type: object
   request.UserPasswordUpdate:
     properties:
-      new_password:
+      newPassword:
         example: Password13!
         type: string
-      old_password:
+      oldPassword:
         example: Password12!
         type: string
     type: object
@@ -384,6 +384,7 @@ definitions:
     properties:
       client:
         $ref: '#/definitions/response.ClientInfo'
+        type: object
       ordersDishes:
         type: string
       total:
@@ -462,10 +463,12 @@ definitions:
         type: string
       summary:
         $ref: '#/definitions/response.SummaryOrder'
+        type: object
       summaryTotal:
         type: number
       userOrders:
         $ref: '#/definitions/response.SummaryUserOrder'
+        type: object
     type: object
   response.SummaryUserOrder:
     properties:
@@ -520,6 +523,7 @@ definitions:
     type: object
 info:
   contact: {}
+  license: {}
   title: AIS Catering
   version: 1.0.0
 paths:
@@ -2104,38 +2108,6 @@ paths:
       summary: Removes cookie if set
       tags:
       - auth
-  /users/{id}:
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: User
-        in: body
-        name: body
-        schema:
-          $ref: '#/definitions/request.UserPasswordUpdate'
-      - description: User ID
-        in: path
-        name: id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: User
-          schema:
-            $ref: '#/definitions/response.UserResponse'
-        "400":
-          description: Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        "404":
-          description: Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-      summary: Returns error or 200 status code if success
-      tags:
-      - Users
   /users/{id}/orders:
     get:
       parameters:
@@ -2230,4 +2202,32 @@ paths:
       summary: Returns error or 204 status code if success
       tags:
       - users orders
+  /users/change-password:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: User
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/request.UserPasswordUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Returns error or 200 status code if success
+      tags:
+      - Users
 swagger: "2.0"

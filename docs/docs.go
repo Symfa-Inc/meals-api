@@ -19,6 +19,7 @@ var doc = `{
         "description": "{{.Description}}",
         "title": "{{.Title}}",
         "contact": {},
+        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -2450,7 +2451,7 @@ var doc = `{
                 }
             }
         },
-        "/users/{id}": {
+        "/users/change-password": {
             "put": {
                 "consumes": [
                     "application/json"
@@ -2470,12 +2471,6 @@ var doc = `{
                         "schema": {
                             "$ref": "#/definitions/request.UserPasswordUpdate"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path"
                     }
                 ],
                 "responses": {
@@ -3201,11 +3196,11 @@ var doc = `{
         "request.UserPasswordUpdate": {
             "type": "object",
             "properties": {
-                "new_password": {
+                "newPassword": {
                     "type": "string",
                     "example": "Password13!"
                 },
-                "old_password": {
+                "oldPassword": {
                     "type": "string",
                     "example": "Password12!"
                 }
@@ -3215,6 +3210,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "client": {
+                    "type": "object",
                     "$ref": "#/definitions/response.ClientInfo"
                 },
                 "ordersDishes": {
@@ -3336,12 +3332,14 @@ var doc = `{
                     "type": "string"
                 },
                 "summary": {
+                    "type": "object",
                     "$ref": "#/definitions/response.SummaryOrder"
                 },
                 "summaryTotal": {
                     "type": "number"
                 },
                 "userOrders": {
+                    "type": "object",
                     "$ref": "#/definitions/response.SummaryUserOrder"
                 }
             }
