@@ -23,11 +23,11 @@ func main() {
 	if len(cmd) == 1 {
 		migrate()
 	} else {
-		if cmd[1] == "dropTable" {
-			dropTable()
-		} else if cmd[1] == "seed" {
+		if cmd[1] == "drop" {
+			drop()
+		} else if cmd[1] == "seeds" {
 			migrate()
-			seed()
+			seeds()
 		} else {
 			fmt.Println("Not existing command")
 		}
@@ -77,7 +77,7 @@ func migrate() {
 
 }
 
-func dropTable() {
+func drop() {
 	config.DB.DropTableIfExists(
 		&domain.UserOrders{},
 		&domain.OrderDishes{},
@@ -102,7 +102,7 @@ func dropTable() {
 	fmt.Println("=== Tables deleted ====")
 }
 
-func seed() {
+func seeds() {
 
 	dev.CreateCaterings()
 	dev.CreateCateringSchedules()
