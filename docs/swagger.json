@@ -3,6 +3,7 @@
     "info": {
         "title": "AIS Catering",
         "contact": {},
+        "license": {},
         "version": "1.0.0"
     },
     "paths": {
@@ -2432,7 +2433,7 @@
                 }
             }
         },
-        "/users/{id}": {
+        "/users/change-password": {
             "put": {
                 "consumes": [
                     "application/json"
@@ -2452,12 +2453,6 @@
                         "schema": {
                             "$ref": "#/definitions/request.UserPasswordUpdate"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path"
                     }
                 ],
                 "responses": {
@@ -3183,11 +3178,11 @@
         "request.UserPasswordUpdate": {
             "type": "object",
             "properties": {
-                "new_password": {
+                "newPassword": {
                     "type": "string",
                     "example": "Password13!"
                 },
-                "old_password": {
+                "oldPassword": {
                     "type": "string",
                     "example": "Password12!"
                 }
@@ -3197,6 +3192,7 @@
             "type": "object",
             "properties": {
                 "client": {
+                    "type": "object",
                     "$ref": "#/definitions/response.ClientInfo"
                 },
                 "ordersDishes": {
@@ -3318,12 +3314,14 @@
                     "type": "string"
                 },
                 "summary": {
+                    "type": "object",
                     "$ref": "#/definitions/response.SummaryOrder"
                 },
                 "summaryTotal": {
                     "type": "number"
                 },
                 "userOrders": {
+                    "type": "object",
                     "$ref": "#/definitions/response.SummaryUserOrder"
                 }
             }
