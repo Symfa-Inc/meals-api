@@ -2,6 +2,7 @@ package backup
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -11,7 +12,8 @@ import (
 	"github.com/Aiscom-LLC/meals-api/src/config"
 )
 
-func DumpToFile() {
+func CreateBackup() {
+	fmt.Println("qewqs")
 	cmd := exec.Command("pg_dump", "-u", config.Env.DbUser, "-w", config.Env.DbName)
 	cmd.Stdin = strings.NewReader(config.Env.DbPassword)
 	var out bytes.Buffer
