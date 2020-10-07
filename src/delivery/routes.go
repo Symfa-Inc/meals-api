@@ -7,6 +7,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/Aiscom-LLC/meals-api/src/config"
+
+	"github.com/Aiscom-LLC/meals-api/backup"
+
 	"github.com/Aiscom-LLC/meals-api/src/domain"
 
 	"github.com/Aiscom-LLC/meals-api/src/delivery/middleware"
@@ -34,6 +38,10 @@ func RedirectFunc(route string) func(c *gin.Context) {
 //SetupRouter setting up gin router and config
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
+
+	config.CRON.Cron.Start()
+
+	_ = config.CRON.Cron.AddFunc("TZ=Europe/Moscow 00 00 * * * *", backup.DumpToFile)
 
 	if err := os.Mkdir("logs", 0777); err != nil {
 		fmt.Println(err)
