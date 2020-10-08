@@ -1,12 +1,13 @@
 package tests
 
 import (
-	"github.com/Aiscom-LLC/meals-api/api"
-	"github.com/Aiscom-LLC/meals-api/api/middleware"
-	"github.com/Aiscom-LLC/meals-api/repository"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/Aiscom-LLC/meals-api/api"
+	"github.com/Aiscom-LLC/meals-api/api/middleware"
+	"github.com/Aiscom-LLC/meals-api/repository"
 
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
@@ -21,7 +22,7 @@ func TestAddDish(t *testing.T) {
 	userRepo := repository.NewUserRepo()
 	mealRepo := repository.NewMealRepo()
 	cateringRepo := repository.NewCateringRepo()
-	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
+	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
@@ -109,7 +110,7 @@ func TestGetDishes(t *testing.T) {
 	categoryRepo := repository.NewCategoryRepo()
 	userRepo := repository.NewUserRepo()
 	cateringRepo := repository.NewCateringRepo()
-	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
+	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
@@ -164,7 +165,7 @@ func TestUpdateDish(t *testing.T) {
 	userRepo := repository.NewUserRepo()
 	dishRepo := repository.NewDishRepo()
 	cateringRepo := repository.NewCateringRepo()
-	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
+	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
@@ -263,7 +264,7 @@ func TestDeleteDish(t *testing.T) {
 	userRepo := repository.NewUserRepo()
 	dishRepo := repository.NewDishRepo()
 	cateringRepo := repository.NewCateringRepo()
-	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
+	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")

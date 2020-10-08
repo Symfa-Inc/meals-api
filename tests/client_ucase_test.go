@@ -2,6 +2,9 @@ package tests
 
 import (
 	"encoding/json"
+	"net/http"
+	"testing"
+
 	"github.com/Aiscom-LLC/meals-api/api"
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/repository"
@@ -10,8 +13,6 @@ import (
 	"github.com/buger/jsonparser"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
 )
 
 func TestAddClient(t *testing.T) {
@@ -19,7 +20,7 @@ func TestAddClient(t *testing.T) {
 
 	userRepo := repository.NewUserRepo()
 	cateringRepo := repository.NewCateringRepo()
-	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
+	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
@@ -58,7 +59,7 @@ func TestGetClients(t *testing.T) {
 	r := gofight.New()
 
 	userRepo := repository.NewUserRepo()
-	result, _ := userRepo.GetByKey("email", "admin@meals.com")
+	result, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: result.ID.String()})
 
 	// Trying to get list of clients
@@ -93,7 +94,7 @@ func TestDeleteClient(t *testing.T) {
 
 	userRepo := repository.NewUserRepo()
 	cateringRepo := repository.NewCateringRepo()
-	result, _ := userRepo.GetByKey("email", "admin@meals.com")
+	result, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: result.ID.String()})
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
@@ -140,7 +141,7 @@ func TestUpdateClient(t *testing.T) {
 
 	userRepo := repository.NewUserRepo()
 	cateringRepo := repository.NewCateringRepo()
-	result, _ := userRepo.GetByKey("email", "admin@meals.com")
+	result, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: result.ID.String()})
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()

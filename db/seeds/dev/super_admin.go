@@ -2,6 +2,7 @@ package dev
 
 import (
 	"fmt"
+
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository/enums"
@@ -21,7 +22,7 @@ func CreateAdmin() {
 		superAdmin := domain.User{
 			FirstName: "super",
 			LastName:  "admin",
-			Email:     "admin@meals.com",
+			Email:     "meals@aisnovations.com",
 			Password:  utils.HashString("Password12!"),
 			Status:    &enums.StatusTypesEnum.Active,
 			Role:      enums.UserRoleEnum.SuperAdmin,

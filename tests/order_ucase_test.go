@@ -1,14 +1,15 @@
 package tests
 
 import (
+	"net/http"
+	"testing"
+
 	"github.com/Aiscom-LLC/meals-api/api"
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	"github.com/go-playground/assert/v2"
-	"net/http"
-	"testing"
 )
 
 func TestAddOrder(t *testing.T) {
@@ -33,7 +34,7 @@ func TestAddOrder(t *testing.T) {
 	dishRepo := repository.NewDishRepo()
 	dishResult, _, _ := dishRepo.GetByKey("name", "доширак", cateringID, categoryID)
 	dishID := dishResult.ID.String()
-	user, _ := userRepo.GetByKey("email", "admin@meals.com")
+	user, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	userID := user.ID.String()
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userID})
 	var order Order
@@ -91,7 +92,7 @@ func TestGetOrder(t *testing.T) {
 	r := gofight.New()
 
 	userRepo := repository.NewUserRepo()
-	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
+	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	userID := userResult.ID.String()
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userID})
 

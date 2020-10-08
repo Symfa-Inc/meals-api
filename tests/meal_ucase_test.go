@@ -1,6 +1,9 @@
 package tests
 
 import (
+	"net/http"
+	"testing"
+
 	"github.com/Aiscom-LLC/meals-api/api"
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/repository"
@@ -8,8 +11,6 @@ import (
 	"github.com/buger/jsonparser"
 	"github.com/go-playground/assert/v2"
 	uuid "github.com/satori/go.uuid"
-	"net/http"
-	"testing"
 )
 
 func TestAddMeal(t *testing.T) {
@@ -23,7 +24,7 @@ func TestAddMeal(t *testing.T) {
 	cateringID := cateringResult.ID.String()
 	categoryResult, _ := categoryRepo.GetByKey("name", "гарнир", cateringID)
 	categoryID := categoryResult.ID.String()
-	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
+	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	dishResult, _, _ := dishRepo.GetByKey("name", "доширак", cateringID, categoryID)
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	var dishIDs []string
@@ -101,7 +102,7 @@ func TestGetMeal(t *testing.T) {
 	cateringID := cateringResult.ID.String()
 	categoryResult, _ := categoryRepo.GetByKey("name", "гарнир", cateringID)
 	categoryID := categoryResult.ID.String()
-	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
+	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	// Trying to get list of meal
