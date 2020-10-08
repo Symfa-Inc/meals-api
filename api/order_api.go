@@ -1,6 +1,9 @@
 package api
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/repository"
@@ -10,8 +13,6 @@ import (
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"time"
 )
 
 // Order struct
@@ -283,4 +284,42 @@ func (o Order) GetOrderStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": status,
 	})
+}
+
+// GetClientOrdersExcel returns excel file of provided client
+// @Summary returns excel file of orders of provided client
+// @Tags clients orders
+// @Produce json
+// @Param id path string true "Client ID"
+// @Param date query string true "Date query in YYYY-MM-DDT00:00:00Z format"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
+// @Router /clients/{id}/orders-file [get]
+func (o Order) GetClientOrdersExcel(c *gin.Context) {
+	var path url.PathID
+	var query url.DateQuery
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderQuery(&query, c); err != nil {
+		return
+	}
+
+	_, err := time.Parse(time.RFC3339, query.Date)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err, c)
+		return
+	}
+
+	pathDir, code, err := orderService.GetClientOrdersExcel(path, query)
+
+	if err != nil {
+		utils.CreateError(code, err, c)
+		return
+	}
+
+	c.File(pathDir)
 }
