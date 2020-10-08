@@ -174,6 +174,9 @@ func SetupRouter() *gin.Engine {
 
 			// users
 			allUsers.PUT("/users/change-password", user.ChangePassword)
+
+			// auth
+			allUsers.POST("/forgot-password", auth.ForgotPassword)
 		}
 
 		allAdmins := authRequired.Group("/")

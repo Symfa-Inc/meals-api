@@ -2,12 +2,18 @@ package services
 
 import (
 	"errors"
+	"net/http"
+
+	"github.com/Aiscom-LLC/meals-api/domain"
+
+	"github.com/Aiscom-LLC/meals-api/utils"
+
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
+	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // AuthService struct
@@ -42,4 +48,19 @@ func (as *AuthService) IsAuthenticated(c *gin.Context) (models.UserClientCaterin
 		return models.UserClientCatering{}, http.StatusForbidden, errors.New("user was deleted")
 	}
 	return result, 0, nil
+}
+
+func (as AuthService) ForgotPassword(body swagger.ForgotPassword) (domain.User, string, int, error) {
+	user, err := userRepo.GetByKey("email", body.Email)
+
+	if err != nil {
+		return user, "", http.StatusBadRequest, err
+	}
+
+	password := utils.GenerateString(10)
+	hashPassword := utils.HashString(password)
+
+	code, err := userRepo.UpdatePassword(user.ID, hashPassword)
+
+	return user, password, code, err
 }
