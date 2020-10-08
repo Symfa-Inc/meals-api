@@ -15,6 +15,6 @@ type OrderItem struct {
 type UserOrder struct {
 	Items   []OrderItem `json:"items"`
 	Status  string      `json:"status"`
-	Total   int         `json:"total"`
+	Total   float32     `json:"total"`
 	OrderID uuid.UUID   `json:"orderId" gorm:"column:order_id"`
 }
