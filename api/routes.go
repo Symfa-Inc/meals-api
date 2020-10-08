@@ -29,7 +29,6 @@ func SetupRouter() *gin.Engine {
 	image := NewImage()
 	order := NewOrder()
 	address := NewAddress()
-	user := NewUser()
 
 	validator := middleware.NewValidator()
 
@@ -173,7 +172,7 @@ func SetupRouter() *gin.Engine {
 			allUsers.GET("/caterings/:id/dishes/:dishId", dish.GetByID)
 
 			// users
-			allUsers.PUT("/users/change-password", user.ChangePassword)
+			allUsers.PUT("/auth/change-password", auth.ChangePassword)
 		}
 
 		allAdmins := authRequired.Group("/")

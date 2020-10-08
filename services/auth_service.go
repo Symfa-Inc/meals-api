@@ -2,12 +2,16 @@ package services
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
+	"github.com/Aiscom-LLC/meals-api/api/swagger"
+	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
+	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // AuthService struct
@@ -18,6 +22,8 @@ type AuthService struct{}
 func NewAuthService() *AuthService {
 	return &AuthService{}
 }
+
+var userRepository = repository.NewUserRepo()
 
 func (as *AuthService) IsAuthenticated(c *gin.Context) (models.UserClientCatering, int, error) {
 	userRepo := repository.NewUserRepo()
@@ -42,4 +48,26 @@ func (as *AuthService) IsAuthenticated(c *gin.Context) (models.UserClientCaterin
 		return models.UserClientCatering{}, http.StatusForbidden, errors.New("user was deleted")
 	}
 	return result, 0, nil
+}
+
+func (u *UserService) ChangePassword(body swagger.UserPasswordUpdate, user interface{}) (int, error) {
+
+	if len(body.NewPassword) < 10 {
+		return http.StatusBadRequest, errors.New("password must contain at least 10 characters")
+	}
+
+	newPassword := utils.HashString(body.NewPassword)
+	parsedUserID := user.(domain.User).ID
+
+	if err := utils.CheckPasswordHash(body.NewPassword, user.(domain.User).Password); err {
+		return http.StatusBadRequest, errors.New("passwords are the same")
+	}
+
+	if ok := utils.CheckPasswordHash(body.OldPassword, user.(domain.User).Password); !ok {
+		return http.StatusBadRequest, errors.New("wrong password")
+	}
+
+	code, err := userRepository.UpdatePassword(parsedUserID, newPassword)
+
+	return code, err
 }
