@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
+
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
@@ -94,6 +95,22 @@ func (ur UserRepo) UpdateStatus(userID uuid.UUID, status string) (int, error) {
 		Model(&domain.User{}).
 		Where("id = ?", userID).
 		Update("status", status).
+		Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return http.StatusNotFound, err
+		}
+		return http.StatusBadRequest, err
+	}
+
+	return 0, nil
+}
+
+// UpdatePassword updates status for provided userID
+func (ur UserRepo) UpdatePassword(userID uuid.UUID, password string) (int, error) {
+	if err := config.DB.
+		Model(&domain.User{}).
+		Where("id = ?", userID).
+		Update("password", password).
 		Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return http.StatusNotFound, err
