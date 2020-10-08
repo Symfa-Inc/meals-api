@@ -1,8 +1,10 @@
 package api
 
 import (
-	"github.com/Aiscom-LLC/meals-api/services"
 	"net/http"
+
+	"github.com/Aiscom-LLC/meals-api/api/swagger"
+	"github.com/Aiscom-LLC/meals-api/services"
 
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
@@ -38,6 +40,33 @@ func (a Auth) IsAuthenticated(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, user)
+}
+
+// @Summary Returns error or 200 status code if success
+// @Produce json
+// @Accept json
+// @Tags auth
+// @Param body body swagger.UserPasswordUpdate false "User"
+// @Success 200 {object} swagger.UserResponse false "User"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Error"
+// @Router /auth/change-password [put]
+func (a Auth) ChangePassword(c *gin.Context) { //nolint:dupl
+	var body swagger.UserPasswordUpdate
+
+	if err := utils.RequestBinderBody(&body, c); err != nil {
+		return
+	}
+
+	user, _ := c.Get("user")
+
+	code, err := authService.ChangePassword(body, user)
+	if err != nil {
+		utils.CreateError(code, err, c)
+		return
+	}
+
+	c.JSON(http.StatusOK, "Password updated")
 }
 
 // @Summary Returns info about user

@@ -170,6 +170,9 @@ func SetupRouter() *gin.Engine {
 			// dishes
 			allUsers.GET("/caterings/:id/dishes", dish.Get)
 			allUsers.GET("/caterings/:id/dishes/:dishId", dish.GetByID)
+
+			// auth
+			allUsers.PUT("/auth/change-password", auth.ChangePassword)
 		}
 
 		allAdmins := authRequired.Group("/")

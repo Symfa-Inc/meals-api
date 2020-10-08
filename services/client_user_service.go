@@ -2,6 +2,9 @@ package services
 
 import (
 	"errors"
+	"net/http"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
@@ -11,8 +14,6 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
-	"net/http"
-	"time"
 )
 
 // ClientUser struct
