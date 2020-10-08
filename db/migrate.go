@@ -2,11 +2,15 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/db/seeds/dev"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository/enums"
+	"github.com/jinzhu/gorm"
+	"gopkg.in/gormigrate.v1"
 )
 
 func main() {
@@ -14,34 +18,66 @@ func main() {
 	createTypes()
 	fmt.Println("=== TYPES ARE CREATED ===")
 
-	migrate()
-	fmt.Println("=== ADD MIGRATIONS ===")
+	cmd := os.Args
+
+	if len(cmd) == 1 {
+		migrate()
+	} else {
+		if cmd[1] == "drop" {
+			drop()
+		} else if cmd[1] == "seeds" {
+			migrate()
+			seeds()
+		} else {
+			fmt.Println("Not existing command")
+		}
+	}
+}
+
+func migrate() {
+	m := gormigrate.New(config.DB, gormigrate.DefaultOptions, []*gormigrate.Migration{})
+
+	m.InitSchema(func(tx *gorm.DB) error {
+		err := tx.AutoMigrate(
+			&domain.Seed{},
+			&domain.User{},
+			&domain.Catering{},
+			&domain.CateringUser{},
+			&domain.CateringSchedule{},
+			&domain.Client{},
+			&domain.ClientUser{},
+			&domain.Address{},
+			&domain.ClientSchedule{},
+			&domain.Meal{},
+			&domain.Category{},
+			&domain.Dish{},
+			&domain.ImageDish{},
+			&domain.Image{},
+			&domain.MealDish{},
+			&domain.Order{},
+			&domain.OrderDishes{},
+			&domain.UserOrders{},
+		)
+		if err != nil {
+			return err.Error
+		}
+
+		return nil
+	})
+
+	if err := m.Migrate(); err != nil {
+		log.Fatalf("Could not migrate: %v\n", err)
+	}
+	log.Println("=== ADD MIGRATIONS ===")
 
 	addDbConstraints()
 	fmt.Println("=== ADD DB CONSTRAINTS ===")
 
-	dev.CreateCaterings()
-	dev.CreateCateringSchedules()
-	dev.CreateClients()
-	dev.CreateClientSchedules()
-
 	dev.CreateAdmin()
 
-	dev.CreateUsers()
-	dev.CreateCateringUsers()
-	dev.CreateClientUsers()
-	dev.CreateMeals()
-	dev.CreateCategories()
-	dev.CreateDishes()
-
-	dev.CreateImages()
-
-	dev.CreateMealDishes()
-	dev.CreateImageDishes()
-	dev.CreateAddresses()
 }
 
-func migrate() {
+func drop() {
 	config.DB.DropTableIfExists(
 		&domain.UserOrders{},
 		&domain.OrderDishes{},
@@ -63,27 +99,28 @@ func migrate() {
 		&domain.Seed{},
 	)
 
-	config.DB.AutoMigrate(
-		&domain.Seed{},
-		&domain.User{},
-		&domain.Catering{},
-		&domain.CateringUser{},
-		&domain.CateringSchedule{},
-		&domain.Client{},
-		&domain.ClientUser{},
-		&domain.Address{},
-		&domain.ClientSchedule{},
-		&domain.Meal{},
-		&domain.Category{},
-		&domain.Dish{},
-		&domain.ImageDish{},
-		&domain.Image{},
-		&domain.MealDish{},
-		&domain.Order{},
-		&domain.OrderDishes{},
-		&domain.UserOrders{},
-	)
+	fmt.Println("=== Tables deleted ====")
+}
 
+func seeds() {
+
+	dev.CreateCaterings()
+	dev.CreateCateringSchedules()
+	dev.CreateClients()
+	dev.CreateClientSchedules()
+
+	dev.CreateUsers()
+	dev.CreateCateringUsers()
+	dev.CreateClientUsers()
+	dev.CreateMeals()
+	dev.CreateCategories()
+	dev.CreateDishes()
+
+	dev.CreateImages()
+
+	dev.CreateMealDishes()
+	dev.CreateImageDishes()
+	dev.CreateAddresses()
 }
 
 func addDbConstraints() {
@@ -122,29 +159,25 @@ func addDbConstraints() {
 }
 
 func createTypes() {
-	userTypesQuery := fmt.Sprintf("DROP TYPE IF EXISTS user_roles CASCADE;"+
-		"CREATE TYPE user_roles AS ENUM ('%s', '%s', '%s', '%s')",
+	userTypesQuery := fmt.Sprintf("CREATE TYPE user_roles AS ENUM ('%s', '%s', '%s', '%s')",
 		enums.UserRoleEnum.SuperAdmin,
 		enums.UserRoleEnum.CateringAdmin,
 		enums.UserRoleEnum.ClientAdmin,
 		enums.UserRoleEnum.User,
 	)
 
-	companyTypesQuery := fmt.Sprintf("DROP TYPE IF EXISTS company_types CASCADE;"+
-		"CREATE TYPE company_types AS ENUM ('%s', '%s')",
+	companyTypesQuery := fmt.Sprintf("CREATE TYPE company_types AS ENUM ('%s', '%s')",
 		enums.CompanyTypesEnum.Catering,
 		enums.CompanyTypesEnum.Client,
 	)
 
-	statusTypesQuery := fmt.Sprintf("DROP TYPE IF EXISTS status_types CASCADE;"+
-		"CREATE TYPE status_types AS ENUM ('%s', '%s', '%s')",
+	statusTypesQuery := fmt.Sprintf("CREATE TYPE status_types AS ENUM ('%s', '%s', '%s')",
 		enums.StatusTypesEnum.Deleted,
 		enums.StatusTypesEnum.Invited,
 		enums.StatusTypesEnum.Active,
 	)
 
-	orderStatusTypesQuery := fmt.Sprintf("DROP TYPE IF EXISTS order_status_types CASCADE;"+
-		"CREATE TYPE order_status_types AS ENUM ('%s', '%s', '%s')",
+	orderStatusTypesQuery := fmt.Sprintf("CREATE TYPE order_status_types AS ENUM ('%s', '%s', '%s')",
 		enums.OrderStatusTypesEnum.Approved,
 		enums.OrderStatusTypesEnum.Canceled,
 		enums.OrderStatusTypesEnum.Pending,

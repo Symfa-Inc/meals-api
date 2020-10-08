@@ -1,7 +1,10 @@
 package api
 
 import (
+	"fmt"
+	"io"
 	"os"
+	"time"
 
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/repository/enums"
@@ -15,6 +18,14 @@ import (
 //SetupRouter setting up gin router and config
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
+
+	if err := os.Mkdir("logs", 0777); err != nil {
+		fmt.Println(err)
+	}
+	file, _ := os.Create("logs/gin: " + time.Now().UTC().String() + ".log")
+	fileErr, _ := os.Create("logs/err: " + time.Now().UTC().String() + ".log")
+	gin.DefaultWriter = io.MultiWriter(file)
+	gin.DefaultErrorWriter = io.MultiWriter(fileErr)
 
 	auth := NewAuth()
 	cateringUser := NewCateringUser()
@@ -37,11 +48,24 @@ func SetupRouter() *gin.Engine {
 
 	configCors.AllowCredentials = true
 	r.Use(cors.New(configCors))
-	r.Use(gin.Logger())
-	r.Use(gin.Recovery())
 
 	dir, _ := os.Getwd()
 	r.Use(static.Serve("/static/", static.LocalFile(dir+"/src/static/images", true)))
+
+	r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+
+		return fmt.Sprintf("IP=%s - [Date=%s] Method=\"%s\" Path=%s Request Prototype=%s Status code=%d Latency=%s User agent=\"%s\" %s\"\n",
+			param.ClientIP,
+			param.TimeStamp.Format(time.RFC1123),
+			param.Method,
+			param.Path,
+			param.Request.Proto,
+			param.StatusCode,
+			param.Latency,
+			param.Request.UserAgent(),
+			param.ErrorMessage,
+		)
+	}))
 
 	r.GET("/api-docs/static/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/is-authenticated", auth.IsAuthenticated)
