@@ -50,8 +50,7 @@ func (as *AuthService) IsAuthenticated(c *gin.Context) (models.UserClientCaterin
 	return result, 0, nil
 }
 
-func (u *UserService) ChangePassword(body swagger.UserPasswordUpdate, user interface{}) (int, error) {
-
+func (as *AuthService) ChangePassword(body swagger.UserPasswordUpdate, user interface{}) (int, error) {
 	if len(body.NewPassword) < 10 {
 		return http.StatusBadRequest, errors.New("password must contain at least 10 characters")
 	}

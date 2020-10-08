@@ -60,7 +60,7 @@ func (a Auth) ChangePassword(c *gin.Context) { //nolint:dupl
 
 	user, _ := c.Get("user")
 
-	code, err := services.NewUserService().ChangePassword(body, user)
+	code, err := authService.ChangePassword(body, user)
 	if err != nil {
 		utils.CreateError(code, err, c)
 		return

@@ -171,7 +171,7 @@ func SetupRouter() *gin.Engine {
 			allUsers.GET("/caterings/:id/dishes", dish.Get)
 			allUsers.GET("/caterings/:id/dishes/:dishId", dish.GetByID)
 
-			// users
+			// auth
 			allUsers.PUT("/auth/change-password", auth.ChangePassword)
 		}
 
