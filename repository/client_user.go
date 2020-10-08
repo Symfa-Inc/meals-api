@@ -2,10 +2,11 @@ package repository
 
 import (
 	"errors"
-	"github.com/Aiscom-LLC/meals-api/api/url"
-	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"time"
+
+	"github.com/Aiscom-LLC/meals-api/api/url"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
@@ -143,9 +144,9 @@ func (cur *ClientUserRepo) Update(user *domain.User, floor *int) (int, error) {
 		config.DB.
 			Unscoped().
 			Model(&domain.ClientUser{}).
-			Update("floor", *floor).
-			Where("user_id = ? AND (users.deleted_at > ? OR users.deleted_at IS NULL)",
-				user.ID, time.Now())
+			Where("user_id = ? AND (deleted_at > ? OR deleted_at IS NULL)",
+				user.ID, time.Now()).
+			Update("floor", *floor)
 	}
 
 	return 0, nil
