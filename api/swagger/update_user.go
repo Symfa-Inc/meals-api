@@ -22,7 +22,7 @@ type ClientUserUpdate struct {
 	Role      string `json:"role" example:"User"`
 }
 
-// ForgotPassword scheme
-type ForgotPassword struct {
+// RecoveryPassword scheme
+type RecoveryPassword struct {
 	Email string `json:"email" example:"meals@aisnovations.com"`
 }

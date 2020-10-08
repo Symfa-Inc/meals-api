@@ -32,9 +32,9 @@ func SendEmail(user domain.User, password string, url string) error {
 	return nil
 }
 
-// ForgotPassword sends email with new random generate password
+// RecoveryPassword sends email with new random generate password
 // return error
-func ForgotPassword(user domain.User, password string, url string) error {
+func RecoveryPassword(user domain.User, password string, url string) error {
 	auth = smtp.PlainAuth("", os.Getenv("SMTP_EMAIL"), os.Getenv("SMTP_PASSWORD"), "smtp.gmail.com")
 
 	r := NewRequest([]string{user.Email},
