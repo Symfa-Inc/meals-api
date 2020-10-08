@@ -2,6 +2,9 @@ package api
 
 import (
 	"errors"
+	"net/http"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/mailer"
@@ -13,8 +16,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	uuid "github.com/satori/go.uuid"
-	"net/http"
-	"time"
 )
 
 // CateringUser struct
@@ -74,8 +75,9 @@ func (cu *CateringUser) Add(c *gin.Context) {
 		return
 	}
 
+	url := c.Request.Header.Get("Origin")
 	// nolint:errcheck
-	go mailer.SendEmail(userCreated, password)
+	go mailer.SendEmail(userCreated, password, url)
 	c.JSON(http.StatusCreated, userClientCatering)
 }
 
