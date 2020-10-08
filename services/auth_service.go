@@ -70,3 +70,18 @@ func (as *AuthService) ChangePassword(body swagger.UserPasswordUpdate, user inte
 
 	return code, err
 }
+
+func (as *AuthService) RecoveryPassword(body swagger.RecoveryPassword) (domain.User, string, int, error) {
+	user, err := userRepo.GetByKey("email", body.Email)
+
+	if err != nil {
+		return user, "", http.StatusBadRequest, err
+	}
+
+	password := utils.GenerateString(10)
+	hashPassword := utils.HashString(password)
+
+	code, err := userRepository.UpdatePassword(user.ID, hashPassword)
+
+	return user, password, code, err
+}

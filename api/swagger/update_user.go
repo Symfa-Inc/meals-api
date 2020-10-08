@@ -21,3 +21,8 @@ type ClientUserUpdate struct {
 	Floor     *int   `json:"floor" example:"5"`
 	Role      string `json:"role" example:"User"`
 }
+
+// RecoveryPassword scheme
+type RecoveryPassword struct {
+	Email string `json:"email" example:"meals@aisnovations.com"`
+}

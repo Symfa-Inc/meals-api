@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/Aiscom-LLC/meals-api/mailer"
+
 	"github.com/Aiscom-LLC/meals-api/api/swagger"
 	"github.com/Aiscom-LLC/meals-api/services"
 
@@ -67,6 +69,34 @@ func (a Auth) ChangePassword(c *gin.Context) { //nolint:dupl
 	}
 
 	c.JSON(http.StatusOK, "Password updated")
+}
+
+// RecoveryPassword send a mail to user with new pass
+// @Produce json
+// @Accept json
+// @Tags auth
+// @Param body body swagger.RecoveryPassword false "User"
+// @Success 200 {object} Error "Success"
+// @Failure 401 {object} Error "Error"
+// @Router /recovery-password [post]
+func (a Auth) RecoveryPassword(c *gin.Context) {
+	var body swagger.RecoveryPassword
+
+	if err := utils.RequestBinderBody(&body, c); err != nil {
+		return
+	}
+
+	user, password, code, err := authService.RecoveryPassword(body)
+
+	if err != nil {
+		utils.CreateError(code, err, c)
+		return
+	}
+
+	url := c.Request.Header.Get("Origin")
+	// nolint:errcheck
+	go mailer.RecoveryPassword(user, password, url)
+	c.JSON(http.StatusOK, "Check your email")
 }
 
 // @Summary Returns info about user
