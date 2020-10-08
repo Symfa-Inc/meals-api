@@ -1938,6 +1938,47 @@ var doc = `{
                 }
             }
         },
+        "/clients/{id}/orders-file": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "clients orders"
+                ],
+                "summary": "returns excel file of orders of provided client",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date query in YYYY-MM-DDT00:00:00Z format",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/clients/{id}/schedules": {
             "get": {
                 "produces": [
@@ -2251,6 +2292,43 @@ var doc = `{
                 }
             }
         },
+        "/forgot-password/{id}": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "parameters": [
+                    {
+                        "description": "User",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/request.ForgotPassword"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/images": {
             "get": {
                 "produces": [
@@ -2371,6 +2449,50 @@ var doc = `{
                         }
                     },
                     "401": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/change-password": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Returns error or 200 status code if success",
+                "parameters": [
+                    {
+                        "description": "User",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/request.UserPasswordUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User",
+                        "schema": {
+                            "$ref": "#/definitions/response.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
                         "description": "Error",
                         "schema": {
                             "$ref": "#/definitions/ErrorResponse"
@@ -2895,7 +3017,7 @@ var doc = `{
             "properties": {
                 "email": {
                     "type": "string",
-                    "example": "admin@meals.com"
+                    "example": "meals@aisnovations.com"
                 },
                 "password": {
                     "type": "string",
@@ -3102,7 +3224,7 @@ var doc = `{
                     "type": "integer"
                 },
                 "total": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
@@ -3144,7 +3266,7 @@ var doc = `{
                     "type": "string"
                 },
                 "price": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
@@ -3201,7 +3323,7 @@ var doc = `{
                     "$ref": "#/definitions/swagger.SummaryOrder"
                 },
                 "summaryTotal": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "userOrders": {
                     "type": "object",
@@ -3228,7 +3350,7 @@ var doc = `{
                     "type": "string"
                 },
                 "total": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
@@ -3248,7 +3370,7 @@ var doc = `{
                     "type": "string"
                 },
                 "total": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },

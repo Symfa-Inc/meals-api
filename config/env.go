@@ -21,7 +21,7 @@ type env struct {
 var Env env
 
 func init() {
-	_ = godotenv.Load(os.ExpandEnv("$GOPATH/src/github.com/Aiscom-LLC/meals-api/.env"))
+	_ = godotenv.Load()
 	Env = env{
 		DbHost:     os.Getenv("DB_HOST"),
 		DbPort:     os.Getenv("DB_PORT"),

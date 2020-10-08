@@ -7,10 +7,10 @@ import (
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/db/seeds/dev"
-	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository/enums"
-	"github.com/jinzhu/gorm"
+	"github.com/Aiscom-LLC/meals-api/domain"
 	"gopkg.in/gormigrate.v1"
+	"github.com/jinzhu/gorm"
 )
 
 func main() {
