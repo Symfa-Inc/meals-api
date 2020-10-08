@@ -2,6 +2,9 @@ package tests
 
 import (
 	"encoding/json"
+	"net/http"
+	"testing"
+
 	"github.com/Aiscom-LLC/meals-api/api"
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/repository"
@@ -9,8 +12,6 @@ import (
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
 )
 
 func TestAddCateringUser(t *testing.T) {
@@ -81,7 +82,7 @@ func TestAddCateringUser(t *testing.T) {
 			"jwt": jwt,
 		}).
 		SetJSON(gofight.D{
-			"email":     "admin@meals.com",
+			"email":     "meals@aisnovations.com",
 			"firstName": "ExampleFName",
 			"lastName":  "ExampleLName",
 		}).

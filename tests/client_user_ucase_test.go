@@ -1,14 +1,15 @@
 package tests
 
 import (
+	"net/http"
+	"testing"
+
 	"github.com/Aiscom-LLC/meals-api/api"
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
 )
 
 func TestAddClientUser(t *testing.T) {
@@ -16,7 +17,7 @@ func TestAddClientUser(t *testing.T) {
 
 	var clientRepo = repository.NewClientRepo()
 	var userRepo = repository.NewUserRepo()
-	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
+	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()
@@ -132,7 +133,7 @@ func TestGetClientUsers(t *testing.T) {
 
 	var clientRepo = repository.NewClientRepo()
 	var userRepo = repository.NewUserRepo()
-	result, _ := userRepo.GetByKey("email", "admin@meals.com")
+	result, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: result.ID.String()})
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()
@@ -163,7 +164,7 @@ func TestDeleteClientUsers(t *testing.T) {
 
 	var clientRepo = repository.NewClientRepo()
 	var userRepo = repository.NewUserRepo()
-	result, _ := userRepo.GetByKey("email", "admin@meals.com")
+	result, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	admin1, _ := userRepo.GetByKey("email", "marianafox@comcubine.com")
 	admin2, _ := userRepo.GetByKey("email", "maggietodd@comcubine.com")
 	clientAdmin, _ := userRepo.GetByKey("email", "melodybond@comcubine.com")
@@ -239,7 +240,7 @@ func TestUpdateClientUser(t *testing.T) {
 
 	var clientRepo = repository.NewClientRepo()
 	var userRepo = repository.NewUserRepo()
-	result, _ := userRepo.GetByKey("email", "admin@meals.com")
+	result, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: result.ID.String()})
 	clientResult, _ := clientRepo.GetByKey("name", "Dymi")
 	clientID := clientResult.ID.String()

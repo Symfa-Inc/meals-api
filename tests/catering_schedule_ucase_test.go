@@ -2,6 +2,9 @@ package tests
 
 import (
 	"encoding/json"
+	"net/http"
+	"testing"
+
 	"github.com/Aiscom-LLC/meals-api/api"
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/domain"
@@ -10,8 +13,6 @@ import (
 	"github.com/buger/jsonparser"
 	"github.com/go-playground/assert/v2"
 	uuid "github.com/satori/go.uuid"
-	"net/http"
-	"testing"
 )
 
 func TestGetCateringSchedules(t *testing.T) {
@@ -19,7 +20,7 @@ func TestGetCateringSchedules(t *testing.T) {
 
 	var userRepo = repository.NewUserRepo()
 	var cateringRepo = repository.NewCateringRepo()
-	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
+	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
@@ -61,7 +62,7 @@ func TestUpdateCateringSchedule(t *testing.T) {
 
 	var userRepo = repository.NewUserRepo()
 	var cateringRepo = repository.NewCateringRepo()
-	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
+	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	cateringResult, _ := cateringRepo.GetByKey("name", "Twiist")
 	cateringID := cateringResult.ID.String()
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})

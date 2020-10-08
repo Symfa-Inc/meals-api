@@ -1,21 +1,22 @@
 package tests
 
 import (
+	"net/http"
+	"testing"
+
 	"github.com/Aiscom-LLC/meals-api/api"
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/appleboy/gofight/v2"
 	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
 )
 
 func TestIsAuthenticated(t *testing.T) {
 	r := gofight.New()
 
 	userRepo := repository.NewUserRepo()
-	userResult, _ := userRepo.GetByKey("email", "admin@meals.com")
+	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
 
 	// Trying to login without jwt cookie
@@ -36,7 +37,7 @@ func TestIsAuthenticated(t *testing.T) {
 		email, _ := jsonparser.GetString(data, "email")
 		name, _ := jsonparser.GetString(data, "firstName")
 		assert.Equal(t, http.StatusOK, r.Code)
-		assert.Equal(t, "admin@meals.com", email)
+		assert.Equal(t, "meals@aisnovations.com", email)
 		assert.Equal(t, "super", name)
 	})
 }
