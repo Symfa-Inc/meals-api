@@ -2,9 +2,10 @@ package repository
 
 import (
 	"errors"
-	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"time"
+
+	"github.com/Aiscom-LLC/meals-api/repository/models"
 
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
@@ -28,7 +29,7 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder models.OrderReque
 	var orderExist int
 	var order domain.Order
 	var userOrder domain.UserOrders
-	var total int
+	var total float32
 	var userOrderResponse models.UserOrder
 
 	config.DB.
@@ -46,7 +47,7 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder models.OrderReque
 	config.DB.Create(&order)
 
 	for _, dish := range newOrder.Items {
-		var price []int
+		var price []float32
 
 		orderDish := domain.OrderDishes{
 			OrderID: order.ID,
@@ -63,7 +64,7 @@ func (o OrderRepo) Add(userID string, date time.Time, newOrder models.OrderReque
 			Where("id = ?", dish.DishID).
 			Pluck("price", &price)
 
-		total += price[0] * dish.Amount
+		total += price[0] * float32(dish.Amount)
 
 		order.Total = &total
 		order.Date = date
