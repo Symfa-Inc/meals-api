@@ -99,8 +99,8 @@ func Passport() *jwt.GinJWTMiddleware {
 							}, nil
 						}
 					}
-					return nil, errors.New("user was deleted")
 				}
+				return nil, errors.New("user was deleted")
 			}
 			return nil, errors.New("incorrect email or password")
 		},
