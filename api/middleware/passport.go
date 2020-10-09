@@ -91,7 +91,7 @@ func Passport() *jwt.GinJWTMiddleware {
 			if err == nil {
 				for i := range result {
 					status := utils.DerefString(result[i].Status)
-					if status == enums.StatusTypesEnum.Invited {
+					if status == enums.StatusTypesEnum.Invited || status == enums.StatusTypesEnum.Active {
 						equal := utils.CheckPasswordHash(body.Password, result[i].Password)
 						if equal {
 							return &UserID{
