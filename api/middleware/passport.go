@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -94,7 +93,6 @@ func Passport() *jwt.GinJWTMiddleware {
 					status := utils.DerefString(result[i].Status)
 					if status == enums.StatusTypesEnum.Invited || status == enums.StatusTypesEnum.Active {
 						equal := utils.CheckPasswordHash(body.Password, result[i].Password)
-						fmt.Println(result)
 						if equal {
 							return &UserID{
 								ID: result[i].ID.String(),
