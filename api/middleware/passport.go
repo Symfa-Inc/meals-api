@@ -2,13 +2,15 @@ package middleware
 
 import (
 	"errors"
-	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/Aiscom-LLC/meals-api/repository"
+	"github.com/Aiscom-LLC/meals-api/repository/models"
+
 	"github.com/Aiscom-LLC/meals-api/repository/enums"
+
+	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
@@ -28,7 +30,7 @@ var userRepo = repository.NewUserRepo()
 // Passport is middleware for user authentication
 func Passport() *jwt.GinJWTMiddleware {
 	authMiddleware, _ := jwt.New(&jwt.GinJWTMiddleware{
-		Realm:          "AIS Catering",
+		Realm:          "TastyOffice",
 		Key:            []byte(os.Getenv("JWTSECRET")),
 		Timeout:        time.Hour * 4,
 		MaxRefresh:     time.Hour * 24,
@@ -85,18 +87,19 @@ func Passport() *jwt.GinJWTMiddleware {
 				return "", errors.New("missing email or password")
 			}
 
-			result, err := userRepo.GetByKey("email", body.Email)
+			result, err := userRepo.GetAllByKey("email", body.Email)
 			if err == nil {
-				status := utils.DerefString(result.Status)
-				if status == enums.StatusTypesEnum.Deleted {
+				for i := range result {
+					status := utils.DerefString(result[i].Status)
+					if status == enums.StatusTypesEnum.Invited {
+						equal := utils.CheckPasswordHash(body.Password, result[i].Password)
+						if equal {
+							return &UserID{
+								ID: result[i].ID.String(),
+							}, nil
+						}
+					}
 					return nil, errors.New("user was deleted")
-				}
-
-				equal := utils.CheckPasswordHash(body.Password, result.Password)
-				if equal {
-					return &UserID{
-						ID: result.ID.String(),
-					}, nil
 				}
 			}
 			return nil, errors.New("incorrect email or password")
