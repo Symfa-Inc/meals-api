@@ -197,7 +197,7 @@ func (o *OrderService) GetClientOrdersExcel(path url.PathID, query url.DateQuery
 		}
 	}
 
-	pathDir := filepath.Join(dir, "src", "static", "Book1.xlsx")
+	pathDir := filepath.Join(dir, "static", "Book1.xlsx")
 
 	// nolint:errcheck
 	f.SaveAs(pathDir)
