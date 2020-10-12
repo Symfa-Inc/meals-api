@@ -243,7 +243,7 @@ definitions:
   LoginRequest:
     properties:
       email:
-        example: admin@meals.com
+        example: meals@aisnovations.com
         type: string
       password:
         example: Password12!
@@ -388,7 +388,7 @@ definitions:
       page:
         type: integer
       total:
-        type: integer
+        type: number
     type: object
   swagger.ItemsSummaryOrder:
     properties:
@@ -415,7 +415,7 @@ definitions:
       name:
         type: string
       price:
-        type: integer
+        type: number
     type: object
   swagger.OrderRequest:
     properties:
@@ -452,7 +452,7 @@ definitions:
         $ref: '#/definitions/swagger.SummaryOrder'
         type: object
       summaryTotal:
-        type: integer
+        type: number
       userOrders:
         $ref: '#/definitions/swagger.SummaryUserOrder'
         type: object
@@ -470,7 +470,7 @@ definitions:
       name:
         type: string
       total:
-        type: integer
+        type: number
     type: object
   swagger.UserOrder:
     properties:
@@ -483,7 +483,7 @@ definitions:
       status:
         type: string
       total:
-        type: integer
+        type: number
     type: object
   swagger.UserResponse:
     properties:
@@ -1764,6 +1764,33 @@ paths:
       summary: approve user orders
       tags:
       - clients orders
+  /clients/{id}/orders-file:
+    get:
+      parameters:
+      - description: Client ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Date query in YYYY-MM-DDT00:00:00Z format
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: returns excel file of orders of provided client
+      tags:
+      - clients orders
   /clients/{id}/schedules:
     get:
       parameters:
@@ -1967,6 +1994,29 @@ paths:
       summary: Returns error or 200 status code if success
       tags:
       - clients users
+  /forgot-password/{id}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/request.ForgotPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "401":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      tags:
+      - auth
   /images:
     get:
       produces:
@@ -2143,4 +2193,32 @@ paths:
       summary: Returns error or 204 status code if success
       tags:
       - users orders
+  /users/change-password:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: User
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/request.UserPasswordUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Returns error or 200 status code if success
+      tags:
+      - Users
 swagger: "2.0"

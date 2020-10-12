@@ -35,8 +35,8 @@ type ClientInfo struct {
 // ClientOrder response struct
 type ClientOrder struct {
 	ClientInfo   `json:"client"`
-	OrdersDishes string `json:"ordersDishes" gorm:"column:orders_dishes"`
-	Total        int    `json:"total" gorm:"column:total"`
+	OrdersDishes string  `json:"ordersDishes" gorm:"column:orders_dishes"`
+	Total        float32 `json:"total" gorm:"column:total"`
 }
 
 // ClientResponse struct
@@ -57,5 +57,5 @@ type GetCateringClientsSwagger struct {
 type CateringClientSwagger struct {
 	ClientInfo   ClientInfo `json:"client"`
 	OrdersDishes string     `json:"ordersDishes" gorm:"column:orders_dishes"`
-	Total        int        `json:"total" gorm:"column:total"`
+	Total        float32    `json:"total" gorm:"column:total"`
 }

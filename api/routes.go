@@ -50,7 +50,7 @@ func SetupRouter() *gin.Engine {
 	r.Use(cors.New(configCors))
 
 	dir, _ := os.Getwd()
-	r.Use(static.Serve("/static/", static.LocalFile(dir+"/src/static/images", true)))
+	r.Use(static.Serve("/static/", static.LocalFile(dir+"/static/images", true)))
 
 	r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 
