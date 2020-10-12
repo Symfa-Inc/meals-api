@@ -323,6 +323,10 @@ func (o Order) GetClientOrdersExcel(c *gin.Context) {
 	}
 
 	c.File(pathDir)
-	// nolint:errcheck
-	os.Remove(pathDir)
+
+	err = os.Remove(pathDir)
+	if err != nil {
+		utils.CreateError(code, err, c)
+		return
+	}
 }
