@@ -5,10 +5,10 @@ import (
 	"log"
 	"os"
 
+	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/db/seeds/dev"
-	"github.com/Aiscom-LLC/meals-api/src/config"
-	"github.com/Aiscom-LLC/meals-api/src/domain"
-	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 	"github.com/jinzhu/gorm"
 	"gopkg.in/gormigrate.v1"
 )
@@ -160,27 +160,27 @@ func addDbConstraints() {
 
 func createTypes() {
 	userTypesQuery := fmt.Sprintf("CREATE TYPE user_roles AS ENUM ('%s', '%s', '%s', '%s')",
-		types.UserRoleEnum.SuperAdmin,
-		types.UserRoleEnum.CateringAdmin,
-		types.UserRoleEnum.ClientAdmin,
-		types.UserRoleEnum.User,
+		enums.UserRoleEnum.SuperAdmin,
+		enums.UserRoleEnum.CateringAdmin,
+		enums.UserRoleEnum.ClientAdmin,
+		enums.UserRoleEnum.User,
 	)
 
 	companyTypesQuery := fmt.Sprintf("CREATE TYPE company_types AS ENUM ('%s', '%s')",
-		types.CompanyTypesEnum.Catering,
-		types.CompanyTypesEnum.Client,
+		enums.CompanyTypesEnum.Catering,
+		enums.CompanyTypesEnum.Client,
 	)
 
 	statusTypesQuery := fmt.Sprintf("CREATE TYPE status_types AS ENUM ('%s', '%s', '%s')",
-		types.StatusTypesEnum.Deleted,
-		types.StatusTypesEnum.Invited,
-		types.StatusTypesEnum.Active,
+		enums.StatusTypesEnum.Deleted,
+		enums.StatusTypesEnum.Invited,
+		enums.StatusTypesEnum.Active,
 	)
 
 	orderStatusTypesQuery := fmt.Sprintf("CREATE TYPE order_status_types AS ENUM ('%s', '%s', '%s')",
-		types.OrderStatusTypesEnum.Approved,
-		types.OrderStatusTypesEnum.Canceled,
-		types.OrderStatusTypesEnum.Pending,
+		enums.OrderStatusTypesEnum.Approved,
+		enums.OrderStatusTypesEnum.Canceled,
+		enums.OrderStatusTypesEnum.Pending,
 	)
 
 	config.DB.Exec(userTypesQuery)

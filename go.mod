@@ -12,6 +12,7 @@ require (
 	github.com/cosmtrek/air v1.21.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/creack/pty v1.1.11 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/static v0.0.0-20200815103939-31fb0c56a3d1
@@ -39,9 +40,9 @@ require (
 	github.com/swaggo/swag v1.6.7
 	github.com/urfave/cli/v2 v2.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de
-	golang.org/x/net v0.0.0-20200923182212-328152dc79b1 // indirect
-	golang.org/x/sys v0.0.0-20200923182605-d9f96fdee20d // indirect
-	golang.org/x/tools v0.0.0-20200923182640-463111b69878 // indirect
+	golang.org/x/net v0.0.0-20200822124328-c89045814202 // indirect
+	golang.org/x/sys v0.0.0-20200828194041-157a740278f4 // indirect
+	golang.org/x/tools v0.0.0-20200828161849-5deb26317202
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 )

@@ -3,10 +3,10 @@ package dev
 import (
 	"fmt"
 
-	"github.com/Aiscom-LLC/meals-api/src/config"
-	"github.com/Aiscom-LLC/meals-api/src/domain"
-	"github.com/Aiscom-LLC/meals-api/src/types"
-	"github.com/Aiscom-LLC/meals-api/src/utils"
+	"github.com/Aiscom-LLC/meals-api/config"
+	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
+	"github.com/Aiscom-LLC/meals-api/utils"
 )
 
 // CreateUsers will populate users table with random users
@@ -27,11 +27,11 @@ func CreateUsers() {
 		for i := range userArray {
 			if i < 3 {
 				userArray[i].Password = hashedPassword
-				userArray[i].Status = &types.StatusTypesEnum.Active
+				userArray[i].Status = &enums.StatusTypesEnum.Active
 				config.DB.Create(&userArray[i])
 			} else {
 				userArray[i].Password = hashedPassword
-				userArray[i].Status = &types.StatusTypesEnum.Active
+				userArray[i].Status = &enums.StatusTypesEnum.Active
 				config.DB.Create(&userArray[i])
 			}
 		}

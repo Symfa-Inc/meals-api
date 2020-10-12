@@ -2,8 +2,8 @@ package dev
 
 import (
 	"fmt"
-	"github.com/Aiscom-LLC/meals-api/src/config"
-	"github.com/Aiscom-LLC/meals-api/src/domain"
+	"github.com/Aiscom-LLC/meals-api/config"
+	"github.com/Aiscom-LLC/meals-api/domain"
 	"io/ioutil"
 	"os"
 )
@@ -17,7 +17,7 @@ func CreateImages() {
 		}
 
 		dir, _ := os.Getwd()
-		salads, _ := ioutil.ReadDir(dir + "/src/static/images/salad")
+		salads, _ := ioutil.ReadDir(dir + "/static/images/salad")
 		for _, salad := range salads {
 			categoryName := "salad"
 			image := domain.Image{
@@ -27,7 +27,7 @@ func CreateImages() {
 			config.DB.Create(&image)
 		}
 
-		desserts, _ := ioutil.ReadDir(dir + "/src/static/images/dessert")
+		desserts, _ := ioutil.ReadDir(dir + "/static/images/dessert")
 		for _, dessert := range desserts {
 			categoryName := "dessert"
 			image := domain.Image{
@@ -37,7 +37,7 @@ func CreateImages() {
 			config.DB.Create(&image)
 		}
 
-		garnishes, _ := ioutil.ReadDir(dir + "/src/static/images/garnish")
+		garnishes, _ := ioutil.ReadDir(dir + "/static/images/garnish")
 		for _, garnish := range garnishes {
 			categoryName := "garnish"
 			image := domain.Image{
@@ -47,7 +47,7 @@ func CreateImages() {
 			config.DB.Create(&image)
 		}
 
-		soups, _ := ioutil.ReadDir(dir + "/src/static/images/soup")
+		soups, _ := ioutil.ReadDir(dir + "/static/images/soup")
 		for _, soup := range soups {
 			categoryName := "soup"
 			image := domain.Image{
@@ -57,7 +57,7 @@ func CreateImages() {
 			config.DB.Create(&image)
 		}
 
-		firstCourses, _ := ioutil.ReadDir(dir + "/src/static/images/first_course")
+		firstCourses, _ := ioutil.ReadDir(dir + "/static/images/first_course")
 		for _, firstCourse := range firstCourses {
 			categoryName := "first_course"
 			image := domain.Image{

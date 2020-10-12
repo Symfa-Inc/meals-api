@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Aiscom-LLC/meals-api/src/config"
+	"github.com/Aiscom-LLC/meals-api/config"
 )
 
 func CreateBackup() {

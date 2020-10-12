@@ -3,10 +3,10 @@ package dev
 import (
 	"fmt"
 
-	"github.com/Aiscom-LLC/meals-api/src/config"
-	"github.com/Aiscom-LLC/meals-api/src/domain"
-	"github.com/Aiscom-LLC/meals-api/src/repository"
-	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/config"
+	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/repository"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 )
 
 // CreateClientUsers will populate client users table
@@ -21,8 +21,8 @@ func CreateClientUsers() {
 		client, _ := clientRepo.GetByKey("name", "Dymi")
 
 		userRepo := repository.NewUserRepo()
-		adminUsers, _ := userRepo.GetAllByKey("role", types.UserRoleEnum.ClientAdmin)
-		users, _ := userRepo.GetAllByKey("role", types.UserRoleEnum.User)
+		adminUsers, _ := userRepo.GetAllByKey("role", enums.UserRoleEnum.ClientAdmin)
+		users, _ := userRepo.GetAllByKey("role", enums.UserRoleEnum.User)
 
 		for i, user := range users {
 			clientUser := domain.ClientUser{
