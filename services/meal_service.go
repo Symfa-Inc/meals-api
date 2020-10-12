@@ -2,14 +2,15 @@ package services
 
 import (
 	"errors"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	uuid "github.com/satori/go.uuid"
-	"net/http"
-	"strconv"
-	"time"
 )
 
 // MealService struct
@@ -89,7 +90,7 @@ func (m *MealService) Add(path url.PathClient, body models.AddMeal, user interfa
 
 var cateringRepo = repository.NewCateringRepo()
 
-func (m *MealService) Get(query url.DateRangeQuery, path url.PathClient) ([]models.GetMeal, int, error) {
+func (m *MealService) Get(query url.DateQuery, path url.PathClient) ([]models.GetMeal, int, error) {
 	_, err := cateringRepo.GetByKey("id", path.ID)
 
 	if err != nil {
@@ -99,21 +100,12 @@ func (m *MealService) Get(query url.DateRangeQuery, path url.PathClient) ([]mode
 		return []models.GetMeal{}, http.StatusBadRequest, err
 	}
 
-	startDate, err := time.Parse(time.RFC3339, query.StartDate)
+	mealDate, err := time.Parse(time.RFC3339, query.Date)
 	if err != nil {
 		return []models.GetMeal{}, http.StatusBadRequest, errors.New("can't parse the date")
 	}
 
-	endDate, err := time.Parse(time.RFC3339, query.EndDate)
-	if err != nil {
-		return []models.GetMeal{}, http.StatusBadRequest, errors.New("can't parse the date")
-	}
-
-	if startDate.After(endDate) {
-		return []models.GetMeal{}, http.StatusBadRequest, errors.New("end date can't be earlier than start date")
-	}
-
-	result, code, err := mealRepo.GetByRange(startDate, endDate, path.ID, path.ClientID)
+	result, code, err := mealRepo.Get(mealDate, path.ID, path.ClientID)
 
 	return result, code, err
 }

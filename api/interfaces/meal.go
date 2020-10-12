@@ -1,10 +1,11 @@
 package domain
 
 import (
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,7 +22,6 @@ type MealRepository interface {
 	Add(meal *domain.Meal) error
 	Get(mealDate time.Time, id, clientID string) ([]models.GetMeal, int, error)
 	GetByKey(key, value string) (domain.Meal, int, error)
-	GetByRange(startDate time.Time, endDate time.Time, id, clientID string) ([]models.GetMeal, int, error)
 }
 
 // MealService is meal interface for service
