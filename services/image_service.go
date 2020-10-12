@@ -1,15 +1,16 @@
 package services
 
 import (
+	"net/http"
+	"os"
+	"path/filepath"
+
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
-	"net/http"
-	"os"
-	"path/filepath"
 )
 
 // ImageService struct
@@ -48,7 +49,7 @@ func (i *ImageService) Add(c *gin.Context, path url.PathDish) (domain.Image, int
 	ext := filepath.Ext(file.Filename)
 	randomString := utils.GenerateString(10)
 
-	imagePath := dir + "/src/static/images/" + randomString + ext
+	imagePath := dir + "/static/images/" + randomString + ext
 
 	if err := c.SaveUploadedFile(file, imagePath); err != nil {
 		return domain.Image{}, http.StatusBadRequest, err
