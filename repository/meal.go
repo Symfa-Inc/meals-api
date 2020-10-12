@@ -48,7 +48,7 @@ func (m MealRepo) Get(mealDate time.Time, id, clientID string) ([]models.GetMeal
 	var mealsResponse []models.GetMeal
 
 	if err := config.DB.
-		Where("catering_id = ? AND client_id = ? AND date > ?", id, clientID, mealDate).
+		Where("catering_id = ? AND client_id = ? AND date = ?", id, clientID, mealDate).
 		Order("created_at").
 		Find(&meals).
 		Error; err != nil {
