@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
@@ -322,4 +323,6 @@ func (o Order) GetClientOrdersExcel(c *gin.Context) {
 	}
 
 	c.File(pathDir)
+	// nolint:errcheck
+	os.Remove(pathDir)
 }
