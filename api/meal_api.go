@@ -1,12 +1,13 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // Meal struct
@@ -67,7 +68,7 @@ func (m Meal) Add(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/meals [get]
 func (m Meal) Get(c *gin.Context) {
-	var query url.DateRangeQuery
+	var query url.DateQuery
 	var path url.PathClient
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
