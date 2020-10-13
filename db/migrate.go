@@ -97,6 +97,7 @@ func drop() {
 		&domain.Catering{},
 		&domain.User{},
 		&domain.Seed{},
+		&domain.Migration{},
 	)
 
 	fmt.Println("=== Tables deleted ====")

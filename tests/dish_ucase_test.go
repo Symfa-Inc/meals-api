@@ -3,7 +3,6 @@ package tests
 import (
 	"net/http"
 	"testing"
-	"time"
 
 	"github.com/Aiscom-LLC/meals-api/api"
 	"github.com/Aiscom-LLC/meals-api/api/middleware"
@@ -20,7 +19,7 @@ func TestAddDish(t *testing.T) {
 
 	categoryRepo := repository.NewCategoryRepo()
 	userRepo := repository.NewUserRepo()
-	mealRepo := repository.NewMealRepo()
+	//mealRepo := repository.NewMealRepo()
 	cateringRepo := repository.NewCateringRepo()
 	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
@@ -30,9 +29,9 @@ func TestAddDish(t *testing.T) {
 
 	categoryResult, _ := categoryRepo.GetByKey("name", "гарнир", cateringID)
 
-	trunc := time.Hour * 24
-	mealResult, _, _ := mealRepo.GetByKey("date", time.Now().AddDate(0, 0, 0).Truncate(trunc).Format(time.RFC3339))
-	mealID := mealResult.ID.String()
+	//trunc := time.Hour * 24
+	//mealResult, _, _ := mealRepo.GetByKey("date", time.Now().AddDate(0, 0, 0).Truncate(trunc).Format(time.RFC3339))
+	//mealID := mealResult.ID.String()
 	// Trying to add dish to non-existing catering
 	// Should throw an error
 	fakeID := uuid.NewV4()
@@ -81,26 +80,6 @@ func TestAddDish(t *testing.T) {
 		}).
 		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 			assert.Equal(t, http.StatusOK, r.Code)
-		})
-
-	// Trying to create same dish in same category
-	// Should throw an error
-	r.POST("/caterings/"+cateringID+"/dishes?mealId="+mealID).
-		SetCookie(gofight.H{
-			"jwt": jwt,
-		}).
-		SetJSON(gofight.D{
-			"categoryID": categoryResult.ID,
-			"desc":       "Очень вкусный",
-			"name":       "тест",
-			"price":      120,
-			"weight":     250,
-		}).
-		Run(api.SetupRouter(), func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-			data := r.Body.Bytes()
-			errorValue, _ := jsonparser.GetString(data, "error")
-			assert.Equal(t, http.StatusBadRequest, r.Code)
-			assert.Equal(t, "this dish already exist in that category", errorValue)
 		})
 }
 
