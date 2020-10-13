@@ -75,6 +75,10 @@ func migrate() {
 
 	dev.CreateAdmin()
 
+	if os.Getenv("ENVIRONMENT") != "production" {
+		seeds()
+	}
+
 }
 
 func drop() {
