@@ -2,12 +2,13 @@ package repository
 
 import (
 	"errors"
+	"net/http"
+	"os"
+
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
-	"net/http"
-	"os"
 )
 
 // ImageRepo struct
@@ -131,7 +132,7 @@ func (i ImageRepo) Delete(cateringID, imageID, dishID string) (int, error) {
 		Find(&imageToDelete).
 		Delete(&domain.Image{}).RowsAffected; imageExist != 0 {
 		dir, _ := os.Getwd()
-		imagePath := dir + "/src/static/images/" + imageToDelete.Path
+		imagePath := dir + "/static/images/" + imageToDelete.Path
 
 		if err := os.Remove(imagePath); err != nil {
 			return http.StatusBadRequest, err

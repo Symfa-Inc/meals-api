@@ -75,7 +75,7 @@ func (i *ImageService) Update(c *gin.Context, path url.PathImageDish) (domain.Im
 	ext := filepath.Ext(file.Filename)
 	randomString := utils.GenerateString(10)
 
-	imagePath := dir + "/src/static/images/" + randomString + ext
+	imagePath := dir + "/static/images/" + randomString + ext
 
 	if err := c.SaveUploadedFile(file, imagePath); err != nil {
 		return domain.Image{}, http.StatusBadRequest, err
