@@ -1,4 +1,4 @@
-package types
+package services
 
 type Alignment struct {
 	Horizontal      string `json:"horizontal"`
