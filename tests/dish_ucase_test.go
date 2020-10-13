@@ -29,9 +29,6 @@ func TestAddDish(t *testing.T) {
 
 	categoryResult, _ := categoryRepo.GetByKey("name", "гарнир", cateringID)
 
-	//trunc := time.Hour * 24
-	//mealResult, _, _ := mealRepo.GetByKey("date", time.Now().AddDate(0, 0, 0).Truncate(trunc).Format(time.RFC3339))
-	//mealID := mealResult.ID.String()
 	// Trying to add dish to non-existing catering
 	// Should throw an error
 	fakeID := uuid.NewV4()
