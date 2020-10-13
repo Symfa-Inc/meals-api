@@ -75,7 +75,7 @@ func migrate() {
 
 	dev.CreateAdmin()
 
-	if os.Getenv("ENVIRONMENT") != "production" {
+	if os.Getenv("ENVIRONMENT") == "development" {
 		seeds()
 	}
 
