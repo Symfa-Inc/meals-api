@@ -25,9 +25,13 @@ ___
 go run db/migrate.go
 ```
 ##### Run tests 
-
+install godotenv on your machine
 ```
-go run db/migrate.go && go test ./... -count=1
+go get github.com/joho/godotenv/cmd/godotenv
+```
+and then run tests with godotenv command
+```
+godotenv go test ./... -count=1
 ```
 use flag -count=1 to clear cache
 ##### Run linter
