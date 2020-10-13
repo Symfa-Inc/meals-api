@@ -19,7 +19,6 @@ func TestAddDish(t *testing.T) {
 
 	categoryRepo := repository.NewCategoryRepo()
 	userRepo := repository.NewUserRepo()
-	//mealRepo := repository.NewMealRepo()
 	cateringRepo := repository.NewCateringRepo()
 	userResult, _ := userRepo.GetByKey("email", "meals@aisnovations.com")
 	jwt, _, _ := middleware.Passport().TokenGenerator(&middleware.UserID{ID: userResult.ID.String()})
