@@ -59,8 +59,7 @@ func (m Meal) Add(c *gin.Context) {
 // @Summary GetByRange list of categories with dishes for passed meal ID
 // @Tags catering meals
 // @Produce json
-// @Param startDate query string false "Meal Start Date in 2020-01-01T00:00:00Z format"
-// @Param endDate query string false "Meal End Date in 2020-01-01T00:00:00Z format"
+// @Param date query string false "Meal Date in 2020-01-01T00:00:00Z format"
 // @Param id path string false "Catering ID"
 // @Param clientId path string false "Client ID"
 // @Success 200 {array} swagger.GetMeal "dishes for passed day"
