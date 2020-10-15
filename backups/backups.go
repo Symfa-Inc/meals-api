@@ -22,7 +22,7 @@ func CreateBackup() {
 	err := cmd.Run()
 
 	if err == nil {
-		file, err := os.Create("backups/dumps/dump-" + time.Now().UTC().String() + ".psql")
+		file, err := os.Create("backups/dumps/dump-" + time.Now().Format("2006-01-02") + ".psql")
 
 		if err != nil {
 			log.Println(err)
