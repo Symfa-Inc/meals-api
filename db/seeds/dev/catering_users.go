@@ -3,10 +3,10 @@ package dev
 import (
 	"fmt"
 
-	"github.com/Aiscom-LLC/meals-api/src/config"
-	"github.com/Aiscom-LLC/meals-api/src/domain"
-	"github.com/Aiscom-LLC/meals-api/src/repository"
-	"github.com/Aiscom-LLC/meals-api/src/types"
+	"github.com/Aiscom-LLC/meals-api/config"
+	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/repository"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
 )
 
 // CreateCateringUsers will populate catering users table
@@ -21,7 +21,7 @@ func CreateCateringUsers() {
 		catering, _ := cateringRepo.GetByKey("name", "Twiist")
 
 		userRepo := repository.NewUserRepo()
-		users, _ := userRepo.GetAllByKey("role", types.UserRoleEnum.CateringAdmin)
+		users, _ := userRepo.GetAllByKey("role", enums.UserRoleEnum.CateringAdmin)
 
 		for _, user := range users {
 			cateringUser := domain.CateringUser{

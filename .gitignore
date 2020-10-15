@@ -3,4 +3,5 @@
 /log
 *.log
 /tmp
-/src/static
+*.log
+/static

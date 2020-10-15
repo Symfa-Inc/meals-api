@@ -2,10 +2,11 @@ package dev
 
 import (
 	"fmt"
-	"github.com/Aiscom-LLC/meals-api/src/config"
-	"github.com/Aiscom-LLC/meals-api/src/domain"
-	"github.com/Aiscom-LLC/meals-api/src/types"
-	"github.com/Aiscom-LLC/meals-api/src/utils"
+
+	"github.com/Aiscom-LLC/meals-api/config"
+	"github.com/Aiscom-LLC/meals-api/domain"
+	"github.com/Aiscom-LLC/meals-api/repository/enums"
+	"github.com/Aiscom-LLC/meals-api/utils"
 )
 
 const seedName string = "init admin"
@@ -23,8 +24,8 @@ func CreateAdmin() {
 			LastName:  "admin",
 			Email:     "meals@aisnovations.com",
 			Password:  utils.HashString("Password12!"),
-			Status:    &types.StatusTypesEnum.Active,
-			Role:      types.UserRoleEnum.SuperAdmin,
+			Status:    &enums.StatusTypesEnum.Active,
+			Role:      enums.UserRoleEnum.SuperAdmin,
 		}
 
 		config.DB.Create(&superAdmin)
