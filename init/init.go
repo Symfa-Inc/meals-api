@@ -1,6 +1,7 @@
 package init
 
 import (
+	"os"
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/backups"
@@ -36,5 +37,7 @@ func init() {
 			}
 		}
 	})
-	_ = config.CRON.Cron.AddFunc(utils.CronStringCreator("Europe/Moscow", "00", "00"), backups.CreateBackup)
+	if os.Getenv("BACKUP") == "true" {
+		_ = config.CRON.Cron.AddFunc(utils.CronStringCreator("Europe/Moscow", "00", "00"), backups.CreateBackup)
+	}
 }
