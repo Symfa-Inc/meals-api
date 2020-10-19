@@ -1,13 +1,14 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
 	"github.com/Aiscom-LLC/meals-api/utils"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
-	"net/http"
 )
 
 // Dish struct
@@ -48,8 +49,11 @@ func (d Dish) Add(c *gin.Context) {
 	err := dishRepo.Add(path.ID, &dish)
 
 	if err != nil {
-		utils.CreateError(http.StatusBadRequest, err, c)
-		return
+		if err.Error() != "this dish already exist" {
+			utils.CreateError(http.StatusBadRequest, err, c)
+			return
+		}
+
 	}
 
 	dish.Images = make([]domain.ImageArray, 0)
@@ -102,6 +106,36 @@ func (d Dish) Get(c *gin.Context) {
 	}
 
 	dishes, code, err := dishRepo.Get(path.ID, query.CategoryID)
+
+	if err != nil {
+		utils.CreateError(code, err, c)
+		return
+	}
+
+	if len(dishes) == 0 {
+		c.JSON(http.StatusOK, make([]string, 0))
+		return
+	}
+
+	c.JSON(http.StatusOK, dishes)
+}
+
+// GetCateringDish return list of dishes
+// @Summary Returns list of dishes
+// @Tags catering dishes
+// @Produce json
+// @Param id path string true "Catering ID"
+// @Success 200 {array} domain.Dish "List of dishes"
+// @Failure 400 {object} Error "Error"
+// @Router /caterings/{id}/catering-dishes [get]
+func (d Dish) GetCateringDish(c *gin.Context) {
+	var path url.PathID
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	dishes, code, err := dishRepo.GetCateringDish(path.ID)
 
 	if err != nil {
 		utils.CreateError(code, err, c)

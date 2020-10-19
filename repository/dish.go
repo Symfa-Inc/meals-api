@@ -2,12 +2,13 @@ package repository
 
 import (
 	"errors"
+	"net/http"
+	"time"
+
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/jinzhu/gorm"
-	"net/http"
-	"time"
 )
 
 // DishRepo struct
@@ -22,12 +23,12 @@ func NewDishRepo() *DishRepo {
 // Add creates new dish entity
 // returns error or nil
 func (d DishRepo) Add(cateringID string, dish *domain.Dish) error {
-	//if dishExist := config.DB.
-	//	Where("catering_id = ? AND category_id = ? AND name = ?", cateringID, dish.CategoryID, dish.Name).
-	//	Find(dish).
-	//	RecordNotFound(); !dishExist {
-	//	return errors.New("this dish already exist in that category")
-	//}
+	if dishExist := config.DB.
+		Where("catering_id = ? AND name = ?", cateringID, dish.Name).
+		Find(dish).
+		RecordNotFound(); !dishExist {
+		return errors.New("this dish already exist")
+	}
 
 	if err := config.DB.Create(dish).Error; err != nil {
 		return err
@@ -166,4 +167,37 @@ func (d DishRepo) Update(path url.PathDish, dish domain.Dish) (int, error) {
 	}
 
 	return 0, nil
+}
+
+// GetCateringDish list of dishes
+// returns array of dishes and error or nil and status code
+func (d DishRepo) GetCateringDish(cateringID string) ([]domain.Dish, int, error) {
+	var dishes []domain.Dish
+
+	if cateringNotExist := config.DB.
+		Where("id = ?", cateringID).
+		Find(&domain.Catering{}).
+		RecordNotFound(); cateringNotExist {
+		return nil, http.StatusNotFound, errors.New("catering with that ID doesn't exist")
+	}
+
+	err := config.DB.
+		Model(&domain.Dish{}).
+		Select("distinct on (catering_id, name) *").
+		Where("catering_id = ?", cateringID).
+		Find(&dishes).
+		Error
+	for i := range dishes {
+		var imagesArray []domain.ImageArray
+		config.DB.
+			Model(&domain.Image{}).
+			Select("images.path, images.id").
+			Joins("left join image_dishes id on id.image_id = images.id").
+			Joins("left join dishes d on id.dish_id = d.id").
+			Where("d.id = ? AND id.deleted_at IS NULL", dishes[i].ID).
+			Scan(&imagesArray)
+		dishes[i].Images = imagesArray
+	}
+
+	return dishes, 0, err
 }
