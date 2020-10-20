@@ -2,6 +2,7 @@ package dev
 
 import (
 	"fmt"
+
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
@@ -28,13 +29,6 @@ func CreateDishes() {
 		for i := range dishesArray {
 			dishesArray[i].CateringID = cateringResult.ID
 			dishesArray[i].CategoryID = categoryResult.ID
-			config.DB.Create(&dishesArray[i])
-		}
-
-		categoryResult2, _ := categoryRepo.GetByKey("name", "гарнир", cateringResult.ID.String())
-		for i := range dishesArray {
-			dishesArray[i].CateringID = cateringResult.ID
-			dishesArray[i].CategoryID = categoryResult2.ID
 			config.DB.Create(&dishesArray[i])
 		}
 
