@@ -169,9 +169,9 @@ func (d DishRepo) Update(path url.PathDish, dish domain.Dish) (int, error) {
 	return 0, nil
 }
 
-// GetCateringDish list of dishes
+// GetCateringDishes list of dishes
 // returns array of dishes and error or nil and status code
-func (d DishRepo) GetCateringDish(cateringID string) ([]domain.Dish, int, error) {
+func (d DishRepo) GetCateringDishes(cateringID string) ([]domain.Dish, int, error) {
 	var dishes []domain.Dish
 
 	if cateringNotExist := config.DB.

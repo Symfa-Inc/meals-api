@@ -88,60 +88,33 @@ func (d Dish) Delete(c *gin.Context) {
 // @Tags catering dishes
 // @Produce json
 // @Param id path string true "Catering ID"
-// @Param categoryID query string true "Category ID"
+// @Param categoryID query string false "Category ID"
 // @Success 200 {array} domain.Dish "List of dishes"
 // @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/dishes [get]
 func (d Dish) Get(c *gin.Context) {
 	var path url.PathID
 	var query url.CategoryIDQuery
-
-	if err := utils.RequestBinderURI(&path, c); err != nil {
-		return
-	}
-	if err := utils.RequestBinderQuery(&query, c); err != nil {
-		return
-	}
-
-	dishes, code, err := dishRepo.Get(path.ID, query.CategoryID)
-
-	if err != nil {
-		utils.CreateError(code, err, c)
-		return
-	}
-
-	if len(dishes) == 0 {
-		c.JSON(http.StatusOK, make([]string, 0))
-		return
-	}
-
-	c.JSON(http.StatusOK, dishes)
-}
-
-// GetCateringDish return list of dishes
-// @Summary Returns list of dishes
-// @Tags catering dishes
-// @Produce json
-// @Param id path string true "Catering ID"
-// @Success 200 {array} domain.Dish "List of dishes"
-// @Failure 400 {object} Error "Error"
-// @Router /caterings/{id}/catering-dishes [get]
-func (d Dish) GetCateringDish(c *gin.Context) {
-	var path url.PathID
+	var code int
+	var err error
+	var dishes []domain.Dish
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	dishes, code, err := dishRepo.GetCateringDish(path.ID)
+	if _, ok := c.GetQuery("categoryID"); !ok {
+		dishes, code, err = dishRepo.GetCateringDishes(path.ID)
+	} else {
+		if err := utils.RequestBinderQuery(&query, c); err != nil {
+			return
+		}
+
+		dishes, code, err = dishRepo.Get(path.ID, query.CategoryID)
+	}
 
 	if err != nil {
 		utils.CreateError(code, err, c)
-		return
-	}
-
-	if len(dishes) == 0 {
-		c.JSON(http.StatusOK, make([]string, 0))
 		return
 	}
 
