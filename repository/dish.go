@@ -23,12 +23,12 @@ func NewDishRepo() *DishRepo {
 // Add creates new dish entity
 // returns error or nil
 func (d DishRepo) Add(cateringID string, dish *domain.Dish) error {
-	if dishExist := config.DB.
-		Where("catering_id = ? AND name = ?", cateringID, dish.Name).
-		Find(dish).
-		RecordNotFound(); !dishExist {
-		return errors.New("this dish already exist")
-	}
+	//if dishExist := config.DB.
+	//	Where("catering_id = ? AND name = ?", cateringID, dish.Name).
+	//	Find(dish).
+	//	RecordNotFound(); !dishExist {
+	//	return errors.New("this dish already exist")
+	//}
 
 	if err := config.DB.Create(dish).Error; err != nil {
 		return err

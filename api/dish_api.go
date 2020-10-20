@@ -49,10 +49,8 @@ func (d Dish) Add(c *gin.Context) {
 	err := dishRepo.Add(path.ID, &dish)
 
 	if err != nil {
-		if err.Error() != "this dish already exist" {
-			utils.CreateError(http.StatusBadRequest, err, c)
-			return
-		}
+		utils.CreateError(http.StatusBadRequest, err, c)
+		return
 
 	}
 
