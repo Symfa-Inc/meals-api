@@ -94,7 +94,6 @@ func (d Dish) Delete(c *gin.Context) {
 // @Router /caterings/{id}/dishes [get]
 func (d Dish) Get(c *gin.Context) {
 	var path url.PathID
-	var query url.CategoryIDQuery
 	var code int
 	var err error
 	var dishes []domain.Dish
@@ -103,14 +102,10 @@ func (d Dish) Get(c *gin.Context) {
 		return
 	}
 
-	if _, ok := c.GetQuery("categoryID"); !ok {
+	if categoryID, ok := c.GetQuery("categoryID"); !ok {
 		dishes, code, err = dishRepo.GetCateringDishes(path.ID)
 	} else {
-		if err := utils.RequestBinderQuery(&query, c); err != nil {
-			return
-		}
-
-		dishes, code, err = dishRepo.Get(path.ID, query.CategoryID)
+		dishes, code, err = dishRepo.Get(path.ID, categoryID)
 	}
 
 	if err != nil {
