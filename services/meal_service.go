@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/Aiscom-LLC/meals-api/api/swagger"
+
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
 	"github.com/Aiscom-LLC/meals-api/repository"
@@ -108,4 +110,59 @@ func (m *MealService) Get(query url.DateQuery, path url.PathClient) ([]models.Ge
 	result, code, err := mealRepo.Get(mealDate, path.ID, path.ClientID)
 
 	return result, code, err
+}
+
+func (m *MealService) AddToDate(path url.PathClient, body swagger.AddMealToDate, user interface{}) ([]models.GetMeal, int, error) {
+
+	userName := user.(domain.User).FirstName + " " + user.(domain.User).LastName
+
+	parsedCateringID, _ := uuid.FromString(path.ID)
+	parsedClientID, _ := uuid.FromString(path.ClientID)
+
+	meal := &domain.Meal{
+		Date:       body.NewDate,
+		CateringID: parsedCateringID,
+		ClientID:   parsedClientID,
+		Person:     userName,
+	}
+
+	meals, code, err := mealRepo.Get(body.Date, path.ID, path.ClientID)
+
+	if err != nil {
+		return []models.GetMeal{}, code, err
+	}
+
+	if len(meals) != 0 {
+		return nil, http.StatusBadRequest, errors.New("meal for current day already exist")
+	} else {
+		MealID := uuid.NewV4()
+		meal.MealID = MealID
+		meal.Version = "V.1"
+	}
+
+	//for i := range meals {
+	//	_, code, err := dishRepo.FindByID(path.ID, meals[i].Result)
+	//	if err != nil {
+	//		return []models.GetMeal{}, code, err
+	//	}
+	//}
+
+	//if err := mealRepo.Add(meal); err != nil {
+	//	return []models.GetMeal{}, code, err
+	//}
+	//
+	//for _, dishID := range body.Dishes {
+	//	dishIDParsed, _ := uuid.FromString(dishID)
+	//	mealDish := domain.MealDish{
+	//		MealID: meal.ID,
+	//		DishID: dishIDParsed,
+	//	}
+	//	if err := mealDishRepo.Add(mealDish); err != nil {
+	//		return []models.GetMeal{}, http.StatusBadRequest, err
+	//	}
+	//}
+	//
+	//result, code, err := mealRepo.Get(body.Date, path.ID, path.ClientID)
+
+	return meals, code, err
 }

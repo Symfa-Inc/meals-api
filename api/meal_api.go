@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/Aiscom-LLC/meals-api/api/swagger"
+
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
@@ -88,4 +90,38 @@ func (m Meal) Get(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, result)
+}
+
+// AddToDate Creates meal for certain client
+// @Summary Creates meal for certain client
+// @Tags catering meals
+// @Produce json
+// @Param id path string false "Catering ID"
+// @Param clientId path string false "Client ID"
+// @Param payload body swagger.AddMealToDate false "meal reading"
+// @Success 201 {object} swagger.AddMealToDate "created meal"
+// @Failure 400 {object} Error "Error"
+// @Router /caterings/{id}/clients/{clientId}/meals-to-date [post]
+func (m Meal) AddToDate(c *gin.Context) {
+	var path url.PathClient
+	var body swagger.AddMealToDate
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderBody(&body, c); err != nil {
+		return
+	}
+
+	user, _ := c.Get("user")
+
+	result, code, err := mealService().AddToDate(path, body, user)
+
+	if err != nil {
+		utils.CreateError(code, err, c)
+		return
+	}
+
+	c.JSON(http.StatusCreated, result)
 }
