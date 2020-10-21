@@ -92,7 +92,7 @@ func (m Meal) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-// AddToDate Creates meal for certain client
+// CopyMeal Creates meal for certain client
 // @Summary Creates meal for certain client
 // @Tags catering meals
 // @Produce json
@@ -101,8 +101,8 @@ func (m Meal) Get(c *gin.Context) {
 // @Param payload body swagger.AddMealToDate false "meal reading"
 // @Success 201 {object} swagger.AddMealToDate "created meal"
 // @Failure 400 {object} Error "Error"
-// @Router /caterings/{id}/clients/{clientId}/meals-to-date [post]
-func (m Meal) AddToDate(c *gin.Context) {
+// @Router /caterings/{id}/clients/{clientId}/copy-meals [post]
+func (m Meal) CopyMeals(c *gin.Context) {
 	var path url.PathClient
 	var body swagger.AddMealToDate
 
@@ -114,7 +114,7 @@ func (m Meal) AddToDate(c *gin.Context) {
 		return
 	}
 
-	result, code, err := mealService().AddToDate(path, body)
+	result, code, err := mealService().CopyMeals(path, body)
 
 	if err != nil {
 		utils.CreateError(code, err, c)

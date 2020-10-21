@@ -17,5 +17,5 @@ type AddMeal struct {
 type AddMealToDate struct {
 	CateringID uuid.UUID `json:"-"`
 	Date       time.Time `json:"date" binding:"required" example:"2020-06-20T00:00:00Z"`
-	NewDate    time.Time `json:"new-date" binding:"required" example:"2020-06-20T00:00:00Z"`
+	NewDate    time.Time `json:"newDate" binding:"required" example:"2020-06-20T00:00:00Z"`
 } // @name AddMealToDate

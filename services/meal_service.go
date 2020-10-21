@@ -112,8 +112,7 @@ func (m *MealService) Get(query url.DateQuery, path url.PathClient) ([]models.Ge
 	return result, code, err
 }
 
-func (m *MealService) AddToDate(path url.PathClient, body swagger.AddMealToDate) ([]models.GetMeal, int, error) {
-
+func (m *MealService) CopyMeals(path url.PathClient, body swagger.AddMealToDate) ([]models.GetMeal, int, error) {
 	meals, code, err := mealRepo.Get(body.Date, path.ID, path.ClientID)
 
 	if err != nil {
