@@ -112,19 +112,7 @@ func (m *MealService) Get(query url.DateQuery, path url.PathClient) ([]models.Ge
 	return result, code, err
 }
 
-func (m *MealService) AddToDate(path url.PathClient, body swagger.AddMealToDate, user interface{}) ([]models.GetMeal, int, error) {
-
-	userName := user.(domain.User).FirstName + " " + user.(domain.User).LastName
-
-	parsedCateringID, _ := uuid.FromString(path.ID)
-	parsedClientID, _ := uuid.FromString(path.ClientID)
-
-	meal := &domain.Meal{
-		Date:       body.NewDate,
-		CateringID: parsedCateringID,
-		ClientID:   parsedClientID,
-		Person:     userName,
-	}
+func (m *MealService) AddToDate(path url.PathClient, body swagger.AddMealToDate) ([]models.GetMeal, int, error) {
 
 	meals, code, err := mealRepo.Get(body.Date, path.ID, path.ClientID)
 
@@ -132,37 +120,29 @@ func (m *MealService) AddToDate(path url.PathClient, body swagger.AddMealToDate,
 		return []models.GetMeal{}, code, err
 	}
 
-	if len(meals) != 0 {
-		return nil, http.StatusBadRequest, errors.New("meal for current day already exist")
-	} else {
-		MealID := uuid.NewV4()
-		meal.MealID = MealID
-		meal.Version = "V.1"
+	mealExist, _, _ := mealRepo.Get(body.NewDate, path.ID, path.ClientID)
+	if len(mealExist) != 0 {
+		return []models.GetMeal{}, http.StatusBadRequest, errors.New("meals for current day already exist")
 	}
 
-	//for i := range meals {
-	//	_, code, err := dishRepo.FindByID(path.ID, meals[i].Result)
-	//	if err != nil {
-	//		return []models.GetMeal{}, code, err
-	//	}
-	//}
+	for meal := range meals {
+		for dish := range meals[meal].Result {
+			_, code, err := dishRepo.FindByID(path.ID, meals[meal].Result[dish].ID.String())
+			if err != nil {
+				return []models.GetMeal{}, code, err
+			}
 
-	//if err := mealRepo.Add(meal); err != nil {
-	//	return []models.GetMeal{}, code, err
-	//}
-	//
-	//for _, dishID := range body.Dishes {
-	//	dishIDParsed, _ := uuid.FromString(dishID)
-	//	mealDish := domain.MealDish{
-	//		MealID: meal.ID,
-	//		DishID: dishIDParsed,
-	//	}
-	//	if err := mealDishRepo.Add(mealDish); err != nil {
-	//		return []models.GetMeal{}, http.StatusBadRequest, err
-	//	}
-	//}
-	//
-	//result, code, err := mealRepo.Get(body.Date, path.ID, path.ClientID)
+		}
+		mealID := meals[meal].MealID
+		mealResult, _, _ := mealRepo.GetByKey("meal_id", mealID.String())
+		mealResult.Date = body.NewDate
 
-	return meals, code, err
+		if err := mealRepo.Add(&mealResult); err != nil {
+			return []models.GetMeal{}, code, err
+		}
+	}
+
+	result, code, err := mealRepo.Get(body.NewDate, path.ID, path.ClientID)
+
+	return result, code, err
 }

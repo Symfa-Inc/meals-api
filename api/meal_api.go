@@ -114,9 +114,7 @@ func (m Meal) AddToDate(c *gin.Context) {
 		return
 	}
 
-	user, _ := c.Get("user")
-
-	result, code, err := mealService().AddToDate(path, body, user)
+	result, code, err := mealService().AddToDate(path, body)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
