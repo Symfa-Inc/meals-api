@@ -109,3 +109,37 @@ func (m *MealService) Get(query url.DateQuery, path url.PathClient) ([]models.Ge
 
 	return result, code, err
 }
+
+func (m *MealService) CopyMeals(path url.PathClient, body models.CopyMealToDate) ([]models.GetMeal, int, error) {
+	meals, code, err := mealRepo.Get(body.Date, path.ID, path.ClientID)
+
+	if err != nil {
+		return []models.GetMeal{}, code, err
+	}
+
+	mealExist, _, _ := mealRepo.Get(body.ToDate, path.ID, path.ClientID)
+	if len(mealExist) != 0 {
+		return []models.GetMeal{}, http.StatusBadRequest, errors.New("meals for current day already exist")
+	}
+
+	for meal := range meals {
+		for dish := range meals[meal].Result {
+			_, code, err := dishRepo.FindByID(path.ID, meals[meal].Result[dish].ID.String())
+			if err != nil {
+				return []models.GetMeal{}, code, err
+			}
+
+		}
+		mealID := meals[meal].MealID
+		mealResult, _, _ := mealRepo.GetByKey("meal_id", mealID.String())
+		mealResult.Date = body.ToDate
+
+		if err := mealRepo.Add(&mealResult); err != nil {
+			return []models.GetMeal{}, code, err
+		}
+	}
+
+	result, code, err := mealRepo.Get(body.ToDate, path.ID, path.ClientID)
+
+	return result, code, err
+}
