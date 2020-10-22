@@ -102,7 +102,7 @@ func (m Meal) Get(c *gin.Context) {
 // @Router /caterings/{id}/clients/{clientId}/copy-meals [post]
 func (m Meal) CopyMeals(c *gin.Context) {
 	var path url.PathClient
-	var body models.CopyMealToDates
+	var body models.CopyMealToDate
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

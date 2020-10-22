@@ -14,7 +14,7 @@ type AddMeal struct {
 } // @name AddMealRequest
 
 // CopyMeal request scheme
-type CopyMealToDates struct {
+type CopyMealToDate struct {
 	CateringID uuid.UUID `json:"-"`
 	Date       time.Time `json:"date" binding:"required" example:"2020-06-20T00:00:00Z"`
 	ToDate     time.Time `json:"toDate" binding:"required" example:"2020-06-20T00:00:00Z"`
