@@ -11,19 +11,21 @@ import (
 )
 
 // CreateCategories creates seeds for categories table
-func CreateCategories() {
+func CreateClientCategories() {
 	cateringRepo := repository.NewCateringRepo()
+	clientRepo := repository.NewClientRepo()
 	seedExists := config.DB.
-		Where("name = ?", "init dish_categories").
+		Where("name = ?", "init dish_client_categories").
 		First(&domain.Seed{}).Error
 	if seedExists != nil {
 		seed := domain.Seed{
-			Name: "init dish_categories",
+			Name: "init dish_client_categories",
 		}
 
 		catering, _ := cateringRepo.GetByKey("name", "Twiist")
-		var categoriesArray []domain.Category
-		utils.JSONParse("/db/seeds/data/categories.json", &categoriesArray)
+		client, _ := clientRepo.GetByKey("name", "Dymi")
+		var categoriesArray []domain.ClientCategory
+		utils.JSONParse("/db/seeds/data/client_categories.json", &categoriesArray)
 
 		var wg sync.WaitGroup
 		wg.Add(len(categoriesArray))
@@ -32,6 +34,7 @@ func CreateCategories() {
 			go func(i int) {
 				defer wg.Done()
 				categoriesArray[i].CateringID = catering.ID
+				categoriesArray[i].ClientID = client.ID
 				config.DB.Create(&categoriesArray[i])
 			}(i)
 		}
@@ -40,6 +43,6 @@ func CreateCategories() {
 		config.DB.Create(&seed)
 		fmt.Println("=== Dish Categories seeds created ===")
 	} else {
-		fmt.Printf("Seed `init dish_categories` already exists \n")
+		fmt.Printf("Seed `init dish_client_categories` already exists \n")
 	}
 }

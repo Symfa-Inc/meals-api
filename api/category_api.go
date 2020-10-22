@@ -31,14 +31,13 @@ var categoryRepo = repository.NewCategoryRepo()
 // @Accept json
 // @Tags catering categories
 // @Param id path string true "Catering ID"
-// @Param clientId path string true "Client ID"
 // @Param body body swagger.AddCategory false "Category Name"
 // @Success 200 {object} Category false "category object"
 // @Failure 400 {object} Error "Error"
-// @Router /caterings/{id}/clients/{clientId}/categories [post]
+// @Router /caterings/{id}/categories [post]
 func (dc Category) Add(c *gin.Context) {
 	var body models.AddCategory
-	var path url.PathClient
+	var path url.PathID
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -49,12 +48,10 @@ func (dc Category) Add(c *gin.Context) {
 	}
 
 	cateringID, _ := uuid.FromString(path.ID)
-	clientID, _ := uuid.FromString(path.ClientID)
 	category := domain.Category{
 		Date:       body.Date,
 		Name:       body.Name,
 		CateringID: cateringID,
-		ClientID:   clientID,
 	}
 
 	err := categoryRepo.Add(&category)
@@ -72,11 +69,10 @@ func (dc Category) Add(c *gin.Context) {
 // @Tags catering categories
 // @Produce json
 // @Param id path string true "Catering ID"
-// @Param clientId path string false "Client ID"
 // @Param categoryID path string true "Category ID"
 // @Success 204 "Successfully deleted"
 // @Failure 404 {object} Error "Not Found"
-// @Router /caterings/{id}/clients/{clientId}/categories/{categoryID} [delete]
+// @Router /caterings/{id}/categories/{categoryID} [delete]
 func (dc Category) Delete(c *gin.Context) {
 	var path url.PathCategory
 
@@ -97,14 +93,13 @@ func (dc Category) Delete(c *gin.Context) {
 // @Tags catering categories
 // @Produce json
 // @Param id path string false "Catering ID"
-// @Param clientId path string false "Client ID"
 // @Param date query string false "in format YYYY-MM-DDT00:00:00Z"
 // @Success 200 {array} domain.Category "array of category readings"
 // @Failure 400 {object} Error "Error"
 // @Failure 404 {object} Error "Not Found"
-// @Router /caterings/{id}/clients/{clientId}/categories [get]
+// @Router /caterings/{id}/categories [get]
 func (dc Category) Get(c *gin.Context) {
-	var path url.PathClient
+	var path url.PathID
 	var query url.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
@@ -119,7 +114,7 @@ func (dc Category) Get(c *gin.Context) {
 		query.Date = time.Now().Format(time.RFC3339)
 	}
 
-	categoriesResult, code, err := categoryRepo.Get(path.ID, path.ClientID, query.Date)
+	categoriesResult, code, err := categoryRepo.Get(path.ID, query.Date)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
@@ -140,7 +135,7 @@ func (dc Category) Get(c *gin.Context) {
 // @Success 204 "Successfully updated"
 // @Failure 400 {object} Error "Error"
 // @Failure 404 {object} Error "Not Found"
-// @Router /caterings/{id}/clients/{clientId}/categories/{categoryID} [put]
+// @Router /caterings/{id}/categories/{categoryID} [put]
 func (dc Category) Update(c *gin.Context) {
 	var path url.PathCategory
 	var category domain.Category

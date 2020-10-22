@@ -29,7 +29,7 @@ var clientCategoryRepo = repository.NewClientCategoryRepo()
 // @Summary Returns error if exists and 200 if success
 // @Produce json
 // @Accept json
-// @Tags catering categories
+// @Tags client categories
 // @Param id path string true "Catering ID"
 // @Param clientId path string true "Client ID"
 // @Param body body swagger.AddCategory false "Category Name"
@@ -50,7 +50,7 @@ func (dc ClientCategory) Add(c *gin.Context) {
 
 	cateringID, _ := uuid.FromString(path.ID)
 	clientID, _ := uuid.FromString(path.ClientID)
-	category := domain.Category{
+	category := domain.ClientCategory{
 		Date:       body.Date,
 		Name:       body.Name,
 		CateringID: cateringID,
@@ -69,7 +69,7 @@ func (dc ClientCategory) Add(c *gin.Context) {
 
 // Delete soft delete of category reading
 // @Summary Soft delete
-// @Tags catering categories
+// @Tags client categories
 // @Produce json
 // @Param id path string true "Catering ID"
 // @Param clientId path string false "Client ID"
@@ -78,7 +78,7 @@ func (dc ClientCategory) Add(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/categories/{categoryID} [delete]
 func (dc ClientCategory) Delete(c *gin.Context) {
-	var path url.PathCategory
+	var path url.PathClientCategory
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
@@ -94,7 +94,7 @@ func (dc ClientCategory) Delete(c *gin.Context) {
 
 // Get returns list of categories or error
 // @Summary Get list of categories
-// @Tags catering categories
+// @Tags client categories
 // @Produce json
 // @Param id path string false "Catering ID"
 // @Param clientId path string false "Client ID"
@@ -133,7 +133,7 @@ func (dc ClientCategory) Get(c *gin.Context) {
 // @Summary Returns 204 if success and 4xx error if failed
 // @Produce json
 // @Accept json
-// @Tags catering categories
+// @Tags client categories
 // @Param id path string true "Catering ID"
 // @Param categoryID path string true "Category ID"
 // @Param body body swagger.UpdateCategory false "new category name"
@@ -142,8 +142,8 @@ func (dc ClientCategory) Get(c *gin.Context) {
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/clients/{clientId}/categories/{categoryID} [put]
 func (dc ClientCategory) Update(c *gin.Context) {
-	var path url.PathCategory
-	var category domain.Category
+	var path url.PathClientCategory
+	var category domain.ClientCategory
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return

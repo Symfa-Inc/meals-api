@@ -50,6 +50,7 @@ func migrate() {
 			&domain.ClientSchedule{},
 			&domain.Meal{},
 			&domain.Category{},
+			&domain.ClientCategory{},
 			&domain.Dish{},
 			&domain.ImageDish{},
 			&domain.Image{},
@@ -87,6 +88,7 @@ func drop() {
 		&domain.Image{},
 		&domain.Dish{},
 		&domain.Category{},
+		&domain.ClientCategory{},
 		&domain.Meal{},
 		&domain.Address{},
 		&domain.ClientSchedule{},
@@ -114,6 +116,7 @@ func seeds() {
 	dev.CreateCateringUsers()
 	dev.CreateClientUsers()
 	dev.CreateMeals()
+	dev.CreateClientCategories()
 	dev.CreateCategories()
 	dev.CreateDishes()
 
@@ -142,7 +145,9 @@ func addDbConstraints() {
 	config.DB.Model(&domain.Meal{}).AddIndex("idx_meals_date", "date")
 
 	config.DB.Model(&domain.Category{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
-	config.DB.Model(&domain.Category{}).AddForeignKey("client_id", "clients(id)", "CASCADE", "CASCADE")
+
+	config.DB.Model(&domain.ClientCategory{}).AddForeignKey("catering_id", "caterings(id)", "CASCADE", "CASCADE")
+	config.DB.Model(&domain.ClientCategory{}).AddForeignKey("client_id", "clients(id)", "CASCADE", "CASCADE")
 
 	config.DB.Model(&domain.Dish{}).AddForeignKey("category_id", "categories(id)", "CASCADE", "CASCADE")
 
