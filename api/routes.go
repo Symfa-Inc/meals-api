@@ -36,6 +36,7 @@ func SetupRouter() *gin.Engine {
 	client := NewClient()
 	meal := NewMeal()
 	category := NewCategory()
+	clientCategory := NewClientCategory()
 	dish := NewDish()
 	image := NewImage()
 	order := NewOrder()
@@ -103,10 +104,15 @@ func SetupRouter() *gin.Engine {
 			caAdminSuAdmin.GET("/caterings/:id/users", cateringUser.Get)
 			caAdminSuAdmin.DELETE("/caterings/:id/users/:userId", cateringUser.Delete)
 
+			// client categories
+			caAdminSuAdmin.POST("/caterings/:id/clients/:clientId/categories", clientCategory.Add)
+			caAdminSuAdmin.DELETE("/caterings/:id/clients/:clientId/categories/:categoryID", clientCategory.Delete)
+			caAdminSuAdmin.PUT("/caterings/:id/clients/:clientId/categories/:categoryID", clientCategory.Update)
+
 			// catering categories
-			caAdminSuAdmin.POST("/caterings/:id/clients/:clientId/categories", category.Add)
-			caAdminSuAdmin.DELETE("/caterings/:id/clients/:clientId/categories/:categoryID", category.Delete)
-			caAdminSuAdmin.PUT("/caterings/:id/clients/:clientId/categories/:categoryID", category.Update)
+			caAdminSuAdmin.POST("/caterings/:id/categories", category.Add)
+			caAdminSuAdmin.DELETE("/caterings/:id/categories/:categoryID", category.Delete)
+			caAdminSuAdmin.PUT("/caterings/:id/categories/:categoryID", category.Update)
 
 			// catering clients
 			caAdminSuAdmin.POST("/caterings/:id/clients", client.Add)
@@ -184,7 +190,10 @@ func SetupRouter() *gin.Engine {
 		))
 		{
 			// categories
-			allUsers.GET("/caterings/:id/clients/:clientId/categories", category.Get)
+			allUsers.GET("/caterings/:id/categories", category.Get)
+
+			// client categories
+			allUsers.GET("/caterings/:id/clients/:clientId/categories", clientCategory.Get)
 
 			// catering meals
 			allUsers.GET("/caterings/:id/clients/:clientId/meals", meal.Get)

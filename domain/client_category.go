@@ -6,10 +6,11 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// Category struct
-type Category struct {
+// ClientCategory struct
+type ClientCategory struct {
 	Base
 	Date       *time.Time `json:"date"`
 	Name       string     `gorm:"type:varchar(150);not null" json:"name" binding:"required"`
 	CateringID uuid.UUID  `json:"-"`
-} //@name Category
+	ClientID   uuid.UUID  `json:"clientId"`
+} //@name ClientCategory

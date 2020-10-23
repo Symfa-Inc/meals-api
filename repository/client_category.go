@@ -6,26 +6,27 @@ import (
 	"time"
 
 	"github.com/Aiscom-LLC/meals-api/api/url"
+
 	"github.com/Aiscom-LLC/meals-api/config"
 	"github.com/Aiscom-LLC/meals-api/domain"
 )
 
-// CategoryRepo struct
-type CategoryRepo struct{}
+// ClientCategoryRepo struct
+type ClientCategoryRepo struct{}
 
-// NewCategoryRepo returns pointer to
+// NewClientCategoryRepo returns pointer to
 // category repository with all methods
-func NewCategoryRepo() *CategoryRepo {
-	return &CategoryRepo{}
+func NewClientCategoryRepo() *ClientCategoryRepo {
+	return &ClientCategoryRepo{}
 }
 
 // Add creates dish category
 // returns dish category and error
-func (dc CategoryRepo) Add(category *domain.Category) error {
+func (dc ClientCategoryRepo) Add(category *domain.ClientCategory) error {
 	if exist := config.DB.
 		Unscoped().
-		Where("catering_id = ? AND name = ? AND (deleted_at >  ? OR deleted_at IS NULL)",
-			category.CateringID, category.Name, category.DeletedAt).
+		Where("catering_id = ? AND client_id = ? AND name = ? AND (deleted_at >  ? OR deleted_at IS NULL)",
+			category.CateringID, category.ClientID, category.Name, category.DeletedAt).
 		Find(category).RecordNotFound(); !exist {
 
 		return errors.New("this category already exist")
@@ -37,8 +38,8 @@ func (dc CategoryRepo) Add(category *domain.Category) error {
 
 // Get returns list of categories of passed catering ID
 // returns list of categories and error
-func (dc CategoryRepo) Get(cateringID, date string) ([]domain.Category, int, error) {
-	var categories []domain.Category
+func (dc ClientCategoryRepo) Get(cateringID, clientID, date string) ([]domain.ClientCategory, int, error) {
+	var categories []domain.ClientCategory
 
 	if cateringRows := config.DB.
 		Where("id = ?", cateringID).
@@ -50,9 +51,10 @@ func (dc CategoryRepo) Get(cateringID, date string) ([]domain.Category, int, err
 	err := config.DB.
 		Unscoped().
 		Where("catering_id = ?"+
+			" AND client_id = ?"+
 			" AND (date = ? OR date IS NULL)"+
 			" AND (deleted_at > ? OR deleted_at IS NULL)"+
-			" AND (deleted_at IS NULL or date IS NULL)", cateringID, date, date).
+			" AND (deleted_at IS NULL or date IS NULL)", cateringID, clientID, date, date).
 		Order("created_at").
 		Find(&categories).
 		Error
@@ -62,8 +64,8 @@ func (dc CategoryRepo) Get(cateringID, date string) ([]domain.Category, int, err
 
 // GetByKey returns single category item found by key
 // and error if exists
-func (dc CategoryRepo) GetByKey(key, value, cateringID string) (domain.Category, error) {
-	var category domain.Category
+func (dc ClientCategoryRepo) GetByKey(key, value, cateringID string) (domain.ClientCategory, error) {
+	var category domain.ClientCategory
 	err := config.DB.
 		Where("catering_id = ? AND "+key+" = ?", cateringID, value).
 		First(&category).Error
@@ -72,11 +74,11 @@ func (dc CategoryRepo) GetByKey(key, value, cateringID string) (domain.Category,
 
 // Delete soft deletes reading from DB
 // returns gorm.DB struct with methods
-func (dc CategoryRepo) Delete(path url.PathCategory) (int, error) {
+func (dc ClientCategoryRepo) Delete(path url.PathClientCategory) (int, error) {
 	result := config.DB.
 		Unscoped().
-		Model(&domain.Category{}).
-		Where("catering_id = ? AND id = ? AND (deleted_at > ? OR deleted_at IS NULL)", path.ID, path.CategoryID, time.Now()).
+		Model(&domain.ClientCategory{}).
+		Where("catering_id = ? AND id = ? AND client_id = ? AND (deleted_at > ? OR deleted_at IS NULL)", path.ID, path.CategoryID, path.ClientID, time.Now()).
 		Update("deleted_at", time.Now().UTC().Truncate(time.Hour*24).AddDate(0, 0, 1))
 
 	if result.Error != nil {
@@ -92,14 +94,14 @@ func (dc CategoryRepo) Delete(path url.PathCategory) (int, error) {
 
 // Update checks if that name already exists in provided catering
 // if its exists throws and error, if not updates the reading
-func (dc CategoryRepo) Update(path url.PathCategory, category *domain.Category) (int, error) {
+func (dc ClientCategoryRepo) Update(path url.PathClientCategory, category *domain.ClientCategory) (int, error) {
 	if categoryExist := config.DB.
 		Where("catering_id = ? AND name = ? AND id = ? AND (deleted_at > ? OR deleted_at IS NULL)",
 			path.ID, category.Name, path.CategoryID, time.Now()).
 		Find(&category).
 		RowsAffected; categoryExist == 0 {
 		if nameExist := config.DB.
-			Where("catering_id = ? AND name = ?", path.ID, category.Name).
+			Where("catering_id = ? AND client_id = ? AND name = ?", path.ID, path.ClientID, category.Name).
 			Find(&category).
 			RowsAffected; nameExist != 0 {
 			return http.StatusBadRequest, errors.New("category with that name already exist")
@@ -108,7 +110,7 @@ func (dc CategoryRepo) Update(path url.PathCategory, category *domain.Category) 
 
 	if categoryNotExist := config.DB.
 		Unscoped().
-		Model(&domain.Category{}).
+		Model(&domain.ClientCategory{}).
 		Where("id = ? AND (deleted_at > ? OR deleted_at IS NULL)", path.CategoryID, time.Now()).
 		Update(category); categoryNotExist.RowsAffected == 0 {
 		return http.StatusNotFound, errors.New("category not found")
