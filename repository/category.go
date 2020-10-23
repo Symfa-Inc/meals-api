@@ -37,7 +37,7 @@ func (dc CategoryRepo) Add(category *domain.Category) error {
 
 // Get returns list of categories of passed catering ID
 // returns list of categories and error
-func (dc CategoryRepo) Get(cateringID, date string) ([]domain.Category, int, error) {
+func (dc CategoryRepo) Get(cateringID string) ([]domain.Category, int, error) {
 	var categories []domain.Category
 
 	if cateringRows := config.DB.
@@ -50,9 +50,8 @@ func (dc CategoryRepo) Get(cateringID, date string) ([]domain.Category, int, err
 	err := config.DB.
 		Unscoped().
 		Where("catering_id = ?"+
-			" AND (date = ? OR date IS NULL)"+
 			" AND (deleted_at > ? OR deleted_at IS NULL)"+
-			" AND (deleted_at IS NULL or date IS NULL)", cateringID, date, date).
+			" AND (deleted_at IS NULL or date IS NULL)", cateringID, time.Now()).
 		Order("created_at").
 		Find(&categories).
 		Error

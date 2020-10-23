@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/domain"
@@ -49,7 +48,6 @@ func (dc Category) Add(c *gin.Context) {
 
 	cateringID, _ := uuid.FromString(path.ID)
 	category := domain.Category{
-		Date:       body.Date,
 		Name:       body.Name,
 		CateringID: cateringID,
 	}
@@ -93,28 +91,18 @@ func (dc Category) Delete(c *gin.Context) {
 // @Tags catering categories
 // @Produce json
 // @Param id path string false "Catering ID"
-// @Param date query string false "in format YYYY-MM-DDT00:00:00Z"
 // @Success 200 {array} domain.Category "array of category readings"
 // @Failure 400 {object} Error "Error"
 // @Failure 404 {object} Error "Not Found"
 // @Router /caterings/{id}/categories [get]
 func (dc Category) Get(c *gin.Context) {
 	var path url.PathID
-	var query url.DateQuery
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	if err := utils.RequestBinderQuery(&query, c); err != nil {
-		return
-	}
-
-	if query.Date == "" {
-		query.Date = time.Now().Format(time.RFC3339)
-	}
-
-	categoriesResult, code, err := categoryRepo.Get(path.ID, query.Date)
+	categoriesResult, code, err := categoryRepo.Get(path.ID)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
