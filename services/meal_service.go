@@ -165,6 +165,14 @@ func (m *MealService) CopyMeals(path url.PathClient, body models.CopyMealToDate)
 }
 
 func (m *MealService) CopyWeek(path url.PathClient, body models.CopyMealToWeek) (int, error) {
+	if len(body.Date) != len(body.ToWeek) {
+		return http.StatusBadRequest, errors.New("non valid data")
+	}
+
+	today := time.Now()
+	if body.ToWeek[4].Sub(today).Hours() > 504 {
+		return http.StatusBadRequest, errors.New("can't use data after 3 week")
+	}
 	for date := range body.Date {
 		meals, code, err := mealRepo.Get(body.Date[date], path.ID, path.ClientID)
 
@@ -175,7 +183,7 @@ func (m *MealService) CopyWeek(path url.PathClient, body models.CopyMealToWeek) 
 		mealExist, _, _ := mealRepo.Get(body.ToWeek[date], path.ID, path.ClientID)
 
 		if len(mealExist) != 0 {
-			return http.StatusBadRequest, errors.New(fmt.Sprintf("meals for %v already exist", body.ToWeek[date].Weekday()))
+			return http.StatusBadRequest, fmt.Errorf("meals for %v already exist", body.ToWeek[date].Weekday())
 		}
 
 		for meal := range meals {

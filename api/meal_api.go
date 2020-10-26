@@ -121,7 +121,6 @@ func (m Meal) CopyMeals(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, result)
 }
-func expensiveCall() {}
 
 // CopyWeek Copy menu from one week to another
 // @Summary Copy menu from one week to another
