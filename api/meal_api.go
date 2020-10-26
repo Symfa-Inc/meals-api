@@ -96,8 +96,8 @@ func (m Meal) Get(c *gin.Context) {
 // @Produce json
 // @Param id path string false "Catering ID"
 // @Param clientId path string false "Client ID"
-// @Param payload body swagger.AddMealToDate false "meal reading"
-// @Success 201 {object} swagger.AddMealToDate "copied meal"
+// @Param payload body swagger.CopyMealToDate false "meal reading"
+// @Success 201 {object} swagger.CopyMealToDate "copied meal"
 // @Failure 400 {object} Error "Error"
 // @Router /caterings/{id}/clients/{clientId}/copy-meals [post]
 func (m Meal) CopyMeals(c *gin.Context) {
@@ -120,4 +120,37 @@ func (m Meal) CopyMeals(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, result)
+}
+func expensiveCall() {}
+
+// CopyWeek Copy menu from one week to another
+// @Summary Copy menu from one week to another
+// @Tags catering meals
+// @Produce json
+// @Param id path string false "Catering ID"
+// @Param clientId path string false "Client ID"
+// @Param payload body swagger.CopyMealToWeek false "meal reading"
+// @Success 201 {object} swagger.CopyMealToWeek "copied meal"
+// @Failure 400 {object} Error "Error"
+// @Router /caterings/{id}/clients/{clientId}/copy-meals-week [post]
+func (m Meal) CopyWeek(c *gin.Context) {
+	var path url.PathClient
+	var body models.CopyMealToWeek
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderBody(&body, c); err != nil {
+		return
+	}
+
+	code, err := mealService.CopyWeek(path, body)
+
+	if err != nil {
+		utils.CreateError(code, err, c)
+		return
+	}
+
+	c.JSON(http.StatusCreated, "menu copied to the selected week")
 }
