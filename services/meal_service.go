@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -125,21 +126,97 @@ func (m *MealService) CopyMeals(path url.PathClient, body models.CopyMealToDate)
 	for meal := range meals {
 		for dish := range meals[meal].Result {
 			_, code, err := dishRepo.FindByID(path.ID, meals[meal].Result[dish].ID.String())
+
 			if err != nil {
 				return []models.GetMeal{}, code, err
 			}
-
 		}
+
 		mealID := meals[meal].MealID
 		mealResult, _, _ := mealRepo.GetByKey("meal_id", mealID.String())
 		mealResult.Date = body.ToDate
+		mealResult.MealID = uuid.NewV4()
 
 		if err := mealRepo.Add(&mealResult); err != nil {
 			return []models.GetMeal{}, code, err
+		}
+
+		for dish := range meals[meal].Result {
+			meals[meal].Result[dish].ID = uuid.NewV4()
+
+			if err := dishRepo.Add(meals[meal].Result[dish].CateringID.String(), &meals[meal].Result[dish]); err != nil {
+				return []models.GetMeal{}, http.StatusBadRequest, err
+			}
+
+			mealDish := domain.MealDish{
+				MealID: mealResult.ID,
+				DishID: meals[meal].Result[dish].ID,
+			}
+
+			if err := mealDishRepo.Add(mealDish); err != nil {
+				return []models.GetMeal{}, http.StatusBadRequest, err
+			}
 		}
 	}
 
 	result, code, err := mealRepo.Get(body.ToDate, path.ID, path.ClientID)
 
 	return result, code, err
+}
+
+func (m *MealService) CopyWeek(path url.PathClient, body models.CopyMealToWeek) (int, error) {
+	if len(body.Date) != len(body.ToWeek) {
+		return http.StatusBadRequest, errors.New("non valid data")
+	}
+
+	today := time.Now()
+	threeWeeks := float64(504) // 504 hours in 3 weeks in total
+	if body.ToWeek[4].Sub(today).Hours() > threeWeeks {
+		return http.StatusBadRequest, errors.New("can't use data after 3 week")
+	}
+	for date := range body.Date {
+		meals, code, err := mealRepo.Get(body.Date[date], path.ID, path.ClientID)
+
+		if err != nil {
+			return code, err
+		}
+
+		mealExist, _, _ := mealRepo.Get(body.ToWeek[date], path.ID, path.ClientID)
+
+		if len(mealExist) != 0 {
+			return http.StatusBadRequest, fmt.Errorf("meals for %v already exist", body.ToWeek[date].Weekday())
+		}
+
+		for meal := range meals {
+			mealID := meals[meal].MealID
+			mealResult, _, _ := mealRepo.GetByKey("meal_id", mealID.String())
+			mealResult.Date = body.ToWeek[date]
+			mealResult.MealID = uuid.NewV4()
+
+			if err := mealRepo.Add(&mealResult); err != nil {
+				return code, err
+			}
+
+			for dish := range meals[meal].Result {
+				meals[meal].Result[dish].ID = uuid.NewV4()
+				cateringID := meals[meal].Result[dish].CateringID.String()
+				currentDish := meals[meal].Result[dish]
+
+				if err := dishRepo.Add(cateringID, &currentDish); err != nil {
+					return http.StatusBadRequest, err
+				}
+
+				mealDish := domain.MealDish{
+					MealID: mealResult.ID,
+					DishID: meals[meal].Result[dish].ID,
+				}
+
+				if err := mealDishRepo.Add(mealDish); err != nil {
+					return http.StatusBadRequest, err
+				}
+			}
+		}
+	}
+
+	return http.StatusCreated, nil
 }
