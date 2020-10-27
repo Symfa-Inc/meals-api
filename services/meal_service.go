@@ -170,7 +170,8 @@ func (m *MealService) CopyWeek(path url.PathClient, body models.CopyMealToWeek) 
 	}
 
 	today := time.Now()
-	if body.ToWeek[4].Sub(today).Hours() > 504 {
+	threeWeeks := float64(504) // 504 hours in 3 weeks in total
+	if body.ToWeek[4].Sub(today).Hours() > threeWeeks {
 		return http.StatusBadRequest, errors.New("can't use data after 3 week")
 	}
 	for date := range body.Date {
@@ -198,8 +199,10 @@ func (m *MealService) CopyWeek(path url.PathClient, body models.CopyMealToWeek) 
 
 			for dish := range meals[meal].Result {
 				meals[meal].Result[dish].ID = uuid.NewV4()
+				cateringID := meals[meal].Result[dish].CateringID.String()
+				currentDish := meals[meal].Result[dish]
 
-				if err := dishRepo.Add(meals[meal].Result[dish].CateringID.String(), &meals[meal].Result[dish]); err != nil {
+				if err := dishRepo.Add(cateringID, &currentDish); err != nil {
 					return http.StatusBadRequest, err
 				}
 
