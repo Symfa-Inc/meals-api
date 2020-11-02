@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/Aiscom-LLC/meals-api/repository"
+
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
@@ -20,6 +22,7 @@ func NewMeal() *Meal {
 }
 
 var mealService = services.NewMealService()
+var mealDishRepo = repository.NewMealDishesRepo()
 
 // Add Creates meal for certain client
 // @Summary Creates meal for certain client
@@ -90,34 +93,64 @@ func (m Meal) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-// CopyMeal Copy menu from one day to another
-// @Summary Creates meal for certain client
-// @Tags catering meals
+// Update updates meal
+// @Summary Returns 204 if success and 4xx error if failed
 // @Produce json
-// @Param id path string false "Catering ID"
-// @Param clientId path string false "Client ID"
-// @Param payload body swagger.AddMealToDate false "meal reading"
-// @Success 201 {object} swagger.AddMealToDate "copied meal"
+// @Accept json
+// @Tags catering meals
+// @Param id path string true "Catering ID"
+// @Param clientId path string true "Client ID"
+// @Param mealId path string true "Meal ID"
+// @Param body body swagger.UpdateMeal false "Meal object"
+// @Success 204 "Successfully updated"
 // @Failure 400 {object} Error "Error"
-// @Router /caterings/{id}/clients/{clientId}/copy-meals [post]
-func (m Meal) CopyMeals(c *gin.Context) {
-	var path url.PathClient
-	var body models.CopyMealToDate
+// @Failure 404 {object} Error "Not Found"
+// @Router /caterings/{id}/clients/{clientId}/meals/{mealId} [put]
+func (m Meal) Update(c *gin.Context) {
+	var path url.PathUpdateMeal
+	var meal models.UpdateMeal
 
 	if err := utils.RequestBinderURI(&path, c); err != nil {
 		return
 	}
 
-	if err := utils.RequestBinderBody(&body, c); err != nil {
+	if err := utils.RequestBinderBody(&meal, c); err != nil {
 		return
 	}
 
-	result, code, err := mealService.CopyMeals(path, body)
+	code, err := mealService.Update(path, meal.Dishes, meal.Status)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
 		return
 	}
+	c.JSON(http.StatusOK, "update success")
+}
 
-	c.JSON(http.StatusCreated, result)
+// Delete soft delete of meals
+// @Summary Soft delete
+// @Tags catering meals
+// @Produce json
+// @Param id path string true "Catering ID"
+// @Param clientID path string true "Client ID"
+// @Param mealID path string true "Meal ID"
+// @Success 204 "Successfully deleted"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
+// @Router /caterings/{id}/client{clientID}/meals{mealID} [delete]
+func (m Meal) Delete(c *gin.Context) {
+	var path url.PathID
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	err := mealDishRepo.Delete(path.ID)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err, c)
+		return
+	}
+
+	c.JSON(http.StatusNoContent, "success delete")
 }

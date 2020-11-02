@@ -36,6 +36,13 @@ type PathClient struct {
 	ClientID string `uri:"clientId" json:"clientId" binding:"required"`
 }
 
+// PathUpdateMeal struct for path binding
+type PathUpdateMeal struct {
+	ID       string `uri:"id" json:"id" binding:"required"`
+	ClientID string `uri:"clientId" json:"clientId" binding:"required"`
+	MealID   string `uri:"mealId" json:"mealId" binding:"required"`
+}
+
 // PathDish struct for path binding
 type PathDish struct {
 	CateringID string `uri:"id" json:"id" binding:"required"`
