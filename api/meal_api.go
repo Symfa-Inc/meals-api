@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/Aiscom-LLC/meals-api/repository"
+
 	"github.com/Aiscom-LLC/meals-api/api/url"
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 	"github.com/Aiscom-LLC/meals-api/services"
@@ -19,7 +21,8 @@ func NewMeal() *Meal {
 	return &Meal{}
 }
 
-var mealService = services.NewMealService
+var mealService = services.NewMealService()
+var mealDishRepo = repository.NewMealDishesRepo()
 
 // Add Creates meal for certain client
 // @Summary Creates meal for certain client
@@ -45,7 +48,7 @@ func (m Meal) Add(c *gin.Context) {
 
 	user, _ := c.Get("user")
 
-	result, code, err := mealService().Add(path, body, user)
+	result, code, err := mealService.Add(path, body, user)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
@@ -80,7 +83,7 @@ func (m Meal) Get(c *gin.Context) {
 		return
 	}
 
-	result, code, err := mealService().Get(query, path)
+	result, code, err := mealService.Get(query, path)
 
 	if err != nil {
 		utils.CreateError(code, err, c)
@@ -88,4 +91,66 @@ func (m Meal) Get(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, result)
+}
+
+// Update updates meal
+// @Summary Returns 204 if success and 4xx error if failed
+// @Produce json
+// @Accept json
+// @Tags catering meals
+// @Param id path string true "Catering ID"
+// @Param clientId path string true "Client ID"
+// @Param mealId path string true "Meal ID"
+// @Param body body swagger.UpdateMeal false "Meal object"
+// @Success 204 "Successfully updated"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
+// @Router /caterings/{id}/clients/{clientId}/meals/{mealId} [put]
+func (m Meal) Update(c *gin.Context) {
+	var path url.PathUpdateMeal
+	var meal models.UpdateMeal
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	if err := utils.RequestBinderBody(&meal, c); err != nil {
+		return
+	}
+
+	code, err := mealService.Update(path, meal.Dishes, meal.Status)
+
+	if err != nil {
+		utils.CreateError(code, err, c)
+		return
+	}
+	c.JSON(http.StatusOK, "update success")
+}
+
+// Delete soft delete of meals
+// @Summary Soft delete
+// @Tags catering meals
+// @Produce json
+// @Param id path string true "Catering ID"
+// @Param clientID path string true "Client ID"
+// @Param mealID path string true "Meal ID"
+// @Success 204 "Successfully deleted"
+// @Failure 400 {object} Error "Error"
+// @Failure 404 {object} Error "Not Found"
+// @Router /caterings/{id}/client{clientID}/meals{mealID} [delete]
+func (m Meal) Delete(c *gin.Context) {
+	var path url.PathID
+
+	if err := utils.RequestBinderURI(&path, c); err != nil {
+		return
+	}
+
+	err := mealDishRepo.Delete(path.ID)
+
+	if err != nil {
+		utils.CreateError(http.StatusBadRequest, err, c)
+		return
+	}
+
+	c.JSON(http.StatusNoContent, "success delete")
 }

@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	uuid "github.com/satori/go.uuid"
+
 	"github.com/Aiscom-LLC/meals-api/repository/models"
 
 	"github.com/Aiscom-LLC/meals-api/config"
@@ -121,4 +123,17 @@ func (m MealRepo) GetByKey(key, value string) (domain.Meal, int, error) {
 	}
 
 	return meal, 0, nil
+}
+
+// ChangeStatus update status for meal
+func (m MealRepo) ChangeStatus(status string, mealID uuid.UUID) (int, error) {
+	if err := config.DB.
+		Unscoped().
+		Model(domain.MealDish{}).
+		Where("id = ?", mealID).
+		Update("status = ?", status).
+		Error; err != nil {
+		return http.StatusBadRequest, err
+	}
+	return http.StatusOK, nil
 }

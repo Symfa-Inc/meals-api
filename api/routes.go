@@ -132,6 +132,7 @@ func SetupRouter() *gin.Engine {
 
 			// catering meals
 			caAdminSuAdmin.POST("/caterings/:id/clients/:clientId/meals", meal.Add)
+			caAdminSuAdmin.PUT("/caterings/:id/clients/:clientId/meals/:mealId", meal.Update)
 
 			// catering schedules
 			caAdminSuAdmin.PUT("/caterings/:id/schedules/:scheduleId", cateringSchedule.Update)

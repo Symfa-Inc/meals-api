@@ -30,4 +30,5 @@ type Meal struct {
 	MealID     uuid.UUID `json:"mealId"`
 	Version    string    `json:"version"`
 	Person     string    `json:"person"`
+	Status     string    `json:"status" gorm:"default:'draft'"`
 } // @name MealsResponse
